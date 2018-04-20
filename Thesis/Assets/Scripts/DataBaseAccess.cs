@@ -4,7 +4,7 @@ using UnityEngine;
 using System.Data;
 using Mono.Data.SqliteClient;
 
-public class DataBaseAccess : MonoBehaviour {
+public class DataBaseAccess {
 
 	private string connection;
     private IDbConnection dbcon;
@@ -49,7 +49,7 @@ public class DataBaseAccess : MonoBehaviour {
         while(reader.Read()) { 
             ArrayList lineArray = new ArrayList();
             for (int i = 0; i < reader.FieldCount; i++)
-                lineArray.Add(reader.GetValue(i)); // This reads the entries in a row
+                lineArray.Add(reader.GetName(i)); // This reads the entries in a row
             readArray.Add(lineArray); // This makes an array of all the rows
         }
         return readArray; // return matches

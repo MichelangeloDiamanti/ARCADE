@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Data;
 
 public class ScriptThatUsesTheDatabase : MonoBehaviour {
 
@@ -29,14 +29,62 @@ DataBaseAccess db;
 	Vector2 scrollPosition;
 	ArrayList databaseData = new ArrayList();
 
-	// Use this for initialization
-	void Start () {
+	List<Entity> entities;
+
+    public void SetEntities(List<Entity> value)
+    {
+        entities = value;
+    }
+
+    // Use this for initialization
+    void Start () {
 		db = new DataBaseAccess();
-		db.OpenDB("sqlite3.db");
-		List<string> list = db.SingleSelectWhere("people", "*", "1", "=", "1");
-		foreach(string s in list){
-			Debug.Log(s);
+		db.OpenDB("Database/initRealWorld.db");
+
+        entities = new List<Entity>();
+
+		IDataReader res = db.BasicQuery("SELECT * FROM ENTITY", true);
+        while(res.Read()) { 
+			// string line = "";
+			string type = "";
+			string name = "";
+			bool real = false;
+			int world = -1;
+            for (int i = 0; i < res.FieldCount; i++){
+                string field = res.GetName(i);
+				// line += field + ":" + res.GetValue(i) + "   ";
+				switch(field){
+					case "TYPE":
+						type = res.GetString(i);
+						break;
+					case "NAME":
+						name = res.GetString(i);
+						break;
+					case "REAL":
+						real = res.GetBoolean(i);
+						break;
+					case "WORLD":
+						world = res.GetInt32(i);
+						break;
+				}
+			}
+			entities.Add(new Entity(type, name, real, world));
+			// Debug.Log(line);
+
 		}
+
+		foreach(Entity e in entities){
+			Debug.Log(e.Type + " " + e.Name + " " + e.Real + " " + e.World);
+		}
+		Debug.Log(entities);
+
+
+
+		// foreach(string s in list){
+		// 	Debug.Log(s);
+		// }
+
+
 		// db = new DataBaseAccess();
 		// db.OpenDB(DatabaseName);
 		// // Let's make sure we've got a table to work with as well!
