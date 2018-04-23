@@ -68,7 +68,7 @@ DataBaseAccess db;
 						break;
 				}
 			}
-			entities.Add(new Entity(type, name, real, world));
+			//entities.Add(new Entity(type, name, real, world));
 			// Debug.Log(line);
 
 		}
