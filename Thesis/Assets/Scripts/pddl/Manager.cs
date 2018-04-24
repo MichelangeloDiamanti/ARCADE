@@ -4,9 +4,15 @@ using UnityEngine;
 
 public static class Manager
 {
-	private static List<IPredicate> _predicates = new List<IPredicate>();
-    private static List<EntityType> _entityTypes = new List<EntityType>();
-    private static List<Entity> _entities = new List<Entity>();
+	private static List<IPredicate> _predicates;
+    private static List<EntityType> _entityTypes;
+    private static List<Entity> _entities;
+
+    public static void initManager(){
+        _predicates = new List<IPredicate>();
+        _entityTypes = new List<EntityType>();
+        _entities = new List<Entity>();
+    }
 
     public static List<IPredicate> getPredicates()
     {
@@ -68,10 +74,28 @@ public static class Manager
         }
         return false;
     }
+    public static bool entityExists(Entity entity){
+        foreach(Entity e in _entities){
+            if(e.Equals(entity)){
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     public static bool entityTypeExists(string type){
         foreach(EntityType et in _entityTypes){
             if(et.Type.Equals(type)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static bool entityTypeExists(EntityType entityType){
+        foreach(EntityType et in _entityTypes){
+            if(et.Equals(entityType)){
                 return true;
             }
         }

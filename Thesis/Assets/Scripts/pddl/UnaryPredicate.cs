@@ -19,9 +19,12 @@ public class UnaryPredicate : IPredicate {
 
 	public UnaryPredicate(EntityType source, string name){
 		if(source == null)
-			throw new System.ArgumentException("Predicate source type cannot be null", "source type");
+			throw new System.ArgumentNullException("Predicate source type cannot be null", "source type");
 		if(name == null)
-			throw new System.ArgumentException("Predicate name cannot be null", "name");
+			throw new System.ArgumentNullException("Predicate name cannot be null", "name");
+
+		if(Manager.entityTypeExists(source) == false)
+			throw new System.ArgumentException("The specified Entity Type does not exist", name);
 
 		if(Manager.predicateExists(source, name))
 			throw new System.ArgumentException("Predicate has already been declared", name);

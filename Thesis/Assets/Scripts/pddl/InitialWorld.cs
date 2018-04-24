@@ -29,8 +29,8 @@ public class InitialWorld : MonoBehaviour {
 		Manager.addPredicate(isAt);
 		Manager.addPredicate(isRich);
 
-		UnaryPredicate isRich2 = new UnaryPredicate(character, "RICH");
-		BinaryPredicate isAt2 = new BinaryPredicate(character, "IS_AT", location);
+		// UnaryPredicate isRich2 = new UnaryPredicate(character, "RICH");
+		// BinaryPredicate isAt2 = new BinaryPredicate(character, "IS_AT", location);
 
         // Debug.Log("predicates count: " + Manager.getPredicates().Count);
 
