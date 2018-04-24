@@ -5,7 +5,7 @@ using System.Data;
 
 public class State : MonoBehaviour {
 	
-	List<BinaryRelation> relations;
+	List<IRelation> relations;
 
 	// Use this for initialization
 	void Start () {
@@ -13,6 +13,8 @@ public class State : MonoBehaviour {
 		EntityType character = new EntityType("CHARACTER");
 		EntityType location = new EntityType("LOCATION");
 		EntityType object = new EntityType("OBJECT");
+		Manager.addEntityType(object);
+		
 
 		Entity hero = new Entity(character, "hero");
 		Entity cat_lady = new Entity(character, "cat_lady");
@@ -31,6 +33,7 @@ public class State : MonoBehaviour {
 		relations.Add(catIsAtV2);		
 		
 		UnaryRelation heroHandempty = new UnaryRelation(hero, handempty);
+		relations.Add(heroHandempty);
 
 		
 	}

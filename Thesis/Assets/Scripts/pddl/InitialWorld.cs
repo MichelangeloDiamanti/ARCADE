@@ -14,7 +14,6 @@ public class InitialWorld : MonoBehaviour {
 		EntityType character = new EntityType("CHARACTER");
 		EntityType location = new EntityType("LOCATION");
 
-		Manager.addEntityType(character);
 		Manager.addEntityType(location);
 
 		Entity john = new Entity(character, "john");
