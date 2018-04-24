@@ -11,7 +11,7 @@ public class EntityType{
     }
 
     public EntityType(string type){
-		if(Manager.GetManager().entityTypeExists(type))
+		if(Manager.entityTypeExists(type))
 			throw new System.ArgumentException("Entity type has already been declared", type);
 
         _type = type;

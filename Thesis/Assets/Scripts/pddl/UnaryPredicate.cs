@@ -23,7 +23,7 @@ public class UnaryPredicate : IPredicate {
 		if(name == null)
 			throw new System.ArgumentException("Predicate name cannot be null", "name");
 
-		if(Manager.GetManager().predicateExists(source, name))
+		if(Manager.predicateExists(source, name))
 			throw new System.ArgumentException("Predicate has already been declared", name);
 
 		_source = source;
