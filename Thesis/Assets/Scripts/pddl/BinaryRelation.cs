@@ -30,6 +30,11 @@ public class BinaryRelation : IRelation {
 		if(destination == null)
 			throw new System.ArgumentNullException("Relation destination cannot be null", "destination");
 
+		if(Manager.entityExists(source) == false)
+			throw new System.ArgumentException("Relation source must be an existing entity", source + " " + predicate.Source);
+		if(Manager.entityExists(destination) == false)
+			throw new System.ArgumentException("Relation destination must be an existing entity", source + " " + predicate.Source);
+
 		if(source.Type.Equals(predicate.Source) == false)
 			throw new System.ArgumentException("Relation source is not of the specified predicate type", source + " " + predicate.Source);
 		if(destination.Type.Equals(predicate.Destination) == false)
