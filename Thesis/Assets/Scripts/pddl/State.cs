@@ -3,46 +3,48 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Data;
 
-public class State : MonoBehaviour {
+public class State{
 	
-	List<IRelation> relations;
-
-	// Use this for initialization
-	void Start () {
-
-		EntityType character = new EntityType("CHARACTER");
-		EntityType location = new EntityType("LOCATION");
-		EntityType object = new EntityType("OBJECT");
-		Manager.addEntityType(object);
-		
-
-		Entity hero = new Entity(character, "hero");
-		Entity cat_lady = new Entity(character, "cat_lady");
-		Entity v1 = new Entity(location, "village1");
-		Entity v2 = new Entity(location, "village2");
-		Entity cat = new Entity(object, "cat");
-
-		BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location);
-		UnaryPredicate handempty = new UnaryPredicate(character, "HANDEMPTY");
-
-		BinaryRelation heroIsAtV1 = new BinaryRelation(hero, isAt, v1);
-		relations.Add(heroIsAtV1);
-		BinaryRelation cat_ladyIsAtV1 = new BinaryRelation(cat_lady, isAt, v1);
-		relations.Add(cat_ladyIsAtV1);
-		BinaryRelation catIsAtV2 = new BinaryRelation(cat, isAt, v2);
-		relations.Add(catIsAtV2);		
-		
-		UnaryRelation heroHandempty = new UnaryRelation(hero, handempty);
-		relations.Add(heroHandempty);
-
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
+	private static List<IRelation> _relations = new List<IRelation>();
+	public List<IRelation> Relations
+	{
+		get { return _relations; }  
 	}
 
+	public  static void AddRelation(IRelation r){
+		if(relationExists(r) == false)
+			_relations.Add(r);
+	}
+
+	public State(List<IRelation> relations){
+
+		if(relations == null || relations.Count == 0)
+			 throw new System.ArgumentException("List of relations cannot be null or empty", "List<IRelation> relations");
+		
+		_relations = relations;
+	}
+
+	public static bool relationExists(IRelation relation){
+        foreach(IRelation r in _relations){
+            if(r.GetType() == typeof(BinaryRelation) && relation == typeof(BinaryRelation))
+            {
+                BinaryRelation br1 = r as BinaryRelation;
+				BinaryRelation br2 = relation as BinaryRelation;
+                if(br1.Equals(br2) == false){
+                    return true;
+                }
+            }
+			else if(r.GetType() == typeof(UnaryRelation) && relation == typeof(UnaryRelation))
+            {
+                UnaryRelation br1 = r as UnaryRelation;
+				UnaryRelation br2 = relation as UnaryRelation;
+                if(br1.Equals(br2) == false){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
 
 }
