@@ -21,7 +21,6 @@ public class UnaryRelationTest {
 		Manager.addEntityType(character);
 
 		Entity john = new Entity(character, "JOHN");
-		// Manager.addEntity(john);
 		
 		UnaryPredicate rich = new UnaryPredicate(character, "RICH");
 		Manager.addPredicate(rich);
@@ -29,18 +28,41 @@ public class UnaryRelationTest {
 		Assert.That(()=> new UnaryRelation(john, rich), Throws.ArgumentException);
 	}
 
+	[Test]
+	public void UnaryRelationSourceMustBeOfCorrectPredicateType() {
+		Manager.initManager();
 
-	// [Test]
-	// public void UnaryPredicateMustBeUnique() {
-	// 	Manager.initManager();
-		
-	// 	EntityType character = new EntityType("CHARACTER");
-	// 	Manager.addEntityType(character);
+		EntityType character = new EntityType("CHARACTER");
+		Manager.addEntityType(character);
 
-	// 	UnaryPredicate up = new UnaryPredicate(character, "RICH");
-	// 	Manager.addPredicate(up);
+		EntityType location = new EntityType("LOCATION");
+		Manager.addEntityType(location);
 
-	// 	Assert.That(()=> new UnaryPredicate(character, "RICH"), Throws.ArgumentException);
-	// }
+		Entity john = new Entity(character, "JOHN");
+		Manager.addEntity(john);
+
+		Entity school = new Entity(location, "SCHOOL");
+		Manager.addEntity(school);
+
+		UnaryPredicate isRich = new UnaryPredicate(character, "RICH");
+		Manager.addPredicate(isRich);
+
+		Assert.That(()=> new UnaryRelation(school, isRich), Throws.ArgumentException);
+	}
+
+	[Test]
+	public void UnaryRelationPredicateMustBeAnExistingPredicate() {
+		Manager.initManager();
+
+		EntityType character = new EntityType("CHARACTER");
+		Manager.addEntityType(character);
+
+		Entity john = new Entity(character, "JOHN");
+		Manager.addEntity(john);
+
+		UnaryPredicate rich = new UnaryPredicate(character, "RICH");
+
+		Assert.That(()=> new UnaryRelation(john, rich), Throws.ArgumentException);
+	}
 
 }

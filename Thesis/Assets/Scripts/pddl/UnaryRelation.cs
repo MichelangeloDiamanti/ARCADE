@@ -26,13 +26,15 @@ public class UnaryRelation : IRelation
         if (Manager.entityExists(source) == false)
             throw new System.ArgumentException("Relation source must be an existing entity", source + " " + predicate.Source);
 
-        if (source.Type.Equals(predicate.Source) == false)
-            throw new System.ArgumentException("Relation source is not of the specified predicate type", source + " " + predicate.Source);
+		if(Manager.predicateExists(predicate) == false)
+			throw new System.ArgumentException("Relation predicate must be an existing predicate", source + " " + predicate.Source);
 
-        // if(Manager.predicateExists())
-        _source = source;
-        _predicate = predicate;
-    }
+		if(source.Type.Equals(predicate.Source) == false)
+			throw new System.ArgumentException("Relation source is not of the specified predicate type", source + " " + predicate.Source);
+
+		_source = source;
+		_predicate = predicate;
+	}
 
     public override string ToString()
     {
