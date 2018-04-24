@@ -35,6 +35,9 @@ public class ActionDefinition
         if (parameters == null || parameters.Count == 0)
             throw new System.ArgumentException("ActionDefinition: List of parameter cannot be null or empty", "List<EntityType> parameter");
 
-        
+        _preCondition = pre;
+        _name = name;
+        _parameters = parameters;
+        _postCondition = post;
     }
 }
