@@ -30,7 +30,7 @@ public class InitialWorld : MonoBehaviour {
 		State.AddRelation(cat_ladyIsAtV1);
 		BinaryRelation catIsAtV2 = new BinaryRelation(cat, isAt, v2);
 		State.AddRelation(catIsAtV2);		
-		
+	
 		UnaryRelation heroHandempty = new UnaryRelation(hero, handempty);
 		State.AddRelation(heroHandempty);
 
