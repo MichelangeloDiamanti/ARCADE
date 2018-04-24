@@ -11,11 +11,11 @@ public class BinaryRelation : IRelation {
 	public BinaryRelation(Entity source, BinaryPredicate predicate, Entity destination)
 	{
 		if(source == null)
-			throw new System.ArgumentException("Relation source cannot be null", "source");
+			throw new System.ArgumentNullException("Relation source cannot be null", "source");
 		if(predicate == null)
-			throw new System.ArgumentException("Relation predicate cannot be null", "predicate");
+			throw new System.ArgumentNullException("Relation predicate cannot be null", "predicate");
 		if(destination == null)
-			throw new System.ArgumentException("Relation destination cannot be null", "destination");
+			throw new System.ArgumentNullException("Relation destination cannot be null", "destination");
 
 		if(source.Type.Equals(predicate.Source) == false)
 			throw new System.ArgumentException("Relation source is not of the specified predicate type", source + " " + predicate.Source);
