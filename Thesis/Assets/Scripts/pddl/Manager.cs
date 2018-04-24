@@ -1,12 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 public static class Manager
 {
 	private static List<IPredicate> _predicates = new List<IPredicate>();
     private static List<EntityType> _entityTypes = new List<EntityType>();
     private static List<Entity> _entities = new List<Entity>();
+    private static List<ActionDefinition> _actionDefinition = new List<ActionDefinition>();
 
     public static List<IPredicate> getPredicates()
     {
@@ -33,6 +33,15 @@ public static class Manager
     public static void addEntity(Entity e)
     {
         _entities.Add(e);
+    }
+
+    public static List<ActionDefinition> getActionDefinitions()
+    {
+        return _actionDefinition;
+    }
+    public static void addActionDefinition(ActionDefinition a)
+    {
+        _actionDefinition.Add(a);
     }
 
     public static bool predicateExists(EntityType source, string name, EntityType destination){
@@ -75,6 +84,21 @@ public static class Manager
                 return true;
             }
         }
+        return false;
+    }
+
+    public static bool actionDefinitionExists(List<IPredicate> pre, string name, List<EntityType> parameters, List<IPredicate> post){
+        foreach(ActionDefinition a in _actionDefinition){
+            if(a.Name.Equals(name)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static bool predicateInManager(IPredicate predicate){
+        if(_predicates.Contains(predicate))
+            return true;
         return false;
     }
 
