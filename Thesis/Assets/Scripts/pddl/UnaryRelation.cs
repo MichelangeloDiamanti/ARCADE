@@ -17,6 +17,7 @@ public class UnaryRelation : IRelation {
 		if(source.Type.Equals(predicate.Source) == false)
 			throw new System.ArgumentException("Relation source is not of the specified predicate type", source + " " + predicate.Source);
 
+		// if(Manager.predicateExists())
 		_source = source;
 		_predicate = predicate;
 	}

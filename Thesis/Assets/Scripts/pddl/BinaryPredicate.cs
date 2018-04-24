@@ -30,7 +30,7 @@ public class BinaryPredicate : IPredicate {
 		if(destination == null)
 			throw new System.ArgumentException("Predicate destination type cannot be null", "destination type");
 
-		if(Manager.GetManager().predicateExists(source, name, destination))
+		if(Manager.predicateExists(source, name, destination))
 			throw new System.ArgumentException("Predicate has already been declared", name);
 
 		_source = source;

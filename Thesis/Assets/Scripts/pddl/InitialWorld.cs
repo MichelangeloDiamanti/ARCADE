@@ -7,40 +7,39 @@ public class InitialWorld : MonoBehaviour {
 
 	DataBaseAccess db;
 	List<Entity> entities;
-	Manager man;
 
     // Use this for initialization
     void Start () {
 
-		man = Manager.GetManager();
-
 		EntityType character = new EntityType("CHARACTER");
 		EntityType location = new EntityType("LOCATION");
 
-		man.addEntityType(character);
-		man.addEntityType(location);
+		Manager.addEntityType(character);
+		Manager.addEntityType(location);
 
 		Entity john = new Entity(character, "john");
 		Entity school = new Entity(location, "school");
 
-		man.addEntity(john);
-		man.addEntity(school);
+		Manager.addEntity(john);
+		Manager.addEntity(school);
 
 		BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location);
-		// BinaryPredicate isAt2 = new BinaryPredicate(character, "IS_AT", location);
 		UnaryPredicate isRich = new UnaryPredicate(character, "RICH");
 
-		man.addPredicate(isAt);
-		man.addPredicate(isRich);
+		Manager.addPredicate(isAt);
+		Manager.addPredicate(isRich);
 
-		Debug.Log("predicates count: " + man.getPredicates().Count);
+		UnaryPredicate isRich2 = new UnaryPredicate(character, "RICH");
+		BinaryPredicate isAt2 = new BinaryPredicate(character, "IS_AT", location);
 
-		foreach(IPredicate p in man.getPredicates()){
-			if(p.GetType() == typeof(BinaryPredicate))
-				Debug.Log(p + " binary");
-			if(p.GetType() == typeof(UnaryPredicate))
-				Debug.Log(p + " unary");
-		}
+        // Debug.Log("predicates count: " + Manager.getPredicates().Count);
+
+		// foreach(IPredicate p in Manager.getPredicates()){
+		// 	if(p.GetType() == typeof(BinaryPredicate))
+        //         Debug.Log(p + " binary");
+		// 	if(p.GetType() == typeof(UnaryPredicate))
+        //         Debug.Log(p + " unary");
+		// }
 
 		// Manager.GetManager().addPredicate(new Predicate("IS_AT",2));
 		// foreach( Entity e in man.getEntities()){
