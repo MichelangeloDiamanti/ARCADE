@@ -8,6 +8,19 @@ public class BinaryRelation : IRelation {
 	private BinaryPredicate _predicate;
 	private Entity _destination;
 
+    public Entity Source
+    {
+        get { return _source; }
+    }
+    public BinaryPredicate Predicate
+    {
+        get { return _predicate; }
+    }
+    public Entity Destination
+    {
+        get { return _destination; }
+    }
+
 	public BinaryRelation(Entity source, BinaryPredicate predicate, Entity destination)
 	{
 		if(source == null)
@@ -29,7 +42,7 @@ public class BinaryRelation : IRelation {
 
     public override string ToString()
     {
-		return _source + " " + _predicate + " " + _destination;
+        return _source + " " + _predicate + " " + _destination;
     }
 
 }

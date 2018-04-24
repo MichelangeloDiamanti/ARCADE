@@ -2,20 +2,29 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UnaryRelation : IRelation {
+public class UnaryRelation : IRelation
+{
 
-	private Entity _source;
-	private UnaryPredicate _predicate;
+    private Entity _source;
+    private UnaryPredicate _predicate;
+    public Entity Source
+    {
+        get { return _source; }
+    }
+	public UnaryPredicate Predicate
+    {
+        get { return _predicate; }
+    }
 
-	public UnaryRelation(Entity source, UnaryPredicate predicate)
-	{
-		if(source == null)
-			throw new System.ArgumentNullException("Relation source cannot be null", "source");
-		if(predicate == null)
-			throw new System.ArgumentNullException("Relation predicate cannot be null", "predicate");
+    public UnaryRelation(Entity source, UnaryPredicate predicate)
+    {
+        if (source == null)
+            throw new System.ArgumentNullException("Relation source cannot be null", "source");
+        if (predicate == null)
+            throw new System.ArgumentNullException("Relation predicate cannot be null", "predicate");
 
-		if(Manager.entityExists(source) == false)
-			throw new System.ArgumentException("Relation source must be an existing entity", source + " " + predicate.Source);
+        if (Manager.entityExists(source) == false)
+            throw new System.ArgumentException("Relation source must be an existing entity", source + " " + predicate.Source);
 
 		if(Manager.predicateExists(predicate) == false)
 			throw new System.ArgumentException("Relation predicate must be an existing predicate", source + " " + predicate.Source);
@@ -29,7 +38,7 @@ public class UnaryRelation : IRelation {
 
     public override string ToString()
     {
-		return _source + " " + _predicate + " ";
+        return _source + " " + _predicate + " ";
     }
 
 }
