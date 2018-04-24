@@ -13,21 +13,43 @@ public class InitialWorld : MonoBehaviour {
 
 		EntityType character = new EntityType("CHARACTER");
 		EntityType location = new EntityType("LOCATION");
+		EntityType animal = new EntityType("ANIMAL");
 
-		Manager.addEntityType(character);
-		Manager.addEntityType(location);
-
-		Entity john = new Entity(character, "john");
-		Entity school = new Entity(location, "school");
-
-		Manager.addEntity(john);
-		Manager.addEntity(school);
+		Entity hero = new Entity(character, "hero");
+		Entity cat_lady = new Entity(character, "cat_lady");
+		Entity v1 = new Entity(location, "village1");
+		Entity v2 = new Entity(location, "village2");
+		Entity cat = new Entity(animal, "cat");
 
 		BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location);
-		UnaryPredicate isRich = new UnaryPredicate(character, "RICH");
+		UnaryPredicate handempty = new UnaryPredicate(character, "HANDEMPTY");
 
-		Manager.addPredicate(isAt);
-		Manager.addPredicate(isRich);
+		BinaryRelation heroIsAtV1 = new BinaryRelation(hero, isAt, v1);
+		State.AddRelation(heroIsAtV1);
+		BinaryRelation cat_ladyIsAtV1 = new BinaryRelation(cat_lady, isAt, v1);
+		State.AddRelation(cat_ladyIsAtV1);
+		BinaryRelation catIsAtV2 = new BinaryRelation(cat, isAt, v2);
+		State.AddRelation(catIsAtV2);		
+	
+		UnaryRelation heroHandempty = new UnaryRelation(hero, handempty);
+		State.AddRelation(heroHandempty);
+
+		// EntityType character = new EntityType("CHARACTER");
+		// EntityType location = new EntityType("LOCATION");
+
+		// Manager.addEntityType(location);
+
+		// Entity john = new Entity(character, "john");
+		// Entity school = new Entity(location, "school");
+
+		// Manager.addEntity(john);
+		// Manager.addEntity(school);
+
+		// BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location);
+		// UnaryPredicate isRich = new UnaryPredicate(character, "RICH");
+
+		// Manager.addPredicate(isAt);
+		// Manager.addPredicate(isRich);
 
 		// UnaryPredicate isRich2 = new UnaryPredicate(character, "RICH");
 		// BinaryPredicate isAt2 = new BinaryPredicate(character, "IS_AT", location);
@@ -46,8 +68,8 @@ public class InitialWorld : MonoBehaviour {
 		// 	Debug.Log(e);
 		// }
 
-		UnaryRelation johnIsRich = new UnaryRelation(john, isRich);
-		BinaryRelation johnIsAtSchool = new BinaryRelation(john, isAt, school);
+		// UnaryRelation johnIsRich = new UnaryRelation(john, isRich);
+		// BinaryRelation johnIsAtSchool = new BinaryRelation(john, isAt, school);
 
 
 	}

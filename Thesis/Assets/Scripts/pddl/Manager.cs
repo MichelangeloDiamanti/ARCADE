@@ -1,17 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 public static class Manager
 {
 	private static List<IPredicate> _predicates;
     private static List<EntityType> _entityTypes;
     private static List<Entity> _entities;
-
+    private static List<ActionDefinition> _actionDefinitions;
     public static void initManager(){
         _predicates = new List<IPredicate>();
         _entityTypes = new List<EntityType>();
         _entities = new List<Entity>();
+        _actionDefinitions = new List<ActionDefinition>();
     }
 
     public static List<IPredicate> getPredicates()
@@ -41,6 +41,15 @@ public static class Manager
         _entities.Add(e);
     }
 
+    public static List<ActionDefinition> getActionDefinitions()
+    {
+        return _actionDefinitions;
+    }
+    public static void addActionDefinition(ActionDefinition a)
+    {
+        _actionDefinitions.Add(a);
+    }
+
     public static bool predicateExists(EntityType source, string name, EntityType destination){
         foreach(IPredicate p in _predicates){
             if(p.GetType() == typeof(BinaryPredicate))
@@ -63,6 +72,11 @@ public static class Manager
                 }
             }
         }
+        return false;
+    }
+    public static bool predicateExists(IPredicate predicate){
+        if(_predicates.Contains(predicate))
+            return true;
         return false;
     }
 
@@ -96,6 +110,15 @@ public static class Manager
     public static bool entityTypeExists(EntityType entityType){
         foreach(EntityType et in _entityTypes){
             if(et.Equals(entityType)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static bool actionDefinitionExists(List<IPredicate> pre, string name, List<EntityType> parameters, List<IPredicate> post){
+        foreach(ActionDefinition a in _actionDefinitions){
+            if(a.Name.Equals(name)){
                 return true;
             }
         }
