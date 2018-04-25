@@ -3,10 +3,16 @@ using System.Collections.Generic;
 
 public static class Manager
 {
-	private static List<IPredicate> _predicates = new List<IPredicate>();
-    private static List<EntityType> _entityTypes = new List<EntityType>();
-    private static List<Entity> _entities = new List<Entity>();
-    private static List<ActionDefinition> _actionDefinition = new List<ActionDefinition>();
+	private static List<IPredicate> _predicates;
+    private static List<EntityType> _entityTypes;
+    private static List<Entity> _entities;
+    private static List<ActionDefinition> _actionDefinitions;
+    public static void initManager(){
+        _predicates = new List<IPredicate>();
+        _entityTypes = new List<EntityType>();
+        _entities = new List<Entity>();
+        _actionDefinitions = new List<ActionDefinition>();
+    }
 
     public static List<IPredicate> getPredicates()
     {
@@ -37,11 +43,11 @@ public static class Manager
 
     public static List<ActionDefinition> getActionDefinitions()
     {
-        return _actionDefinition;
+        return _actionDefinitions;
     }
     public static void addActionDefinition(ActionDefinition a)
     {
-        _actionDefinition.Add(a);
+        _actionDefinitions.Add(a);
     }
 
     public static bool predicateExists(EntityType source, string name, EntityType destination){
@@ -68,6 +74,11 @@ public static class Manager
         }
         return false;
     }
+    public static bool predicateExists(IPredicate predicate){
+        if(_predicates.Contains(predicate))
+            return true;
+        return false;
+    }
 
     public static bool entityExists(EntityType type, string name){
         foreach(Entity e in _entities){
@@ -77,6 +88,15 @@ public static class Manager
         }
         return false;
     }
+    public static bool entityExists(Entity entity){
+        foreach(Entity e in _entities){
+            if(e.Equals(entity)){
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     public static bool entityTypeExists(string type){
         foreach(EntityType et in _entityTypes){
@@ -87,18 +107,21 @@ public static class Manager
         return false;
     }
 
-    public static bool actionDefinitionExists(List<IPredicate> pre, string name, List<EntityType> parameters, List<IPredicate> post){
-        foreach(ActionDefinition a in _actionDefinition){
-            if(a.Name.Equals(name)){
+    public static bool entityTypeExists(EntityType entityType){
+        foreach(EntityType et in _entityTypes){
+            if(et.Equals(entityType)){
                 return true;
             }
         }
         return false;
     }
 
-    public static bool predicateInManager(IPredicate predicate){
-        if(_predicates.Contains(predicate))
-            return true;
+    public static bool actionDefinitionExists(List<IPredicate> pre, string name, List<EntityType> parameters, List<IPredicate> post){
+        foreach(ActionDefinition a in _actionDefinitions){
+            if(a.Name.Equals(name)){
+                return true;
+            }
+        }
         return false;
     }
 

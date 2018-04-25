@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class EntityType{
 
@@ -11,6 +10,9 @@ public class EntityType{
     }
 
     public EntityType(string type){
+		if(type == null)
+			throw new System.ArgumentNullException("EntityType cannot be null", "type");
+
 		if(Manager.entityTypeExists(type))
 			throw new System.ArgumentException("Entity type has already been declared", type);
 

@@ -78,7 +78,7 @@ public class ActionDefinition
     {
         foreach (IPredicate p in list)
         {
-            if (!Manager.predicateInManager(p))
+            if (!Manager.predicateExists(p))
             {
                 string nameException = "";
                 if (p.GetType() == typeof(UnaryPredicate))
