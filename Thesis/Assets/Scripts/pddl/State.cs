@@ -74,59 +74,59 @@ public class State
     }
 
     //TODO: applyrelation
-    public State applyAction(ActionDefinition action)
-    {
-        foreach (IPredicate predicate in action.PreCondition)
-        {
+    // public State applyAction(ActionDefinition action)
+    // {
+    //     foreach (IPredicate predicate in action.PreCondition)
+    //     {
 
-        }
-        return null;
-    }
+    //     }
+    //     return null;
+    // }
 
-    public List<Action> getPossibleActions()
-    {
-        List<Action> possibleActions = new List<Action>();
-        foreach (ActionDefinition ad in Manager.getActionDefinitions())
-        {
-            // int countStateRelationForPrecondition = 0;
-            List<IRelation> relationForAction = new List<IRelation>();
-            foreach (IPredicate predicate in ad.PreCondition)
-            {
-                if (predicate.GetType() == typeof(UnaryPredicate))
-                {
-                    UnaryPredicate up = predicate as UnaryPredicate;
-                    foreach (IRelation rel in _relations)
-                    {
-                        if (rel.GetType() == typeof(UnaryRelation))
-                        {
-                            UnaryRelation ur = predicate as UnaryRelation;
-                            /*
-                            TODO:
-                            Missing control for actions with multiple entities. 
-                            MOVE(ciao, L1) and Move(pippo, L2) now are not found,
-                            it will find only one of them.
-                             */
+    // public List<Action> getPossibleActions()
+    // {
+    //     List<Action> possibleActions = new List<Action>();
+    //     foreach (ActionDefinition ad in Manager.getActionDefinitions())
+    //     {
+    //         // int countStateRelationForPrecondition = 0;
+    //         List<IRelation> relationForAction = new List<IRelation>();
+    //         foreach (IPredicate predicate in ad.PreCondition)
+    //         {
+    //             if (predicate.GetType() == typeof(UnaryPredicate))
+    //             {
+    //                 UnaryPredicate up = predicate as UnaryPredicate;
+    //                 foreach (IRelation rel in _relations)
+    //                 {
+    //                     if (rel.GetType() == typeof(UnaryRelation))
+    //                     {
+    //                         UnaryRelation ur = predicate as UnaryRelation;
+    //                         /*
+    //                         TODO:
+    //                         Missing control for actions with multiple entities. 
+    //                         MOVE(ciao, L1) and Move(pippo, L2) now are not found,
+    //                         it will find only one of them.
+    //                          */
 
-                            if (ur.Predicate.Equals(up))
-                            {
-                                relationForAction.Add(ur);
-                                break;
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    BinaryPredicate bp = predicate as BinaryPredicate;
+    //                         if (ur.Predicate.Equals(up))
+    //                         {
+    //                             relationForAction.Add(ur);
+    //                             break;
+    //                         }
+    //                     }
+    //                 }
+    //             }
+    //             else
+    //             {
+    //                 BinaryPredicate bp = predicate as BinaryPredicate;
 
-                }
-            }
-            if (relationForAction.Count == ad.PreCondition.Count)
-            {
+    //             }
+    //         }
+    //         if (relationForAction.Count == ad.PreCondition.Count)
+    //         {
 
-            }
-        }
-        return possibleActions;
-    }
+    //         }
+    //     }
+    //     return possibleActions;
+    // }
 
 }
