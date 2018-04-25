@@ -112,12 +112,12 @@ GameObject:
   - component: {fileID: 198513784263971998}
   - component: {fileID: 199155792094650776}
   m_Layer: 0
-  m_Name: Particle System
+  m_Name: Church1PS
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1029957949964724
 GameObject:
   m_ObjectHideFlags: 1
@@ -669,12 +669,12 @@ GameObject:
   - component: {fileID: 198744597975440342}
   - component: {fileID: 199056713107907918}
   m_Layer: 0
-  m_Name: Particle System (1)
+  m_Name: Inn1PS
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1142075648910112
 GameObject:
   m_ObjectHideFlags: 1
@@ -1155,12 +1155,12 @@ GameObject:
   - component: {fileID: 198065907426337980}
   - component: {fileID: 199316877585082364}
   m_Layer: 0
-  m_Name: Particle System (2)
+  m_Name: Market1PS
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1331306866402878
 GameObject:
   m_ObjectHideFlags: 1
