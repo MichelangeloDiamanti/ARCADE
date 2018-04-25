@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using System.Data;
 
 public class State
@@ -86,11 +85,15 @@ public class State
 
     public List<Action> getPossibleActions()
     {
+        List<Action> possibleActions = new List<Action>();
         foreach (ActionDefinition ad in Manager.getActionDefinitions())
         {
-            
+            foreach (IPredicate predicate in ad.PreCondition)
+            {
+                
+            }
         }
-        return null;
+        return possibleActions;
     }
 
 }
