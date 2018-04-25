@@ -76,12 +76,12 @@ public class InitialWorld : MonoBehaviour
 
         BinaryRelation heroIsAtV1 = new BinaryRelation(hero, isAt, v1);
         // State.AddRelation(heroIsAtV1);
-        // BinaryRelation cat_ladyIsAtV1 = new BinaryRelation(cat_lady, isAt, v1);
+        BinaryRelation cat_ladyIsAtV1 = new BinaryRelation(cat_lady, isAt, v1);
         // State.AddRelation(cat_ladyIsAtV1);
-        // BinaryRelation catIsAtV2 = new BinaryRelation(cat, isAt, v2);
+        BinaryRelation catIsAtV2 = new BinaryRelation(cat, isAt, v2);
         // State.AddRelation(catIsAtV2);
 
-        // UnaryRelation heroHandempty = new UnaryRelation(hero, handempty);
+        UnaryRelation heroHandempty = new UnaryRelation(hero, handempty);
         // State.AddRelation(heroHandempty);
     }
     private void example()
