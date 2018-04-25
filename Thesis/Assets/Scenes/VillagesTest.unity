@@ -122,21 +122,20 @@ GameObject:
   m_Component:
   - component: {fileID: 457529162}
   - component: {fileID: 457529161}
-  - component: {fileID: 457529163}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &457529161
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 457529160}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5673a0ac46aa845088e5c27fe6541a49, type: 3}
   m_Name: 
@@ -154,19 +153,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &457529163
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 457529160}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b00e4dec7429bf84c8d28b7b929ef759, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  x: 0
-  name: 
 --- !u!1 &627155819
 GameObject:
   m_ObjectHideFlags: 0
@@ -627,18 +613,6 @@ Prefab:
     - target: {fileID: 4633760230337000, guid: 58badd730249ed5449676bcfd18aca7b, type: 2}
       propertyPath: m_LocalScale.z
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1141084030184102, guid: 58badd730249ed5449676bcfd18aca7b, type: 2}
-      propertyPath: m_Name
-      value: Inn2PS
-      objectReference: {fileID: 0}
-    - target: {fileID: 1026029668682912, guid: 58badd730249ed5449676bcfd18aca7b, type: 2}
-      propertyPath: m_Name
-      value: Church2PS
-      objectReference: {fileID: 0}
-    - target: {fileID: 1323181433780606, guid: 58badd730249ed5449676bcfd18aca7b, type: 2}
-      propertyPath: m_Name
-      value: Market2PS
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 58badd730249ed5449676bcfd18aca7b, type: 2}
