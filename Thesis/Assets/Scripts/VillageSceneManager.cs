@@ -47,49 +47,59 @@ public class VillageSceneManager : MonoBehaviour {
 
 		if(flag)
 		{
-			if (name == "Market1")
+			// Calls the function Manager with the string typed in the public variable "name"
+    		gameObject.SendMessage("Manager", name);
+			flag = false;
+		}
+		
+	}
+
+	// Every script attached to the game object
+    // that has an Manager function will be called.
+    public void Manager (string s) {
+
+        print (s);
+
+		if (s == "Market1")
 			{
 				Market1.SetActive(true);
 			}
-			else if(name == "Market2")
+			else if(s == "Market2")
 			{
 				Market2.SetActive(true);
 			}
-			else if(name == "Church1")
+			else if(s == "Church1")
 			{
 				Church1.SetActive(true);
 			}
-			else if(name == "Church2")
+			else if(s == "Church2")
 			{
 				Church2.SetActive(true);
 			}
-			else if(name == "Inn1")
+			else if(s == "Inn1")
 			{
 				Inn1.SetActive(true);
 			}
-			else if(name == "Inn2")
+			else if(s == "Inn2")
 			{
 				Inn2.SetActive(true);
 			}
-			else{
-				foreach(GameObject x in list)
-				{
-					if(x.activeSelf)
-					{
-						x.SetActive(false);
-					}
-			}
-			}
-		}else
+		
+		foreach(GameObject x in list)
 		{
-			foreach(GameObject x in list)
+			if(x.activeSelf && (x.name != s + "PS"))
 			{
-				if(x.activeSelf)
-				{
-					x.SetActive(false);
-				}
+				x.SetActive(false);
 			}
 		}
+
+		//Resources.FindObjectsOfTypeAll finds all the object of the 
+		//specified type, even if they are inactive
+		//
+		// foreach (GameObject x in Resources.FindObjectsOfTypeAll(typeof(GameObject)) as GameObject[])
+		// {
+			
+		// }
 		
 	}
 }

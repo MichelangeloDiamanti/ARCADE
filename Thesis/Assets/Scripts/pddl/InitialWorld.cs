@@ -122,6 +122,8 @@ public class InitialWorld : MonoBehaviour
         ActionDefinition move = new ActionDefinition(pre, "MOVE", parameters, post);
         Manager.addActionDefinition(move);
 
+        //GameObject.Find("GameManager").SendMessage("Manager", "Inn1");
+
         Debug.Log(move.ToString());
 
     }

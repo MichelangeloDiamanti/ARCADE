@@ -165,8 +165,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b00e4dec7429bf84c8d28b7b929ef759, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  x: 0
   name: 
+  flag: 0
 --- !u!1 &627155819
 GameObject:
   m_ObjectHideFlags: 0
@@ -640,6 +640,18 @@ Prefab:
       propertyPath: m_Name
       value: Market2PS
       objectReference: {fileID: 0}
+    - target: {fileID: 4042660181099658, guid: 58badd730249ed5449676bcfd18aca7b, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 4042660181099658, guid: 58badd730249ed5449676bcfd18aca7b, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4042660181099658, guid: 58badd730249ed5449676bcfd18aca7b, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 2.4
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 58badd730249ed5449676bcfd18aca7b, type: 2}
   m_IsPrefabParent: 0
@@ -801,7 +813,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2008458665}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 123c575661b5950439f80d9cd3bb9e9f, type: 3}
   m_Name: 
