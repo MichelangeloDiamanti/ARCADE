@@ -7,7 +7,7 @@ public class ActionDefinition
 
     private List<KeyValuePair<IRelation, bool>> _preCondition;
     private string _name;
-    private List<KeyValuePair<string, EntityType>> _parameters;
+    private List<Entity> _parameters;
     private List<KeyValuePair<IRelation, bool>> _postCondition;
     public string Name
     {
@@ -22,11 +22,11 @@ public class ActionDefinition
     {
         get { return _postCondition; }
     }
-    public List<KeyValuePair<string, EntityType>> Parameters
+    public List<Entity> Parameters
     {
         get { return _parameters; }
     }
-    public ActionDefinition(List<KeyValuePair<IRelation, bool>> pre, string name, List<KeyValuePair<string, EntityType>> parameters, List<KeyValuePair<IRelation, bool>> post)
+    public ActionDefinition(List<KeyValuePair<IRelation, bool>> pre, string name, List<Entity> parameters, List<KeyValuePair<IRelation, bool>> post)
     {
         if (pre == null || pre.Count == 0)
             throw new System.ArgumentException("ActionDefinition: List of precondiction cannot be null or empty", "List<IPredicate> precondition");
@@ -38,14 +38,10 @@ public class ActionDefinition
             throw new System.ArgumentException("ActionDefinition: List of parameter cannot be null or empty", "List<EntityType> parameter");
         if (Manager.actionDefinitionExists(pre, name, parameters, post))
             throw new System.ArgumentException("ActionDefinition: ActionDefinition already exists", "ActionDefinition name: " + name);
-        foreach (KeyValuePair<string, EntityType> et in parameters)
-        {
-            if (!Manager.entityTypeExists(et.Value.Type))
-            {
-                throw new System.ArgumentException("ActionDefinition: Not all parameters are already declared and added in manager", "ActionDefinition name of the parameter: " + et.Value.Type);
-            }
-        }
-        //TODO: controllo che il nome della variabile sia nelle relazioni
+
+        checkVariableInRelation(pre, parameters);
+        checkVariableInRelation(post, parameters);
+
 
         _preCondition = pre;
         _name = name;
@@ -75,25 +71,50 @@ public class ActionDefinition
         return this.Name.GetHashCode();
     }
 
-    // private void checkPredicate(List<KeyValuePair<IRelation, bool>> list)
-    // {
-    //     foreach (KeyValuePair<IRelation, bool> p in list)
-    //     {
-    //         if (!Manager.predicateExists(p.Key))
-    //         {
-    //             string nameException = "";
-    //             if (p.GetType() == typeof(UnaryPredicate))
-    //             {
-    //                 UnaryPredicate bp = p.Key as UnaryPredicate;
-    //                 nameException = bp.Name;
-    //             }
-    //             else
-    //             {
-    //                 BinaryPredicate bp = p.Key as BinaryPredicate;
-    //                 nameException = bp.Name;
-    //             }
-    //             throw new System.ArgumentException("ActionDefinition: Not all predicates are already declared and added in manager", "ActionDefinition name of the predicate: " + nameException);
-    //         }
-    //     }
-    // }
+    private void checkVariableInRelation(List<KeyValuePair<IRelation, bool>> pre, List<Entity> parameters)
+    {
+        foreach (KeyValuePair<IRelation, bool> item in pre)
+        {
+            if (item.Key.GetType() == typeof(BinaryRelation))
+            {
+                BinaryRelation br = item.Key as BinaryRelation;
+                if (!parameters.Contains(br.Source))
+                {
+                    throw new System.ArgumentException("ActionDefinition: One variable of pre or post condition is not inside parameter list", "List<Entity> parameters: " + br.Source.Name + " is missing");
+                }
+                if (!parameters.Contains(br.Destination))
+                {
+                    throw new System.ArgumentException("ActionDefinition: One variable of pre or post condition is not inside parameter list", "List<Entity> parameters: " + br.Destination.Name + " is missing");
+                }
+            }
+            else
+            {
+                UnaryRelation br = item.Key as UnaryRelation;
+                if (!parameters.Contains(br.Source))
+                {
+                    throw new System.ArgumentException("ActionDefinition: One variable of pre or post condition is not inside parameter list", "List<Entity> parameters: " + br.Source.Name + " is missing");
+                }
+            }
+        }
+    }
+    public override string ToString()
+    {
+        string value = "Action: "+_name+"(";
+        foreach (Entity item in _parameters)
+        {
+            value+= item.ToString() + " ,";
+        }
+        value+= ") \nPRECONDITION:\n";
+        foreach (KeyValuePair<IRelation, bool> item in _preCondition)
+        {
+            value += item.Key.ToString() + " " + item.Value + "\n";
+        }
+
+        value+= "POSTCONDITION:\n";
+        foreach (KeyValuePair<IRelation, bool> item in _postCondition)
+        {
+            value += item.Key.ToString() + " " + item.Value + "\n";
+        }
+        return value;
+    }
 }
