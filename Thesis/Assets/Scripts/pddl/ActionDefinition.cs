@@ -1,30 +1,32 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class ActionDefinition
 {
-    private List<IPredicate> _preCondition;
+
+    private List<KeyValuePair<IRelation, bool>> _preCondition;
     private string _name;
-    private List<EntityType> _parameters;
-    private List<IPredicate> _postCondition;
+    private List<KeyValuePair<string, EntityType>> _parameters;
+    private List<KeyValuePair<IRelation, bool>> _postCondition;
     public string Name
     {
         get { return _name; }
     }
 
-    public List<IPredicate> PreCondition
+    public List<KeyValuePair<IRelation, bool>> PreCondition
     {
         get { return _preCondition; }
     }
-    public List<IPredicate> PostCondition
+    public List<KeyValuePair<IRelation, bool>> PostCondition
     {
         get { return _postCondition; }
     }
-    public List<EntityType> Parameters
+    public List<KeyValuePair<string, EntityType>> Parameters
     {
         get { return _parameters; }
     }
-    public ActionDefinition(List<IPredicate> pre, string name, List<EntityType> parameters, List<IPredicate> post)
+    public ActionDefinition(List<KeyValuePair<IRelation, bool>> pre, string name, List<KeyValuePair<string, EntityType>> parameters, List<KeyValuePair<IRelation, bool>> post)
     {
         if (pre == null || pre.Count == 0)
             throw new System.ArgumentException("ActionDefinition: List of precondiction cannot be null or empty", "List<IPredicate> precondition");
@@ -36,15 +38,14 @@ public class ActionDefinition
             throw new System.ArgumentException("ActionDefinition: List of parameter cannot be null or empty", "List<EntityType> parameter");
         if (Manager.actionDefinitionExists(pre, name, parameters, post))
             throw new System.ArgumentException("ActionDefinition: ActionDefinition already exists", "ActionDefinition name: " + name);
-        checkPredicate(pre);
-        checkPredicate(post);
-        foreach (EntityType et in parameters)
+        foreach (KeyValuePair<string, EntityType> et in parameters)
         {
-            if (!Manager.entityTypeExists(et.Type))
+            if (!Manager.entityTypeExists(et.Value.Type))
             {
-                throw new System.ArgumentException("ActionDefinition: Not all parameters are already declared and added in manager", "ActionDefinition name of the parameter: " + et.Type);                
+                throw new System.ArgumentException("ActionDefinition: Not all parameters are already declared and added in manager", "ActionDefinition name of the parameter: " + et.Value.Type);
             }
         }
+        //TODO: controllo che il nome della variabile sia nelle relazioni
 
         _preCondition = pre;
         _name = name;
@@ -74,25 +75,25 @@ public class ActionDefinition
         return this.Name.GetHashCode();
     }
 
-    private void checkPredicate(List<IPredicate> list)
-    {
-        foreach (IPredicate p in list)
-        {
-            if (!Manager.predicateExists(p))
-            {
-                string nameException = "";
-                if (p.GetType() == typeof(UnaryPredicate))
-                {
-                    UnaryPredicate bp = p as UnaryPredicate;
-                    nameException = bp.Name;
-                }
-                else
-                {
-                    BinaryPredicate bp = p as BinaryPredicate;
-                    nameException = bp.Name;
-                }
-                throw new System.ArgumentException("ActionDefinition: Not all predicates are already declared and added in manager", "ActionDefinition name of the predicate: " + nameException);
-            }
-        }
-    }
+    // private void checkPredicate(List<KeyValuePair<IRelation, bool>> list)
+    // {
+    //     foreach (KeyValuePair<IRelation, bool> p in list)
+    //     {
+    //         if (!Manager.predicateExists(p.Key))
+    //         {
+    //             string nameException = "";
+    //             if (p.GetType() == typeof(UnaryPredicate))
+    //             {
+    //                 UnaryPredicate bp = p.Key as UnaryPredicate;
+    //                 nameException = bp.Name;
+    //             }
+    //             else
+    //             {
+    //                 BinaryPredicate bp = p.Key as BinaryPredicate;
+    //                 nameException = bp.Name;
+    //             }
+    //             throw new System.ArgumentException("ActionDefinition: Not all predicates are already declared and added in manager", "ActionDefinition name of the predicate: " + nameException);
+    //         }
+    //     }
+    // }
 }
