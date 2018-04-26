@@ -76,7 +76,7 @@ public class State
     //TODO: applyrelation
     public State applyAction(ActionDefinition action)
     {
-        foreach (IPredicate predicate in action.PreCondition)
+        foreach (IPredicate predicate in action.PreConditions)
         {
 
         }
@@ -88,7 +88,7 @@ public class State
         List<Action> possibleActions = new List<Action>();
         foreach (ActionDefinition ad in Manager.getActionDefinitions())
         {
-            foreach (IPredicate predicate in ad.PreCondition)
+            foreach (IPredicate predicate in ad.PreConditions)
             {
                 
             }

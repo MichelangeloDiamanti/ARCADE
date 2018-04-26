@@ -80,6 +80,14 @@ public static class Manager
         return false;
     }
 
+    public static bool predicatesExist(List<IPredicate> pList)
+    {
+        foreach (IPredicate p in pList)
+            if (Manager.predicateExists(p) == false)
+                return false;
+        return true;
+    }
+
     public static bool entityExists(EntityType type, string name){
         foreach(Entity e in _entities){
             if(e.Type.Equals(type) && e.Name.Equals(name)){

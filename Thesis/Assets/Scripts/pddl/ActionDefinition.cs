@@ -3,22 +3,22 @@ using System.Collections.Generic;
 
 public class ActionDefinition
 {
-    private List<IPredicate> _preCondition;
+    private List<IPredicate> _preConditions;
     private string _name;
     private List<EntityType> _parameters;
-    private List<IPredicate> _postCondition;
+    private List<IPredicate> _postConditions;
     public string Name
     {
         get { return _name; }
     }
 
-    public List<IPredicate> PreCondition
+    public List<IPredicate> PreConditions
     {
-        get { return _preCondition; }
+        get { return _preConditions; }
     }
-    public List<IPredicate> PostCondition
+    public List<IPredicate> PostConditions
     {
-        get { return _postCondition; }
+        get { return _postConditions; }
     }
     public List<EntityType> Parameters
     {
@@ -27,17 +27,20 @@ public class ActionDefinition
     public ActionDefinition(List<IPredicate> pre, string name, List<EntityType> parameters, List<IPredicate> post)
     {
         if (pre == null || pre.Count == 0)
-            throw new System.ArgumentException("ActionDefinition: List of precondiction cannot be null or empty", "List<IPredicate> precondition");
+            throw new System.ArgumentNullException("ActionDefinition: List of precondiction cannot be null or empty", "List<IPredicate> precondition");
         if (name == null)
-            throw new System.ArgumentException("ActionDefinition: name cannot be null", "name");
+            throw new System.ArgumentNullException("ActionDefinition: name cannot be null", "name");
         if (post == null || post.Count == 0)
-            throw new System.ArgumentException("ActionDefinition: List of postcondition cannot be null or empty", "List<IPredicate> postcondition");
+            throw new System.ArgumentNullException("ActionDefinition: List of postcondition cannot be null or empty", "List<IPredicate> postcondition");
         if (parameters == null || parameters.Count == 0)
-            throw new System.ArgumentException("ActionDefinition: List of parameter cannot be null or empty", "List<EntityType> parameter");
+            throw new System.ArgumentNullException("ActionDefinition: List of parameter cannot be null or empty", "List<EntityType> parameter");
+        
         if (Manager.actionDefinitionExists(pre, name, parameters, post))
             throw new System.ArgumentException("ActionDefinition: ActionDefinition already exists", "ActionDefinition name: " + name);
+        
         checkPredicate(pre);
         checkPredicate(post);
+        
         foreach (EntityType et in parameters)
         {
             if (!Manager.entityTypeExists(et.Type))
@@ -46,11 +49,13 @@ public class ActionDefinition
             }
         }
 
-        _preCondition = pre;
+        _preConditions = pre;
         _name = name;
         _parameters = parameters;
-        _postCondition = post;
+        _postConditions = post;
     }
+
+    
     //TODO: ask david for actions, can an action have same name but different pre/post condition?
     public override bool Equals(object obj)
     {
