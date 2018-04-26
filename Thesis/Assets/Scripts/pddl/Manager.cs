@@ -116,7 +116,7 @@ public static class Manager
         return false;
     }
 
-    public static bool actionDefinitionExists(List<KeyValuePair<IRelation, bool>> pre, string name, List<KeyValuePair<string, EntityType>> parameters, List<KeyValuePair<IRelation, bool>> post){
+    public static bool actionDefinitionExists(List<KeyValuePair<IRelation, bool>> pre, string name, List<Entity> parameters, List<KeyValuePair<IRelation, bool>> post){
         foreach(ActionDefinition a in _actionDefinitions){
             if(a.Name.Equals(name)){
                 return true;
