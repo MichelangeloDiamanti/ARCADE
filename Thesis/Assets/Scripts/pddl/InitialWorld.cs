@@ -12,6 +12,7 @@ public class InitialWorld : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        Manager.initManager();
 		animalInizialitation();
 		// example();
     }
@@ -65,29 +66,64 @@ public class InitialWorld : MonoBehaviour
         Manager.addEntityType(character);
         
         EntityType location = new EntityType("LOCATION");
-        Manager.addEntityType(character);
+        Manager.addEntityType(location);
         
-        EntityType animal = new EntityType("ANIMAL");
-        Manager.addEntityType(character);
+        // EntityType animal = new EntityType("ANIMAL");
+        // Manager.addEntityType(animal);
         
         Entity hero = new Entity(character, "hero");
+        Manager.addEntity(hero);
         Entity cat_lady = new Entity(character, "cat_lady");
+        Manager.addEntity(cat_lady);
         Entity v1 = new Entity(location, "village1");
+        Manager.addEntity(v1);
         Entity v2 = new Entity(location, "village2");
-        Entity cat = new Entity(animal, "cat");
+        Manager.addEntity(v2);
+        Entity cat = new Entity(character, "cat");
+        Manager.addEntity(cat);
 
         BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location);
+        Manager.addPredicate(isAt);
         UnaryPredicate handempty = new UnaryPredicate(character, "HANDEMPTY");
+        Manager.addPredicate(handempty);
 
         BinaryRelation heroIsAtV1 = new BinaryRelation(hero, isAt, v1);
-        // State.AddRelation(heroIsAtV1);
         BinaryRelation cat_ladyIsAtV1 = new BinaryRelation(cat_lady, isAt, v1);
-        // State.AddRelation(cat_ladyIsAtV1);
         BinaryRelation catIsAtV2 = new BinaryRelation(cat, isAt, v2);
-        // State.AddRelation(catIsAtV2);
 
         UnaryRelation heroHandempty = new UnaryRelation(hero, handempty);
-        // State.AddRelation(heroHandempty);
+
+
+        List<Entity> parameters = new List<Entity>(); 
+        Entity c1 = new Entity(character, "c1");
+        parameters.Add(c1);
+        Entity c2 = new Entity(character, "c2");
+        parameters.Add(c2);        
+        Entity l1 = new Entity(location, "l1");
+        parameters.Add(l1);
+        Entity l2 = new Entity(location, "l2");
+        parameters.Add(l2);
+        Entity c3 = new Entity(character, "a1");
+        parameters.Add(c1);
+
+        BinaryRelation c1IsAtl1 = new BinaryRelation(c1, isAt, l1, true);
+        BinaryRelation c2IsAtl1 = new BinaryRelation(c2, isAt, l1, true);
+        BinaryRelation a1IsAtl2 = new BinaryRelation(c3, isAt, l2, true);
+        BinaryRelation c1IsAtl2 = new BinaryRelation(c1, isAt, l2, true);
+
+        UnaryRelation c1Handempty = new UnaryRelation(c1, handempty, true);
+        
+        List<KeyValuePair<IRelation, bool>> pre = new List<KeyValuePair<IRelation, bool>>(); 
+        pre.Add(new KeyValuePair<IRelation, bool>(c1IsAtl1, true));
+        pre.Add(new KeyValuePair<IRelation, bool>(c1IsAtl2, false));
+        List<KeyValuePair<IRelation, bool>> post = new List<KeyValuePair<IRelation, bool>>(); 
+        post.Add(new KeyValuePair<IRelation, bool>(c1IsAtl1, false));
+        post.Add(new KeyValuePair<IRelation, bool>(c1IsAtl2, true));        
+        ActionDefinition move = new ActionDefinition(pre, "MOVE", parameters, post);
+        Manager.addActionDefinition(move);
+
+        Debug.Log(move.ToString());
+
     }
     private void example()
     {
