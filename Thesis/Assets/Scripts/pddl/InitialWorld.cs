@@ -12,7 +12,7 @@ public class InitialWorld : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-		// animalInizialitation();
+		animalInizialitation();
 		// example();
     }
 
@@ -62,9 +62,14 @@ public class InitialWorld : MonoBehaviour
     private void animalInizialitation()
     {
         EntityType character = new EntityType("CHARACTER");
+        Manager.addEntityType(character);
+        
         EntityType location = new EntityType("LOCATION");
+        Manager.addEntityType(character);
+        
         EntityType animal = new EntityType("ANIMAL");
-
+        Manager.addEntityType(character);
+        
         Entity hero = new Entity(character, "hero");
         Entity cat_lady = new Entity(character, "cat_lady");
         Entity v1 = new Entity(location, "village1");

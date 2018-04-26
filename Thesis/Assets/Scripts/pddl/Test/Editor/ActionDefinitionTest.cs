@@ -47,7 +47,7 @@ public class ActionDefinitionTest {
 		List<IPredicate> post = new List<IPredicate>();
 		pre.Add(isAt);
 
-		Assert.That(()=> new ActionDefinition(pre, "GO_TO", , ), Throws.ArgumentNullException);
+		// Assert.That(()=> new ActionDefinition(pre, "GO_TO", , ), Throws.ArgumentNullException);
 	}
 
 
