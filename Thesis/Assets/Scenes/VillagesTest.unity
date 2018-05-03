@@ -123,6 +123,7 @@ GameObject:
   - component: {fileID: 457529162}
   - component: {fileID: 457529161}
   - component: {fileID: 457529163}
+  - component: {fileID: 457529164}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -167,6 +168,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: 
   flag: 0
+--- !u!114 &457529164
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 457529160}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a9900d0305f4e140a21419c16bba677, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &627155819
 GameObject:
   m_ObjectHideFlags: 0
@@ -651,6 +663,14 @@ Prefab:
     - target: {fileID: 4042660181099658, guid: 58badd730249ed5449676bcfd18aca7b, type: 2}
       propertyPath: m_LocalPosition.z
       value: 2.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1799495494674716, guid: 58badd730249ed5449676bcfd18aca7b, type: 2}
+      propertyPath: m_TagString
+      value: Building
+      objectReference: {fileID: 0}
+    - target: {fileID: 1187057327176364, guid: 58badd730249ed5449676bcfd18aca7b, type: 2}
+      propertyPath: m_TagString
+      value: Building
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 58badd730249ed5449676bcfd18aca7b, type: 2}

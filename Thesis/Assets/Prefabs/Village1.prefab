@@ -320,7 +320,6 @@ GameObject:
   - component: {fileID: 4814082838051872}
   - component: {fileID: 33026920187430620}
   - component: {fileID: 23239827594743916}
-  - component: {fileID: 64771149286128112}
   m_Layer: 0
   m_Name: Building_c
   m_TagString: Untagged
@@ -840,9 +839,10 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4577034083395302}
+  - component: {fileID: 64300193463126810}
   m_Layer: 0
   m_Name: Inn
-  m_TagString: Untagged
+  m_TagString: Building
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2965,7 +2965,6 @@ GameObject:
   - component: {fileID: 4236535561424966}
   - component: {fileID: 33759074311306736}
   - component: {fileID: 23171655495992776}
-  - component: {fileID: 64251399905447378}
   m_Layer: 0
   m_Name: Building_b (1)
   m_TagString: Untagged
@@ -3035,9 +3034,10 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4636340584470740}
+  - component: {fileID: 64890936644802600}
   m_Layer: 0
   m_Name: Church
-  m_TagString: Untagged
+  m_TagString: Building
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -14604,20 +14604,6 @@ MeshCollider:
   m_CookingOptions: 14
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 4300000, guid: 57b1c6e5e6fd80c4f8ee1d5ccba246c8, type: 3}
---- !u!64 &64251399905447378
-MeshCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1776809893988496}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Convex: 0
-  m_CookingOptions: 14
-  m_SkinWidth: 0.01
-  m_Mesh: {fileID: 4300000, guid: 190601c6ad4761d45b65274b5f33fb3d, type: 3}
 --- !u!64 &64283081918112386
 MeshCollider:
   m_ObjectHideFlags: 1
@@ -14646,6 +14632,20 @@ MeshCollider:
   m_CookingOptions: 14
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 4300000, guid: 57b1c6e5e6fd80c4f8ee1d5ccba246c8, type: 3}
+--- !u!64 &64300193463126810
+MeshCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1187057327176364}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Convex: 0
+  m_CookingOptions: 14
+  m_SkinWidth: 0.01
+  m_Mesh: {fileID: 4300000, guid: 190601c6ad4761d45b65274b5f33fb3d, type: 3}
 --- !u!64 &64302720584541122
 MeshCollider:
   m_ObjectHideFlags: 1
@@ -15374,20 +15374,6 @@ MeshCollider:
   m_CookingOptions: 14
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 4300000, guid: 57b1c6e5e6fd80c4f8ee1d5ccba246c8, type: 3}
---- !u!64 &64771149286128112
-MeshCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1080649584798820}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Convex: 0
-  m_CookingOptions: 14
-  m_SkinWidth: 0.01
-  m_Mesh: {fileID: 4300000, guid: 2504be7eb69b8d64eb52456b112b1623, type: 3}
 --- !u!64 &64773034822255620
 MeshCollider:
   m_ObjectHideFlags: 1
@@ -15584,6 +15570,20 @@ MeshCollider:
   m_CookingOptions: 14
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 4300000, guid: 57b1c6e5e6fd80c4f8ee1d5ccba246c8, type: 3}
+--- !u!64 &64890936644802600
+MeshCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1799495494674716}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Convex: 0
+  m_CookingOptions: 14
+  m_SkinWidth: 0.01
+  m_Mesh: {fileID: 4300000, guid: 2504be7eb69b8d64eb52456b112b1623, type: 3}
 --- !u!64 &64900566814375508
 MeshCollider:
   m_ObjectHideFlags: 1
@@ -19835,7 +19835,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 200784682
+  randomSeed: -1379546120
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -23196,7 +23196,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1298657763
+  randomSeed: -582511814
   InitialModule:
     serializedVersion: 3
     enabled: 1
