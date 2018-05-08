@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.AI;
 using UnityEngine.UI;
 
@@ -9,7 +10,7 @@ public class PointAndClick : MonoBehaviour {
 	public Object description;
 	private Object desc;
 	private Vector3 destination;
-	private string name;
+	private string locationName;
 	NavMeshAgent agent;
 
 
@@ -17,6 +18,12 @@ public class PointAndClick : MonoBehaviour {
 	void Start () {
 		Cursor.visible = true;
 		agent = GameObject.Find("Character").GetComponent<NavMeshAgent>();
+
+		foreach (ParticleSystem ps in Resources.FindObjectsOfTypeAll(typeof(ParticleSystem)) as ParticleSystem[])
+		{
+			ParticleSystem.EmissionModule emission = ps.emission;
+			emission.enabled = false;
+		}
 	}
 	
 	// Update is called once per frame
@@ -27,20 +34,29 @@ public class PointAndClick : MonoBehaviour {
             if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit) && hit.transform.tag == "Building" && desc == null)
             {
 				destination = hit.point;
-				name = hit.transform.name;
+				locationName = hit.transform.name;
                 print (hit.transform.name);
 				RetriveInformations();
 				ShowDescription();
-				//MoveCharacter();
 			}else
 			{
 				DestroyDescription();
 				print ("NOTHING");
 			}
         }
-		// if(Input.GetMouseButtonDown(0) && desc != null){
-		// 	DestroyDescription();
-		// }
+		if(Input.GetMouseButtonDown(0)){
+			if (EventSystem.current.IsPointerOverGameObject())
+			{	
+                Debug.Log("left-click over a GUI element!");
+			} 
+            else
+			{
+				if(desc != null)
+				{
+					DestroyDescription();
+				}
+			}
+		}
 	}
 
 	private void ShowDescription() {
@@ -49,10 +65,9 @@ public class PointAndClick : MonoBehaviour {
 		{
 			DestroyDescription();
 		}
-		// Vector3 position = new Vector3(0,0,0);
 		desc = Instantiate(description, GameObject.Find("Canvas").transform, instantiateInWorldSpace:false);
 		Text title = GameObject.Find("Title").GetComponent<Text>();
-		title.text = name; 
+		title.text = locationName; 
 		Button btn = GameObject.Find("Move").GetComponent<Button>();
 		btn.onClick.AddListener(MoveCharacter);
 		// desc.transform.SetParent(GameObject.Find("Canvas").transform);
@@ -75,6 +90,19 @@ public class PointAndClick : MonoBehaviour {
 
 	public void MoveCharacter(){
 		print("Moving...");
+		DestroyDescription();
 		agent.destination = destination;
+		foreach (ParticleSystem ps in Resources.FindObjectsOfTypeAll(typeof(ParticleSystem)) as ParticleSystem[])
+		{
+			if(ps.name == locationName + "PS"){
+				ParticleSystem.EmissionModule emission = ps.emission;
+				emission.enabled = true;
+			}else{
+				if(ps.emission.enabled == true){
+					ParticleSystem.EmissionModule emission = ps.emission;
+					emission.enabled = false;
+				}
+			}
+		}
 	}
 }
