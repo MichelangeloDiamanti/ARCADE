@@ -7,6 +7,7 @@ public class UnaryRelation : IRelation
 
     private Entity _source;
     private UnaryPredicate _predicate;
+    private bool _value;
     public Entity Source
     {
         get { return _source; }
@@ -15,8 +16,11 @@ public class UnaryRelation : IRelation
     {
         get { return _predicate; }
     }
-
-    public UnaryRelation(Entity source, UnaryPredicate predicate, bool bypassCheck = false)
+    public bool Value
+    {
+        get { return _value; }
+    }
+    public UnaryRelation(Entity source, UnaryPredicate predicate, bool value, bool bypassCheck = false)
     {
         if (source == null)
             throw new System.ArgumentNullException("Relation source cannot be null", "source");
@@ -38,11 +42,12 @@ public class UnaryRelation : IRelation
 
         _source = source;
         _predicate = predicate;
+        _value = value;
     }
 
     public override string ToString()
     {
-        return _source + " " + _predicate + " ";
+        return _source + " " + _predicate + ": " + _value;
     }
 
 }

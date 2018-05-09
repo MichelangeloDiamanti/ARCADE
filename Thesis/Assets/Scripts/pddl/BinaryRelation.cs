@@ -8,6 +8,7 @@ public class BinaryRelation : IRelation
     private Entity _source;
     private BinaryPredicate _predicate;
     private Entity _destination;
+    private bool _value;
 
     public Entity Source
     {
@@ -21,8 +22,12 @@ public class BinaryRelation : IRelation
     {
         get { return _destination; }
     }
+    public bool Value
+    {
+        get { return _value; }
+    }
 
-    public BinaryRelation(Entity source, BinaryPredicate predicate, Entity destination, bool bypassCheck = false)
+    public BinaryRelation(Entity source, BinaryPredicate predicate, Entity destination, bool value, bool bypassCheck = false)
     {
         if (source == null)
             throw new System.ArgumentNullException("Relation source cannot be null", "source");
@@ -47,11 +52,12 @@ public class BinaryRelation : IRelation
         _source = source;
         _predicate = predicate;
         _destination = destination;
+        _value = value;
     }
 
     public override string ToString()
     {
-        return _source + " " + _predicate + " " + _destination;
+        return _source + " " + _predicate + " " + _destination + ": " + _value;
     }
 
 }

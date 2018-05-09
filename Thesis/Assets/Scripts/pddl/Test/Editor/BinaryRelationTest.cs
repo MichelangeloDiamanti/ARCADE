@@ -10,7 +10,7 @@ public class BinaryRelationTest {
 	public void BinaryRelationCannotBeNull() {
 		Manager.initManager();
 
-		Assert.That(()=> new BinaryRelation(null,null,null), Throws.ArgumentNullException);
+		Assert.That(()=> new BinaryRelation(null,null,null,false), Throws.ArgumentNullException);
 	}
 
 	[Test]
@@ -31,7 +31,7 @@ public class BinaryRelationTest {
 		BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location);
 		Manager.addPredicate(isAt);
 
-		Assert.That(()=> new BinaryRelation(john, isAt, school), Throws.ArgumentException);
+		Assert.That(()=> new BinaryRelation(john, isAt, school, true), Throws.ArgumentException);
 	}
 
 	[Test]
@@ -52,7 +52,7 @@ public class BinaryRelationTest {
 		BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location);
 		Manager.addPredicate(isAt);
 
-		Assert.That(()=> new BinaryRelation(john, isAt, school), Throws.ArgumentException);
+		Assert.That(()=> new BinaryRelation(john, isAt, school, true), Throws.ArgumentException);
 	}
 
 	[Test]
@@ -71,7 +71,7 @@ public class BinaryRelationTest {
 		BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location);
 		Manager.addPredicate(isAt);
 
-		Assert.That(()=> new BinaryRelation(school, isAt, school), Throws.ArgumentException);
+		Assert.That(()=> new BinaryRelation(school, isAt, school, true), Throws.ArgumentException);
 	}
 
 	[Test]
@@ -90,7 +90,7 @@ public class BinaryRelationTest {
 		BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location);
 		Manager.addPredicate(isAt);
 
-		Assert.That(()=> new BinaryRelation(john, isAt, john), Throws.ArgumentException);
+		Assert.That(()=> new BinaryRelation(john, isAt, john, true), Throws.ArgumentException);
 	}
 
 	[Test]
@@ -110,6 +110,6 @@ public class BinaryRelationTest {
 		
 		BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location);
 
-		Assert.That(()=> new BinaryRelation(john, isAt, school), Throws.ArgumentException);
+		Assert.That(()=> new BinaryRelation(john, isAt, school, true), Throws.ArgumentException);
 	}
 }

@@ -10,7 +10,7 @@ public class UnaryRelationTest {
 	public void UnaryRelationCannotBeNull() {
 		Manager.initManager();
 
-		Assert.That(()=> new UnaryRelation(null,null), Throws.ArgumentNullException);
+		Assert.That(()=> new UnaryRelation(null,null, true), Throws.ArgumentNullException);
 	}
 
 	[Test]
@@ -25,7 +25,7 @@ public class UnaryRelationTest {
 		UnaryPredicate rich = new UnaryPredicate(character, "RICH");
 		Manager.addPredicate(rich);
 
-		Assert.That(()=> new UnaryRelation(john, rich), Throws.ArgumentException);
+		Assert.That(()=> new UnaryRelation(john, rich, true), Throws.ArgumentException);
 	}
 
 	[Test]
@@ -47,7 +47,7 @@ public class UnaryRelationTest {
 		UnaryPredicate isRich = new UnaryPredicate(character, "RICH");
 		Manager.addPredicate(isRich);
 
-		Assert.That(()=> new UnaryRelation(school, isRich), Throws.ArgumentException);
+		Assert.That(()=> new UnaryRelation(school, isRich, true), Throws.ArgumentException);
 	}
 
 	[Test]
@@ -62,7 +62,7 @@ public class UnaryRelationTest {
 
 		UnaryPredicate rich = new UnaryPredicate(character, "RICH");
 
-		Assert.That(()=> new UnaryRelation(john, rich), Throws.ArgumentException);
+		Assert.That(()=> new UnaryRelation(john, rich, true), Throws.ArgumentException);
 	}
 
 }

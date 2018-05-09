@@ -5,49 +5,49 @@ using System;
 public class ActionDefinition
 {
 
-    private List<KeyValuePair<IRelation, bool>> _preConditions;
+    private List<IRelation> _preConditions;
     private string _name;
     private List<Entity> _parameters;
-    private List<KeyValuePair<IRelation, bool>> _postConditions;
-    public string Name
-    {
-        get { return _name; }
-    }
-
-    public List<KeyValuePair<IRelation, bool>> PreConditions
+    private List<IRelation> _postConditions;
+    
+    public List<IRelation> PreConditions
     {
         get { return _preConditions; }
     }
-    public List<KeyValuePair<IRelation, bool>> PostConditions
+    public string Name
     {
-        get { return _postConditions; }
+        get { return _name; }
     }
     public List<Entity> Parameters
     {
         get { return _parameters; }
     }
-    public ActionDefinition(List<KeyValuePair<IRelation, bool>> pre, string name, List<Entity> parameters, List<KeyValuePair<IRelation, bool>> post)
+    public List<IRelation> PostConditions
     {
-        if (pre == null || pre.Count == 0)
+        get { return _postConditions; }
+    }
+    public ActionDefinition(List<IRelation> preconditions, string name, List<Entity> parameters, List<IRelation> postconditions)
+    {
+        if (preconditions == null || preconditions.Count == 0)
             throw new System.ArgumentNullException("ActionDefinition: List of precondiction cannot be null or empty", "List<IPredicate> precondition");
         if (name == null)
             throw new System.ArgumentNullException("ActionDefinition: name cannot be null", "name");
-        if (post == null || post.Count == 0)
+        if (postconditions == null || postconditions.Count == 0)
             throw new System.ArgumentNullException("ActionDefinition: List of postcondition cannot be null or empty", "List<IPredicate> postcondition");
         if (parameters == null || parameters.Count == 0)
             throw new System.ArgumentNullException("ActionDefinition: List of parameter cannot be null or empty", "List<EntityType> parameter");
         
-        if (Manager.actionDefinitionExists(pre, name, parameters, post))
+        if (Manager.actionDefinitionExists(name) == true)
             throw new System.ArgumentException("ActionDefinition: ActionDefinition already exists", "ActionDefinition name: " + name);
 
-        checkVariableInRelation(pre, parameters);
-        checkVariableInRelation(post, parameters);
+        checkVariableInRelation(preconditions, parameters);
+        checkVariableInRelation(postconditions, parameters);
 
 
-        _preConditions = pre;
+        _preConditions = preconditions;
         _name = name;
         _parameters = parameters;
-        _postConditions = post;
+        _postConditions = postconditions;
     }
 
     
@@ -74,32 +74,33 @@ public class ActionDefinition
         return this.Name.GetHashCode();
     }
 
-    private void checkVariableInRelation(List<KeyValuePair<IRelation, bool>> pre, List<Entity> parameters)
+    private void checkVariableInRelation(List<IRelation> relations, List<Entity> parameters)
     {
-        foreach (KeyValuePair<IRelation, bool> item in pre)
+        foreach (IRelation r in relations)
         {
-            if (item.Key.GetType() == typeof(BinaryRelation))
+            if (r.GetType() == typeof(BinaryRelation))
             {
-                BinaryRelation br = item.Key as BinaryRelation;
-                if (!parameters.Contains(br.Source))
+                BinaryRelation br = r as BinaryRelation;
+                if (parameters.Contains(br.Source) == false)
                 {
                     throw new System.ArgumentException("ActionDefinition: One variable of pre or post condition is not inside parameter list", "List<Entity> parameters: " + br.Source.Name + " is missing");
                 }
-                if (!parameters.Contains(br.Destination))
+                if (parameters.Contains(br.Destination) == false)
                 {
                     throw new System.ArgumentException("ActionDefinition: One variable of pre or post condition is not inside parameter list", "List<Entity> parameters: " + br.Destination.Name + " is missing");
                 }
             }
-            else
+            else if(r.GetType() == typeof(UnaryRelation))
             {
-                UnaryRelation br = item.Key as UnaryRelation;
-                if (!parameters.Contains(br.Source))
+                UnaryRelation ur = r as UnaryRelation;
+                if (parameters.Contains(ur.Source) == false)
                 {
-                    throw new System.ArgumentException("ActionDefinition: One variable of pre or post condition is not inside parameter list", "List<Entity> parameters: " + br.Source.Name + " is missing");
+                    throw new System.ArgumentException("ActionDefinition: One variable of pre or post condition is not inside parameter list", "List<Entity> parameters: " + ur.Source.Name + " is missing");
                 }
             }
         }
     }
+    
     public override string ToString()
     {
         string value = "Action: "+_name+"(";
@@ -107,16 +108,35 @@ public class ActionDefinition
         {
             value+= item.ToString() + " ,";
         }
+
         value+= ") \nPRECONDITION:\n";
-        foreach (KeyValuePair<IRelation, bool> item in _preConditions)
+        foreach (IRelation r in _preConditions)
         {
-            value += item.Key.ToString() + " " + item.Value + "\n";
+            if(r.GetType() == typeof(UnaryRelation))
+            {
+                UnaryRelation ur = r as UnaryRelation;
+                value += ur.ToString() + " " + ur.Value + "\n";                
+            }
+            else if(r.GetType() == typeof(BinaryRelation))
+            {
+                BinaryRelation br = r as BinaryRelation;
+                value += br.ToString() + " " + br.Value + "\n";                
+            }
         }
 
         value+= "POSTCONDITION:\n";
-        foreach (KeyValuePair<IRelation, bool> item in _postConditions)
+        foreach (IRelation r in _postConditions)
         {
-            value += item.Key.ToString() + " " + item.Value + "\n";
+            if(r.GetType() == typeof(UnaryRelation))
+            {
+                UnaryRelation ur = r as UnaryRelation;
+                value += ur.ToString() + " " + ur.Value + "\n";                
+            }
+            else if(r.GetType() == typeof(BinaryRelation))
+            {
+                BinaryRelation br = r as BinaryRelation;
+                value += br.ToString() + " " + br.Value + "\n";                
+            }
         }
         return value;
     }
