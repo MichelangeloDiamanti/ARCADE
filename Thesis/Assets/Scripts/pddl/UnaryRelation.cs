@@ -20,19 +20,12 @@ public class UnaryRelation : IRelation
     {
         get { return _value; }
     }
-    public UnaryRelation(Entity source, UnaryPredicate predicate, bool value, bool bypassCheck = false)
+    public UnaryRelation(Entity source, UnaryPredicate predicate, bool value)
     {
         if (source == null)
             throw new System.ArgumentNullException("Relation source cannot be null", "source");
         if (predicate == null)
             throw new System.ArgumentNullException("Relation predicate cannot be null", "predicate");
-
-        if (!bypassCheck)
-        {
-            if (Manager.entityExists(source) == false)
-                throw new System.ArgumentException("Relation source must be an existing entity", source + " " + predicate.Source);
-        }
-
 
         if (Manager.predicateExists(predicate) == false)
             throw new System.ArgumentException("Relation predicate must be an existing predicate", source + " " + predicate.Source);

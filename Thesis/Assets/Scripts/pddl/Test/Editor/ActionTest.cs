@@ -4,14 +4,14 @@ using UnityEngine.TestTools;
 using NUnit.Framework;
 using System.Collections.Generic;
 
-public class ActionDefinitionTest {
+public class ActionTest {
 
 	[Test]
 	public void ActionDefinitionCannotBeNull() {
 
 		Manager.initManager();
 
-		Assert.That(()=> new ActionDefinition(null,null,null,null), Throws.ArgumentNullException);
+		Assert.That(()=> new Action(null,null,null,null), Throws.ArgumentNullException);
 	}
 
 	[Test]

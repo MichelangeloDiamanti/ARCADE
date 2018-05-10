@@ -6,12 +6,12 @@ public static class Manager
 	private static List<IPredicate> _predicates;
     private static List<EntityType> _entityTypes;
     private static List<Entity> _entities;
-    private static List<ActionDefinition> _actionDefinitions;
+    private static List<Action> _actions;
     public static void initManager(){
         _predicates = new List<IPredicate>();
         _entityTypes = new List<EntityType>();
         _entities = new List<Entity>();
-        _actionDefinitions = new List<ActionDefinition>();
+        _actions = new List<Action>();
     }
 
     public static List<IPredicate> getPredicates()
@@ -41,13 +41,13 @@ public static class Manager
         _entities.Add(e);
     }
 
-    public static List<ActionDefinition> getActionDefinitions()
+    public static List<Action> getActions()
     {
-        return _actionDefinitions;
+        return _actions;
     }
-    public static void addActionDefinition(ActionDefinition a)
+    public static void addAction(Action a)
     {
-        _actionDefinitions.Add(a);
+        _actions.Add(a);
     }
 
     public static bool predicateExists(EntityType source, string name, EntityType destination){
@@ -124,8 +124,8 @@ public static class Manager
         return false;
     }
 
-    public static bool actionDefinitionExists(string name){
-        foreach(ActionDefinition a in _actionDefinitions){
+    public static bool actionExists(string name){
+        foreach(Action a in _actions){
             if(a.Name.Equals(name)){
                 return true;
             }

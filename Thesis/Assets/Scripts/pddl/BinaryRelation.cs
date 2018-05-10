@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class BinaryRelation : IRelation
 {
-
     private Entity _source;
     private BinaryPredicate _predicate;
     private Entity _destination;
@@ -27,7 +26,7 @@ public class BinaryRelation : IRelation
         get { return _value; }
     }
 
-    public BinaryRelation(Entity source, BinaryPredicate predicate, Entity destination, bool value, bool bypassCheck = false)
+    public BinaryRelation(Entity source, BinaryPredicate predicate, Entity destination, bool value)
     {
         if (source == null)
             throw new System.ArgumentNullException("Relation source cannot be null", "source");
@@ -40,14 +39,6 @@ public class BinaryRelation : IRelation
             throw new System.ArgumentException("Relation source is not of the specified predicate type", source + " " + predicate.Source);
         if (destination.Type.Equals(predicate.Destination) == false)
             throw new System.ArgumentException("Relation destination is not of the specified predicate type", source + " " + predicate.Destination);
-
-        if (!bypassCheck)
-        {
-            if (Manager.entityExists(source) == false)
-                throw new System.ArgumentException("Relation source must be an existing entity", source + " " + predicate.Source);
-            if (Manager.entityExists(destination) == false)
-                throw new System.ArgumentException("Relation source must be an existing entity", destination + " " + predicate.Destination);
-        }
 
         _source = source;
         _predicate = predicate;

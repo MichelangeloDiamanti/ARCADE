@@ -13,15 +13,87 @@ public class InitialWorld : MonoBehaviour
     void Start()
     {
         Manager.initManager();
+        roverWorldFullDetail();
 		
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        
     }
 
+    private void roverWorldFullDetail(){
+        EntityType rover = new EntityType("ROVER");
+        Manager.addEntityType(rover);
+        
+        EntityType wayPoint = new EntityType("WAYPOINT");
+        Manager.addEntityType(wayPoint);
+
+        EntityType sample = new EntityType("SAMPLE");
+        Manager.addEntityType(sample);
+
+        EntityType objective = new EntityType("OBJECTIVE");
+        Manager.addEntityType(objective);
+
+        //(can-move ?from-waypoint ?to-waypoint)
+        BinaryPredicate canMove = new BinaryPredicate(wayPoint, "CAN_MOVE", wayPoint);
+        Manager.addPredicate(canMove);
+        //(is-visible ?objective ?waypoint)
+        BinaryPredicate isVisible = new BinaryPredicate(objective, "IS_VISIBLE", wayPoint);
+        Manager.addPredicate(isVisible);
+        //(is-in ?sample ?waypoint)
+        BinaryPredicate isIn = new BinaryPredicate(sample, "IS_IN", wayPoint);
+        Manager.addPredicate(isIn);
+        //(been-at ?rover ?waypoint)
+        BinaryPredicate beenAt = new BinaryPredicate(rover, "BEEN_AT", wayPoint);
+        Manager.addPredicate(beenAt);
+        //(carry ?rover ?sample)  
+        BinaryPredicate carry = new BinaryPredicate(rover, "CARRY", sample);
+        Manager.addPredicate(carry);
+        //(at ?rover ?waypoint)
+        BinaryPredicate at = new BinaryPredicate(rover, "AT", wayPoint);
+        Manager.addPredicate(at);
+        //(is-dropping-dock ?waypoint)
+        UnaryPredicate isDroppingDock = new UnaryPredicate(wayPoint, "IS_DROPPING_DOCK");
+        Manager.addPredicate(isDroppingDock);
+        //(taken-image ?objective)
+        UnaryPredicate takenImage = new UnaryPredicate(objective, "TAKEN_IMAGE");
+        Manager.addPredicate(takenImage);
+        //(stored-sample ?sample)
+        UnaryPredicate storedSample = new UnaryPredicate(sample, "STORED_SAMPLE");
+        Manager.addPredicate(storedSample);
+        //(empty ?rover) 
+        UnaryPredicate isEmpty = new UnaryPredicate(rover, "IS_EMPTY");
+        Manager.addPredicate(isEmpty);
+
+        Entity curiosity = new Entity(rover, "ROVER");
+        Entity fromWayPoint = new Entity(wayPoint, "WAYPOINT1");
+        Entity toWayPoint = new Entity(wayPoint, "WAYPOINT2");        
+
+        List<Entity> moveActionParameters = new List<Entity>();
+        moveActionParameters.Add(curiosity);
+        moveActionParameters.Add(fromWayPoint);
+        moveActionParameters.Add(toWayPoint);        
+
+
+        List<IRelation> preconditions = new List<IRelation>();
+        BinaryRelation roverAtfromWP = new BinaryRelation(curiosity, at, fromWayPoint, true);
+        preconditions.Add(roverAtfromWP);
+        BinaryRelation canMoveFromWP1ToWP2 = new BinaryRelation(fromWayPoint, canMove, toWayPoint, true);
+        preconditions.Add(canMoveFromWP1ToWP2);
+
+        List<IRelation> postconditions = new List<IRelation>();
+        BinaryRelation notRoverAtFromWP = new BinaryRelation(curiosity, at, fromWayPoint, false);
+        postconditions.Add(notRoverAtFromWP);
+        BinaryRelation roverAtToWP = new BinaryRelation(curiosity, at, toWayPoint, true);
+        postconditions.Add(roverAtToWP);
+        BinaryRelation roverBeenAtToWP = new BinaryRelation(curiosity, beenAt, toWayPoint, true);
+        postconditions.Add(roverBeenAtToWP);
+
+        Action move = new Action(preconditions, "MOVE", moveActionParameters, postconditions);
+        Manager.addAction(move);
+    }
     private void villaggeBanditWorldFullDetail(){
         EntityType character = new EntityType("CHARACTER");
         Manager.addEntityType(character);
@@ -71,72 +143,6 @@ public class InitialWorld : MonoBehaviour
         // mayors are in their own respecting villages
         BinaryRelation MV1IsAtV1 = new BinaryRelation(mayorVillage1, isAt, village1, true);
         BinaryRelation MV2IsAtV2 = new BinaryRelation(mayorVillage2, isAt, village2, true);
-
-    }
-
-    private void animalInizialitation()
-    {
-        EntityType character = new EntityType("CHARACTER");
-        Manager.addEntityType(character);
-        
-        EntityType location = new EntityType("LOCATION");
-        Manager.addEntityType(location);
-        
-        // EntityType animal = new EntityType("ANIMAL");
-        // Manager.addEntityType(animal);
-        
-        Entity hero = new Entity(character, "hero");
-        Manager.addEntity(hero);
-        Entity cat_lady = new Entity(character, "cat_lady");
-        Manager.addEntity(cat_lady);
-        Entity v1 = new Entity(location, "village1");
-        Manager.addEntity(v1);
-        Entity v2 = new Entity(location, "village2");
-        Manager.addEntity(v2);
-        Entity cat = new Entity(character, "cat");
-        Manager.addEntity(cat);
-
-        BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location);
-        Manager.addPredicate(isAt);
-        UnaryPredicate handempty = new UnaryPredicate(character, "HANDEMPTY");
-        Manager.addPredicate(handempty);
-
-        // BinaryRelation heroIsAtV1 = new BinaryRelation(hero, isAt, v1);
-        // BinaryRelation cat_ladyIsAtV1 = new BinaryRelation(cat_lady, isAt, v1);
-        // BinaryRelation catIsAtV2 = new BinaryRelation(cat, isAt, v2);
-
-        // UnaryRelation heroHandempty = new UnaryRelation(hero, handempty);
-
-
-        List<Entity> parameters = new List<Entity>(); 
-        Entity c1 = new Entity(character, "c1");
-        parameters.Add(c1);
-        Entity c2 = new Entity(character, "c2");
-        // parameters.Add(c2);        
-        Entity l1 = new Entity(location, "l1");
-        parameters.Add(l1);
-        Entity l2 = new Entity(location, "l2");
-        parameters.Add(l2);
-        Entity c3 = new Entity(character, "a1");
-        // parameters.Add(c3);
-
-        BinaryRelation c1IsAtl1 = new BinaryRelation(c1, isAt, l1, true);
-        BinaryRelation c2IsAtl1 = new BinaryRelation(c2, isAt, l1, true);
-        BinaryRelation a1IsAtl2 = new BinaryRelation(c3, isAt, l2, true);
-        BinaryRelation c1IsAtl2 = new BinaryRelation(c1, isAt, l2, true);
-
-        UnaryRelation c1Handempty = new UnaryRelation(c1, handempty, true);
-        
-        List<KeyValuePair<IRelation, bool>> pre = new List<KeyValuePair<IRelation, bool>>(); 
-        pre.Add(new KeyValuePair<IRelation, bool>(c1IsAtl1, true));
-        pre.Add(new KeyValuePair<IRelation, bool>(c1IsAtl2, false));
-        List<KeyValuePair<IRelation, bool>> post = new List<KeyValuePair<IRelation, bool>>(); 
-        post.Add(new KeyValuePair<IRelation, bool>(c1IsAtl1, false));
-        post.Add(new KeyValuePair<IRelation, bool>(c1IsAtl2, true));        
-        // ActionDefinition move = new ActionDefinition(pre, "MOVE", parameters, post);
-        // Manager.addActionDefinition(move);
-
-        // Debug.Log(move.ToString());
 
     }
 }
