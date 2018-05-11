@@ -133,4 +133,37 @@ public static class Domain
         return false;
     }
 
+    public static string ToString()
+    {
+        string value = "";
+        value += "ENTITY TYPES:\n";
+        foreach(EntityType et in _entityTypes)
+        {
+            value += et.ToString() + "\n";
+        }
+
+        value += "\nPREDICATES:\n";
+        foreach (IPredicate p in _predicates)
+        {
+            if(p.GetType() == typeof(UnaryPredicate))
+            {
+                UnaryPredicate up = p as UnaryPredicate;
+                value += up.ToString() + "\n";                
+            }
+            else if(p.GetType() == typeof(BinaryPredicate))
+            {
+                BinaryPredicate bp = p as BinaryPredicate;
+                value += bp.ToString() + "\n";                
+            }
+        }
+
+        value += "\nACTIONS:\n";
+        foreach (Action a in _actions)
+        {
+            value += a.ToString() + "\n";
+        }
+
+        return value;
+    }
+
 }

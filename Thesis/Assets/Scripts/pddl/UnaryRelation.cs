@@ -40,7 +40,7 @@ public class UnaryRelation : IRelation
 
     public override string ToString()
     {
-        return _source + " " + _predicate + ": " + _value;
+        return _source.Name + " " + _predicate.Name + ": " + _value;
     }
 
 }

@@ -48,7 +48,7 @@ public class BinaryRelation : IRelation
 
     public override string ToString()
     {
-        return _source + " " + _predicate + " " + _destination + ": " + _value;
+        return _source.Name + " " + _predicate.Name + " " + _destination.Name + ": " + _value;
     }
 
 }

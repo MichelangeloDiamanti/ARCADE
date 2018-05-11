@@ -107,7 +107,7 @@ public class Action
         string value = "Action: "+_name+"(";
         foreach (Entity item in _parameters)
         {
-            value+= item.ToString() + " ,";
+            value+= item.Name + " ,";
         }
 
         value+= ") \nPRECONDITION:\n";
@@ -116,12 +116,12 @@ public class Action
             if(r.GetType() == typeof(UnaryRelation))
             {
                 UnaryRelation ur = r as UnaryRelation;
-                value += ur.ToString() + " " + ur.Value + "\n";                
+                value += ur.ToString() + "\n";                
             }
             else if(r.GetType() == typeof(BinaryRelation))
             {
                 BinaryRelation br = r as BinaryRelation;
-                value += br.ToString() + " " + br.Value + "\n";                
+                value += br.ToString() + "\n";                
             }
         }
 
@@ -131,12 +131,12 @@ public class Action
             if(r.GetType() == typeof(UnaryRelation))
             {
                 UnaryRelation ur = r as UnaryRelation;
-                value += ur.ToString() + " " + ur.Value + "\n";                
+                value += ur.ToString() + "\n";                
             }
             else if(r.GetType() == typeof(BinaryRelation))
             {
                 BinaryRelation br = r as BinaryRelation;
-                value += br.ToString() + " " + br.Value + "\n";                
+                value += br.ToString() + "\n";                
             }
         }
         return value;
