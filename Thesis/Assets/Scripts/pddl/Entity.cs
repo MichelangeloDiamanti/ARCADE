@@ -23,9 +23,6 @@ public class Entity {
 		if(Domain.entityTypeExists(type) == false)
 			throw new System.ArgumentException("The specified entity type does not exist", type.ToString());
 
-		if(Domain.entityExists(type, name))
-			throw new System.ArgumentException("Entity has already been declared", type + " " + name);
-
 		_type = type;
 		_name = name;
 	}

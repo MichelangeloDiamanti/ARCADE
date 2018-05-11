@@ -42,5 +42,5 @@ public class UnaryRelation : IRelation
     {
         return _source + " " + _predicate + ": " + _value;
     }
-
+    
 }

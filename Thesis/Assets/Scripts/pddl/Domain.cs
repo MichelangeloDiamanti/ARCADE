@@ -5,12 +5,10 @@ public static class Domain
 {
 	private static List<IPredicate> _predicates;
     private static List<EntityType> _entityTypes;
-    private static List<Entity> _entities;
     private static List<Action> _actions;
     public static void initManager(){
         _predicates = new List<IPredicate>();
         _entityTypes = new List<EntityType>();
-        _entities = new List<Entity>();
         _actions = new List<Action>();
     }
 
@@ -32,14 +30,6 @@ public static class Domain
         _entityTypes.Add(et);
     }
 
-    public static List<Entity> getEntities()
-    {
-        return _entities;
-    }
-    public static void addEntity(Entity e)
-    {
-        _entities.Add(e);
-    }
 
     public static List<Action> getActions()
     {
@@ -86,23 +76,6 @@ public static class Domain
             if (Domain.predicateExists(p) == false)
                 return false;
         return true;
-    }
-
-    public static bool entityExists(EntityType type, string name){
-        foreach(Entity e in _entities){
-            if(e.Type.Equals(type) && e.Name.Equals(name)){
-                return true;
-            }
-        }
-        return false;
-    }
-    public static bool entityExists(Entity entity){
-        foreach(Entity e in _entities){
-            if(e.Equals(entity)){
-                return true;
-            }
-        }
-        return false;
     }
 
 

@@ -39,10 +39,10 @@ public class UnaryRelationTest {
 		Domain.addEntityType(location);
 
 		Entity john = new Entity(character, "JOHN");
-		Domain.addEntity(john);
+		// Domain.addEntity(john);
 
 		Entity school = new Entity(location, "SCHOOL");
-		Domain.addEntity(school);
+		// Domain.addEntity(school);
 
 		UnaryPredicate isRich = new UnaryPredicate(character, "RICH");
 		Domain.addPredicate(isRich);
@@ -58,7 +58,7 @@ public class UnaryRelationTest {
 		Domain.addEntityType(character);
 
 		Entity john = new Entity(character, "JOHN");
-		Domain.addEntity(john);
+		// Domain.addEntity(john);
 
 		UnaryPredicate rich = new UnaryPredicate(character, "RICH");
 
