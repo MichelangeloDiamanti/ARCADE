@@ -30,7 +30,7 @@ public class EntityTest {
 		Domain.addEntityType(character);
 
 		Entity e = new Entity(character, "JOHN");
-		Domain.addEntity(e);
+		// Domain.addEntity(e);
 
 		Assert.That(()=> new Entity(character, "JOHN"), Throws.ArgumentException);
 	}

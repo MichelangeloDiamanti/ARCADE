@@ -185,21 +185,21 @@ public class InitialWorld : MonoBehaviour
         EntityType location = new EntityType("LOCATION");
         Domain.addEntityType(location);
 
-        Entity village1 = new Entity(location, "village1");
-        Domain.addEntity(village1);
-        Entity village2 = new Entity(location, "village2");
-        Domain.addEntity(village2);
+        // Entity village1 = new Entity(location, "village1");
+        // Domain.addEntity(village1);
+        // Entity village2 = new Entity(location, "village2");
+        // Domain.addEntity(village2);
 
-        Entity mayorVillage1 = new Entity(character, "mayorVillage1");
-        Domain.addEntity(mayorVillage1);
-        Entity mayorVillage2 = new Entity(character, "mayorVillage2");
-        Domain.addEntity(mayorVillage2);
-        Entity citizensVillage1 = new Entity(character, "citizensVillage1");
-        Domain.addEntity(citizensVillage1);
-        Entity citizensVillage2 = new Entity(character, "citizensVillage2");
-        Domain.addEntity(citizensVillage2);
-        Entity bandits = new Entity(character, "bandits");
-        Domain.addEntity(bandits);
+        // Entity mayorVillage1 = new Entity(character, "mayorVillage1");
+        // Domain.addEntity(mayorVillage1);
+        // Entity mayorVillage2 = new Entity(character, "mayorVillage2");
+        // Domain.addEntity(mayorVillage2);
+        // Entity citizensVillage1 = new Entity(character, "citizensVillage1");
+        // Domain.addEntity(citizensVillage1);
+        // Entity citizensVillage2 = new Entity(character, "citizensVillage2");
+        // Domain.addEntity(citizensVillage2);
+        // Entity bandits = new Entity(character, "bandits");
+        // Domain.addEntity(bandits);
 
         BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location);
         Domain.addPredicate(isAt);
@@ -220,13 +220,13 @@ public class InitialWorld : MonoBehaviour
         BinaryPredicate attack = new BinaryPredicate(character, "ATTACK", location);
         Domain.addPredicate(attack);
 
-        // citizens are in their own respecting villages
-        BinaryRelation CV1IsAtV1 = new BinaryRelation(citizensVillage1, isAt, village1, true);
-        BinaryRelation CV2IsAtV2 = new BinaryRelation(citizensVillage2, isAt, village2, true);
+        // // citizens are in their own respecting villages
+        // BinaryRelation CV1IsAtV1 = new BinaryRelation(citizensVillage1, isAt, village1, true);
+        // BinaryRelation CV2IsAtV2 = new BinaryRelation(citizensVillage2, isAt, village2, true);
 
-        // mayors are in their own respecting villages
-        BinaryRelation MV1IsAtV1 = new BinaryRelation(mayorVillage1, isAt, village1, true);
-        BinaryRelation MV2IsAtV2 = new BinaryRelation(mayorVillage2, isAt, village2, true);
+        // // mayors are in their own respecting villages
+        // BinaryRelation MV1IsAtV1 = new BinaryRelation(mayorVillage1, isAt, village1, true);
+        // BinaryRelation MV2IsAtV2 = new BinaryRelation(mayorVillage2, isAt, village2, true);
 
     }
 }

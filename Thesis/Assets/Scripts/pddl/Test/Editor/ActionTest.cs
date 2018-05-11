@@ -25,10 +25,10 @@ public class ActionTest {
 		Domain.addEntityType(location);
 
 		Entity john = new Entity(character, "JOHN");
-		Domain.addEntity(john);
+		// Domain.addEntity(john);
 
 		Entity school = new Entity(location, "SCHOOL");
-		Domain.addEntity(school);
+		// Domain.addEntity(school);
 
 		BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location);
 		Domain.addPredicate(isAt);

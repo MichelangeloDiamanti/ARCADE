@@ -10,6 +10,17 @@ public class State
     {
         get { return _relations; }
     }
+    public List<Entity> Entities
+    {
+        get { return _entities; }
+    }
+
+    public void addEntity(Entity e)
+    {
+        if(entityExists(e))
+            throw new System.ArgumentException(e.Name + " already added to the list of entities", "List<Entity> Entities");            
+        _entities.Add(e);
+    }
 
     public void AddRelation(IRelation r)
     {
@@ -21,7 +32,7 @@ public class State
                 UnaryRelation bp = r as UnaryRelation;
                 if (!_entities.Contains(bp.Source))
                 {
-                    _entities.Add(bp.Source);
+                    throw new System.ArgumentException("Source Entity: "+bp.Source.Name+" not added to the list of entities", "List<Entity> Entities");
                 }
             }
             if (r.GetType() == typeof(BinaryRelation))
@@ -29,22 +40,22 @@ public class State
                 BinaryRelation bp = r as BinaryRelation;
                 if (!_entities.Contains(bp.Source))
                 {
-                    _entities.Add(bp.Source);
+                    throw new System.ArgumentException("Source Entity: "+bp.Source.Name+" not added to the list of entities", "List<Entity> Entities");                    
                 }
                 if (!_entities.Contains(bp.Destination))
                 {
-                    _entities.Add(bp.Destination);
+                    throw new System.ArgumentException("Destination Entity: "+bp.Destination.Name+" not added to the list of entities", "List<Entity> Entities");                    
                 }
             }
         }
     }
 
-    public State(List<IRelation> relations)
+    public State()
     {
-        if (relations == null || relations.Count == 0)
-            throw new System.ArgumentException("List of relations cannot be null or empty", "List<IRelation> relations");
+        // if (relations == null || relations.Count == 0)
+        //     throw new System.ArgumentException("List of relations cannot be null or empty", "List<IRelation> relations");
 
-        _relations = relations;
+        // _relations = relations;
     }
 
     public bool relationExists(IRelation relation)
@@ -73,6 +84,29 @@ public class State
         return false;
     }
 
+    public bool entityExists(EntityType type, string name)
+    {
+        foreach (Entity e in _entities)
+        {
+            if (e.Type.Equals(type) && e.Name.Equals(name))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool entityExists(Entity entity)
+    {
+        foreach (Entity e in _entities)
+        {
+            if (e.Equals(entity))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     //TODO: applyrelation
     // public State applyAction(ActionDefinition action)
     // {
@@ -86,11 +120,11 @@ public class State
     // public List<Action> getPossibleActions()
     // {
     //     List<Action> possibleActions = new List<Action>();
-    //     foreach (ActionDefinition ad in Manager.getActionDefinitions())
+    //     foreach (Action ad in Domain.getActions())
     //     {
     //         // int countStateRelationForPrecondition = 0;
     //         List<IRelation> relationForAction = new List<IRelation>();
-    //         foreach (IPredicate predicate in ad.PreCondition)
+    //         foreach (IPredicate predicate in ad.PreConditions)
     //         {
     //             if (predicate.GetType() == typeof(UnaryPredicate))
     //             {
@@ -121,7 +155,7 @@ public class State
 
     //             }
     //         }
-    //         if (relationForAction.Count == ad.PreCondition.Count)
+    //         if (relationForAction.Count == ad.PreConditions.Count)
     //         {
 
     //         }
