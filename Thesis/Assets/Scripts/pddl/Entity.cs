@@ -20,10 +20,10 @@ public class Entity {
 		if(type == null || name == null)
 			throw new System.ArgumentNullException("Entity type and name cannot be null");
 		
-		if(Manager.entityTypeExists(type) == false)
+		if(Domain.entityTypeExists(type) == false)
 			throw new System.ArgumentException("The specified entity type does not exist", type.ToString());
 
-		if(Manager.entityExists(type, name))
+		if(Domain.entityExists(type, name))
 			throw new System.ArgumentException("Entity has already been declared", type + " " + name);
 
 		_type = type;

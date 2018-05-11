@@ -9,29 +9,29 @@ public class ActionTest {
 	[Test]
 	public void ActionDefinitionCannotBeNull() {
 
-		Manager.initManager();
+		Domain.initManager();
 
 		Assert.That(()=> new Action(null,null,null,null), Throws.ArgumentNullException);
 	}
 
 	[Test]
 	public void PreconditionsMustBeExistingPredicates() {
-		Manager.initManager();
+		Domain.initManager();
 
 		EntityType character = new EntityType("CHARACTER");
-		Manager.addEntityType(character);
+		Domain.addEntityType(character);
 
 		EntityType location = new EntityType("LOCATION");
-		Manager.addEntityType(location);
+		Domain.addEntityType(location);
 
 		Entity john = new Entity(character, "JOHN");
-		Manager.addEntity(john);
+		Domain.addEntity(john);
 
 		Entity school = new Entity(location, "SCHOOL");
-		Manager.addEntity(school);
+		Domain.addEntity(school);
 
 		BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location);
-		Manager.addPredicate(isAt);
+		Domain.addPredicate(isAt);
 
 		UnaryPredicate canMove = new UnaryPredicate(character, "CAN_MOVE");
 		// Manager.addPredicate(canMove);

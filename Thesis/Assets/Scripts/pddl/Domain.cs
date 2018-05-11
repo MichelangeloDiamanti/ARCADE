@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
-public static class Manager
+public static class Domain
 {
 	private static List<IPredicate> _predicates;
     private static List<EntityType> _entityTypes;
@@ -83,7 +83,7 @@ public static class Manager
     public static bool predicatesExist(List<IPredicate> pList)
     {
         foreach (IPredicate p in pList)
-            if (Manager.predicateExists(p) == false)
+            if (Domain.predicateExists(p) == false)
                 return false;
         return true;
     }

@@ -8,57 +8,57 @@ public class UnaryRelationTest {
 
 	[Test]
 	public void UnaryRelationCannotBeNull() {
-		Manager.initManager();
+		Domain.initManager();
 
 		Assert.That(()=> new UnaryRelation(null,null, true), Throws.ArgumentNullException);
 	}
 
 	[Test]
 	public void UnaryRelationSourceMustBeAnExistingEntity() {
-		Manager.initManager();
+		Domain.initManager();
 
 		EntityType character = new EntityType("CHARACTER");
-		Manager.addEntityType(character);
+		Domain.addEntityType(character);
 
 		Entity john = new Entity(character, "JOHN");
 		
 		UnaryPredicate rich = new UnaryPredicate(character, "RICH");
-		Manager.addPredicate(rich);
+		Domain.addPredicate(rich);
 
 		Assert.That(()=> new UnaryRelation(john, rich, true), Throws.ArgumentException);
 	}
 
 	[Test]
 	public void UnaryRelationSourceMustBeOfCorrectPredicateType() {
-		Manager.initManager();
+		Domain.initManager();
 
 		EntityType character = new EntityType("CHARACTER");
-		Manager.addEntityType(character);
+		Domain.addEntityType(character);
 
 		EntityType location = new EntityType("LOCATION");
-		Manager.addEntityType(location);
+		Domain.addEntityType(location);
 
 		Entity john = new Entity(character, "JOHN");
-		Manager.addEntity(john);
+		Domain.addEntity(john);
 
 		Entity school = new Entity(location, "SCHOOL");
-		Manager.addEntity(school);
+		Domain.addEntity(school);
 
 		UnaryPredicate isRich = new UnaryPredicate(character, "RICH");
-		Manager.addPredicate(isRich);
+		Domain.addPredicate(isRich);
 
 		Assert.That(()=> new UnaryRelation(school, isRich, true), Throws.ArgumentException);
 	}
 
 	[Test]
 	public void UnaryRelationPredicateMustBeAnExistingPredicate() {
-		Manager.initManager();
+		Domain.initManager();
 
 		EntityType character = new EntityType("CHARACTER");
-		Manager.addEntityType(character);
+		Domain.addEntityType(character);
 
 		Entity john = new Entity(character, "JOHN");
-		Manager.addEntity(john);
+		Domain.addEntity(john);
 
 		UnaryPredicate rich = new UnaryPredicate(character, "RICH");
 

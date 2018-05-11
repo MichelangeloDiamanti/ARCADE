@@ -8,103 +8,103 @@ public class BinaryRelationTest {
 
 	[Test]
 	public void BinaryRelationCannotBeNull() {
-		Manager.initManager();
+		Domain.initManager();
 
 		Assert.That(()=> new BinaryRelation(null,null,null,false), Throws.ArgumentNullException);
 	}
 
 	[Test]
 	public void BinaryRelationSourceMustBeAnExistingEntity() {
-		Manager.initManager();
+		Domain.initManager();
 
 		EntityType character = new EntityType("CHARACTER");
-		Manager.addEntityType(character);
+		Domain.addEntityType(character);
 
 		EntityType location = new EntityType("LOCATION");
-		Manager.addEntityType(location);
+		Domain.addEntityType(location);
 
 		Entity john = new Entity(character, "JOHN");
 
 		Entity school = new Entity(location, "SCHOOL");
-		Manager.addEntity(school);
+		Domain.addEntity(school);
 		
 		BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location);
-		Manager.addPredicate(isAt);
+		Domain.addPredicate(isAt);
 
 		Assert.That(()=> new BinaryRelation(john, isAt, school, true), Throws.ArgumentException);
 	}
 
 	[Test]
 	public void BinaryRelationDestinationMustBeAnExistingEntity() {
-		Manager.initManager();
+		Domain.initManager();
 
 		EntityType character = new EntityType("CHARACTER");
-		Manager.addEntityType(character);
+		Domain.addEntityType(character);
 
 		EntityType location = new EntityType("LOCATION");
-		Manager.addEntityType(location);
+		Domain.addEntityType(location);
 
 		Entity john = new Entity(character, "JOHN");
-		Manager.addEntity(john);
+		Domain.addEntity(john);
 
 		Entity school = new Entity(location, "SCHOOL");
 		
 		BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location);
-		Manager.addPredicate(isAt);
+		Domain.addPredicate(isAt);
 
 		Assert.That(()=> new BinaryRelation(john, isAt, school, true), Throws.ArgumentException);
 	}
 
 	[Test]
 	public void BinaryRelationSourceMustBeOfCorrectPredicateType() {
-		Manager.initManager();
+		Domain.initManager();
 
 		EntityType character = new EntityType("CHARACTER");
-		Manager.addEntityType(character);
+		Domain.addEntityType(character);
 
 		EntityType location = new EntityType("LOCATION");
-		Manager.addEntityType(location);
+		Domain.addEntityType(location);
 
 		Entity school = new Entity(location, "SCHOOL");
-		Manager.addEntity(school);
+		Domain.addEntity(school);
 
 		BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location);
-		Manager.addPredicate(isAt);
+		Domain.addPredicate(isAt);
 
 		Assert.That(()=> new BinaryRelation(school, isAt, school, true), Throws.ArgumentException);
 	}
 
 	[Test]
 	public void BinaryRelationDestinationMustBeOfCorrectPredicateType() {
-		Manager.initManager();
+		Domain.initManager();
 
 		EntityType character = new EntityType("CHARACTER");
-		Manager.addEntityType(character);
+		Domain.addEntityType(character);
 
 		EntityType location = new EntityType("LOCATION");
-		Manager.addEntityType(location);
+		Domain.addEntityType(location);
 
 		Entity john = new Entity(character, "JOHN");
-		Manager.addEntity(john);
+		Domain.addEntity(john);
 
 		BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location);
-		Manager.addPredicate(isAt);
+		Domain.addPredicate(isAt);
 
 		Assert.That(()=> new BinaryRelation(john, isAt, john, true), Throws.ArgumentException);
 	}
 
 	[Test]
 	public void BinaryRelationPredicateMustBeAnExistingPredicate() {
-		Manager.initManager();
+		Domain.initManager();
 
 		EntityType character = new EntityType("CHARACTER");
-		Manager.addEntityType(character);
+		Domain.addEntityType(character);
 
 		EntityType location = new EntityType("LOCATION");
-		Manager.addEntityType(location);
+		Domain.addEntityType(location);
 
 		Entity john = new Entity(character, "JOHN");
-		Manager.addEntity(john);
+		Domain.addEntity(john);
 
 		Entity school = new Entity(location, "SCHOOL");
 		

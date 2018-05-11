@@ -7,17 +7,17 @@ using System.Collections;
 public class EntityTypeTest {
 	[Test]
 	public void EntityTypeCannotBeNull() {
-		Manager.initManager();
+		Domain.initManager();
 
 		Assert.That(()=> new EntityType(null), Throws.ArgumentNullException);
 	}
 
 	[Test]
 	public void EntityTypeMustBeUnique() {
-		Manager.initManager();
+		Domain.initManager();
 
 		EntityType character = new EntityType("CHARACTER");
-		Manager.addEntityType(character);
+		Domain.addEntityType(character);
 
 		Assert.That(()=> new EntityType("CHARACTER"), Throws.ArgumentException);
 	}

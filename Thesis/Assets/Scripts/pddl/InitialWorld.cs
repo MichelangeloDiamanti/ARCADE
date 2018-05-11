@@ -12,7 +12,7 @@ public class InitialWorld : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        Manager.initManager();
+        Domain.initManager();
         roverWorldFullDetail();
 		
     }
@@ -25,48 +25,50 @@ public class InitialWorld : MonoBehaviour
 
     private void roverWorldFullDetail(){
         EntityType rover = new EntityType("ROVER");
-        Manager.addEntityType(rover);
+        Domain.addEntityType(rover);
         
         EntityType wayPoint = new EntityType("WAYPOINT");
-        Manager.addEntityType(wayPoint);
+        Domain.addEntityType(wayPoint);
 
         EntityType sample = new EntityType("SAMPLE");
-        Manager.addEntityType(sample);
+        Domain.addEntityType(sample);
 
         EntityType objective = new EntityType("OBJECTIVE");
-        Manager.addEntityType(objective);
+        Domain.addEntityType(objective);
 
         //(can-move ?from-waypoint ?to-waypoint)
         BinaryPredicate canMove = new BinaryPredicate(wayPoint, "CAN_MOVE", wayPoint);
-        Manager.addPredicate(canMove);
+        Domain.addPredicate(canMove);
         //(is-visible ?objective ?waypoint)
         BinaryPredicate isVisible = new BinaryPredicate(objective, "IS_VISIBLE", wayPoint);
-        Manager.addPredicate(isVisible);
+        Domain.addPredicate(isVisible);
         //(is-in ?sample ?waypoint)
         BinaryPredicate isIn = new BinaryPredicate(sample, "IS_IN", wayPoint);
-        Manager.addPredicate(isIn);
+        Domain.addPredicate(isIn);
         //(been-at ?rover ?waypoint)
         BinaryPredicate beenAt = new BinaryPredicate(rover, "BEEN_AT", wayPoint);
-        Manager.addPredicate(beenAt);
+        Domain.addPredicate(beenAt);
         //(carry ?rover ?sample)  
         BinaryPredicate carry = new BinaryPredicate(rover, "CARRY", sample);
-        Manager.addPredicate(carry);
+        Domain.addPredicate(carry);
         //(at ?rover ?waypoint)
         BinaryPredicate at = new BinaryPredicate(rover, "AT", wayPoint);
-        Manager.addPredicate(at);
+        Domain.addPredicate(at);
         //(is-dropping-dock ?waypoint)
         UnaryPredicate isDroppingDock = new UnaryPredicate(wayPoint, "IS_DROPPING_DOCK");
-        Manager.addPredicate(isDroppingDock);
+        Domain.addPredicate(isDroppingDock);
         //(taken-image ?objective)
         UnaryPredicate takenImage = new UnaryPredicate(objective, "TAKEN_IMAGE");
-        Manager.addPredicate(takenImage);
+        Domain.addPredicate(takenImage);
         //(stored-sample ?sample)
         UnaryPredicate storedSample = new UnaryPredicate(sample, "STORED_SAMPLE");
-        Manager.addPredicate(storedSample);
+        Domain.addPredicate(storedSample);
         //(empty ?rover) 
         UnaryPredicate isEmpty = new UnaryPredicate(rover, "IS_EMPTY");
-        Manager.addPredicate(isEmpty);
+        Domain.addPredicate(isEmpty);
 
+
+        // MOVE ACTION
         Entity curiosity = new Entity(rover, "ROVER");
         Entity fromWayPoint = new Entity(wayPoint, "WAYPOINT1");
         Entity toWayPoint = new Entity(wayPoint, "WAYPOINT2");        
@@ -76,65 +78,113 @@ public class InitialWorld : MonoBehaviour
         moveActionParameters.Add(fromWayPoint);
         moveActionParameters.Add(toWayPoint);        
 
-
-        List<IRelation> preconditions = new List<IRelation>();
+        List<IRelation> movActPreconditions = new List<IRelation>();
         BinaryRelation roverAtfromWP = new BinaryRelation(curiosity, at, fromWayPoint, true);
-        preconditions.Add(roverAtfromWP);
+        movActPreconditions.Add(roverAtfromWP);
         BinaryRelation canMoveFromWP1ToWP2 = new BinaryRelation(fromWayPoint, canMove, toWayPoint, true);
-        preconditions.Add(canMoveFromWP1ToWP2);
+        movActPreconditions.Add(canMoveFromWP1ToWP2);
 
-        List<IRelation> postconditions = new List<IRelation>();
+        List<IRelation> movActPostconditions = new List<IRelation>();
         BinaryRelation notRoverAtFromWP = new BinaryRelation(curiosity, at, fromWayPoint, false);
-        postconditions.Add(notRoverAtFromWP);
+        movActPostconditions.Add(notRoverAtFromWP);
         BinaryRelation roverAtToWP = new BinaryRelation(curiosity, at, toWayPoint, true);
-        postconditions.Add(roverAtToWP);
+        movActPostconditions.Add(roverAtToWP);
         BinaryRelation roverBeenAtToWP = new BinaryRelation(curiosity, beenAt, toWayPoint, true);
-        postconditions.Add(roverBeenAtToWP);
+        movActPostconditions.Add(roverBeenAtToWP);
 
-        Action move = new Action(preconditions, "MOVE", moveActionParameters, postconditions);
-        Manager.addAction(move);
+        Action move = new Action(movActPreconditions, "MOVE", moveActionParameters, movActPostconditions);
+        Domain.addAction(move);
+
+        // TAKE SAMPLE ACTION
+        Entity ESample = new Entity(sample, "SAMPLE");
+        Entity EWayPoint = new Entity(wayPoint, "WAYPOINT");
+        
+        List<Entity> takSampActionParameters = new List<Entity>();
+        takSampActionParameters.Add(curiosity);
+        takSampActionParameters.Add(ESample);
+        takSampActionParameters.Add(EWayPoint);
+
+        List<IRelation> takSampActPreconditions = new List<IRelation>();
+        BinaryRelation sampleIsInWayPoint = new BinaryRelation(ESample, isIn, EWayPoint, true);
+        takSampActPreconditions.Add(sampleIsInWayPoint);
+        BinaryRelation roverIsAtWayPoint = new BinaryRelation(curiosity, at, EWayPoint, true);
+        takSampActPreconditions.Add(roverIsAtWayPoint);
+        UnaryRelation roverIsEmpty = new UnaryRelation(curiosity, isEmpty, true);
+        takSampActPreconditions.Add(roverIsEmpty);
+
+        List<IRelation> takSampActPostconditions = new List<IRelation>();
+        BinaryRelation sampleIsNotInWayPoint = new BinaryRelation(ESample, isIn, EWayPoint, false);
+        takSampActPostconditions.Add(sampleIsNotInWayPoint);
+        UnaryRelation roverIsNotEmpty = new UnaryRelation(curiosity, isEmpty, false);
+        takSampActPostconditions.Add(roverIsNotEmpty);        
+        BinaryRelation roverCarriesSample = new BinaryRelation(curiosity, carry, ESample, true);
+        takSampActPostconditions.Add(roverCarriesSample); 
+
+        Action takeSampleAction = new Action(takSampActPreconditions, "TAKE_SAMPLE", takSampActionParameters, takSampActPostconditions);
+        Domain.addAction(takeSampleAction);
+
+        // DROP SAMPLE ACTION        
+        List<Entity> dropSampActionParameters = new List<Entity>();
+        dropSampActionParameters.Add(curiosity);
+        dropSampActionParameters.Add(ESample);
+        dropSampActionParameters.Add(EWayPoint);
+
+        List<IRelation> dropSampActPreconditions = new List<IRelation>();
+        UnaryRelation wayPointIsDroppingDock = new UnaryRelation(EWayPoint, isDroppingDock, true);
+        dropSampActPreconditions.Add(wayPointIsDroppingDock);
+        dropSampActPreconditions.Add(roverIsAtWayPoint);
+        dropSampActPreconditions.Add(roverCarriesSample);
+
+        List<IRelation> dropSampActPostconditions = new List<IRelation>();
+        dropSampActPostconditions.Add(sampleIsInWayPoint);
+        dropSampActPostconditions.Add(roverIsEmpty);
+        BinaryRelation notRoverCarriesSample = new BinaryRelation(curiosity, carry, ESample, false);
+        dropSampActPostconditions.Add(notRoverCarriesSample); 
+
+        Action dropSampleAction = new Action(dropSampActPreconditions, "TAKE_SAMPLE", dropSampActionParameters, dropSampActPostconditions);
+        Domain.addAction(takeSampleAction);   
     }
     private void villaggeBanditWorldFullDetail(){
         EntityType character = new EntityType("CHARACTER");
-        Manager.addEntityType(character);
+        Domain.addEntityType(character);
         
         EntityType location = new EntityType("LOCATION");
-        Manager.addEntityType(location);
+        Domain.addEntityType(location);
 
         Entity village1 = new Entity(location, "village1");
-        Manager.addEntity(village1);
+        Domain.addEntity(village1);
         Entity village2 = new Entity(location, "village2");
-        Manager.addEntity(village2);
+        Domain.addEntity(village2);
 
         Entity mayorVillage1 = new Entity(character, "mayorVillage1");
-        Manager.addEntity(mayorVillage1);
+        Domain.addEntity(mayorVillage1);
         Entity mayorVillage2 = new Entity(character, "mayorVillage2");
-        Manager.addEntity(mayorVillage2);
+        Domain.addEntity(mayorVillage2);
         Entity citizensVillage1 = new Entity(character, "citizensVillage1");
-        Manager.addEntity(citizensVillage1);
+        Domain.addEntity(citizensVillage1);
         Entity citizensVillage2 = new Entity(character, "citizensVillage2");
-        Manager.addEntity(citizensVillage2);
+        Domain.addEntity(citizensVillage2);
         Entity bandits = new Entity(character, "bandits");
-        Manager.addEntity(bandits);
+        Domain.addEntity(bandits);
 
         BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location);
-        Manager.addPredicate(isAt);
+        Domain.addPredicate(isAt);
 
         UnaryPredicate increaseTaxes = new UnaryPredicate(character, "INCREASE_TAXES");
-        Manager.addPredicate(increaseTaxes);
+        Domain.addPredicate(increaseTaxes);
         UnaryPredicate decreaseTaxes = new UnaryPredicate(character, "DECREASE_TAXES");
-        Manager.addPredicate(decreaseTaxes);
+        Domain.addPredicate(decreaseTaxes);
         
         UnaryPredicate happyAboutTaxes = new UnaryPredicate(character, "HAPPY_ABOUT_TAXES");
-        Manager.addPredicate(happyAboutTaxes);
+        Domain.addPredicate(happyAboutTaxes);
         UnaryPredicate angryAboutTaxes = new UnaryPredicate(character, "ANGRY_ABOUT_TAXES");
-        Manager.addPredicate(angryAboutTaxes);
+        Domain.addPredicate(angryAboutTaxes);
 
         UnaryPredicate callForHelp = new UnaryPredicate(character, "CALL_FOR_HELP");
-        Manager.addPredicate(callForHelp);
+        Domain.addPredicate(callForHelp);
 
         BinaryPredicate attack = new BinaryPredicate(character, "ATTACK", location);
-        Manager.addPredicate(attack);
+        Domain.addPredicate(attack);
 
         // citizens are in their own respecting villages
         BinaryRelation CV1IsAtV1 = new BinaryRelation(citizensVillage1, isAt, village1, true);

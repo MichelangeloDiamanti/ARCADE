@@ -8,29 +8,29 @@ public class BinaryPredicateTest {
 
 	[Test]
 	public void BinaryPredicateCannotBeNull() {
-		Manager.initManager();
+		Domain.initManager();
 
 		Assert.That(()=> new BinaryPredicate(null,null,null), Throws.ArgumentNullException);
 	}
 
 	[Test]
 	public void BinaryPredicateSourceCanOnlyBeOfExistingType() {
-		Manager.initManager();
+		Domain.initManager();
 
 		EntityType character = new EntityType("CHARACTER");
 
 		EntityType location = new EntityType("LOCATION");
-		Manager.addEntityType(location);
+		Domain.addEntityType(location);
 
 		Assert.That(()=> new BinaryPredicate(character, "IS_AT", location), Throws.ArgumentException);
 	}
 
 	[Test]
 	public void BinaryPredicateDestinationCanOnlyBeOfExistingType() {
-		Manager.initManager();
+		Domain.initManager();
 
 		EntityType character = new EntityType("CHARACTER");
-		Manager.addEntityType(character);
+		Domain.addEntityType(character);
 		
 		EntityType location = new EntityType("LOCATION");
 
@@ -40,16 +40,16 @@ public class BinaryPredicateTest {
 
 	[Test]
 	public void BinaryPredicateMustBeUnique() {
-		Manager.initManager();
+		Domain.initManager();
 
 		EntityType character = new EntityType("CHARACTER");
-		Manager.addEntityType(character);
+		Domain.addEntityType(character);
 		
 		EntityType location = new EntityType("LOCATION");		
-		Manager.addEntityType(location);
+		Domain.addEntityType(location);
 
 		BinaryPredicate up = new BinaryPredicate(character, "IS_AT", location);
-		Manager.addPredicate(up);
+		Domain.addPredicate(up);
 
 		Assert.That(()=> new BinaryPredicate(character, "IS_AT", location), Throws.ArgumentException);
 	}

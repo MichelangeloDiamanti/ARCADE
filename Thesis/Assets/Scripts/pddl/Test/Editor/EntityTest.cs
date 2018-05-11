@@ -8,14 +8,14 @@ public class EntityTest {
 
 	[Test]
 	public void EntityCannotBeNull() {
-		Manager.initManager();
+		Domain.initManager();
 
 		Assert.That(()=> new Entity(null,null), Throws.ArgumentNullException);
 	}
 
 	[Test]
 	public void EntityCanOnlyBeOfExistingType() {
-		Manager.initManager();
+		Domain.initManager();
 
 		EntityType character = new EntityType("CHARACTER");
 		Assert.That(()=> new Entity(character, "JOHN"), Throws.ArgumentException);
@@ -24,13 +24,13 @@ public class EntityTest {
 
 	[Test]
 	public void EntityMustBeUnique() {
-		Manager.initManager();
+		Domain.initManager();
 		
 		EntityType character = new EntityType("CHARACTER");
-		Manager.addEntityType(character);
+		Domain.addEntityType(character);
 
 		Entity e = new Entity(character, "JOHN");
-		Manager.addEntity(e);
+		Domain.addEntity(e);
 
 		Assert.That(()=> new Entity(character, "JOHN"), Throws.ArgumentException);
 	}

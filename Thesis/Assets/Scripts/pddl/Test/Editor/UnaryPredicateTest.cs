@@ -8,14 +8,14 @@ public class UnaryPredicateTest {
 	
 	[Test]
 	public void UnaryPredicateCannotBeNull() {
-		Manager.initManager();
+		Domain.initManager();
 
 		Assert.That(()=> new UnaryPredicate(null,null), Throws.ArgumentNullException);
 	}
 
 	[Test]
 	public void UnaryPredicateCanOnlyBeOfExistingType() {
-		Manager.initManager();
+		Domain.initManager();
 
 		EntityType character = new EntityType("CHARACTER");
 		Assert.That(()=> new UnaryPredicate(character, "RICH"), Throws.ArgumentException);
@@ -24,13 +24,13 @@ public class UnaryPredicateTest {
 
 	[Test]
 	public void UnaryPredicateMustBeUnique() {
-		Manager.initManager();
+		Domain.initManager();
 		
 		EntityType character = new EntityType("CHARACTER");
-		Manager.addEntityType(character);
+		Domain.addEntityType(character);
 
 		UnaryPredicate up = new UnaryPredicate(character, "RICH");
-		Manager.addPredicate(up);
+		Domain.addPredicate(up);
 
 		Assert.That(()=> new UnaryPredicate(character, "RICH"), Throws.ArgumentException);
 	}

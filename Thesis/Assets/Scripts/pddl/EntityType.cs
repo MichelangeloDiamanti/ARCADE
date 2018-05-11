@@ -13,7 +13,7 @@ public class EntityType{
 		if(type == null)
 			throw new System.ArgumentNullException("EntityType cannot be null", "type");
 
-		if(Manager.entityTypeExists(type))
+		if(Domain.entityTypeExists(type))
 			throw new System.ArgumentException("Entity type has already been declared", type);
 
         _type = type;
