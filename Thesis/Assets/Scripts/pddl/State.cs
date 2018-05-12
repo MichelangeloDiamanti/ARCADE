@@ -15,6 +15,19 @@ public class State
         get { return _entities; }
     }
 
+    public State(List<Entity> entities, List<IRelation> relations)
+    {
+        if (entities == null || entities.Count == 0)
+            throw new System.ArgumentNullException("Entities cannot be null or empty", "List<Entity> entities");
+        if (relations == null || relations.Count == 0)
+            throw new System.ArgumentNullException("Relations cannot be null or empty", "List<Relation> relations");
+
+        foreach(Entity e in entities)
+            this.addEntity(e);
+        foreach(IRelation r in relations)
+            this.addRelation(r);
+    }
+
     public void addEntity(Entity e)
     {
         if(entityExists(e))
@@ -22,7 +35,7 @@ public class State
         _entities.Add(e);
     }
 
-    public void AddRelation(IRelation r)
+    public void addRelation(IRelation r)
     {
         if (relationExists(r) == false)
         {
@@ -48,14 +61,6 @@ public class State
                 }
             }
         }
-    }
-
-    public State()
-    {
-        // if (relations == null || relations.Count == 0)
-        //     throw new System.ArgumentException("List of relations cannot be null or empty", "List<IRelation> relations");
-
-        // _relations = relations;
     }
 
     public bool relationExists(IRelation relation)
