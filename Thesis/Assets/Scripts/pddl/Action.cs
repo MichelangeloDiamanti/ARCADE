@@ -37,9 +37,6 @@ public class Action
             throw new System.ArgumentNullException("ActionDefinition: List of postcondition cannot be null or empty", "List<IPredicate> postcondition");
         if (parameters == null || parameters.Count == 0)
             throw new System.ArgumentNullException("ActionDefinition: List of parameter cannot be null or empty", "List<EntityType> parameter");
-        
-        if (Domain.actionExists(name) == true)
-            throw new System.ArgumentException("ActionDefinition: ActionDefinition already exists", "ActionDefinition name: " + name);
 
         checkVariableInRelation(preconditions, parameters);
         checkVariableInRelation(postconditions, parameters);

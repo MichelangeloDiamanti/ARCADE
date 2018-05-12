@@ -30,15 +30,6 @@ public class BinaryPredicate : IPredicate {
 		if(destination == null)
 			throw new System.ArgumentNullException("Predicate destination type cannot be null", "destination type");
 
-		if(Domain.entityTypeExists(source) == false)
-			throw new System.ArgumentException("The specified Entity Type does not exist", name);
-		if(Domain.entityTypeExists(destination) == false)
-			throw new System.ArgumentException("The specified Entity Type does not exist", name);
-
-
-		if(Domain.predicateExists(source, name, destination))
-			throw new System.ArgumentException("Predicate has already been declared", name);
-
 		_source = source;
 		_name = name;
 		_destination = destination;

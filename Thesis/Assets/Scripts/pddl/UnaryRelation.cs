@@ -27,9 +27,6 @@ public class UnaryRelation : IRelation
         if (predicate == null)
             throw new System.ArgumentNullException("Relation predicate cannot be null", "predicate");
 
-        if (Domain.predicateExists(predicate) == false)
-            throw new System.ArgumentException("Relation predicate must be an existing predicate", source + " " + predicate.Source);
-
         if (source.Type.Equals(predicate.Source) == false)
             throw new System.ArgumentException("Relation source is not of the specified predicate type", source + " " + predicate.Source);
 

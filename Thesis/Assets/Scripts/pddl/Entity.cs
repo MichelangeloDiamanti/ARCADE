@@ -19,9 +19,6 @@ public class Entity {
 	public Entity(EntityType type, string name){
 		if(type == null || name == null)
 			throw new System.ArgumentNullException("Entity type and name cannot be null");
-		
-		if(Domain.entityTypeExists(type) == false)
-			throw new System.ArgumentException("The specified entity type does not exist", type.ToString());
 
 		_type = type;
 		_name = name;

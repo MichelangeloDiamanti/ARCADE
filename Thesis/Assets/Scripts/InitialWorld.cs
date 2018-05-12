@@ -5,17 +5,16 @@ using System.Data;
 
 public class InitialWorld : MonoBehaviour
 {
-
-    DataBaseAccess db;
-    List<Entity> entities;
-
+    DomainNew domain;
+    WorldState worldState;
     // Use this for initialization
     void Start()
     {
-        Domain.initManager();
-        roverWorldFullDetail();
+        domain = new DomainNew();
+        worldState = new WorldState();
+        roverWorldDomainFullDetail(domain);
 	
-        Debug.Log(Domain.ToString());	
+        Debug.Log(domain.ToString());	
     }
 
     // Update is called once per frame
@@ -24,49 +23,49 @@ public class InitialWorld : MonoBehaviour
         
     }
 
-    private void roverWorldFullDetail(){
+    private void roverWorldDomainFullDetail(DomainNew domain){
         EntityType rover = new EntityType("ROVER");
-        Domain.addEntityType(rover);
+        domain.addEntityType(rover);
         
         EntityType wayPoint = new EntityType("WAYPOINT");
-        Domain.addEntityType(wayPoint);
+        domain.addEntityType(wayPoint);
 
         EntityType sample = new EntityType("SAMPLE");
-        Domain.addEntityType(sample);
+        domain.addEntityType(sample);
 
         EntityType objective = new EntityType("OBJECTIVE");
-        Domain.addEntityType(objective);
+        domain.addEntityType(objective);
 
         //(can-move ?from-waypoint ?to-waypoint)
         BinaryPredicate canMove = new BinaryPredicate(wayPoint, "CAN_MOVE", wayPoint);
-        Domain.addPredicate(canMove);
+        domain.addPredicate(canMove);
         //(is-visible ?objective ?waypoint)
         BinaryPredicate isVisible = new BinaryPredicate(objective, "IS_VISIBLE", wayPoint);
-        Domain.addPredicate(isVisible);
+        domain.addPredicate(isVisible);
         //(is-in ?sample ?waypoint)
         BinaryPredicate isIn = new BinaryPredicate(sample, "IS_IN", wayPoint);
-        Domain.addPredicate(isIn);
+        domain.addPredicate(isIn);
         //(been-at ?rover ?waypoint)
         BinaryPredicate beenAt = new BinaryPredicate(rover, "BEEN_AT", wayPoint);
-        Domain.addPredicate(beenAt);
+        domain.addPredicate(beenAt);
         //(carry ?rover ?sample)  
         BinaryPredicate carry = new BinaryPredicate(rover, "CARRY", sample);
-        Domain.addPredicate(carry);
+        domain.addPredicate(carry);
         //(at ?rover ?waypoint)
         BinaryPredicate at = new BinaryPredicate(rover, "AT", wayPoint);
-        Domain.addPredicate(at);
+        domain.addPredicate(at);
         //(is-dropping-dock ?waypoint)
         UnaryPredicate isDroppingDock = new UnaryPredicate(wayPoint, "IS_DROPPING_DOCK");
-        Domain.addPredicate(isDroppingDock);
+        domain.addPredicate(isDroppingDock);
         //(taken-image ?objective)
         UnaryPredicate takenImage = new UnaryPredicate(objective, "TAKEN_IMAGE");
-        Domain.addPredicate(takenImage);
+        domain.addPredicate(takenImage);
         //(stored-sample ?sample)
         UnaryPredicate storedSample = new UnaryPredicate(sample, "STORED_SAMPLE");
-        Domain.addPredicate(storedSample);
+        domain.addPredicate(storedSample);
         //(empty ?rover) 
         UnaryPredicate isEmpty = new UnaryPredicate(rover, "IS_EMPTY");
-        Domain.addPredicate(isEmpty);
+        domain.addPredicate(isEmpty);
 
 
         //              MOVE ACTION
@@ -97,7 +96,7 @@ public class InitialWorld : MonoBehaviour
         moveActionPostconditions.Add(roverBeenAtToWP);
 
         Action moveAction = new Action(moveActionPreconditions, "MOVE", moveActionParameters, moveActionPostconditions);
-        Domain.addAction(moveAction);
+        domain.addAction(moveAction);
 
         //              TAKE SAMPLE ACTION
         // Parameters
@@ -128,7 +127,7 @@ public class InitialWorld : MonoBehaviour
         takeSampleActPostconditions.Add(roverCarriesSample); 
 
         Action takeSampleAction = new Action(takeSampleActPreconditions, "TAKE_SAMPLE", takeSampleActionParameters, takeSampleActPostconditions);
-        Domain.addAction(takeSampleAction);
+        domain.addAction(takeSampleAction);
 
         //              DROP SAMPLE ACTION        
         // Parameters
@@ -152,7 +151,7 @@ public class InitialWorld : MonoBehaviour
         dropSampActPostconditions.Add(notRoverCarriesSample); 
 
         Action dropSampleAction = new Action(dropSampleActPreconditions, "DROP_SAMPLE", dropSampleActionParameters, dropSampActPostconditions);
-        Domain.addAction(takeSampleAction);
+        domain.addAction(takeSampleAction);
 
         //              TAKE IMAGE ACTION 
         // Parameters 
@@ -175,7 +174,7 @@ public class InitialWorld : MonoBehaviour
         takeImageActionPostconditions.Add(roverHasTakenImageOfObjective);
 
         Action takeImageAction = new Action(takeImageActionPostconditions, "TAKE_IMAGE", takeImageActionParameters, takeImageActionPostconditions);
-        Domain.addAction(takeImageAction);
+        domain.addAction(takeImageAction);
 
     }
     private void villaggeBanditWorldFullDetail(){

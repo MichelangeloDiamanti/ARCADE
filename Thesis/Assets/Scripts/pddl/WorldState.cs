@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Data;
 
-public class State
+public class WorldState
 {
-    private List<IRelation> _relations = new List<IRelation>();
-    private List<Entity> _entities = new List<Entity>();
+    private List<IRelation> _relations;
+    private List<Entity> _entities;
     public List<IRelation> Relations
     {
         get { return _relations; }
@@ -15,7 +15,13 @@ public class State
         get { return _entities; }
     }
 
-    public State(List<Entity> entities, List<IRelation> relations)
+    public WorldState()
+    {
+        _entities = new List<Entity>();
+        _relations = new List<IRelation>();
+    }
+
+    public WorldState(List<Entity> entities, List<IRelation> relations)
     {
         if (entities == null || entities.Count == 0)
             throw new System.ArgumentNullException("Entities cannot be null or empty", "List<Entity> entities");
