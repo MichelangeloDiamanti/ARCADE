@@ -4,6 +4,7 @@ using System.Data;
 
 public class WorldState
 {
+    private DomainNew _domain;
     private List<IRelation> _relations;
     private List<Entity> _entities;
 
@@ -16,20 +17,30 @@ public class WorldState
         get { return _entities; }
     }
 
+    public DomainNew Domain
+    {
+        get { return _domain; }
+        set { _domain = value; }
+    }
+
     public WorldState()
     {
+        _domain = new DomainNew();
         _entities = new List<Entity>();
         _relations = new List<IRelation>();
     }
 
-    public WorldState(List<Entity> entities, List<IRelation> relations)
+    public WorldState(DomainNew domain, List<Entity> entities, List<IRelation> relations)
     {
+        if(domain == null)
+            throw new System.ArgumentNullException("The domain of the worldState cannot be null", "Domain");
         if (entities == null || entities.Count == 0)
             throw new System.ArgumentNullException("Entities cannot be null or empty", "List<Entity> entities");
         if (relations == null || relations.Count == 0)
             throw new System.ArgumentNullException("Relations cannot be null or empty", "List<Relation> relations");
 
-        foreach (Entity e in entities)
+        this._domain = domain;
+        foreach(Entity e in entities)
             this.addEntity(e);
         foreach (IRelation r in relations)
             this.addRelation(r);
@@ -37,8 +48,11 @@ public class WorldState
 
     public void addEntity(Entity e)
     {
-        if (entityExists(e))
-            throw new System.ArgumentException(e.Name + " already added to the list of entities", "List<Entity> Entities");
+        if(Domain.entityTypeExists(e.Type) == false)
+            throw new System.ArgumentException(e.Name + " is of a type which has not been declared in the domain");            
+        if(entityExists(e))
+            throw new System.ArgumentException(e.Name + " already added to the list of entities", "List<Entity> Entities");            
+
         _entities.Add(e);
     }
 
@@ -46,7 +60,6 @@ public class WorldState
     {
         if (relationExists(r) == false)
         {
-            _relations.Add(r);
             if (r.GetType() == typeof(UnaryRelation))
             {
                 UnaryRelation bp = r as UnaryRelation;
@@ -67,6 +80,7 @@ public class WorldState
                     throw new System.ArgumentException("Destination Entity: " + bp.Destination.Name + " not added to the list of entities", "List<Entity> Entities");
                 }
             }
+            _relations.Add(r);
         }
     }
 

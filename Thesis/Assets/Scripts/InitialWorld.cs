@@ -13,7 +13,10 @@ public class InitialWorld : MonoBehaviour
         domain = new DomainNew();
         worldState = new WorldState();
         roverWorldDomainFullDetail();
-	
+        worldState.Domain = domain;
+
+        Entity curiosity = new Entity(new EntityType("ROVER"), "CURIOSITY");
+
         Debug.Log(domain.ToString());	
     }
 
