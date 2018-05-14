@@ -12,7 +12,7 @@ public class InitialWorld : MonoBehaviour
     {
         domain = new DomainNew();
         worldState = new WorldState();
-        roverWorldDomainFullDetail(domain);
+        roverWorldDomainFullDetail();
 	
         Debug.Log(domain.ToString());	
     }
@@ -23,7 +23,16 @@ public class InitialWorld : MonoBehaviour
         
     }
 
-    private void roverWorldDomainFullDetail(DomainNew domain){
+    private void RoverWorldStateInit()
+    {
+        Entity location = new Entity(new EntityType("WAYPOINT"), "location1");
+        Entity location1 = new Entity(new EntityType("WAYPOINT"), "location2");
+        Entity rover = new Entity(new EntityType("ROVER"), "rover");
+
+        // BinaryRelation canMove = new BinaryRelation()
+    }
+
+    private void roverWorldDomainFullDetail(){
         EntityType rover = new EntityType("ROVER");
         domain.addEntityType(rover);
         

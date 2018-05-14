@@ -6,6 +6,7 @@ public class WorldState
 {
     private List<IRelation> _relations;
     private List<Entity> _entities;
+
     public List<IRelation> Relations
     {
         get { return _relations; }
@@ -28,16 +29,16 @@ public class WorldState
         if (relations == null || relations.Count == 0)
             throw new System.ArgumentNullException("Relations cannot be null or empty", "List<Relation> relations");
 
-        foreach(Entity e in entities)
+        foreach (Entity e in entities)
             this.addEntity(e);
-        foreach(IRelation r in relations)
+        foreach (IRelation r in relations)
             this.addRelation(r);
     }
 
     public void addEntity(Entity e)
     {
-        if(entityExists(e))
-            throw new System.ArgumentException(e.Name + " already added to the list of entities", "List<Entity> Entities");            
+        if (entityExists(e))
+            throw new System.ArgumentException(e.Name + " already added to the list of entities", "List<Entity> Entities");
         _entities.Add(e);
     }
 
@@ -51,7 +52,7 @@ public class WorldState
                 UnaryRelation bp = r as UnaryRelation;
                 if (!_entities.Contains(bp.Source))
                 {
-                    throw new System.ArgumentException("Source Entity: "+bp.Source.Name+" not added to the list of entities", "List<Entity> Entities");
+                    throw new System.ArgumentException("Source Entity: " + bp.Source.Name + " not added to the list of entities", "List<Entity> Entities");
                 }
             }
             if (r.GetType() == typeof(BinaryRelation))
@@ -59,11 +60,11 @@ public class WorldState
                 BinaryRelation bp = r as BinaryRelation;
                 if (!_entities.Contains(bp.Source))
                 {
-                    throw new System.ArgumentException("Source Entity: "+bp.Source.Name+" not added to the list of entities", "List<Entity> Entities");                    
+                    throw new System.ArgumentException("Source Entity: " + bp.Source.Name + " not added to the list of entities", "List<Entity> Entities");
                 }
                 if (!_entities.Contains(bp.Destination))
                 {
-                    throw new System.ArgumentException("Destination Entity: "+bp.Destination.Name+" not added to the list of entities", "List<Entity> Entities");                    
+                    throw new System.ArgumentException("Destination Entity: " + bp.Destination.Name + " not added to the list of entities", "List<Entity> Entities");
                 }
             }
         }
@@ -117,61 +118,5 @@ public class WorldState
         }
         return false;
     }
-
-    //TODO: applyrelation
-    // public State applyAction(ActionDefinition action)
-    // {
-    //     foreach (IPredicate predicate in action.PreCondition)
-    //     {
-
-    //     }
-    //     return null;
-    // }
-
-    // public List<Action> getPossibleActions()
-    // {
-    //     List<Action> possibleActions = new List<Action>();
-    //     foreach (Action ad in Domain.getActions())
-    //     {
-    //         // int countStateRelationForPrecondition = 0;
-    //         List<IRelation> relationForAction = new List<IRelation>();
-    //         foreach (IPredicate predicate in ad.PreConditions)
-    //         {
-    //             if (predicate.GetType() == typeof(UnaryPredicate))
-    //             {
-    //                 UnaryPredicate up = predicate as UnaryPredicate;
-    //                 foreach (IRelation rel in _relations)
-    //                 {
-    //                     if (rel.GetType() == typeof(UnaryRelation))
-    //                     {
-    //                         UnaryRelation ur = predicate as UnaryRelation;
-    //                         /*
-    //                         TODO:
-    //                         Missing control for actions with multiple entities. 
-    //                         MOVE(ciao, L1) and Move(pippo, L2) now are not found,
-    //                         it will find only one of them.
-    //                          */
-
-    //                         if (ur.Predicate.Equals(up))
-    //                         {
-    //                             relationForAction.Add(ur);
-    //                             break;
-    //                         }
-    //                     }
-    //                 }
-    //             }
-    //             else
-    //             {
-    //                 BinaryPredicate bp = predicate as BinaryPredicate;
-
-    //             }
-    //         }
-    //         if (relationForAction.Count == ad.PreConditions.Count)
-    //         {
-
-    //         }
-    //     }
-    //     return possibleActions;
-    // }
 
 }

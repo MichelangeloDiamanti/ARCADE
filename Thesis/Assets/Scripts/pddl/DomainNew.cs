@@ -148,7 +148,7 @@ public class DomainNew{
     public bool predicatesExist(List<IPredicate> pList)
     {
         foreach (IPredicate p in pList)
-            if (Domain.predicateExists(p) == false)
+            if (this.predicateExists(p) == false)
                 return false;
         return true;
     }
