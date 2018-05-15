@@ -44,7 +44,7 @@ public class UnaryRelation : IRelation
         return _predicate;
     }
 
-    public override bool Equals(object obj)
+    public bool EqualsThroughPredicate(object obj)
     {
         var other = obj as UnaryRelation;
 
@@ -62,19 +62,6 @@ public class UnaryRelation : IRelation
         }
 
         return false;
-    }
-
-    public override int GetHashCode()
-    {
-        unchecked // Overflow is fine, just wrap
-        {
-            int hash = 17;
-            // Suitable nullity checks etc, of course :)
-            hash = hash * 23 + _predicate.GetHashCode();
-            hash = hash * 23 + _source.GetHashCode();
-            hash = hash * 23 + _value.GetHashCode();
-            return hash;
-        }
     }
 
 }

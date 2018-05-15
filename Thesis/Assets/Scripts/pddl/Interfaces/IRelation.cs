@@ -5,6 +5,6 @@ using UnityEngine;
 public interface IRelation
 {
 	IPredicate getPredicate();
-	bool Equals(object obj);
+	bool EqualsThroughPredicate(object obj);
 	string ToString();
 }
