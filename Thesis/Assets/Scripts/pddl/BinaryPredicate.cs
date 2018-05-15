@@ -39,4 +39,31 @@ public class BinaryPredicate : IPredicate {
 		return _source + " " + _name + " " + _destination; 
 	}
 
+    public override bool Equals(object obj)
+    {
+		if (obj == null)
+			return false;
+        
+		if(obj.GetType() != typeof(BinaryPredicate))
+            return false;
+
+		BinaryPredicate otherPredicate = obj as BinaryPredicate;
+        if(_source.Equals(otherPredicate.Source) == false)
+            return false;
+        if(_name.Equals(otherPredicate.Name) == false)
+            return false;
+        if(_destination.Equals(otherPredicate.Destination) == false)
+            return false;
+        return true;
+    }
+
+    public override int GetHashCode()
+    {
+        int hashCode = 181846194;
+        hashCode = hashCode * -1521134295 + _source.GetHashCode();
+        hashCode = hashCode * -1521134295 + _name.GetHashCode();
+        hashCode = hashCode * -1521134295 + _destination.GetHashCode();
+        return hashCode;
+    }
+
 }

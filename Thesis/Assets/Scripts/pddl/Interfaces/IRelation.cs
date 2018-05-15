@@ -5,4 +5,5 @@ using UnityEngine;
 public interface IRelation
 {
 	string ToString();
+    bool Equals(object obj); 
 }

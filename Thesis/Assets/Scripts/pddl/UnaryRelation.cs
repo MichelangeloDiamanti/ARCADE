@@ -39,5 +39,32 @@ public class UnaryRelation : IRelation
     {
         return _source.Name + " " + _predicate.Name + ": " + _value;
     }
-    
+
+    public override bool Equals(object obj)
+    {
+		if (obj == null)
+			return false;
+            
+        if(obj.GetType() != typeof(UnaryRelation))
+            return false;
+
+		UnaryRelation otherRelation = obj as UnaryRelation;
+        if(_source.Equals(otherRelation.Source) == false)
+            return false;
+        if(_predicate.Equals(otherRelation.Predicate) == false)
+            return false;
+        if(_value.Equals(otherRelation.Value) == false)
+            return false;
+        return true;
+    }
+
+    public override int GetHashCode()
+    {
+        int hashCode = 181846194;
+        hashCode = hashCode * -1521134295 + _source.GetHashCode();
+        hashCode = hashCode * -1521134295 + _predicate.GetHashCode();
+        hashCode += (_value == true) ? 1 : 0;
+        return hashCode;
+    }
+
 }

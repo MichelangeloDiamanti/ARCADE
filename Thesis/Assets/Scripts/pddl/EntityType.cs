@@ -18,23 +18,20 @@ public class EntityType{
 
 	public override bool Equals(object obj)
 	{
-		var other = obj as EntityType;
+		EntityType other = obj as EntityType;
 
 		if (other == null)
-		{
 			return false;
-		}
 
-		if(this.Type.Equals(other.Type) == false){
+		if(_type.Equals(other.Type) == false)
 			return false;
-		}
 
 		return true;
 	}
 
 	public override int GetHashCode()
 	{
-		return this._type.GetHashCode();
+		return _type.GetHashCode();
 	}
 
 	public override string ToString(){

@@ -39,7 +39,7 @@ public class WorldState
         if (relations == null || relations.Count == 0)
             throw new System.ArgumentNullException("Relations cannot be null or empty", "List<Relation> relations");
 
-        this._domain = domain;
+        _domain = domain;
         foreach(Entity e in entities)
             this.addEntity(e);
         foreach (IRelation r in relations)
@@ -58,30 +58,31 @@ public class WorldState
 
     public void addRelation(IRelation r)
     {
-        if (relationExists(r) == false)
+        if (_relations.Contains(r))
+            throw new System.ArgumentException("Relation is already defined in the current state", r.ToString());
+        if (r.GetType() == typeof(UnaryRelation))
         {
-            if (r.GetType() == typeof(UnaryRelation))
-            {
-                UnaryRelation bp = r as UnaryRelation;
-                if (!_entities.Contains(bp.Source))
-                {
-                    throw new System.ArgumentException("Source Entity: " + bp.Source.Name + " not added to the list of entities", "List<Entity> Entities");
-                }
-            }
-            if (r.GetType() == typeof(BinaryRelation))
-            {
-                BinaryRelation bp = r as BinaryRelation;
-                if (!_entities.Contains(bp.Source))
-                {
-                    throw new System.ArgumentException("Source Entity: " + bp.Source.Name + " not added to the list of entities", "List<Entity> Entities");
-                }
-                if (!_entities.Contains(bp.Destination))
-                {
-                    throw new System.ArgumentException("Destination Entity: " + bp.Destination.Name + " not added to the list of entities", "List<Entity> Entities");
-                }
-            }
-            _relations.Add(r);
+            UnaryRelation ur = r as UnaryRelation;
+            // check that the source entitiy in the relation is already part of the state
+            if (_entities.Contains(ur.Source) == false)
+                throw new System.ArgumentException("Relation source " + ur.Source + " does not exist in this state");
+            // check that all the predicate in the relation is defined in the domain
+            if(this.Domain.predicateExists(ur.Predicate) == false)
+                throw new System.ArgumentException("Relation predicate " + ur.Predicate + " does not exist in this domain");
         }
+        if (r.GetType() == typeof(BinaryRelation))
+        {
+            BinaryRelation br = r as BinaryRelation;
+            // check that the source and destination entitiy in the relation is already part of the state
+            if (_entities.Contains(br.Source) == false)
+                throw new System.ArgumentException("Relation source " + br.Source + " does not exist in this state");
+            if (_entities.Contains(br.Destination) == false)
+                throw new System.ArgumentException("Relation destination " + br.Destination + " does not exist in this state");
+            // check that all the predicate in the relation is defined in the domain
+            if(this.Domain.predicateExists(br.Predicate) == false)
+                throw new System.ArgumentException("Relation predicate " + br.Predicate + " does not exist in this domain");
+        }
+        _relations.Add(r);
     }
 
     public bool relationExists(IRelation relation)

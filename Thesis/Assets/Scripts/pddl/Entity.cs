@@ -26,28 +26,24 @@ public class Entity {
 
 	public override bool Equals(object obj)
 	{
-		var other = obj as Entity;
+		Entity other = obj as Entity;
 
 		if (other == null)
-		{
 			return false;
-		}
-
-		if(this.Type.Equals(other.Type) == false){
+		if(_type.Equals(other.Type) == false)
 			return false;
-		}
-
-		if(this.Name.Equals(other.Name) == false){
+		if(_name.Equals(other.Name) == false)
 			return false;
-		}
 
 		return true;
 	}
 
 	public override int GetHashCode()
 	{
-		string s = _name + _type;
-		return s.GetHashCode();
+        int hashCode = 181846194;
+        hashCode = hashCode * -1521134295 + _name.GetHashCode();
+        hashCode = hashCode * -1521134295 + _type.GetHashCode();
+		return hashCode;
 	}
 
 	public override string ToString(){
