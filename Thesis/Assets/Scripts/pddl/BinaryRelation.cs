@@ -73,12 +73,43 @@ public class BinaryRelation : IRelation
 
     public override int GetHashCode()
     {
-        int hashCode = 181846194;
-        hashCode = hashCode * -1521134295 + _source.GetHashCode();
-        hashCode = hashCode * -1521134295 + _predicate.GetHashCode();
-        hashCode = hashCode * -1521134295 + _destination.GetHashCode();
-        hashCode += (_value == true) ? 1 : 0;
-        return hashCode;
+        unchecked
+        {
+            int hashCode = 17;
+            hashCode = hashCode * 23 + _source.GetHashCode();
+            hashCode = hashCode * 23 + _predicate.GetHashCode();
+            hashCode = hashCode * 23 + _destination.GetHashCode();
+            hashCode += (_value == true) ? 1 : 0;
+            return hashCode;
+        }
     }
+
+    public IPredicate getPredicate()
+    {
+        return _predicate;
+    }
+
+    public bool EqualsThroughPredicate(object obj)
+    {
+        var other = obj as BinaryRelation;
+
+        if (other == null)
+        {
+            return false;
+        }
+
+        if (_source.Type.Equals(other.Source.Type))
+        {
+            if (_destination.Type.Equals(other.Destination.Type))
+            {
+                if (_predicate.Equals(other.Predicate))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 
 }

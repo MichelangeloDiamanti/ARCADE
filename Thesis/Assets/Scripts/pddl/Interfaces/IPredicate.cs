@@ -6,4 +6,5 @@ public interface IPredicate
 {
 	string ToString();
     bool Equals(object obj); 
+	string GetName();
 }

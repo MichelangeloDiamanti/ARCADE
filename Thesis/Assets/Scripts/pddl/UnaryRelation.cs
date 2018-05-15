@@ -60,11 +60,37 @@ public class UnaryRelation : IRelation
 
     public override int GetHashCode()
     {
-        int hashCode = 181846194;
-        hashCode = hashCode * -1521134295 + _source.GetHashCode();
-        hashCode = hashCode * -1521134295 + _predicate.GetHashCode();
-        hashCode += (_value == true) ? 1 : 0;
-        return hashCode;
+        unchecked
+        {
+            int hashCode = 17;
+            hashCode = hashCode * 23 + _source.GetHashCode();
+            hashCode = hashCode * 23 + _predicate.GetHashCode();
+            hashCode += (_value == true) ? 1 : 0;
+            return hashCode;
+        }
+    }
+    public IPredicate getPredicate()
+    {
+        return _predicate;
+    }
+    public bool EqualsThroughPredicate(object obj)
+    {
+        var other = obj as UnaryRelation;
+
+        if (other == null)
+        {
+            return false;
+        }
+
+        if (this._source.Type.Equals(other.Source.Type))
+        {
+            if (this._predicate.Equals(other.Predicate))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 }
