@@ -198,28 +198,26 @@ public class DomainNew
         return false;
     }
 
-    public IPredicate findPredicateByName(string name)
+    public IPredicate getPredicate(string name)
     {
         IPredicate predicate = null;
         foreach (IPredicate p in _predicates)
         {
             if (p.GetName().Equals(name))
-            {
                 return p;
-            }
         }
         return predicate;
     }
 
-    public UnaryRelation generateRelationFromPredicateName(string name, Entity source)
+    public UnaryRelation generateRelationFromPredicateName(string name, Entity source, bool value)
     {
         UnaryRelation relation = null;
         UnaryPredicate up = null;
-        IPredicate p = findPredicateByName(name);
+        IPredicate p = getPredicate(name);
         if (p.GetType() == typeof(UnaryPredicate))
         {
             up = p as UnaryPredicate;
-            relation = new UnaryRelation(source, up, true);
+            relation = new UnaryRelation(source, up, value);
         }
         else
         {
@@ -228,15 +226,15 @@ public class DomainNew
         return relation;
     }
 
-    public BinaryRelation generateRelationFromPredicateName(string name, Entity source, Entity destination)
+    public BinaryRelation generateRelationFromPredicateName(string name, Entity source, Entity destination, bool value)
     {
         BinaryRelation relation = null;
         BinaryPredicate bp = null;
-        IPredicate p = findPredicateByName(name);
+        IPredicate p = getPredicate(name);
         if (p.GetType() == typeof(BinaryPredicate))
         {
             bp = p as BinaryPredicate;
-            relation = new BinaryRelation(source, bp, destination, true);
+            relation = new BinaryRelation(source, bp, destination, value);
         }
         else
         {
