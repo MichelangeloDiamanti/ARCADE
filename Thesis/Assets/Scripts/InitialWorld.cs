@@ -14,10 +14,9 @@ public class InitialWorld : MonoBehaviour
         worldState = new WorldState();
         roverWorldDomainFullDetail();
         worldState.Domain = domain;
+        RoverWorldStateInit();
 
-        Entity curiosity = new Entity(new EntityType("ROVER"), "CURIOSITY");
-
-        Debug.Log(domain.ToString());	
+        Debug.Log(worldState.ToString());	
     }
 
     // Update is called once per frame
@@ -29,8 +28,16 @@ public class InitialWorld : MonoBehaviour
     private void RoverWorldStateInit()
     {
         Entity location = new Entity(new EntityType("WAYPOINT"), "location1");
+        worldState.addEntity(location);
         Entity location1 = new Entity(new EntityType("WAYPOINT"), "location2");
+        worldState.addEntity(location1);
         Entity rover = new Entity(new EntityType("ROVER"), "rover");
+        worldState.addEntity(rover);
+
+        BinaryRelation canMove = domain.generateRelationFromPredicateName("CAN_MOVE", location, location1);
+        worldState.addRelation(canMove);
+        BinaryRelation at = domain.generateRelationFromPredicateName("AT", rover, location);
+        worldState.addRelation(at);
 
         // BinaryRelation canMove = new BinaryRelation()
     }

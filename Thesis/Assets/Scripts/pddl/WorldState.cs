@@ -32,7 +32,7 @@ public class WorldState
 
     public WorldState(DomainNew domain, List<Entity> entities, List<IRelation> relations)
     {
-        if(domain == null)
+        if (domain == null)
             throw new System.ArgumentNullException("The domain of the worldState cannot be null", "Domain");
         if (entities == null || entities.Count == 0)
             throw new System.ArgumentNullException("Entities cannot be null or empty", "List<Entity> entities");
@@ -40,7 +40,7 @@ public class WorldState
             throw new System.ArgumentNullException("Relations cannot be null or empty", "List<Relation> relations");
 
         this._domain = domain;
-        foreach(Entity e in entities)
+        foreach (Entity e in entities)
             this.addEntity(e);
         foreach (IRelation r in relations)
             this.addRelation(r);
@@ -48,10 +48,10 @@ public class WorldState
 
     public void addEntity(Entity e)
     {
-        if(Domain.entityTypeExists(e.Type) == false)
-            throw new System.ArgumentException(e.Name + " is of a type which has not been declared in the domain");            
-        if(entityExists(e))
-            throw new System.ArgumentException(e.Name + " already added to the list of entities", "List<Entity> Entities");            
+        if (Domain.entityTypeExists(e.Type) == false)
+            throw new System.ArgumentException(e.Name + " is of a type which has not been declared in the domain");
+        if (entityExists(e))
+            throw new System.ArgumentException(e.Name + " already added to the list of entities", "List<Entity> Entities");
 
         _entities.Add(e);
     }
@@ -131,6 +131,53 @@ public class WorldState
             }
         }
         return false;
+    }
+
+    public override string ToString()
+    {
+        string s = Domain.ToString();
+        s += "\n Entities:\n";
+        foreach (Entity e in _entities)
+        {
+            s += e.ToString();
+            s += "\n";
+        }
+
+        s += "\n Relations:\n";
+        foreach (IRelation e in _relations)
+        {
+            s += e.ToString();
+            s += "\n";
+        }
+
+        return s;
+    }
+
+    public List<Action> getPossibleActions()
+    {
+        List<Action> list = new List<Action>();
+        List<Action> possibleActions = new List<Action>();
+        foreach (Action a in _domain.Actions())
+        {
+            int count = 0;
+            foreach (IRelation r in a.PreConditions)
+            {
+                if (_relations.Contains(r))
+                {
+                    count++;
+                }
+                else
+                {
+                    count = 0;
+                    break;
+                }
+            }
+            if (count == a.PreConditions.Count)
+            {
+                possibleActions.Add(a);
+            }
+        }
+        return list;
     }
 
 }

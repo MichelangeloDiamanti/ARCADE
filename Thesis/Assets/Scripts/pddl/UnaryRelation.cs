@@ -39,5 +39,42 @@ public class UnaryRelation : IRelation
     {
         return _source.Name + " " + _predicate.Name + ": " + _value;
     }
-    
+    public IPredicate getPredicate()
+    {
+        return _predicate;
+    }
+
+    public override bool Equals(object obj)
+    {
+        var other = obj as UnaryRelation;
+
+        if (other == null)
+        {
+            return false;
+        }
+
+        if (this._source.Type.Equals(other.Source.Type))
+        {
+            if (this._predicate.Equals(other.Predicate))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public override int GetHashCode()
+    {
+        unchecked // Overflow is fine, just wrap
+        {
+            int hash = 17;
+            // Suitable nullity checks etc, of course :)
+            hash = hash * 23 + _predicate.GetHashCode();
+            hash = hash * 23 + _source.GetHashCode();
+            hash = hash * 23 + _value.GetHashCode();
+            return hash;
+        }
+    }
+
 }
