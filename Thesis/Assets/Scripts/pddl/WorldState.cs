@@ -136,15 +136,18 @@ public class WorldState
 
     public override string ToString()
     {
-        string s = Domain.ToString();
-        s += "\n Entities:\n";
+
+        string s = "DOMAIN:\n\n";
+        s += Domain.ToString();
+        s += "\nWORLD STATE:\n";
+        s += "\nEntities:\n";
         foreach (Entity e in _entities)
         {
             s += e.ToString();
             s += "\n";
         }
 
-        s += "\n Relations:\n";
+        s += "\nRelations:\n";
         foreach (IRelation e in _relations)
         {
             s += e.ToString();

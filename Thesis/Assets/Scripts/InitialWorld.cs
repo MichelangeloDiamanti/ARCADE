@@ -14,7 +14,7 @@ public class InitialWorld : MonoBehaviour
         worldState = new WorldState();
         roverWorldDomainFullDetail();
         worldState.Domain = domain;
-        RoverWorldStateInit();
+        roverWorldStateFullDetail();
 
         Debug.Log(worldState.ToString());	
     }
@@ -28,6 +28,13 @@ public class InitialWorld : MonoBehaviour
     private void roverWorldStateFullDetail()
     {
         Entity rover = new Entity(new EntityType("ROVER"), "ROVER");
+        worldState.addEntity(rover);
+
+        // for(int i = 1; i <= 9; i++)
+        // {
+        //     Entity wayPoint = new Entity(new EntityType("WAYPOINT"), "WAYPOINT" + i);
+        //     worldState.addEntity(wayPoint);
+        // }
 
         Entity wayPoint1 = new Entity(new EntityType("WAYPOINT"), "WAYPOINT1");
         Entity wayPoint2 = new Entity(new EntityType("WAYPOINT"), "WAYPOINT2");
