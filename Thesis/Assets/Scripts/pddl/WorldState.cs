@@ -4,7 +4,7 @@ using System.Data;
 
 public class WorldState
 {
-    private DomainNew _domain;
+    private Domain _domain;
     private List<IRelation> _relations;
     private List<Entity> _entities;
 
@@ -17,7 +17,7 @@ public class WorldState
         get { return _entities; }
     }
 
-    public DomainNew Domain
+    public Domain Domain
     {
         get { return _domain; }
         set { _domain = value; }
@@ -25,12 +25,12 @@ public class WorldState
 
     public WorldState()
     {
-        _domain = new DomainNew();
+        _domain = new Domain();
         _entities = new List<Entity>();
         _relations = new List<IRelation>();
     }
 
-    public WorldState(DomainNew domain, List<Entity> entities, List<IRelation> relations)
+    public WorldState(Domain domain, List<Entity> entities, List<IRelation> relations)
     {
         if (domain == null)
             throw new System.ArgumentNullException("The domain of the worldState cannot be null", "Domain");

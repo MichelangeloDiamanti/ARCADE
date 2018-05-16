@@ -5,12 +5,12 @@ using System.Data;
 
 public class InitialWorld : MonoBehaviour
 {
-    DomainNew domain;
+    Domain domain;
     WorldState worldState;
     // Use this for initialization
     void Start()
     {
-        domain = new DomainNew();
+        domain = new Domain();
         worldState = new WorldState();
         roverWorldDomainFullDetail();
         worldState.Domain = domain;
@@ -333,55 +333,5 @@ public class InitialWorld : MonoBehaviour
         domain.addAction(takeImageAction);
 
     }
-    private void villaggeBanditWorldFullDetail(){
-        EntityType character = new EntityType("CHARACTER");
-        Domain.addEntityType(character);
-        
-        EntityType location = new EntityType("LOCATION");
-        Domain.addEntityType(location);
 
-        // Entity village1 = new Entity(location, "village1");
-        // Domain.addEntity(village1);
-        // Entity village2 = new Entity(location, "village2");
-        // Domain.addEntity(village2);
-
-        // Entity mayorVillage1 = new Entity(character, "mayorVillage1");
-        // Domain.addEntity(mayorVillage1);
-        // Entity mayorVillage2 = new Entity(character, "mayorVillage2");
-        // Domain.addEntity(mayorVillage2);
-        // Entity citizensVillage1 = new Entity(character, "citizensVillage1");
-        // Domain.addEntity(citizensVillage1);
-        // Entity citizensVillage2 = new Entity(character, "citizensVillage2");
-        // Domain.addEntity(citizensVillage2);
-        // Entity bandits = new Entity(character, "bandits");
-        // Domain.addEntity(bandits);
-
-        BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location);
-        Domain.addPredicate(isAt);
-
-        UnaryPredicate increaseTaxes = new UnaryPredicate(character, "INCREASE_TAXES");
-        Domain.addPredicate(increaseTaxes);
-        UnaryPredicate decreaseTaxes = new UnaryPredicate(character, "DECREASE_TAXES");
-        Domain.addPredicate(decreaseTaxes);
-        
-        UnaryPredicate happyAboutTaxes = new UnaryPredicate(character, "HAPPY_ABOUT_TAXES");
-        Domain.addPredicate(happyAboutTaxes);
-        UnaryPredicate angryAboutTaxes = new UnaryPredicate(character, "ANGRY_ABOUT_TAXES");
-        Domain.addPredicate(angryAboutTaxes);
-
-        UnaryPredicate callForHelp = new UnaryPredicate(character, "CALL_FOR_HELP");
-        Domain.addPredicate(callForHelp);
-
-        BinaryPredicate attack = new BinaryPredicate(character, "ATTACK", location);
-        Domain.addPredicate(attack);
-
-        // // citizens are in their own respecting villages
-        // BinaryRelation CV1IsAtV1 = new BinaryRelation(citizensVillage1, isAt, village1, true);
-        // BinaryRelation CV2IsAtV2 = new BinaryRelation(citizensVillage2, isAt, village2, true);
-
-        // // mayors are in their own respecting villages
-        // BinaryRelation MV1IsAtV1 = new BinaryRelation(mayorVillage1, isAt, village1, true);
-        // BinaryRelation MV2IsAtV2 = new BinaryRelation(mayorVillage2, isAt, village2, true);
-
-    }
 }
