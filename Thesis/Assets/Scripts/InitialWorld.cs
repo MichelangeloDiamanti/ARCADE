@@ -16,7 +16,7 @@ public class InitialWorld : MonoBehaviour
         worldState.Domain = domain;
         RoverWorldStateInit();
 
-        Debug.Log(worldState.ToString());	
+        // Debug.Log(worldState.ToString());	
     }
 
     // Update is called once per frame
@@ -38,6 +38,8 @@ public class InitialWorld : MonoBehaviour
         worldState.addRelation(canMove);
         BinaryRelation at = domain.generateRelationFromPredicateName("AT", rover, location);
         worldState.addRelation(at);
+
+        worldState.getPossibleActions();
 
         // BinaryRelation canMove = new BinaryRelation()
     }
