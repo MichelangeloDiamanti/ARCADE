@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using UnityEngine;
 
 public class WorldState
 {
@@ -40,7 +41,7 @@ public class WorldState
             throw new System.ArgumentNullException("Relations cannot be null or empty", "List<Relation> relations");
 
         _domain = domain;
-        foreach(Entity e in entities)
+        foreach (Entity e in entities)
             this.addEntity(e);
         foreach (IRelation r in relations)
             this.addRelation(r);
@@ -67,7 +68,7 @@ public class WorldState
             if (_entities.Contains(ur.Source) == false)
                 throw new System.ArgumentException("Relation source " + ur.Source + " does not exist in this state");
             // check that all the predicate in the relation is defined in the domain
-            if(this.Domain.predicateExists(ur.Predicate) == false)
+            if (this.Domain.predicateExists(ur.Predicate) == false)
                 throw new System.ArgumentException("Relation predicate " + ur.Predicate + " does not exist in this domain");
         }
         if (r.GetType() == typeof(BinaryRelation))
@@ -79,7 +80,7 @@ public class WorldState
             if (_entities.Contains(br.Destination) == false)
                 throw new System.ArgumentException("Relation destination " + br.Destination + " does not exist in this state");
             // check that all the predicate in the relation is defined in the domain
-            if(this.Domain.predicateExists(br.Predicate) == false)
+            if (this.Domain.predicateExists(br.Predicate) == false)
                 throw new System.ArgumentException("Relation predicate " + br.Predicate + " does not exist in this domain");
         }
         _relations.Add(r);
@@ -157,6 +158,18 @@ public class WorldState
         return s;
     }
 
+    private bool relationsContains(IRelation rel)
+    {
+        foreach (IRelation item in _relations)
+        {
+            if (rel.EqualsThroughPredicate(item))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public List<Action> getPossibleActions()
     {
         List<Action> list = new List<Action>();
@@ -166,7 +179,7 @@ public class WorldState
             int count = 0;
             foreach (IRelation r in a.PreConditions)
             {
-                if (_relations.Contains(r))
+                if (relationsContains(r))
                 {
                     count++;
                 }
@@ -179,6 +192,7 @@ public class WorldState
             if (count == a.PreConditions.Count)
             {
                 possibleActions.Add(a);
+                Debug.Log(a.ToString());
             }
         }
         return list;
