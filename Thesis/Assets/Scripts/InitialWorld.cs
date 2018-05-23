@@ -15,6 +15,7 @@ public class InitialWorld : MonoBehaviour
         roverWorldDomainFullDetail();
         worldState.Domain = domain;
         roverWorldStateFullDetail();
+        worldState.getPossibleActions();
 
         // Debug.Log(worldState.ToString());	
     }
