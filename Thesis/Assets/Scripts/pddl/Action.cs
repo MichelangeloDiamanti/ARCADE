@@ -29,13 +29,13 @@ public class Action
     
     public Action(List<IRelation> preconditions, string name, List<Entity> parameters, List<IRelation> postconditions)
     {
-        if (preconditions == null || preconditions.Count == 0)
+        if (preconditions == null)
             throw new System.ArgumentNullException("ActionDefinition: List of precondiction cannot be null or empty", "List<IPredicate> precondition");
         if (name == null)
             throw new System.ArgumentNullException("ActionDefinition: name cannot be null", "name");
-        if (postconditions == null || postconditions.Count == 0)
+        if (postconditions == null)
             throw new System.ArgumentNullException("ActionDefinition: List of postcondition cannot be null or empty", "List<IPredicate> postcondition");
-        if (parameters == null || parameters.Count == 0)
+        if (parameters == null)
             throw new System.ArgumentNullException("ActionDefinition: List of parameter cannot be null or empty", "List<EntityType> parameter");
 
         checkVariableInRelation(preconditions, parameters);

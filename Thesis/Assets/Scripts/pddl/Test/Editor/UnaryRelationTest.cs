@@ -23,4 +23,55 @@ public class UnaryRelationTest {
 
 		Assert.That(()=> new UnaryRelation(school, isRich, true), Throws.ArgumentException);
 	}
+
+	[Test]
+	public void UnaryRelationsAreEqualIfAllAttributesAreEqual() {
+		EntityType entityType1 = new EntityType("CHARACTER");
+		EntityType entityType2 = new EntityType("CHARACTER");
+
+		Entity entity1 = new Entity(entityType1, "JOHN");
+		Entity entity2 = new Entity(entityType2, "JOHN");
+
+		UnaryPredicate up1 = new UnaryPredicate(entityType1, "IS_RICH");
+		UnaryPredicate up2 = new UnaryPredicate(entityType2, "IS_RICH");
+
+		UnaryRelation ur1 = new UnaryRelation(entity1, up1, true);
+		UnaryRelation ur2 = new UnaryRelation(entity2, up2, true);
+
+		Assert.True(ur1.Equals(ur2) && ur1.GetHashCode() == ur2.GetHashCode());
+	}
+
+	[Test]
+	public void UnaryRelationsAreNotEqualIfSourceIsNotEqual() {
+		EntityType entityType1 = new EntityType("CHARACTER");
+		EntityType entityType2 = new EntityType("CHARACTER2");
+
+		Entity entity1 = new Entity(entityType1, "JOHN");
+		Entity entity2 = new Entity(entityType2, "JOHN");
+
+		UnaryPredicate up1 = new UnaryPredicate(entityType1, "IS_RICH");
+		UnaryPredicate up2 = new UnaryPredicate(entityType2, "IS_RICH");
+
+		UnaryRelation ur1 = new UnaryRelation(entity1, up1, true);
+		UnaryRelation ur2 = new UnaryRelation(entity2, up2, true);
+
+		Assert.False(ur1.Equals(ur2) || ur1.GetHashCode() == ur2.GetHashCode());
+	}
+
+	[Test]
+	public void UnaryRelationsAreNotEqualIfNameIsNotEqual() {
+		EntityType entityType1 = new EntityType("CHARACTER");
+		EntityType entityType2 = new EntityType("CHARACTER");
+
+		Entity entity1 = new Entity(entityType1, "JOHN");
+		Entity entity2 = new Entity(entityType2, "JOHN2");
+
+		UnaryPredicate up1 = new UnaryPredicate(entityType1, "IS_RICH");
+		UnaryPredicate up2 = new UnaryPredicate(entityType2, "IS_RICH");
+
+		UnaryRelation ur1 = new UnaryRelation(entity1, up1, true);
+		UnaryRelation ur2 = new UnaryRelation(entity2, up2, true);
+
+		Assert.False(ur1.Equals(ur2) || ur1.GetHashCode() == ur2.GetHashCode());
+	}
 }
