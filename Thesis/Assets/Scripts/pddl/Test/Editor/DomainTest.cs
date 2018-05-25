@@ -15,6 +15,66 @@ public class DomainTest {
 	}
 
 	[Test]
+	public void GetEntityTypeReturnsCorrectEntityType() {
+		Domain domain = new Domain();
+		EntityType character = new EntityType("CHARACTER");
+		domain.addEntityType(character);
+		EntityType getCharacter = domain.getEntityType("CHARACTER");
+
+		Assert.AreEqual(getCharacter, character);
+	}
+	
+	[Test]
+	public void GetPredicateReturnsCorrectEntityType() {
+		Domain domain = new Domain();
+
+		EntityType character = new EntityType("CHARACTER");
+		EntityType artifact = new EntityType("ARTIFACT");
+		domain.addEntityType(character);
+		domain.addEntityType(artifact);
+		
+		BinaryPredicate binaryPredicate = new BinaryPredicate(character, "PICK_UP", artifact);
+		domain.addPredicate(binaryPredicate);
+
+		object getBinaryPredicate = domain.getPredicate("PICK_UP");
+		Assert.AreEqual(getBinaryPredicate, binaryPredicate);
+	}
+
+	[Test]
+	public void GetActionReturnsCorrectAction() {
+		Domain domain = new Domain();
+
+		EntityType sourceEntityType1 = new EntityType("CHARACTER");
+		EntityType destinationEntityType1 = new EntityType("ARTIFACT");
+		domain.addEntityType(sourceEntityType1);
+		domain.addEntityType(destinationEntityType1);
+
+		Entity sourceEntity1 = new Entity(sourceEntityType1, "JOHN");
+		Entity destinationEntity1 = new Entity(destinationEntityType1, "APPLE");
+
+		BinaryPredicate bp1 = new BinaryPredicate(sourceEntityType1, "PICK_UP", destinationEntityType1);
+		domain.addPredicate(bp1);
+
+		BinaryRelation br1 = new BinaryRelation(sourceEntity1, bp1, destinationEntity1, true);
+
+		List<Entity> parametersAction1 = new List<Entity>();
+		parametersAction1.Add(sourceEntity1);
+		parametersAction1.Add(destinationEntity1);
+
+		List<IRelation> preconditionsAction1 = new List<IRelation>();
+		preconditionsAction1.Add(br1);
+		List<IRelation> postconditionsAction1 = new List<IRelation>();
+		postconditionsAction1.Add(br1);
+
+		Action action = new Action(preconditionsAction1, "PICK_UP", parametersAction1, postconditionsAction1);
+		domain.addAction(action);
+
+		object getAction = domain.getAction("PICK_UP");
+		Assert.AreEqual(action, getAction);
+	}
+
+
+	[Test]
 	public void UnaryPredicateCanOnlyBeOfExistingType() {
 		Domain domain = new Domain();
 		EntityType character = new EntityType("CHARACTER");

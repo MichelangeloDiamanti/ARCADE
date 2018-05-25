@@ -198,15 +198,34 @@ public class Domain
         return false;
     }
 
+    public EntityType getEntityType(string name)
+    {
+        foreach (EntityType et in _entityTypes)
+        {
+            if(et.Type.Equals(name))
+                return et;
+        }
+        return null;
+    }
+
     public IPredicate getPredicate(string name)
     {
-        IPredicate predicate = null;
         foreach (IPredicate p in _predicates)
         {
             if (p.GetName().Equals(name))
                 return p;
         }
-        return predicate;
+        return null;
+    }
+
+    public Action getAction(string name)
+    {
+        foreach (Action a in _actions)
+        {
+            if(a.Name.Equals(name))
+                return a;
+        }
+        return null;
     }
 
     public UnaryRelation generateRelationFromPredicateName(string name, Entity source, bool value)
