@@ -191,10 +191,59 @@ public class WorldState
             }
             if (count == a.PreConditions.Count)
             {
-                possibleActions.Add(a);
-                Debug.Log(a.ToString());
+                if (!possibleActions.Contains(a))
+                {
+                    possibleActions.Add(a);
+                }
             }
         }
+        foreach (Action a in possibleActions)
+        {
+            // List<IRelation> preConditions = new List<IRelation>();
+            // bool cicleValue = true;
+            // while (cicleValue)
+            // {
+            //     foreach (IRelation item in a.PreConditions)
+            //     {
+            //         IPredicate pred = item.getPredicate();
+            //         if (pred.GetType() == typeof(BinaryPredicate))
+            //         {
+            //             BinaryPredicate bp = pred as BinaryPredicate;
+
+            //         }
+            //         else if (pred.GetType() == typeof(UnaryPredicate))
+            //         {
+            //             UnaryPredicate up = pred as UnaryPredicate;
+
+            //         }
+            //     }
+            // }
+
+            string ciao = "Possible Actions: " + a.ToString() + "\n" + "Coinvolte: ";
+            foreach (Entity item in a.Parameters)
+            {
+                // foreach (Entity entity in _entities)
+                // {
+                //     if (item.Type.Equals(entity.Type))
+                //     {
+                //         if (!(sobstitution.ContainsKey(item) && sobstitution.ContainsValue(entity)))
+                //         {
+                //             sobstitution.Add(item, entity);
+                //             break;
+                //         }
+                //     }
+                // }
+                ciao += item.ToString() + "\n";
+            }
+            Debug.Log(ciao);
+
+
+            Dictionary<Entity, Entity> sobstitution = new Dictionary<Entity, Entity>();
+            //TODO: Fisso una entità e cambio le altre così fino a fare tutte le combinazioni.             
+
+        }
+
+
         return list;
     }
 
