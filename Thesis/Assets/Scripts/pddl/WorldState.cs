@@ -180,83 +180,6 @@ public class WorldState
         return false;
     }
 
-    public List<Action> getPossibleActions()
-    {
-        List<Action> list = new List<Action>();
-        List<Action> possibleActions = new List<Action>();
-        foreach (Action a in _domain.Actions())
-        {
-            int count = 0;
-            foreach (IRelation r in a.PreConditions)
-            {
-                if (relationsContains(r))
-                {
-                    count++;
-                }
-                else
-                {
-                    count = 0;
-                    break;
-                }
-            }
-            if (count == a.PreConditions.Count)
-            {
-                if (!possibleActions.Contains(a))
-                {
-                    possibleActions.Add(a);
-                }
-            }
-        }
-        foreach (Action a in possibleActions)
-        {
-            // List<IRelation> preConditions = new List<IRelation>();
-            // bool cicleValue = true;
-            // while (cicleValue)
-            // {
-            //     foreach (IRelation item in a.PreConditions)
-            //     {
-            //         IPredicate pred = item.getPredicate();
-            //         if (pred.GetType() == typeof(BinaryPredicate))
-            //         {
-            //             BinaryPredicate bp = pred as BinaryPredicate;
-
-            //         }
-            //         else if (pred.GetType() == typeof(UnaryPredicate))
-            //         {
-            //             UnaryPredicate up = pred as UnaryPredicate;
-
-            //         }
-            //     }
-            // }
-
-            string ciao = "Possible Actions: " + a.ToString() + "\n" + "Coinvolte: ";
-            foreach (Entity item in a.Parameters)
-            {
-                // foreach (Entity entity in _entities)
-                // {
-                //     if (item.Type.Equals(entity.Type))
-                //     {
-                //         if (!(sobstitution.ContainsKey(item) && sobstitution.ContainsValue(entity)))
-                //         {
-                //             sobstitution.Add(item, entity);
-                //             break;
-                //         }
-                //     }
-                // }
-                ciao += item.ToString() + "\n";
-            }
-            Debug.Log(ciao);
-
-
-            Dictionary<Entity, Entity> sobstitution = new Dictionary<Entity, Entity>();
-            //TODO: Fisso una entità e cambio le altre così fino a fare tutte le combinazioni.             
-
-        }
-
-
-        return list;
-    }
-
     public WorldState Clone()
     {
         List<Entity> newEntities = new List<Entity>();
@@ -294,4 +217,71 @@ public class WorldState
         return resultingState;
     }
 
+    public List<Action> getPossibleActions()
+    {
+        List<Action> list = new List<Action>();
+        List<Action> possibleActions = new List<Action>();
+        foreach (Action a in _domain.Actions())
+        {
+            int count = 0;
+            foreach (IRelation r in a.PreConditions)
+            {
+                if (relationsContains(r))
+                {
+                    count++;
+                }
+                else
+                {
+                    count = 0;
+                    break;
+                }
+            }
+            if (count == a.PreConditions.Count)
+            {
+                if (!possibleActions.Contains(a))
+                {
+                    possibleActions.Add(a);
+                }
+            }
+        }
+        foreach (Action a in possibleActions)
+        {
+            string ciao = "Possible Actions: " + a.ToString() + "\n" + "Coinvolte: ";
+            foreach (Entity item in a.Parameters)
+            {
+                ciao += item.ToString() + "\n";
+            }
+            Debug.Log(ciao);
+
+
+            bool whileCondition = true;
+            //TODO: Fisso una entità e cambio le altre così fino a fare tutte le combinazioni.      
+            while (whileCondition)
+            {
+                Dictionary<Entity, Entity> sobstitution = new Dictionary<Entity, Entity>();
+                foreach (Entity item in a.Parameters)
+                {
+                    if (!sobstitution.ContainsKey(item))
+                    {
+                        foreach (Entity e in _entities)
+                        {
+                            if (!sobstitution.ContainsValue(e) && item.Type.Equals(e.Type))
+                            {
+                                sobstitution.Add(item, e);
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (sobstitution.Count == 0)
+                {
+                    whileCondition = false;
+                }
+            }
+
+        }
+
+
+        return list;
+    }
 }
