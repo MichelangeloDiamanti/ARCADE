@@ -19,7 +19,7 @@ public class UnaryRelation : IRelation
     public bool Value
     {
         get { return _value; }
-        set { _value = Value; }
+        set { _value = value; }
     }
     public UnaryRelation(Entity source, UnaryPredicate predicate, bool value)
     {

@@ -213,7 +213,13 @@ public class WorldStateTest {
         BinaryRelation isAt1 = domain.generateRelationFromPredicateName("AT", entityCuriosity, wayPoint1, true);
         worldState.addRelation(isAt1);
 
+		List<IRelation> expectedWorldRelationsAfterAction = new List<IRelation>();
+		expectedWorldRelationsAfterAction.Add(canMove1);
+		expectedWorldRelationsAfterAction.Add(notRoverAtFromWP);
+		expectedWorldRelationsAfterAction.Add(roverAtToWP);
+		expectedWorldRelationsAfterAction.Add(roverBeenAtToWP);
+
 		WorldState newWorldState = worldState.applyAction(actionMove);
-		Assert.Contains(actionMovePostconditions, newWorldState.Relations);//newWorldState.Relations, actionMovePostconditions);
+		Assert.AreEqual(expectedWorldRelationsAfterAction, newWorldState.Relations);
 	}
 }

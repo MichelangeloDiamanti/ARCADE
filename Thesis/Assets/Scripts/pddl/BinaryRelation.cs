@@ -24,7 +24,7 @@ public class BinaryRelation : IRelation
     public bool Value
     {
         get { return _value; }
-        set { _value = Value; }
+        set { _value = value; }
     }
 
     public BinaryRelation(Entity source, BinaryPredicate predicate, Entity destination, bool value)
