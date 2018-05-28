@@ -31,6 +31,13 @@ public class WorldState
         _relations = new List<IRelation>();
     }
 
+    public WorldState(Domain domain)
+    {
+        _domain = domain; // check if we should clone instead 
+        _entities = new List<Entity>();
+        _relations = new List<IRelation>();
+    }
+
     public WorldState(Domain domain, List<Entity> entities, List<IRelation> relations)
     {
         if (domain == null)
@@ -41,6 +48,9 @@ public class WorldState
             throw new System.ArgumentNullException("Relations cannot be null or empty", "List<Relation> relations");
 
         _domain = domain;
+        _entities = new List<Entity>();
+        _relations = new List<IRelation>();
+        
         foreach (Entity e in entities)
             this.addEntity(e);
         foreach (IRelation r in relations)
@@ -49,7 +59,7 @@ public class WorldState
 
     public void addEntity(Entity e)
     {
-        if (Domain.entityTypeExists(e.Type) == false)
+        if (_domain.entityTypeExists(e.Type) == false)
             throw new System.ArgumentException(e.Name + " is of a type which has not been declared in the domain");
         if (entityExists(e))
             throw new System.ArgumentException(e.Name + " already added to the list of entities", "List<Entity> Entities");
@@ -245,6 +255,43 @@ public class WorldState
 
 
         return list;
+    }
+
+    public WorldState Clone()
+    {
+        List<Entity> newEntities = new List<Entity>();
+        List<IRelation> newRelations = new List<IRelation>();
+        
+        foreach(Entity e in _entities)
+            newEntities.Add(e.Clone());
+        foreach(IRelation ir in _relations)
+            newRelations.Add(ir.Clone());
+
+        return new WorldState(_domain.Clone(), newEntities, newRelations);
+    }
+
+    public WorldState applyAction(Action action)
+    {
+        WorldState resultingState = this.Clone();
+        foreach(IRelation actionEffect in action.PostConditions)
+        {
+            bool found = false;
+            foreach(IRelation newWorldRelation in resultingState.Relations)
+            {
+                // check if the postcondition is already part of the state
+                // maybe with a different value which must be updated
+                if(newWorldRelation.EqualsWithoutValue(actionEffect))
+                {
+                    newWorldRelation.Value = actionEffect.Value;
+                    found = true;
+                    break;
+                }
+            }
+            // if the realtion wasn't there in the first place we need to add it
+            if(found == false)
+                resultingState.addRelation(actionEffect.Clone());
+        }
+        return resultingState;
     }
 
 }

@@ -2,7 +2,7 @@
 using UnityEditor;
 using UnityEngine.TestTools;
 using NUnit.Framework;
-using System.Collections;
+using System.Collections.Generic;
 
 public class WorldStateTest {
 
@@ -146,5 +146,74 @@ public class WorldStateTest {
 		BinaryRelation johnIsAtSchool = new BinaryRelation(john, isAt, school, true);
 		
 		Assert.That(()=> worldState.addRelation(johnIsAtSchool), Throws.ArgumentException);
+	}
+
+	[Test]
+	public void ApplyActionReturnsTheCorrectWorldState() {
+		Domain domain = new Domain();
+
+        EntityType entityTypeRover = new EntityType("ROVER");
+        domain.addEntityType(entityTypeRover);
+        
+        EntityType entityTypewayPoint = new EntityType("WAYPOINT");
+        domain.addEntityType(entityTypewayPoint);
+
+
+        //(can-move ?from-waypoint ?to-waypoint)
+        BinaryPredicate predicateCanMove = new BinaryPredicate(entityTypewayPoint, "CAN_MOVE", entityTypewayPoint);
+        domain.addPredicate(predicateCanMove);
+        //(been-at ?rover ?waypoint)
+        BinaryPredicate predicateBeenAt = new BinaryPredicate(entityTypeRover, "BEEN_AT", entityTypewayPoint);
+        domain.addPredicate(predicateBeenAt);
+        //(at ?rover ?waypoint)
+        BinaryPredicate predicateAt = new BinaryPredicate(entityTypeRover, "AT", entityTypewayPoint);
+        domain.addPredicate(predicateAt);
+
+        //              MOVE ACTION
+        // Parameters
+        Entity entityCuriosity = new Entity(entityTypeRover, "ROVER");
+        Entity entityFromWayPoint = new Entity(entityTypewayPoint, "WAYPOINT1");
+        Entity entityToWayPoint = new Entity(entityTypewayPoint, "WAYPOINT2");        
+
+        List<Entity> actionMoveParameters = new List<Entity>();
+        actionMoveParameters.Add(entityCuriosity);
+        actionMoveParameters.Add(entityFromWayPoint);
+        actionMoveParameters.Add(entityToWayPoint);        
+
+        // Preconditions
+        List<IRelation> actionMovePreconditions = new List<IRelation>();
+        BinaryRelation roverAtfromWP = new BinaryRelation(entityCuriosity, predicateAt, entityFromWayPoint, true);
+        actionMovePreconditions.Add(roverAtfromWP);
+        BinaryRelation canMoveFromWP1ToWP2 = new BinaryRelation(entityFromWayPoint, predicateCanMove, entityToWayPoint, true);
+        actionMovePreconditions.Add(canMoveFromWP1ToWP2);
+
+        // Postconditions
+        List<IRelation> actionMovePostconditions = new List<IRelation>();
+        BinaryRelation notRoverAtFromWP = new BinaryRelation(entityCuriosity, predicateAt, entityFromWayPoint, false);
+        actionMovePostconditions.Add(notRoverAtFromWP);
+        BinaryRelation roverAtToWP = new BinaryRelation(entityCuriosity, predicateAt, entityToWayPoint, true);
+        actionMovePostconditions.Add(roverAtToWP);
+        BinaryRelation roverBeenAtToWP = new BinaryRelation(entityCuriosity, predicateBeenAt, entityToWayPoint, true);
+        actionMovePostconditions.Add(roverBeenAtToWP);
+
+        Action actionMove = new Action(actionMovePreconditions, "MOVE", actionMoveParameters, actionMovePostconditions);
+        domain.addAction(actionMove);
+
+		WorldState worldState = new WorldState(domain);
+        worldState.addEntity(entityCuriosity);
+
+        Entity wayPoint1 = new Entity(new EntityType("WAYPOINT"), "WAYPOINT1");
+        Entity wayPoint2 = new Entity(new EntityType("WAYPOINT"), "WAYPOINT2");
+        worldState.addEntity(wayPoint1);
+        worldState.addEntity(wayPoint2);
+
+        BinaryRelation canMove1 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint1, wayPoint2, true);
+        worldState.addRelation(canMove1);
+
+        BinaryRelation isAt1 = domain.generateRelationFromPredicateName("AT", entityCuriosity, wayPoint1, true);
+        worldState.addRelation(isAt1);
+
+		WorldState newWorldState = worldState.applyAction(actionMove);
+		Assert.Contains(actionMovePostconditions, newWorldState.Relations);//newWorldState.Relations, actionMovePostconditions);
 	}
 }

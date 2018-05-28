@@ -75,4 +75,7 @@ public class BinaryPredicate : IPredicate
             return false;
         return true;
     }
+
+    public IPredicate Clone(){ return new BinaryPredicate(_source.Clone(), _name, _destination.Clone()); }
+
 }

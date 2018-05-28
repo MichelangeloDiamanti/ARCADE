@@ -52,5 +52,7 @@ public class Entity {
 	public override string ToString(){
 		return "type: " + _type + " name: " + _name;
 	}
+
+	public Entity Clone(){ return new Entity(_type.Clone(), _name); }
 	
 }

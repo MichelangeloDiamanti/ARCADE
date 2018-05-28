@@ -64,5 +64,5 @@ public class UnaryPredicate : IPredicate
             return false;
         return true;
     }
-
+    public IPredicate Clone(){ return new UnaryPredicate(_source.Clone(), _name); }
 }

@@ -19,6 +19,7 @@ public class UnaryRelation : IRelation
     public bool Value
     {
         get { return _value; }
+        set { _value = Value; }
     }
     public UnaryRelation(Entity source, UnaryPredicate predicate, bool value)
     {
@@ -40,7 +41,7 @@ public class UnaryRelation : IRelation
         return _source.Name + " " + _predicate.Name + ": " + _value;
     }
 
-    public override bool Equals(object obj)
+    public bool EqualsWithoutValue(object obj)
     {
 		if (obj == null)
 			return false;
@@ -53,6 +54,15 @@ public class UnaryRelation : IRelation
             return false;
         if(_predicate.Equals(otherRelation.Predicate) == false)
             return false;
+        return true;
+    }
+
+    public override bool Equals(object obj)
+    {
+        if(EqualsWithoutValue(obj) == false)
+            return false;
+
+		UnaryRelation otherRelation = obj as UnaryRelation;
         if(_value.Equals(otherRelation.Value) == false)
             return false;
         return true;
@@ -92,5 +102,7 @@ public class UnaryRelation : IRelation
 
         return false;
     }
+
+    public IRelation Clone(){ return new UnaryRelation(_source.Clone(), _predicate.Clone() as UnaryPredicate, _value); }
 
 }

@@ -24,6 +24,7 @@ public class BinaryRelation : IRelation
     public bool Value
     {
         get { return _value; }
+        set { _value = Value; }
     }
 
     public BinaryRelation(Entity source, BinaryPredicate predicate, Entity destination, bool value)
@@ -51,7 +52,7 @@ public class BinaryRelation : IRelation
         return _source.Name + " " + _predicate.Name + " " + _destination.Name + ": " + _value;
     }
 
-    public override bool Equals(object obj)
+    public bool EqualsWithoutValue(object obj)
     {
 		if (obj == null)
 			return false;
@@ -66,6 +67,15 @@ public class BinaryRelation : IRelation
             return false;
         if(_destination.Equals(otherRelation.Destination) == false)
             return false;
+        return true;
+    }
+
+    public override bool Equals(object obj)
+    {
+        if(EqualsWithoutValue(obj) == false)
+            return false;
+
+		BinaryRelation otherRelation = obj as BinaryRelation;
         if(_value.Equals(otherRelation.Value) == false)
             return false;
         return true;
@@ -111,5 +121,9 @@ public class BinaryRelation : IRelation
         return false;
     }
 
+    public IRelation Clone()
+    { 
+        return new BinaryRelation(_source.Clone(), _predicate.Clone() as BinaryPredicate, _destination.Clone(), _value); 
+    }
 
 }

@@ -138,4 +138,20 @@ public class Action
         }
         return value;
     }
+
+    public Action Clone()
+    {
+        List<IRelation> newPreConditions = new List<IRelation>();
+        List<Entity> newParameters = new List<Entity>();
+        List<IRelation> newPostConditions = new List<IRelation>();
+
+        foreach(IRelation precondition in _preConditions)
+            newPreConditions.Add(precondition.Clone());
+        foreach(Entity e in _parameters)
+            newParameters.Add(e.Clone());
+        foreach(IRelation postcondition in _postConditions)
+            newPreConditions.Add(postcondition.Clone());
+        
+        return new Action(newPreConditions, _name, newParameters, newPostConditions);
+    }
 }

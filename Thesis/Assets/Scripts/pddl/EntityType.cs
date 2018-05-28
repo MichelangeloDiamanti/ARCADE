@@ -37,4 +37,7 @@ public class EntityType{
 	public override string ToString(){
 		return _type;
 	}
+
+	public EntityType Clone(){ return new EntityType(_type); }
+
 }

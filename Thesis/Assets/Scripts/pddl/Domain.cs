@@ -294,4 +294,20 @@ public class Domain
 
         return value;
     }
+
+    public Domain Clone()
+    {
+        List<EntityType> newEntityTypes = new List<EntityType>();
+        List<IPredicate> newPredicates = new List<IPredicate>();
+        List<Action> newActions = new List<Action>();
+
+        foreach(EntityType et in _entityTypes)
+            newEntityTypes.Add(et.Clone()); 
+        foreach(IPredicate predicate in _predicates)
+            newPredicates.Add(predicate.Clone());
+        foreach(Action a in _actions)
+            newActions.Add(a.Clone());
+        
+        return new Domain(newEntityTypes, newPredicates, newActions);
+    }
 }
