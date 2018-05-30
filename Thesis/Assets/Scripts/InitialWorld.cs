@@ -161,6 +161,8 @@ public class InitialWorld : MonoBehaviour
 
         BinaryRelation isAt6 = domain.generateRelationFromPredicateName("AT", rover, wayPoint6, true);
         worldState.addRelation(isAt6);
+
+        Debug.Log(worldState.getPossibleActions());
     }
 
     private void RoverWorldStateInit()
