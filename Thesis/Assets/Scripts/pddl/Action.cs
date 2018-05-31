@@ -9,7 +9,7 @@ public class Action
     private string _name;
     private List<Entity> _parameters;
     private List<IRelation> _postConditions;
-    
+
     public List<IRelation> PreConditions
     {
         get { return _preConditions; }
@@ -26,7 +26,7 @@ public class Action
     {
         get { return _postConditions; }
     }
-    
+
     public Action(List<IRelation> preconditions, string name, List<Entity> parameters, List<IRelation> postconditions)
     {
         if (preconditions == null)
@@ -48,7 +48,7 @@ public class Action
         _postConditions = postconditions;
     }
 
-    
+
     //TODO: ask david for actions, can an action have same name but different pre/post condition?
     public override bool Equals(object obj)
     {
@@ -88,7 +88,7 @@ public class Action
                     throw new System.ArgumentException("ActionDefinition: One variable of pre or post condition is not inside parameter list", "List<Entity> parameters: " + br.Destination.Name + " is missing");
                 }
             }
-            else if(r.GetType() == typeof(UnaryRelation))
+            else if (r.GetType() == typeof(UnaryRelation))
             {
                 UnaryRelation ur = r as UnaryRelation;
                 if (parameters.Contains(ur.Source) == false)
@@ -98,45 +98,86 @@ public class Action
             }
         }
     }
-    
+
     public override string ToString()
     {
-        string value = "Action: "+_name+"(";
+        string value = "Action: " + _name + "(";
         foreach (Entity item in _parameters)
         {
-            value+= item.Name + " ,";
+            value += item.Name + " ,";
         }
 
-        value+= ") \nPRECONDITION:\n";
+        value += ") \nPRECONDITION:\n";
         foreach (IRelation r in _preConditions)
         {
-            if(r.GetType() == typeof(UnaryRelation))
+            if (r.GetType() == typeof(UnaryRelation))
             {
                 UnaryRelation ur = r as UnaryRelation;
-                value += ur.ToString() + "\n";                
+                value += ur.ToString() + "\n";
             }
-            else if(r.GetType() == typeof(BinaryRelation))
+            else if (r.GetType() == typeof(BinaryRelation))
             {
                 BinaryRelation br = r as BinaryRelation;
-                value += br.ToString() + "\n";                
+                value += br.ToString() + "\n";
             }
         }
 
-        value+= "POSTCONDITION:\n";
+        value += "POSTCONDITION:\n";
         foreach (IRelation r in _postConditions)
         {
-            if(r.GetType() == typeof(UnaryRelation))
+            if (r.GetType() == typeof(UnaryRelation))
             {
                 UnaryRelation ur = r as UnaryRelation;
-                value += ur.ToString() + "\n";                
+                value += ur.ToString() + "\n";
             }
-            else if(r.GetType() == typeof(BinaryRelation))
+            else if (r.GetType() == typeof(BinaryRelation))
             {
                 BinaryRelation br = r as BinaryRelation;
-                value += br.ToString() + "\n";                
+                value += br.ToString() + "\n";
             }
         }
         return value;
+    }
+
+    public Action sobstituteEntityInAction(Dictionary<Entity, Entity> sobstitutions)
+    {
+        Action newAction = null;
+        List<IRelation> newPreConditions = sobstituteRoutine(sobstitutions, _preConditions);
+        List<IRelation> newPostConditions = sobstituteRoutine(sobstitutions, _postConditions);
+        List<Entity> entitiesInvolved = new List<Entity>();
+        foreach (Entity item in sobstitutions.Values)
+        {
+            entitiesInvolved.Add(item);
+        }
+        newAction = new Action(newPreConditions, _name, entitiesInvolved, newPostConditions);
+        return newAction;
+    }
+
+    private List<IRelation> sobstituteRoutine(Dictionary<Entity, Entity> sobstitutions, List<IRelation> condictions)
+    {
+        List<IRelation> newConditions = new List<IRelation>();
+        foreach (IRelation item in condictions)
+        {
+            if (item.GetType() == typeof(UnaryRelation))
+            {
+                UnaryRelation ur = item as UnaryRelation;
+                Entity source;
+                if (sobstitutions.TryGetValue(ur.Source, out source))
+                {
+                    newConditions.Add(new UnaryRelation(source, ur.Predicate, ur.Value));
+                }
+            }
+            else if (item.GetType() == typeof(BinaryRelation))
+            {
+                BinaryRelation br = item as BinaryRelation;
+                Entity source, destination;
+                if (sobstitutions.TryGetValue(br.Source, out source) && sobstitutions.TryGetValue(br.Destination, out destination))
+                {
+                    newConditions.Add(new BinaryRelation(source, br.Predicate, destination, br.Value));
+                }
+            }
+        }
+        return newConditions;
     }
 
     public Action Clone()
@@ -145,13 +186,13 @@ public class Action
         List<Entity> newParameters = new List<Entity>();
         List<IRelation> newPostConditions = new List<IRelation>();
 
-        foreach(IRelation precondition in _preConditions)
+        foreach (IRelation precondition in _preConditions)
             newPreConditions.Add(precondition.Clone());
-        foreach(Entity e in _parameters)
+        foreach (Entity e in _parameters)
             newParameters.Add(e.Clone());
-        foreach(IRelation postcondition in _postConditions)
+        foreach (IRelation postcondition in _postConditions)
             newPreConditions.Add(postcondition.Clone());
-        
+
         return new Action(newPreConditions, _name, newParameters, newPostConditions);
     }
 }

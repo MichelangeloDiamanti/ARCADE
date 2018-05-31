@@ -36,9 +36,7 @@ public class InitialWorld : MonoBehaviour
     {
         
     }
-
-
-
+    
     private void roverWorldDomainAbstract(){
         EntityType rover = new EntityType("ROVER");
         domain.addEntityType(rover);
