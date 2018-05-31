@@ -221,7 +221,7 @@ public class WorldState
     {
         List<Action> list = new List<Action>();
         List<Action> possibleActions = new List<Action>();
-        foreach (Action a in _domain.Actions())
+        foreach (Action a in _domain.Actions)
         {
             int count = 0;
             foreach (IRelation r in a.PreConditions)

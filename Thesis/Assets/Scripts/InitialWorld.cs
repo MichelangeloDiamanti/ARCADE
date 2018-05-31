@@ -7,6 +7,7 @@ public class InitialWorld : MonoBehaviour
 {
     Domain domain;
     WorldState worldState;
+    TreeNode<WorldState> currentNode;
     // Use this for initialization
     void Start()
     {
@@ -14,10 +15,20 @@ public class InitialWorld : MonoBehaviour
         worldState = new WorldState();
         roverWorldDomainFullDetail();
         worldState.Domain = domain;
-        roverWorldStateFullDetail();
-        worldState.getPossibleActions();
+        currentNode = roverWorldStateFullDetail();	
+        Debug.Log("We are now in this world state: " + currentNode.Data.ToString());
+        StartCoroutine(simulation());
+    }
 
-        // Debug.Log(worldState.ToString());	
+    IEnumerator simulation()
+    {
+        int randomActionIndex = Random.Range(0, currentNode.Data.Domain.Actions.Count);
+        Action randomAction = currentNode.Data.Domain.Actions[randomActionIndex];
+        WorldState nextState = currentNode.Data.applyAction(randomAction);
+        currentNode = currentNode.AddChild(nextState);
+        Debug.Log("The Following Action was performed: " + randomAction.ToString());
+        Debug.Log("We are now in this world state: " + currentNode.Data.ToString());
+        yield return new WaitForSeconds(1);
     }
 
     // Update is called once per frame
@@ -26,165 +37,9 @@ public class InitialWorld : MonoBehaviour
         
     }
 
-    private void roverWorldStateFullDetail()
-    {
-        Entity rover = new Entity(new EntityType("ROVER"), "ROVER");
-        worldState.addEntity(rover);
 
-        // for(int i = 1; i <= 9; i++)
-        // {
-        //     Entity wayPoint = new Entity(new EntityType("WAYPOINT"), "WAYPOINT" + i);
-        //     worldState.addEntity(wayPoint);
-        // }
 
-        Entity wayPoint1 = new Entity(new EntityType("WAYPOINT"), "WAYPOINT1");
-        Entity wayPoint2 = new Entity(new EntityType("WAYPOINT"), "WAYPOINT2");
-        Entity wayPoint3 = new Entity(new EntityType("WAYPOINT"), "WAYPOINT3");
-        Entity wayPoint4 = new Entity(new EntityType("WAYPOINT"), "WAYPOINT4");
-        Entity wayPoint5 = new Entity(new EntityType("WAYPOINT"), "WAYPOINT5");
-        Entity wayPoint6 = new Entity(new EntityType("WAYPOINT"), "WAYPOINT6");
-        Entity wayPoint7 = new Entity(new EntityType("WAYPOINT"), "WAYPOINT7");
-        Entity wayPoint8 = new Entity(new EntityType("WAYPOINT"), "WAYPOINT8");
-        Entity wayPoint9 = new Entity(new EntityType("WAYPOINT"), "WAYPOINT9");
-        worldState.addEntity(wayPoint1);
-        worldState.addEntity(wayPoint2);
-        worldState.addEntity(wayPoint3);
-        worldState.addEntity(wayPoint4);
-        worldState.addEntity(wayPoint5);
-        worldState.addEntity(wayPoint6);
-        worldState.addEntity(wayPoint7);
-        worldState.addEntity(wayPoint8);
-        worldState.addEntity(wayPoint9);
-        
-        Entity sample1 = new Entity(new EntityType("SAMPLE"), "SAMPLE1");
-        Entity sample2 = new Entity(new EntityType("SAMPLE"), "SAMPLE2");
-        Entity sample3 = new Entity(new EntityType("SAMPLE"), "SAMPLE3");
-        Entity sample4 = new Entity(new EntityType("SAMPLE"), "SAMPLE4");
-        Entity sample5 = new Entity(new EntityType("SAMPLE"), "SAMPLE5");
-        Entity sample6 = new Entity(new EntityType("SAMPLE"), "SAMPLE6");
-        worldState.addEntity(sample1);
-        worldState.addEntity(sample2);
-        worldState.addEntity(sample3);
-        worldState.addEntity(sample4);
-        worldState.addEntity(sample5);
-        worldState.addEntity(sample6);
-
-        Entity objective1 = new Entity(new EntityType("OBJECTIVE"), "OBJECTIVE1");
-        Entity objective2 = new Entity(new EntityType("OBJECTIVE"), "OBJECTIVE2");
-        Entity objective3 = new Entity(new EntityType("OBJECTIVE"), "OBJECTIVE3");
-        Entity objective4 = new Entity(new EntityType("OBJECTIVE"), "OBJECTIVE4");
-        Entity objective5 = new Entity(new EntityType("OBJECTIVE"), "OBJECTIVE5");
-        Entity objective6 = new Entity(new EntityType("OBJECTIVE"), "OBJECTIVE6");
-        Entity objective7 = new Entity(new EntityType("OBJECTIVE"), "OBJECTIVE7");
-        Entity objective8 = new Entity(new EntityType("OBJECTIVE"), "OBJECTIVE8");
-        worldState.addEntity(objective1);
-        worldState.addEntity(objective2);
-        worldState.addEntity(objective3);
-        worldState.addEntity(objective4);
-        worldState.addEntity(objective5);
-        worldState.addEntity(objective6);
-        worldState.addEntity(objective7);
-        worldState.addEntity(objective8);
-
-        BinaryRelation canMove1 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint1, wayPoint5, true);
-        BinaryRelation canMove2 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint2, wayPoint5, true);
-        BinaryRelation canMove3 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint3, wayPoint6, true);
-        BinaryRelation canMove4 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint4, wayPoint8, true);
-        BinaryRelation canMove5 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint5, wayPoint1, true);
-        BinaryRelation canMove6 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint6, wayPoint3, true);
-        BinaryRelation canMove7 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint6, wayPoint8, true);
-        BinaryRelation canMove8 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint8, wayPoint4, true);
-        BinaryRelation canMove9 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint9, wayPoint1, true);
-        BinaryRelation canMove10 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint1, wayPoint9, true);
-        BinaryRelation canMove11 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint3, wayPoint4, true);
-        BinaryRelation canMove12 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint4, wayPoint3, true);
-        BinaryRelation canMove13 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint4, wayPoint9, true);
-        BinaryRelation canMove14 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint5, wayPoint2, true);
-        BinaryRelation canMove15 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint6, wayPoint7, true);
-        BinaryRelation canMove16 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint7, wayPoint6, true);
-        BinaryRelation canMove17 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint8, wayPoint6, true);
-        BinaryRelation canMove18 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint9, wayPoint4, true);
-        worldState.addRelation(canMove1);
-        worldState.addRelation(canMove2);
-        worldState.addRelation(canMove3);
-        worldState.addRelation(canMove4);
-        worldState.addRelation(canMove5);
-        worldState.addRelation(canMove6);
-        worldState.addRelation(canMove7);
-        worldState.addRelation(canMove8);
-        worldState.addRelation(canMove9);
-        worldState.addRelation(canMove10);
-        worldState.addRelation(canMove11);
-        worldState.addRelation(canMove12);
-        worldState.addRelation(canMove13);
-        worldState.addRelation(canMove14);
-        worldState.addRelation(canMove15);
-        worldState.addRelation(canMove16);
-        worldState.addRelation(canMove17);
-        worldState.addRelation(canMove18);
-
-        BinaryRelation isVisible1 = domain.generateRelationFromPredicateName("IS_VISIBLE", objective1, wayPoint2, true);
-        BinaryRelation isVisible2 = domain.generateRelationFromPredicateName("IS_VISIBLE", objective1, wayPoint4, true);
-        BinaryRelation isVisible3 = domain.generateRelationFromPredicateName("IS_VISIBLE", objective2, wayPoint7, true);
-        BinaryRelation isVisible4 = domain.generateRelationFromPredicateName("IS_VISIBLE", objective4, wayPoint5, true);
-        BinaryRelation isVisible5 = domain.generateRelationFromPredicateName("IS_VISIBLE", objective1, wayPoint3, true);
-        BinaryRelation isVisible6 = domain.generateRelationFromPredicateName("IS_VISIBLE", objective2, wayPoint5, true);
-        BinaryRelation isVisible7 = domain.generateRelationFromPredicateName("IS_VISIBLE", objective3, wayPoint8, true);
-        BinaryRelation isVisible8 = domain.generateRelationFromPredicateName("IS_VISIBLE", objective4, wayPoint1, true);
-        worldState.addRelation(isVisible1);
-        worldState.addRelation(isVisible2);
-        worldState.addRelation(isVisible3);
-        worldState.addRelation(isVisible4);
-        worldState.addRelation(isVisible5);
-        worldState.addRelation(isVisible6);
-        worldState.addRelation(isVisible7);
-        worldState.addRelation(isVisible8);  
-
-        BinaryRelation isIn1 = domain.generateRelationFromPredicateName("IS_IN", sample1, wayPoint2, true);
-        BinaryRelation isIn2 = domain.generateRelationFromPredicateName("IS_IN", sample3, wayPoint9, true);
-        BinaryRelation isIn3 = domain.generateRelationFromPredicateName("IS_IN", sample5, wayPoint3, true);
-        BinaryRelation isIn4 = domain.generateRelationFromPredicateName("IS_IN", sample2, wayPoint3, true);
-        BinaryRelation isIn5 = domain.generateRelationFromPredicateName("IS_IN", sample4, wayPoint8, true);
-        BinaryRelation isIn6 = domain.generateRelationFromPredicateName("IS_IN", sample6, wayPoint3, true);
-        worldState.addRelation(isIn1);
-        worldState.addRelation(isIn2);
-        worldState.addRelation(isIn3);
-        worldState.addRelation(isIn4);
-        worldState.addRelation(isIn5);
-        worldState.addRelation(isIn6);
-
-        UnaryRelation isDroppingDock = domain.generateRelationFromPredicateName("IS_DROPPING_DOCK", wayPoint7, true);
-        worldState.addRelation(isDroppingDock);
-
-        UnaryRelation isEmpty = domain.generateRelationFromPredicateName("IS_EMPTY", rover, true);
-        worldState.addRelation(isEmpty);
-
-        BinaryRelation isAt6 = domain.generateRelationFromPredicateName("AT", rover, wayPoint6, true);
-        worldState.addRelation(isAt6);
-
-        Debug.Log(worldState.getPossibleActions());
-    }
-
-    private void RoverWorldStateInit()
-    {
-        Entity location = new Entity(new EntityType("WAYPOINT"), "location1");
-        worldState.addEntity(location);
-        Entity location1 = new Entity(new EntityType("WAYPOINT"), "location2");
-        worldState.addEntity(location1);
-        Entity rover = new Entity(new EntityType("ROVER"), "rover");
-        worldState.addEntity(rover);
-
-        BinaryRelation canMove = domain.generateRelationFromPredicateName("CAN_MOVE", location, location1, true);
-        worldState.addRelation(canMove);
-        BinaryRelation at = domain.generateRelationFromPredicateName("AT", rover, location, true);
-        worldState.addRelation(at);
-
-        worldState.getPossibleActions();
-
-        // BinaryRelation canMove = new BinaryRelation()
-    }
-
-    private void roverWorldDomainFullDetail(){
+    private void roverWorldDomainAbstract(){
         EntityType rover = new EntityType("ROVER");
         domain.addEntityType(rover);
         
@@ -336,7 +191,214 @@ public class InitialWorld : MonoBehaviour
 
         Action takeImageAction = new Action(takeImageActionPostconditions, "TAKE_IMAGE", takeImageActionParameters, takeImageActionPostconditions);
         domain.addAction(takeImageAction);
-
     }
 
+    private TreeNode<WorldState> roverWorldStateAbstract()
+    {
+        Entity rover = new Entity(new EntityType("ROVER"), "ROVER");
+        worldState.addEntity(rover);
+
+        // for(int i = 1; i <= 9; i++)
+        // {
+        //     Entity wayPoint = new Entity(new EntityType("WAYPOINT"), "WAYPOINT" + i);
+        //     worldState.addEntity(wayPoint);
+        // }
+
+        Entity wayPoint1 = new Entity(new EntityType("WAYPOINT"), "WAYPOINT1");
+        Entity wayPoint2 = new Entity(new EntityType("WAYPOINT"), "WAYPOINT2");
+        Entity wayPoint3 = new Entity(new EntityType("WAYPOINT"), "WAYPOINT3");
+        Entity wayPoint4 = new Entity(new EntityType("WAYPOINT"), "WAYPOINT4");
+        Entity wayPoint5 = new Entity(new EntityType("WAYPOINT"), "WAYPOINT5");
+        Entity wayPoint6 = new Entity(new EntityType("WAYPOINT"), "WAYPOINT6");
+        Entity wayPoint7 = new Entity(new EntityType("WAYPOINT"), "WAYPOINT7");
+        Entity wayPoint8 = new Entity(new EntityType("WAYPOINT"), "WAYPOINT8");
+        Entity wayPoint9 = new Entity(new EntityType("WAYPOINT"), "WAYPOINT9");
+        worldState.addEntity(wayPoint1);
+        worldState.addEntity(wayPoint2);
+        worldState.addEntity(wayPoint3);
+        worldState.addEntity(wayPoint4);
+        worldState.addEntity(wayPoint5);
+        worldState.addEntity(wayPoint6);
+        worldState.addEntity(wayPoint7);
+        worldState.addEntity(wayPoint8);
+        worldState.addEntity(wayPoint9);
+        
+        Entity sample1 = new Entity(new EntityType("SAMPLE"), "SAMPLE1");
+        Entity sample2 = new Entity(new EntityType("SAMPLE"), "SAMPLE2");
+        Entity sample3 = new Entity(new EntityType("SAMPLE"), "SAMPLE3");
+        Entity sample4 = new Entity(new EntityType("SAMPLE"), "SAMPLE4");
+        Entity sample5 = new Entity(new EntityType("SAMPLE"), "SAMPLE5");
+        Entity sample6 = new Entity(new EntityType("SAMPLE"), "SAMPLE6");
+        worldState.addEntity(sample1);
+        worldState.addEntity(sample2);
+        worldState.addEntity(sample3);
+        worldState.addEntity(sample4);
+        worldState.addEntity(sample5);
+        worldState.addEntity(sample6);
+
+        Entity objective1 = new Entity(new EntityType("OBJECTIVE"), "OBJECTIVE1");
+        Entity objective2 = new Entity(new EntityType("OBJECTIVE"), "OBJECTIVE2");
+        Entity objective3 = new Entity(new EntityType("OBJECTIVE"), "OBJECTIVE3");
+        Entity objective4 = new Entity(new EntityType("OBJECTIVE"), "OBJECTIVE4");
+        Entity objective5 = new Entity(new EntityType("OBJECTIVE"), "OBJECTIVE5");
+        Entity objective6 = new Entity(new EntityType("OBJECTIVE"), "OBJECTIVE6");
+        Entity objective7 = new Entity(new EntityType("OBJECTIVE"), "OBJECTIVE7");
+        Entity objective8 = new Entity(new EntityType("OBJECTIVE"), "OBJECTIVE8");
+        worldState.addEntity(objective1);
+        worldState.addEntity(objective2);
+        worldState.addEntity(objective3);
+        worldState.addEntity(objective4);
+        worldState.addEntity(objective5);
+        worldState.addEntity(objective6);
+        worldState.addEntity(objective7);
+        worldState.addEntity(objective8);
+
+        BinaryRelation canMove1 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint1, wayPoint5, true);
+        BinaryRelation canMove2 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint2, wayPoint5, true);
+        BinaryRelation canMove3 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint3, wayPoint6, true);
+        BinaryRelation canMove4 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint4, wayPoint8, true);
+        BinaryRelation canMove5 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint5, wayPoint1, true);
+        BinaryRelation canMove6 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint6, wayPoint3, true);
+        BinaryRelation canMove7 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint6, wayPoint8, true);
+        BinaryRelation canMove8 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint8, wayPoint4, true);
+        BinaryRelation canMove9 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint9, wayPoint1, true);
+        BinaryRelation canMove10 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint1, wayPoint9, true);
+        BinaryRelation canMove11 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint3, wayPoint4, true);
+        BinaryRelation canMove12 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint4, wayPoint3, true);
+        BinaryRelation canMove13 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint4, wayPoint9, true);
+        BinaryRelation canMove14 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint5, wayPoint2, true);
+        BinaryRelation canMove15 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint6, wayPoint7, true);
+        BinaryRelation canMove16 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint7, wayPoint6, true);
+        BinaryRelation canMove17 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint8, wayPoint6, true);
+        BinaryRelation canMove18 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint9, wayPoint4, true);
+        worldState.addRelation(canMove1);
+        worldState.addRelation(canMove2);
+        worldState.addRelation(canMove3);
+        worldState.addRelation(canMove4);
+        worldState.addRelation(canMove5);
+        worldState.addRelation(canMove6);
+        worldState.addRelation(canMove7);
+        worldState.addRelation(canMove8);
+        worldState.addRelation(canMove9);
+        worldState.addRelation(canMove10);
+        worldState.addRelation(canMove11);
+        worldState.addRelation(canMove12);
+        worldState.addRelation(canMove13);
+        worldState.addRelation(canMove14);
+        worldState.addRelation(canMove15);
+        worldState.addRelation(canMove16);
+        worldState.addRelation(canMove17);
+        worldState.addRelation(canMove18);
+
+        BinaryRelation isVisible1 = domain.generateRelationFromPredicateName("IS_VISIBLE", objective1, wayPoint2, true);
+        BinaryRelation isVisible2 = domain.generateRelationFromPredicateName("IS_VISIBLE", objective1, wayPoint4, true);
+        BinaryRelation isVisible3 = domain.generateRelationFromPredicateName("IS_VISIBLE", objective2, wayPoint7, true);
+        BinaryRelation isVisible4 = domain.generateRelationFromPredicateName("IS_VISIBLE", objective4, wayPoint5, true);
+        BinaryRelation isVisible5 = domain.generateRelationFromPredicateName("IS_VISIBLE", objective1, wayPoint3, true);
+        BinaryRelation isVisible6 = domain.generateRelationFromPredicateName("IS_VISIBLE", objective2, wayPoint5, true);
+        BinaryRelation isVisible7 = domain.generateRelationFromPredicateName("IS_VISIBLE", objective3, wayPoint8, true);
+        BinaryRelation isVisible8 = domain.generateRelationFromPredicateName("IS_VISIBLE", objective4, wayPoint1, true);
+        worldState.addRelation(isVisible1);
+        worldState.addRelation(isVisible2);
+        worldState.addRelation(isVisible3);
+        worldState.addRelation(isVisible4);
+        worldState.addRelation(isVisible5);
+        worldState.addRelation(isVisible6);
+        worldState.addRelation(isVisible7);
+        worldState.addRelation(isVisible8);  
+
+        BinaryRelation isIn1 = domain.generateRelationFromPredicateName("IS_IN", sample1, wayPoint2, true);
+        BinaryRelation isIn2 = domain.generateRelationFromPredicateName("IS_IN", sample3, wayPoint9, true);
+        BinaryRelation isIn3 = domain.generateRelationFromPredicateName("IS_IN", sample5, wayPoint3, true);
+        BinaryRelation isIn4 = domain.generateRelationFromPredicateName("IS_IN", sample2, wayPoint3, true);
+        BinaryRelation isIn5 = domain.generateRelationFromPredicateName("IS_IN", sample4, wayPoint8, true);
+        BinaryRelation isIn6 = domain.generateRelationFromPredicateName("IS_IN", sample6, wayPoint3, true);
+        worldState.addRelation(isIn1);
+        worldState.addRelation(isIn2);
+        worldState.addRelation(isIn3);
+        worldState.addRelation(isIn4);
+        worldState.addRelation(isIn5);
+        worldState.addRelation(isIn6);
+
+        UnaryRelation isDroppingDock = domain.generateRelationFromPredicateName("IS_DROPPING_DOCK", wayPoint7, true);
+        worldState.addRelation(isDroppingDock);
+
+        UnaryRelation isEmpty = domain.generateRelationFromPredicateName("IS_EMPTY", rover, true);
+        worldState.addRelation(isEmpty);
+
+        BinaryRelation isAt6 = domain.generateRelationFromPredicateName("AT", rover, wayPoint6, true);
+        worldState.addRelation(isAt6);
+
+        return new TreeNode<WorldState>(worldState);
+    }
+    private void roverWorldDomainFullDetail()
+    {
+        roverWorldDomainAbstract();
+
+        EntityType entityTypeBattery = new EntityType("BATTERY");
+        domain.addEntityType(entityTypeBattery);
+        EntityType entityTypeWheel = new EntityType("WHEEL");
+        domain.addEntityType(entityTypeWheel);
+        UnaryPredicate predicateBatteryCharged = new UnaryPredicate(entityTypeBattery, "BATTERY_CHARGED");
+        domain.addPredicate(predicateBatteryCharged);
+        UnaryPredicate predicateWheelsInflated = new UnaryPredicate(entityTypeWheel, "WHEELS_INFLATED");
+        domain.addPredicate(predicateWheelsInflated);
+
+        List<Entity> actionChargeParameters = new List<Entity>();
+        Entity entityBattery = new Entity(entityTypeBattery, "BATTERY");
+        actionChargeParameters.Add(entityBattery);
+
+        List<IRelation> actionChargePreconditions = new List<IRelation>();
+        UnaryRelation relationBatteryDischarged = new UnaryRelation(entityBattery, predicateBatteryCharged, false);
+        actionChargePreconditions.Add(relationBatteryDischarged);
+
+        List<IRelation> actionChargePostconditions = new List<IRelation>();
+        UnaryRelation relationBatteryCharged = new UnaryRelation(entityBattery, predicateBatteryCharged, true);
+        actionChargePreconditions.Add(relationBatteryCharged);
+
+        Action actionChargeBattery = new Action(actionChargePreconditions, "CHARGE_BATTERY", actionChargeParameters, actionChargePostconditions);
+        domain.addAction(actionChargeBattery);
+
+        Action actionDischargeBattery = new Action(actionChargePostconditions, "DISCHARGE_BATTERY", actionChargeParameters, actionChargePreconditions);
+        domain.addAction(actionChargeBattery);
+
+        List<Entity> actionInflateParameters = new List<Entity>();
+        Entity entityWheels = new Entity(entityTypeWheel, "WHEELS");
+        actionChargeParameters.Add(entityWheels);
+
+        List<IRelation> actionInflatePreconditions = new List<IRelation>();
+        UnaryRelation relationWheelsDeflated = new UnaryRelation(entityWheels, predicateWheelsInflated, false);
+        actionInflatePreconditions.Add(relationWheelsDeflated);
+
+        List<IRelation> actionInflatePostconditions = new List<IRelation>();
+        UnaryRelation relationWheelsInflated = new UnaryRelation(entityWheels, predicateWheelsInflated, true);
+        actionInflatePostconditions.Add(relationWheelsInflated);
+
+        Action actionInflate = new Action(actionInflatePreconditions, "INFLATE", actionInflateParameters, actionInflatePostconditions);
+        domain.addAction(actionInflate);
+        
+        Action actionDeflate = new Action(actionInflatePostconditions, "DEFLATE", actionInflateParameters ,actionInflatePreconditions);
+        domain.addAction(actionDeflate);    
+    }
+
+    private TreeNode<WorldState> roverWorldStateFullDetail()
+    {
+        TreeNode<WorldState> detailedtNode = roverWorldStateAbstract();
+        WorldState detailedState = detailedtNode.Data;
+
+        EntityType entityTypeBattery = new EntityType("BATTERY");
+        EntityType entityTypeWheel = new EntityType("WHEEL");
+
+        Entity entityBattery = new Entity(entityTypeBattery, "BATTERY");
+        Entity entityWheels = new Entity(entityTypeWheel, "WHEELS");
+        detailedState.addEntity(entityBattery);
+        detailedState.addEntity(entityWheels);
+        
+        UnaryRelation relationBatteryIsCharged = detailedState.Domain.generateRelationFromPredicateName("BATTERY_CHARGED", entityBattery, true);
+        detailedState.addRelation(relationBatteryIsCharged);
+        UnaryRelation relationWheelsInflated = detailedState.Domain.generateRelationFromPredicateName("WHEELS_INFLATED", entityWheels, true);
+        detailedState.addRelation(relationWheelsInflated);
+
+        return detailedtNode;
+    }
 }
