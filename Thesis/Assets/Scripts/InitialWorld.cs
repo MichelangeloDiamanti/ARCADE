@@ -177,7 +177,6 @@ public class InitialWorld : MonoBehaviour
         BinaryRelation at = domain.generateRelationFromPredicateName("AT", rover, location, true);
         worldState.addRelation(at);
 
-        worldState.getPossibleActions();
 
         // BinaryRelation canMove = new BinaryRelation()
     }

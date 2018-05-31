@@ -142,8 +142,42 @@ public class Action
     public Action sobstituteEntityInAction(Dictionary<Entity, Entity> sobstitutions)
     {
         Action newAction = null;
-
+        List<IRelation> newPreConditions = sobstituteRoutine(sobstitutions, _preConditions);
+        List<IRelation> newPostConditions = sobstituteRoutine(sobstitutions, _postConditions);
+        List<Entity> entitiesInvolved = new List<Entity>();
+        foreach (Entity item in sobstitutions.Values)
+        {
+            entitiesInvolved.Add(item);
+        }
+        newAction = new Action(newPreConditions, _name, entitiesInvolved, newPostConditions);
         return newAction;
+    }
+
+    private List<IRelation> sobstituteRoutine(Dictionary<Entity, Entity> sobstitutions, List<IRelation> condictions)
+    {
+        List<IRelation> newConditions = new List<IRelation>();
+        foreach (IRelation item in condictions)
+        {
+            if (item.GetType() == typeof(UnaryRelation))
+            {
+                UnaryRelation ur = item as UnaryRelation;
+                Entity source;
+                if (sobstitutions.TryGetValue(ur.Source, out source))
+                {
+                    newConditions.Add(new UnaryRelation(source, ur.Predicate, ur.Value));
+                }
+            }
+            else if (item.GetType() == typeof(BinaryRelation))
+            {
+                BinaryRelation br = item as BinaryRelation;
+                Entity source, destination;
+                if (sobstitutions.TryGetValue(br.Source, out source) && sobstitutions.TryGetValue(br.Destination, out destination))
+                {
+                    newConditions.Add(new BinaryRelation(source, br.Predicate, destination, br.Value));
+                }
+            }
+        }
+        return newConditions;
     }
 
     public Action Clone()

@@ -50,7 +50,7 @@ public class WorldState
         _domain = domain;
         _entities = new List<Entity>();
         _relations = new List<IRelation>();
-        
+
         foreach (Entity e in entities)
             this.addEntity(e);
         foreach (IRelation r in relations)
@@ -184,10 +184,10 @@ public class WorldState
     {
         List<Entity> newEntities = new List<Entity>();
         List<IRelation> newRelations = new List<IRelation>();
-        
-        foreach(Entity e in _entities)
+
+        foreach (Entity e in _entities)
             newEntities.Add(e.Clone());
-        foreach(IRelation ir in _relations)
+        foreach (IRelation ir in _relations)
             newRelations.Add(ir.Clone());
 
         return new WorldState(_domain.Clone(), newEntities, newRelations);
@@ -196,14 +196,14 @@ public class WorldState
     public WorldState applyAction(Action action)
     {
         WorldState resultingState = this.Clone();
-        foreach(IRelation actionEffect in action.PostConditions)
+        foreach (IRelation actionEffect in action.PostConditions)
         {
             bool found = false;
-            foreach(IRelation newWorldRelation in resultingState.Relations)
+            foreach (IRelation newWorldRelation in resultingState.Relations)
             {
                 // check if the postcondition is already part of the state
                 // maybe with a different value which must be updated
-                if(newWorldRelation.EqualsWithoutValue(actionEffect))
+                if (newWorldRelation.EqualsWithoutValue(actionEffect))
                 {
                     newWorldRelation.Value = actionEffect.Value;
                     found = true;
@@ -211,7 +211,7 @@ public class WorldState
                 }
             }
             // if the realtion wasn't there in the first place we need to add it
-            if(found == false)
+            if (found == false)
                 resultingState.addRelation(actionEffect.Clone());
         }
         return resultingState;
@@ -246,38 +246,37 @@ public class WorldState
         }
         foreach (Action a in possibleActions)
         {
-            string ciao = "Possible Actions: " + a.ToString() + "\n" + "Coinvolte: ";
+            string ciao = "Possible Actions: " + a.ToString() + "\nCoinvolte: \n";
             foreach (Entity item in a.Parameters)
             {
                 ciao += item.ToString() + "\n";
             }
             Debug.Log(ciao);
 
-
-            bool whileCondition = true;
-            //TODO: Fisso una entità e cambio le altre così fino a fare tutte le combinazioni.      
-            while (whileCondition)
+            List<Entity> listSobstitution = new List<Entity>();
+            foreach (Entity item in a.Parameters)
             {
-                Dictionary<Entity, Entity> sobstitution = new Dictionary<Entity, Entity>();
-                foreach (Entity item in a.Parameters)
+                foreach (Entity e in _entities)
                 {
-                    if (!sobstitution.ContainsKey(item))
+                    if (item.Type.Equals(e.Type))
                     {
-                        foreach (Entity e in _entities)
-                        {
-                            if (!sobstitution.ContainsValue(e) && item.Type.Equals(e.Type))
-                            {
-                                sobstitution.Add(item, e);
-                                break;
-                            }
-                        }
+                        listSobstitution.Add(e.Clone());
                     }
                 }
-                if (sobstitution.Count == 0)
-                {
-                    whileCondition = false;
-                }
             }
+            List<List<Entity>> combinations = Utils.ItemCombinations(listSobstitution);
+            string casino = "";
+            foreach (List<Entity> item in combinations)
+            {
+                foreach (Entity e in item)
+                {
+                    casino+= e.ToString()+",";
+                }
+                casino +="\n";
+            }
+            Debug.Log(casino);
+            break;
+            
 
         }
 
