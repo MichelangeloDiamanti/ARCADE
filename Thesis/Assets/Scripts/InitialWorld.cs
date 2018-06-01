@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Data;
+using System.Linq;
 
 public class InitialWorld : MonoBehaviour
 {
@@ -17,7 +18,7 @@ public class InitialWorld : MonoBehaviour
         worldState.Domain = domain;
         currentNode = roverWorldStateFullDetail();	
         Debug.Log("We are now in this world state: " + currentNode.Data.ToString());
-        StartCoroutine(simulation());
+        possibleMoveActions();
     }
 
     IEnumerator simulation()
@@ -36,8 +37,66 @@ public class InitialWorld : MonoBehaviour
     {
         
     }
-    
-    private void roverWorldDomainAbstract(){
+
+    public List<Action> possibleMoveActions()
+    {
+        List<Action> possibleMoveActions = new List<Action>();
+        Action moveAction = currentNode.Data.Domain.getAction("MOVE");
+        
+        // Dictionary<Entity, List<Entity>> possibleParameters = new Dictionary<Entity, List<Entity>>();
+        List<List<Entity>> possibleParameters = new List<List<Entity>>();
+        foreach(Entity parameter in moveAction.Parameters)
+        {
+            // Debug.Log(parameter.Name + " CAN BE SUBSTITUTED WITH: ");
+            List<Entity> possibleSubstitutions = new List<Entity>();
+            foreach(Entity e in currentNode.Data.Entities)
+                if(e.Type.Equals(parameter.Type))
+                {
+                    // Debug.Log(e.Name);
+                    possibleSubstitutions.Add(e);                    
+                }
+            possibleParameters.Add(possibleSubstitutions);
+        }
+        List<List<Entity>> possibleCombinations = AllCombinationsOf(possibleParameters.ToArray());
+        foreach(List<Entity> combination in possibleCombinations)
+        {
+            string substitution = "< ";
+            foreach(Entity e in combination)
+                substitution += e.Name + ", ";
+            substitution = substitution.Substring(0, substitution.Length - 2);
+            substitution += " >";
+            Debug.Log(substitution);
+        }
+        return possibleMoveActions;
+    }
+
+    public static List<List<T>> AllCombinationsOf<T>(params List<T>[] sets)
+    {
+        // need array bounds checking etc for production
+        var combinations = new List<List<T>>();
+
+        // prime the data
+        foreach (var value in sets[0])
+            combinations.Add(new List<T> { value });
+
+        foreach (var set in sets.Skip(1))
+            combinations = AddExtraSet(combinations, set);
+
+        return combinations;
+    }
+
+    private static List<List<T>> AddExtraSet<T>
+        (List<List<T>> combinations, List<T> set)
+    {
+        var newCombinations = from value in set
+                            from combination in combinations
+                            select new List<T>(combination) { value };
+
+        return newCombinations.ToList();
+    }
+
+    private void roverWorldDomainAbstract()
+    {
         EntityType rover = new EntityType("ROVER");
         domain.addEntityType(rover);
         
@@ -165,7 +224,7 @@ public class InitialWorld : MonoBehaviour
         dropSampActPostconditions.Add(notRoverCarriesSample); 
 
         Action dropSampleAction = new Action(dropSampleActPreconditions, "DROP_SAMPLE", dropSampleActionParameters, dropSampActPostconditions);
-        domain.addAction(takeSampleAction);
+        domain.addAction(dropSampleAction);
 
         //              TAKE IMAGE ACTION 
         // Parameters 
@@ -187,7 +246,7 @@ public class InitialWorld : MonoBehaviour
         UnaryRelation roverHasTakenImageOfObjective = new UnaryRelation(EObjective, takenImage, true);
         takeImageActionPostconditions.Add(roverHasTakenImageOfObjective);
 
-        Action takeImageAction = new Action(takeImageActionPostconditions, "TAKE_IMAGE", takeImageActionParameters, takeImageActionPostconditions);
+        Action takeImageAction = new Action(takeImageActionPreconditions, "TAKE_IMAGE", takeImageActionParameters, takeImageActionPostconditions);
         domain.addAction(takeImageAction);
     }
 
@@ -352,17 +411,17 @@ public class InitialWorld : MonoBehaviour
 
         List<IRelation> actionChargePostconditions = new List<IRelation>();
         UnaryRelation relationBatteryCharged = new UnaryRelation(entityBattery, predicateBatteryCharged, true);
-        actionChargePreconditions.Add(relationBatteryCharged);
+        actionChargePostconditions.Add(relationBatteryCharged);
 
         Action actionChargeBattery = new Action(actionChargePreconditions, "CHARGE_BATTERY", actionChargeParameters, actionChargePostconditions);
         domain.addAction(actionChargeBattery);
 
         Action actionDischargeBattery = new Action(actionChargePostconditions, "DISCHARGE_BATTERY", actionChargeParameters, actionChargePreconditions);
-        domain.addAction(actionChargeBattery);
+        domain.addAction(actionDischargeBattery);
 
         List<Entity> actionInflateParameters = new List<Entity>();
         Entity entityWheels = new Entity(entityTypeWheel, "WHEELS");
-        actionChargeParameters.Add(entityWheels);
+        actionInflateParameters.Add(entityWheels);
 
         List<IRelation> actionInflatePreconditions = new List<IRelation>();
         UnaryRelation relationWheelsDeflated = new UnaryRelation(entityWheels, predicateWheelsInflated, false);
