@@ -8,61 +8,70 @@ public class UnaryRelationTest {
 
 	[Test]
 	public void UnaryRelationCannotBeNull() {
-		Manager.initManager();
-
-		Assert.That(()=> new UnaryRelation(null,null), Throws.ArgumentNullException);
-	}
-
-	[Test]
-	public void UnaryRelationSourceMustBeAnExistingEntity() {
-		Manager.initManager();
-
-		EntityType character = new EntityType("CHARACTER");
-		Manager.addEntityType(character);
-
-		Entity john = new Entity(character, "JOHN");
-		
-		UnaryPredicate rich = new UnaryPredicate(character, "RICH");
-		Manager.addPredicate(rich);
-
-		Assert.That(()=> new UnaryRelation(john, rich), Throws.ArgumentException);
+		Assert.That(()=> new UnaryRelation(null,null, true), Throws.ArgumentNullException);
 	}
 
 	[Test]
 	public void UnaryRelationSourceMustBeOfCorrectPredicateType() {
-		Manager.initManager();
-
 		EntityType character = new EntityType("CHARACTER");
-		Manager.addEntityType(character);
+		Entity john = new Entity(character, "JOHN");
 
 		EntityType location = new EntityType("LOCATION");
-		Manager.addEntityType(location);
-
-		Entity john = new Entity(character, "JOHN");
-		Manager.addEntity(john);
-
 		Entity school = new Entity(location, "SCHOOL");
-		Manager.addEntity(school);
 
 		UnaryPredicate isRich = new UnaryPredicate(character, "RICH");
-		Manager.addPredicate(isRich);
 
-		Assert.That(()=> new UnaryRelation(school, isRich), Throws.ArgumentException);
+		Assert.That(()=> new UnaryRelation(school, isRich, true), Throws.ArgumentException);
 	}
 
 	[Test]
-	public void UnaryRelationPredicateMustBeAnExistingPredicate() {
-		Manager.initManager();
+	public void UnaryRelationsAreEqualIfAllAttributesAreEqual() {
+		EntityType entityType1 = new EntityType("CHARACTER");
+		EntityType entityType2 = new EntityType("CHARACTER");
 
-		EntityType character = new EntityType("CHARACTER");
-		Manager.addEntityType(character);
+		Entity entity1 = new Entity(entityType1, "JOHN");
+		Entity entity2 = new Entity(entityType2, "JOHN");
 
-		Entity john = new Entity(character, "JOHN");
-		Manager.addEntity(john);
+		UnaryPredicate up1 = new UnaryPredicate(entityType1, "IS_RICH");
+		UnaryPredicate up2 = new UnaryPredicate(entityType2, "IS_RICH");
 
-		UnaryPredicate rich = new UnaryPredicate(character, "RICH");
+		UnaryRelation ur1 = new UnaryRelation(entity1, up1, true);
+		UnaryRelation ur2 = new UnaryRelation(entity2, up2, true);
 
-		Assert.That(()=> new UnaryRelation(john, rich), Throws.ArgumentException);
+		Assert.True(ur1.Equals(ur2) && ur1.GetHashCode() == ur2.GetHashCode());
 	}
 
+	[Test]
+	public void UnaryRelationsAreNotEqualIfSourceIsNotEqual() {
+		EntityType entityType1 = new EntityType("CHARACTER");
+		EntityType entityType2 = new EntityType("CHARACTER2");
+
+		Entity entity1 = new Entity(entityType1, "JOHN");
+		Entity entity2 = new Entity(entityType2, "JOHN");
+
+		UnaryPredicate up1 = new UnaryPredicate(entityType1, "IS_RICH");
+		UnaryPredicate up2 = new UnaryPredicate(entityType2, "IS_RICH");
+
+		UnaryRelation ur1 = new UnaryRelation(entity1, up1, true);
+		UnaryRelation ur2 = new UnaryRelation(entity2, up2, true);
+
+		Assert.False(ur1.Equals(ur2) || ur1.GetHashCode() == ur2.GetHashCode());
+	}
+
+	[Test]
+	public void UnaryRelationsAreNotEqualIfNameIsNotEqual() {
+		EntityType entityType1 = new EntityType("CHARACTER");
+		EntityType entityType2 = new EntityType("CHARACTER");
+
+		Entity entity1 = new Entity(entityType1, "JOHN");
+		Entity entity2 = new Entity(entityType2, "JOHN2");
+
+		UnaryPredicate up1 = new UnaryPredicate(entityType1, "IS_RICH");
+		UnaryPredicate up2 = new UnaryPredicate(entityType2, "IS_RICH");
+
+		UnaryRelation ur1 = new UnaryRelation(entity1, up1, true);
+		UnaryRelation ur2 = new UnaryRelation(entity2, up2, true);
+
+		Assert.False(ur1.Equals(ur2) || ur1.GetHashCode() == ur2.GetHashCode());
+	}
 }

@@ -8,31 +8,40 @@ public class EntityTest {
 
 	[Test]
 	public void EntityCannotBeNull() {
-		Manager.initManager();
-
 		Assert.That(()=> new Entity(null,null), Throws.ArgumentNullException);
 	}
 
 	[Test]
-	public void EntityCanOnlyBeOfExistingType() {
-		Manager.initManager();
-
+	public void EntitiesAreEqual() {
 		EntityType character = new EntityType("CHARACTER");
-		Assert.That(()=> new Entity(character, "JOHN"), Throws.ArgumentException);
+		Entity e1 = new Entity(character, "John");
+		Entity e2 = new Entity(character, "John");
+		Assert.True(e1.Equals(e2));
 	}
 
+	[Test]
+	public void EntitiesAreNotEqualIfNameIsNotEqual() {
+		EntityType character = new EntityType("CHARACTER");
+		Entity e1 = new Entity(character, "John");
+		Entity e2 = new Entity(character, "Paul");
+		Assert.False(e1.Equals(e2));
+	}
 
 	[Test]
-	public void EntityMustBeUnique() {
-		Manager.initManager();
-		
+	public void EntitiesAreNotEqualIfTypeIsNotEqual() {
 		EntityType character = new EntityType("CHARACTER");
-		Manager.addEntityType(character);
+		EntityType character2 = new EntityType("CHARACTER2");		
+		Entity e1 = new Entity(character, "John");
+		Entity e2 = new Entity(character2, "John");
+		Assert.False(e1.Equals(e2));
+	}
 
-		Entity e = new Entity(character, "JOHN");
-		Manager.addEntity(e);
-
-		Assert.That(()=> new Entity(character, "JOHN"), Throws.ArgumentException);
+	[Test]
+	public void EntitiesHaveTheSameHashCodeIfEqual() {
+		EntityType character = new EntityType("CHARACTER");		
+		Entity e1 = new Entity(character, "John");
+		Entity e2 = new Entity(character, "John");
+		Assert.True(e1.GetHashCode() == e2.GetHashCode());
 	}
 
 }

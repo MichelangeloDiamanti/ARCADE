@@ -8,49 +8,47 @@ public class BinaryPredicateTest {
 
 	[Test]
 	public void BinaryPredicateCannotBeNull() {
-		Manager.initManager();
-
 		Assert.That(()=> new BinaryPredicate(null,null,null), Throws.ArgumentNullException);
 	}
 
 	[Test]
-	public void BinaryPredicateSourceCanOnlyBeOfExistingType() {
-		Manager.initManager();
-
+	public void BinaryPredicatesAreEqualIfAllAttributesAreEqual() {
 		EntityType character = new EntityType("CHARACTER");
-
-		EntityType location = new EntityType("LOCATION");
-		Manager.addEntityType(location);
-
-		Assert.That(()=> new BinaryPredicate(character, "IS_AT", location), Throws.ArgumentException);
+		EntityType artifact = new EntityType("ARTIFACT");
+	
+		EntityType character2 = new EntityType("CHARACTER");
+		EntityType artifact2 = new EntityType("ARTIFACT");
+	
+		BinaryPredicate bp1 = new BinaryPredicate(character, "PICK_UP", artifact);
+		BinaryPredicate bp2 = new BinaryPredicate(character2, "PICK_UP", artifact2);
+		Assert.True(bp1.Equals(bp2) && bp1.GetHashCode() == bp2.GetHashCode());
 	}
 
 	[Test]
-	public void BinaryPredicateDestinationCanOnlyBeOfExistingType() {
-		Manager.initManager();
-
+	public void BinaryPredicatesAreNotEqualIfSourceTypeIsNotEqual() {
 		EntityType character = new EntityType("CHARACTER");
-		Manager.addEntityType(character);
-		
-		EntityType location = new EntityType("LOCATION");
-
-		Assert.That(()=> new BinaryPredicate(character, "IS_AT", location), Throws.ArgumentException);
+		EntityType artifact = new EntityType("ARTIFACT");
+		BinaryPredicate bp1 = new BinaryPredicate(character, "PICK_UP", artifact);
+		BinaryPredicate bp2 = new BinaryPredicate(artifact, "PICK_UP", artifact);
+		Assert.False(bp1.Equals(bp2) || bp1.GetHashCode() == bp2.GetHashCode());
 	}
-
 
 	[Test]
-	public void BinaryPredicateMustBeUnique() {
-		Manager.initManager();
-
+	public void BinaryPredicatesAreNotEqualIfDestinationTypeIsNotEqual() {
 		EntityType character = new EntityType("CHARACTER");
-		Manager.addEntityType(character);
-		
-		EntityType location = new EntityType("LOCATION");		
-		Manager.addEntityType(location);
-
-		BinaryPredicate up = new BinaryPredicate(character, "IS_AT", location);
-		Manager.addPredicate(up);
-
-		Assert.That(()=> new BinaryPredicate(character, "IS_AT", location), Throws.ArgumentException);
+		EntityType artifact = new EntityType("ARTIFACT");
+		BinaryPredicate bp1 = new BinaryPredicate(character, "PICK_UP", artifact);
+		BinaryPredicate bp2 = new BinaryPredicate(character, "PICK_UP", character);
+		Assert.False(bp1.Equals(bp2) || bp1.GetHashCode() == bp2.GetHashCode());
 	}
+
+	[Test]
+	public void BinaryPredicatesAreNotEqualIfNameIsNotEqual() {
+		EntityType character = new EntityType("CHARACTER");
+		EntityType artifact = new EntityType("ARTIFACT");
+		BinaryPredicate bp1 = new BinaryPredicate(character, "PICK_UP", artifact);
+		BinaryPredicate bp2 = new BinaryPredicate(character, "PICK_UP2", artifact);
+		Assert.False(bp1.Equals(bp2) || bp1.GetHashCode() == bp2.GetHashCode());
+	}
+
 }

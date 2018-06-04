@@ -19,12 +19,6 @@ public class Entity {
 	public Entity(EntityType type, string name){
 		if(type == null || name == null)
 			throw new System.ArgumentNullException("Entity type and name cannot be null");
-		
-		if(Manager.entityTypeExists(type) == false)
-			throw new System.ArgumentException("The specified entity type does not exist", type.ToString());
-
-		if(Manager.entityExists(type, name))
-			throw new System.ArgumentException("Entity has already been declared", type + " " + name);
 
 		_type = type;
 		_name = name;
@@ -32,32 +26,33 @@ public class Entity {
 
 	public override bool Equals(object obj)
 	{
-		var other = obj as Entity;
+		Entity other = obj as Entity;
 
 		if (other == null)
-		{
 			return false;
-		}
-
-		if(this.Type.Equals(other.Type) == false){
+		if(_type.Equals(other.Type) == false)
 			return false;
-		}
-
-		if(this.Name.Equals(other.Name) == false){
+		if(_name.Equals(other.Name) == false)
 			return false;
-		}
 
 		return true;
 	}
 
 	public override int GetHashCode()
 	{
-		string s = _name + _type;
-		return s.GetHashCode();
+        unchecked
+        {
+            int hashCode = 17;
+			hashCode = hashCode * -1521134295 + _name.GetHashCode();
+			hashCode = hashCode * -1521134295 + _type.GetHashCode();
+            return hashCode;
+        }
 	}
 
 	public override string ToString(){
 		return "type: " + _type + " name: " + _name;
 	}
+
+	public Entity Clone(){ return new Entity(_type.Clone(), _name); }
 	
 }

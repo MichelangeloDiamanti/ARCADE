@@ -8,31 +8,31 @@ public class UnaryPredicateTest {
 	
 	[Test]
 	public void UnaryPredicateCannotBeNull() {
-		Manager.initManager();
-
 		Assert.That(()=> new UnaryPredicate(null,null), Throws.ArgumentNullException);
 	}
 
 	[Test]
-	public void UnaryPredicateCanOnlyBeOfExistingType() {
-		Manager.initManager();
-
+	public void UnaryPredicatesAreEqualIfAllAttributesAreEqual() {
 		EntityType character = new EntityType("CHARACTER");
-		Assert.That(()=> new UnaryPredicate(character, "RICH"), Throws.ArgumentException);
+		UnaryPredicate up1 = new UnaryPredicate(character, "IS_RICH");
+		UnaryPredicate up2 = new UnaryPredicate(character, "IS_RICH");
+		Assert.True(up1.Equals(up2) && up1.GetHashCode() == up2.GetHashCode());
 	}
-
 
 	[Test]
-	public void UnaryPredicateMustBeUnique() {
-		Manager.initManager();
-		
+	public void UnaryPredicatesAreNotEqualIfTypeIsNotEqual() {
 		EntityType character = new EntityType("CHARACTER");
-		Manager.addEntityType(character);
-
-		UnaryPredicate up = new UnaryPredicate(character, "RICH");
-		Manager.addPredicate(up);
-
-		Assert.That(()=> new UnaryPredicate(character, "RICH"), Throws.ArgumentException);
+		EntityType character2 = new EntityType("CHARACTER2");
+		UnaryPredicate up1 = new UnaryPredicate(character, "IS_RICH");
+		UnaryPredicate up2 = new UnaryPredicate(character2, "IS_RICH");
+		Assert.False(up1.Equals(up2));
 	}
 
+	[Test]
+	public void UnaryPredicatesAreNotEqualIfNameIsNotEqual() {
+		EntityType character = new EntityType("CHARACTER");
+		UnaryPredicate up1 = new UnaryPredicate(character, "IS_RICH");
+		UnaryPredicate up2 = new UnaryPredicate(character, "IS_RICH2");
+		Assert.False(up1.Equals(up2));
+	}
 }

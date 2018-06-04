@@ -8,108 +8,148 @@ public class BinaryRelationTest {
 
 	[Test]
 	public void BinaryRelationCannotBeNull() {
-		Manager.initManager();
-
-		Assert.That(()=> new BinaryRelation(null,null,null), Throws.ArgumentNullException);
-	}
-
-	[Test]
-	public void BinaryRelationSourceMustBeAnExistingEntity() {
-		Manager.initManager();
-
-		EntityType character = new EntityType("CHARACTER");
-		Manager.addEntityType(character);
-
-		EntityType location = new EntityType("LOCATION");
-		Manager.addEntityType(location);
-
-		Entity john = new Entity(character, "JOHN");
-
-		Entity school = new Entity(location, "SCHOOL");
-		Manager.addEntity(school);
-		
-		BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location);
-		Manager.addPredicate(isAt);
-
-		Assert.That(()=> new BinaryRelation(john, isAt, school), Throws.ArgumentException);
-	}
-
-	[Test]
-	public void BinaryRelationDestinationMustBeAnExistingEntity() {
-		Manager.initManager();
-
-		EntityType character = new EntityType("CHARACTER");
-		Manager.addEntityType(character);
-
-		EntityType location = new EntityType("LOCATION");
-		Manager.addEntityType(location);
-
-		Entity john = new Entity(character, "JOHN");
-		Manager.addEntity(john);
-
-		Entity school = new Entity(location, "SCHOOL");
-		
-		BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location);
-		Manager.addPredicate(isAt);
-
-		Assert.That(()=> new BinaryRelation(john, isAt, school), Throws.ArgumentException);
+		Assert.That(()=> new BinaryRelation(null,null,null,false), Throws.ArgumentNullException);
 	}
 
 	[Test]
 	public void BinaryRelationSourceMustBeOfCorrectPredicateType() {
-		Manager.initManager();
-
 		EntityType character = new EntityType("CHARACTER");
-		Manager.addEntityType(character);
+		Entity john = new Entity(character, "JOHN");
 
 		EntityType location = new EntityType("LOCATION");
-		Manager.addEntityType(location);
-
 		Entity school = new Entity(location, "SCHOOL");
-		Manager.addEntity(school);
 
 		BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location);
-		Manager.addPredicate(isAt);
 
-		Assert.That(()=> new BinaryRelation(school, isAt, school), Throws.ArgumentException);
+		Assert.That(()=> new BinaryRelation(school, isAt, school, true), Throws.ArgumentException);
 	}
 
 	[Test]
 	public void BinaryRelationDestinationMustBeOfCorrectPredicateType() {
-		Manager.initManager();
-
 		EntityType character = new EntityType("CHARACTER");
-		Manager.addEntityType(character);
+		Entity john = new Entity(character, "JOHN");
 
 		EntityType location = new EntityType("LOCATION");
-		Manager.addEntityType(location);
-
-		Entity john = new Entity(character, "JOHN");
-		Manager.addEntity(john);
+		Entity school = new Entity(location, "SCHOOL");
 
 		BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location);
-		Manager.addPredicate(isAt);
 
-		Assert.That(()=> new BinaryRelation(john, isAt, john), Throws.ArgumentException);
+		Assert.That(()=> new BinaryRelation(john, isAt, john, true), Throws.ArgumentException);
 	}
 
 	[Test]
-	public void BinaryRelationPredicateMustBeAnExistingPredicate() {
-		Manager.initManager();
+	public void BinaryRelationsAreEqualIfAllAttributesAreEqual() {
+		EntityType sourceEntityType1 = new EntityType("CHARACTER");
+		EntityType sourceEntityType2 = new EntityType("CHARACTER");
 
-		EntityType character = new EntityType("CHARACTER");
-		Manager.addEntityType(character);
-
-		EntityType location = new EntityType("LOCATION");
-		Manager.addEntityType(location);
-
-		Entity john = new Entity(character, "JOHN");
-		Manager.addEntity(john);
-
-		Entity school = new Entity(location, "SCHOOL");
+		EntityType destinationEntityType1 = new EntityType("ARTIFACT");
+		EntityType destinationEntityType2 = new EntityType("ARTIFACT");
 		
-		BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location);
+		Entity sourceEntity1 = new Entity(sourceEntityType1, "JOHN");
+		Entity sourceEntity2 = new Entity(sourceEntityType2, "JOHN");
 
-		Assert.That(()=> new BinaryRelation(john, isAt, school), Throws.ArgumentException);
+		Entity destinationEntity1 = new Entity(destinationEntityType1, "APPLE");
+		Entity destinationEntity2 = new Entity(destinationEntityType2, "APPLE");
+
+		BinaryPredicate bp1 = new BinaryPredicate(sourceEntityType1, "PICK_UP", destinationEntityType1);
+		BinaryPredicate bp2 = new BinaryPredicate(sourceEntityType2, "PICK_UP", destinationEntityType2);
+
+		BinaryRelation br1 = new BinaryRelation(sourceEntity1, bp1, destinationEntity1, true);
+		BinaryRelation br2 = new BinaryRelation(sourceEntity2, bp2, destinationEntity2, true);
+
+		Assert.True(br1.Equals(br2) && br1.GetHashCode() == br2.GetHashCode());
 	}
+
+	[Test]
+	public void BinaryRelationsAreNotEqualIfSourcesAreNotEqual() {
+		EntityType sourceEntityType1 = new EntityType("CHARACTER");
+		EntityType sourceEntityType2 = new EntityType("CHARACTER");
+
+		EntityType destinationEntityType1 = new EntityType("ARTIFACT");
+		EntityType destinationEntityType2 = new EntityType("ARTIFACT");
+		
+		Entity sourceEntity1 = new Entity(sourceEntityType1, "JOHN");
+		Entity sourceEntity2 = new Entity(sourceEntityType2, "JOHN2");
+
+		Entity destinationEntity1 = new Entity(destinationEntityType1, "APPLE");
+		Entity destinationEntity2 = new Entity(destinationEntityType2, "APPLE");
+
+		BinaryPredicate bp1 = new BinaryPredicate(sourceEntityType1, "PICK_UP", destinationEntityType1);
+		BinaryPredicate bp2 = new BinaryPredicate(sourceEntityType2, "PICK_UP", destinationEntityType2);
+
+		BinaryRelation br1 = new BinaryRelation(sourceEntity1, bp1, destinationEntity1, true);
+		BinaryRelation br2 = new BinaryRelation(sourceEntity2, bp2, destinationEntity2, true);
+
+		Assert.False(br1.Equals(br2) || br1.GetHashCode() == br2.GetHashCode());
+	}
+
+	[Test]
+	public void BinaryRelationsAreNotEqualIfDestinationsAreNotEqual() {
+		EntityType sourceEntityType1 = new EntityType("CHARACTER");
+		EntityType sourceEntityType2 = new EntityType("CHARACTER");
+
+		EntityType destinationEntityType1 = new EntityType("ARTIFACT");
+		EntityType destinationEntityType2 = new EntityType("ARTIFACT");
+		
+		Entity sourceEntity1 = new Entity(sourceEntityType1, "JOHN");
+		Entity sourceEntity2 = new Entity(sourceEntityType2, "JOHN");
+
+		Entity destinationEntity1 = new Entity(destinationEntityType1, "APPLE");
+		Entity destinationEntity2 = new Entity(destinationEntityType2, "APPLE2");
+
+		BinaryPredicate bp1 = new BinaryPredicate(sourceEntityType1, "PICK_UP", destinationEntityType1);
+		BinaryPredicate bp2 = new BinaryPredicate(sourceEntityType2, "PICK_UP", destinationEntityType2);
+
+		BinaryRelation br1 = new BinaryRelation(sourceEntity1, bp1, destinationEntity1, true);
+		BinaryRelation br2 = new BinaryRelation(sourceEntity2, bp2, destinationEntity2, true);
+
+		Assert.False(br1.Equals(br2) || br1.GetHashCode() == br2.GetHashCode());
+	}
+
+	[Test]
+	public void BinaryRelationsAreNotEqualIfPredicatesAreNotEqual() {
+		EntityType sourceEntityType1 = new EntityType("CHARACTER");
+		EntityType sourceEntityType2 = new EntityType("CHARACTER");
+
+		EntityType destinationEntityType1 = new EntityType("ARTIFACT");
+		EntityType destinationEntityType2 = new EntityType("ARTIFACT");
+		
+		Entity sourceEntity1 = new Entity(sourceEntityType1, "JOHN");
+		Entity sourceEntity2 = new Entity(sourceEntityType2, "JOHN");
+
+		Entity destinationEntity1 = new Entity(destinationEntityType1, "APPLE");
+		Entity destinationEntity2 = new Entity(destinationEntityType2, "APPLE");
+
+		BinaryPredicate bp1 = new BinaryPredicate(sourceEntityType1, "PICK_UP", destinationEntityType1);
+		BinaryPredicate bp2 = new BinaryPredicate(sourceEntityType2, "PICK_UP2", destinationEntityType2);
+
+		BinaryRelation br1 = new BinaryRelation(sourceEntity1, bp1, destinationEntity1, true);
+		BinaryRelation br2 = new BinaryRelation(sourceEntity2, bp2, destinationEntity2, true);
+
+		Assert.False(br1.Equals(br2) || br1.GetHashCode() == br2.GetHashCode());
+	}
+
+	[Test]
+	public void BinaryRelationsAreNotEqualIfValuesAreNotEqual() {
+		EntityType sourceEntityType1 = new EntityType("CHARACTER");
+		EntityType sourceEntityType2 = new EntityType("CHARACTER");
+
+		EntityType destinationEntityType1 = new EntityType("ARTIFACT");
+		EntityType destinationEntityType2 = new EntityType("ARTIFACT");
+		
+		Entity sourceEntity1 = new Entity(sourceEntityType1, "JOHN");
+		Entity sourceEntity2 = new Entity(sourceEntityType2, "JOHN");
+
+		Entity destinationEntity1 = new Entity(destinationEntityType1, "APPLE");
+		Entity destinationEntity2 = new Entity(destinationEntityType2, "APPLE");
+
+		BinaryPredicate bp1 = new BinaryPredicate(sourceEntityType1, "PICK_UP", destinationEntityType1);
+		BinaryPredicate bp2 = new BinaryPredicate(sourceEntityType2, "PICK_UP", destinationEntityType2);
+
+		BinaryRelation br1 = new BinaryRelation(sourceEntity1, bp1, destinationEntity1, true);
+		BinaryRelation br2 = new BinaryRelation(sourceEntity2, bp2, destinationEntity2, false);
+
+		Assert.False(br1.Equals(br2) || br1.GetHashCode() == br2.GetHashCode());
+	}
+
 }

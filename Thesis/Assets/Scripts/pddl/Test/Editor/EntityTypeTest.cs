@@ -7,18 +7,28 @@ using System.Collections;
 public class EntityTypeTest {
 	[Test]
 	public void EntityTypeCannotBeNull() {
-		Manager.initManager();
-
 		Assert.That(()=> new EntityType(null), Throws.ArgumentNullException);
 	}
 
 	[Test]
-	public void EntityTypeMustBeUnique() {
-		Manager.initManager();
-
-		EntityType character = new EntityType("CHARACTER");
-		Manager.addEntityType(character);
-
-		Assert.That(()=> new EntityType("CHARACTER"), Throws.ArgumentException);
+	public void EntityTypeHashCodeIsEqualIfTheyAreEqual() {
+		EntityType et1 = new EntityType("CHARACTER");
+		EntityType et2 = new EntityType("CHARACTER");
+		Assert.True(et1.GetHashCode() == et2.GetHashCode());
 	}
+	
+	[Test]
+	public void EntityTypeAreEqualIfTheyHaveTheSameName() {
+		EntityType et1 = new EntityType("CHARACTER");
+		EntityType et2 = new EntityType("CHARACTER");
+		Assert.True(et1.Equals(et2));
+	}
+
+	[Test]
+	public void EntityTypeAreNotEqualIfTheyDoNotHaveTheSameName() {
+		EntityType et1 = new EntityType("CHARACTER");
+		EntityType et2 = new EntityType("CHARACTEr");
+		Assert.False(et1.Equals(et2));
+	}
+
 }
