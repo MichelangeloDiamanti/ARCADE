@@ -17,8 +17,9 @@ public class InitialWorld : MonoBehaviour
         roverWorldDomainFullDetail();
         worldState.Domain = domain;
         currentNode = roverWorldStateFullDetail();	
-        Debug.Log("We are now in this world state: " + currentNode.Data.ToString());
-        possibleMoveActions();
+        // Debug.Log("We are now in this world state: " + currentNode.Data.ToString());
+        // possibleMoveActions();
+        worldState.getPossibleActions();
     }
 
     IEnumerator simulation()

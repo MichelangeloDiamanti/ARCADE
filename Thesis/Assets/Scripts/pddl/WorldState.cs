@@ -8,6 +8,7 @@ public class WorldState
     private Domain _domain;
     private List<IRelation> _relations;
     private List<Entity> _entities;
+    private List<List<Entity>> _combinations = new List<List<Entity>>();
 
     public List<IRelation> Relations
     {
@@ -217,6 +218,7 @@ public class WorldState
         return resultingState;
     }
 
+
     public List<Action> getPossibleActions()
     {
         List<Action> listActions = new List<Action>();
@@ -246,14 +248,14 @@ public class WorldState
         }
         foreach (Action a in possibleActions)
         {
-            string ciao = "Possible Actions: " + a.ToString() + "\nCoinvolte: \n";
-            foreach (Entity item in a.Parameters)
-            {
-                ciao += item.ToString() + "\n";
-            }
-            Debug.Log(ciao);
+            // string ciao = "Possible Actions: " + a.ToString() + "\nCoinvolte: \n";
+            // foreach (Entity item in a.Parameters)
+            // {
+            //     ciao += item.ToString() + "\n";
+            // }
+            // Debug.Log(ciao);
 
-            List<List<Entity>> listSobstitution = new List<List<Entity>>();
+            Queue<List<Entity>> listSobstitution = new Queue<List<Entity>>();
             foreach (Entity item in a.Parameters)
             {
                 List<Entity> listapp = new List<Entity>();
@@ -264,37 +266,42 @@ public class WorldState
                         listapp.Add(e.Clone());
                     }
                 }
-                listSobstitution.Add(listapp);
+                listSobstitution.Enqueue(listapp);
             }
 
-            List<List<Entity>> listSobstitutionNew = new List<List<Entity>>();
-            int j = 0;
-            foreach (List<Entity> list in listSobstitution)
+            _combinations.Clear();
+            List<Entity> result = new List<Entity>();
+            CombinationRecoursive(listSobstitution, result);
+
+            // string message = "Combinations: \n";
+            // foreach (List<Entity> list in _combinations)
+            // {
+            //     message += "List: \n";
+            //     foreach (Entity item in list)
+            //     {
+            //         message += item.ToString() + " ";
+            //     }
+            //     message += "\n";
+            // }
+            // Debug.Log(message);
+
+            foreach (List<Entity> list in _combinations)
             {
-                int i = 0;
-                foreach (Entity item in list)
+                Dictionary<Entity, Entity> sob = new Dictionary<Entity, Entity>();
+                for (int i = 0; i < a.Parameters.Count; i++)
                 {
-                    if (j == 0)
+                    if (a.Parameters[i].Type.Equals(list[i].Type))
                     {
-                        listSobstitutionNew.Add(new List<Entity>(a.Parameters.Count));
+                        sob.Add(a.Parameters[i], list[i]);
                     }
-                    listSobstitutionNew[i].Add(item);
-                    i++;
+                    else
+                    {
+                        throw new System.ArgumentException();
+                    }
                 }
-                j++;
+                Action action = a.sobstituteEntityInAction(sob);
+                Debug.Log(action.ToString());
             }
-
-            string message = "Combinations: \n";
-            foreach (List<Entity> list in listSobstitutionNew)
-            {
-                message+="List: \n";
-                foreach (Entity item in list)
-                {
-                    message += item.ToString() +" ";
-                }
-                message +="\n";
-            }
-            Debug.Log(message);
 
         }
 
@@ -303,5 +310,34 @@ public class WorldState
     }
 
 
+    void CombinationRecoursive(Queue<List<Entity>> listEntities, List<Entity> result)
+    {
+        List<Entity> list = listEntities.Dequeue();
+        foreach (Entity item in list)
+        {
+            result.Add(item.Clone());
+            if (listEntities.Count == 0)
+            {
+                _combinations.Add(copyList(result));
+            }
+            else
+            {
+                CombinationRecoursive(listEntities, result);
+            }
+            result.Remove(item);
+        }
+        listEntities.Enqueue(list);
+    }
 
+    private List<Entity> copyList(List<Entity> list)
+    {
+        List<Entity> newList = new List<Entity>();
+        list.ForEach((item) =>
+        {
+            newList.Add(item.Clone());
+        });
+        return newList;
+    }
 }
+
+
