@@ -195,6 +195,8 @@ public class WorldState
 
     public WorldState applyAction(Action action)
     {
+        if(canPerformAction(action) == false)
+            throw new System.ArgumentException("The action " + action.Name + " cannot be performed in the worldState: " + this.ToString());
         WorldState resultingState = this.Clone();
         foreach (IRelation actionEffect in action.PostConditions)
         {
@@ -215,6 +217,12 @@ public class WorldState
                 resultingState.addRelation(actionEffect.Clone());
         }
         return resultingState;
+    }
+
+    public bool canPerformAction(Action action){
+        foreach(IRelation precondition in action.PreConditions)
+            if(_relations.Contains(precondition) == false) return false;
+        return true;
     }
 
     public List<Action> getPossibleActions()
