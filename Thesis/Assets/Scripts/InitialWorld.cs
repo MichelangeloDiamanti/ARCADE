@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Data;
+using System.Linq;
 
 public class InitialWorld : MonoBehaviour
 {
     Domain domain;
     WorldState worldState;
+    TreeNode<WorldState> currentNode;
     // Use this for initialization
     void Start()
     {
@@ -14,10 +16,20 @@ public class InitialWorld : MonoBehaviour
         worldState = new WorldState();
         roverWorldDomainFullDetail();
         worldState.Domain = domain;
-        roverWorldStateFullDetail();
-        worldState.getPossibleActions();
+        currentNode = roverWorldStateFullDetail();	
+        Debug.Log("We are now in this world state: " + currentNode.Data.ToString());
+        possibleMoveActions();
+    }
 
-        // Debug.Log(worldState.ToString());	
+    IEnumerator simulation()
+    {
+        int randomActionIndex = Random.Range(0, currentNode.Data.Domain.Actions.Count);
+        Action randomAction = currentNode.Data.Domain.Actions[randomActionIndex];
+        WorldState nextState = currentNode.Data.applyAction(randomAction);
+        currentNode = currentNode.AddChild(nextState);
+        Debug.Log("The Following Action was performed: " + randomAction.ToString());
+        Debug.Log("We are now in this world state: " + currentNode.Data.ToString());
+        yield return new WaitForSeconds(1);
     }
 
     // Update is called once per frame
@@ -26,7 +38,219 @@ public class InitialWorld : MonoBehaviour
         
     }
 
-    private void roverWorldStateFullDetail()
+    public List<Action> possibleMoveActions()
+    {
+        List<Action> possibleMoveActions = new List<Action>();
+        Action moveAction = currentNode.Data.Domain.getAction("MOVE");
+        
+        // Dictionary<Entity, List<Entity>> possibleParameters = new Dictionary<Entity, List<Entity>>();
+        List<List<Entity>> possibleParameters = new List<List<Entity>>();
+        foreach(Entity parameter in moveAction.Parameters)
+        {
+            // Debug.Log(parameter.Name + " CAN BE SUBSTITUTED WITH: ");
+            List<Entity> possibleSubstitutions = new List<Entity>();
+            foreach(Entity e in currentNode.Data.Entities)
+                if(e.Type.Equals(parameter.Type))
+                {
+                    // Debug.Log(e.Name);
+                    possibleSubstitutions.Add(e);                    
+                }
+            possibleParameters.Add(possibleSubstitutions);
+        }
+        List<List<Entity>> possibleCombinations = AllCombinationsOf(possibleParameters.ToArray());
+        foreach(List<Entity> combination in possibleCombinations)
+        {
+            string substitution = "< ";
+            foreach(Entity e in combination)
+                substitution += e.Name + ", ";
+            substitution = substitution.Substring(0, substitution.Length - 2);
+            substitution += " >";
+            Debug.Log(substitution);
+        }
+        return possibleMoveActions;
+    }
+
+    public static List<List<T>> AllCombinationsOf<T>(params List<T>[] sets)
+    {
+        // need array bounds checking etc for production
+        var combinations = new List<List<T>>();
+
+        // prime the data
+        foreach (var value in sets[0])
+            combinations.Add(new List<T> { value });
+
+        foreach (var set in sets.Skip(1))
+            combinations = AddExtraSet(combinations, set);
+
+        return combinations;
+    }
+
+    private static List<List<T>> AddExtraSet<T>
+        (List<List<T>> combinations, List<T> set)
+    {
+        var newCombinations = from value in set
+                            from combination in combinations
+                            select new List<T>(combination) { value };
+
+        return newCombinations.ToList();
+    }
+
+    private void roverWorldDomainAbstract()
+    {
+        EntityType rover = new EntityType("ROVER");
+        domain.addEntityType(rover);
+        
+        EntityType wayPoint = new EntityType("WAYPOINT");
+        domain.addEntityType(wayPoint);
+
+        EntityType sample = new EntityType("SAMPLE");
+        domain.addEntityType(sample);
+
+        EntityType objective = new EntityType("OBJECTIVE");
+        domain.addEntityType(objective);
+
+        //(can-move ?from-waypoint ?to-waypoint)
+        BinaryPredicate canMove = new BinaryPredicate(wayPoint, "CAN_MOVE", wayPoint);
+        domain.addPredicate(canMove);
+        //(is-visible ?objective ?waypoint)
+        BinaryPredicate isVisible = new BinaryPredicate(objective, "IS_VISIBLE", wayPoint);
+        domain.addPredicate(isVisible);
+        //(is-in ?sample ?waypoint)
+        BinaryPredicate isIn = new BinaryPredicate(sample, "IS_IN", wayPoint);
+        domain.addPredicate(isIn);
+        //(been-at ?rover ?waypoint)
+        BinaryPredicate beenAt = new BinaryPredicate(rover, "BEEN_AT", wayPoint);
+        domain.addPredicate(beenAt);
+        //(carry ?rover ?sample)  
+        BinaryPredicate carry = new BinaryPredicate(rover, "CARRY", sample);
+        domain.addPredicate(carry);
+        //(at ?rover ?waypoint)
+        BinaryPredicate at = new BinaryPredicate(rover, "AT", wayPoint);
+        domain.addPredicate(at);
+        //(is-dropping-dock ?waypoint)
+        UnaryPredicate isDroppingDock = new UnaryPredicate(wayPoint, "IS_DROPPING_DOCK");
+        domain.addPredicate(isDroppingDock);
+        //(taken-image ?objective)
+        UnaryPredicate takenImage = new UnaryPredicate(objective, "TAKEN_IMAGE");
+        domain.addPredicate(takenImage);
+        //(stored-sample ?sample)
+        UnaryPredicate storedSample = new UnaryPredicate(sample, "STORED_SAMPLE");
+        domain.addPredicate(storedSample);
+        //(empty ?rover) 
+        UnaryPredicate isEmpty = new UnaryPredicate(rover, "IS_EMPTY");
+        domain.addPredicate(isEmpty);
+
+
+        //              MOVE ACTION
+        // Parameters
+        Entity curiosity = new Entity(rover, "ROVER");
+        Entity fromWayPoint = new Entity(wayPoint, "WAYPOINT1");
+        Entity toWayPoint = new Entity(wayPoint, "WAYPOINT2");        
+
+        List<Entity> moveActionParameters = new List<Entity>();
+        moveActionParameters.Add(curiosity);
+        moveActionParameters.Add(fromWayPoint);
+        moveActionParameters.Add(toWayPoint);        
+
+        // Preconditions
+        List<IRelation> moveActionPreconditions = new List<IRelation>();
+        BinaryRelation roverAtfromWP = new BinaryRelation(curiosity, at, fromWayPoint, true);
+        moveActionPreconditions.Add(roverAtfromWP);
+        BinaryRelation canMoveFromWP1ToWP2 = new BinaryRelation(fromWayPoint, canMove, toWayPoint, true);
+        moveActionPreconditions.Add(canMoveFromWP1ToWP2);
+
+        // Postconditions
+        List<IRelation> moveActionPostconditions = new List<IRelation>();
+        BinaryRelation notRoverAtFromWP = new BinaryRelation(curiosity, at, fromWayPoint, false);
+        moveActionPostconditions.Add(notRoverAtFromWP);
+        BinaryRelation roverAtToWP = new BinaryRelation(curiosity, at, toWayPoint, true);
+        moveActionPostconditions.Add(roverAtToWP);
+        BinaryRelation roverBeenAtToWP = new BinaryRelation(curiosity, beenAt, toWayPoint, true);
+        moveActionPostconditions.Add(roverBeenAtToWP);
+
+        Action moveAction = new Action(moveActionPreconditions, "MOVE", moveActionParameters, moveActionPostconditions);
+        domain.addAction(moveAction);
+
+        //              TAKE SAMPLE ACTION
+        // Parameters
+        Entity ESample = new Entity(sample, "SAMPLE");
+        Entity EWayPoint = new Entity(wayPoint, "WAYPOINT");
+        
+        List<Entity> takeSampleActionParameters = new List<Entity>();
+        takeSampleActionParameters.Add(curiosity);
+        takeSampleActionParameters.Add(ESample);
+        takeSampleActionParameters.Add(EWayPoint);
+
+        // Preconditions
+        List<IRelation> takeSampleActPreconditions = new List<IRelation>();
+        BinaryRelation sampleIsInWayPoint = new BinaryRelation(ESample, isIn, EWayPoint, true);
+        takeSampleActPreconditions.Add(sampleIsInWayPoint);
+        BinaryRelation roverIsAtWayPoint = new BinaryRelation(curiosity, at, EWayPoint, true);
+        takeSampleActPreconditions.Add(roverIsAtWayPoint);
+        UnaryRelation roverIsEmpty = new UnaryRelation(curiosity, isEmpty, true);
+        takeSampleActPreconditions.Add(roverIsEmpty);
+
+        // Postconditions
+        List<IRelation> takeSampleActPostconditions = new List<IRelation>();
+        BinaryRelation sampleIsNotInWayPoint = new BinaryRelation(ESample, isIn, EWayPoint, false);
+        takeSampleActPostconditions.Add(sampleIsNotInWayPoint);
+        UnaryRelation roverIsNotEmpty = new UnaryRelation(curiosity, isEmpty, false);
+        takeSampleActPostconditions.Add(roverIsNotEmpty);        
+        BinaryRelation roverCarriesSample = new BinaryRelation(curiosity, carry, ESample, true);
+        takeSampleActPostconditions.Add(roverCarriesSample); 
+
+        Action takeSampleAction = new Action(takeSampleActPreconditions, "TAKE_SAMPLE", takeSampleActionParameters, takeSampleActPostconditions);
+        domain.addAction(takeSampleAction);
+
+        //              DROP SAMPLE ACTION        
+        // Parameters
+        List<Entity> dropSampleActionParameters = new List<Entity>();
+        dropSampleActionParameters.Add(curiosity);
+        dropSampleActionParameters.Add(ESample);
+        dropSampleActionParameters.Add(EWayPoint);
+
+        // Preconditions
+        List<IRelation> dropSampleActPreconditions = new List<IRelation>();
+        UnaryRelation wayPointIsDroppingDock = new UnaryRelation(EWayPoint, isDroppingDock, true);
+        dropSampleActPreconditions.Add(wayPointIsDroppingDock);
+        dropSampleActPreconditions.Add(roverIsAtWayPoint);
+        dropSampleActPreconditions.Add(roverCarriesSample);
+
+        // Postconditions
+        List<IRelation> dropSampActPostconditions = new List<IRelation>();
+        dropSampActPostconditions.Add(sampleIsInWayPoint);
+        dropSampActPostconditions.Add(roverIsEmpty);
+        BinaryRelation notRoverCarriesSample = new BinaryRelation(curiosity, carry, ESample, false);
+        dropSampActPostconditions.Add(notRoverCarriesSample); 
+
+        Action dropSampleAction = new Action(dropSampleActPreconditions, "DROP_SAMPLE", dropSampleActionParameters, dropSampActPostconditions);
+        domain.addAction(dropSampleAction);
+
+        //              TAKE IMAGE ACTION 
+        // Parameters 
+        Entity EObjective = new Entity(objective, "OBJECTIVE");
+
+        List<Entity> takeImageActionParameters = new List<Entity>();
+        takeImageActionParameters.Add(curiosity);
+        takeImageActionParameters.Add(EObjective);
+        takeImageActionParameters.Add(EWayPoint);
+
+        // Preconditions
+        List<IRelation> takeImageActionPreconditions = new List<IRelation>();
+        takeImageActionPreconditions.Add(roverIsAtWayPoint);
+        BinaryRelation objectiveIsVisibleFromWayPoint = new BinaryRelation(EObjective, isVisible, EWayPoint, true);
+        takeImageActionPreconditions.Add(objectiveIsVisibleFromWayPoint);
+
+        // Postconditions
+        List<IRelation> takeImageActionPostconditions = new List<IRelation>();
+        UnaryRelation roverHasTakenImageOfObjective = new UnaryRelation(EObjective, takenImage, true);
+        takeImageActionPostconditions.Add(roverHasTakenImageOfObjective);
+
+        Action takeImageAction = new Action(takeImageActionPreconditions, "TAKE_IMAGE", takeImageActionParameters, takeImageActionPostconditions);
+        domain.addAction(takeImageAction);
+    }
+
+    private TreeNode<WorldState> roverWorldStateAbstract()
     {
         Entity rover = new Entity(new EntityType("ROVER"), "ROVER");
         worldState.addEntity(rover);
@@ -161,179 +385,77 @@ public class InitialWorld : MonoBehaviour
 
         BinaryRelation isAt6 = domain.generateRelationFromPredicateName("AT", rover, wayPoint6, true);
         worldState.addRelation(isAt6);
-    }
 
-    private void RoverWorldStateInit()
+        return new TreeNode<WorldState>(worldState);
+    }
+    private void roverWorldDomainFullDetail()
     {
-        Entity location = new Entity(new EntityType("WAYPOINT"), "location1");
-        worldState.addEntity(location);
-        Entity location1 = new Entity(new EntityType("WAYPOINT"), "location2");
-        worldState.addEntity(location1);
-        Entity rover = new Entity(new EntityType("ROVER"), "rover");
-        worldState.addEntity(rover);
+        roverWorldDomainAbstract();
 
-        BinaryRelation canMove = domain.generateRelationFromPredicateName("CAN_MOVE", location, location1, true);
-        worldState.addRelation(canMove);
-        BinaryRelation at = domain.generateRelationFromPredicateName("AT", rover, location, true);
-        worldState.addRelation(at);
+        EntityType entityTypeBattery = new EntityType("BATTERY");
+        domain.addEntityType(entityTypeBattery);
+        EntityType entityTypeWheel = new EntityType("WHEEL");
+        domain.addEntityType(entityTypeWheel);
+        UnaryPredicate predicateBatteryCharged = new UnaryPredicate(entityTypeBattery, "BATTERY_CHARGED");
+        domain.addPredicate(predicateBatteryCharged);
+        UnaryPredicate predicateWheelsInflated = new UnaryPredicate(entityTypeWheel, "WHEELS_INFLATED");
+        domain.addPredicate(predicateWheelsInflated);
 
+        List<Entity> actionChargeParameters = new List<Entity>();
+        Entity entityBattery = new Entity(entityTypeBattery, "BATTERY");
+        actionChargeParameters.Add(entityBattery);
 
-        // BinaryRelation canMove = new BinaryRelation()
+        List<IRelation> actionChargePreconditions = new List<IRelation>();
+        UnaryRelation relationBatteryDischarged = new UnaryRelation(entityBattery, predicateBatteryCharged, false);
+        actionChargePreconditions.Add(relationBatteryDischarged);
+
+        List<IRelation> actionChargePostconditions = new List<IRelation>();
+        UnaryRelation relationBatteryCharged = new UnaryRelation(entityBattery, predicateBatteryCharged, true);
+        actionChargePostconditions.Add(relationBatteryCharged);
+
+        Action actionChargeBattery = new Action(actionChargePreconditions, "CHARGE_BATTERY", actionChargeParameters, actionChargePostconditions);
+        domain.addAction(actionChargeBattery);
+
+        Action actionDischargeBattery = new Action(actionChargePostconditions, "DISCHARGE_BATTERY", actionChargeParameters, actionChargePreconditions);
+        domain.addAction(actionDischargeBattery);
+
+        List<Entity> actionInflateParameters = new List<Entity>();
+        Entity entityWheels = new Entity(entityTypeWheel, "WHEELS");
+        actionInflateParameters.Add(entityWheels);
+
+        List<IRelation> actionInflatePreconditions = new List<IRelation>();
+        UnaryRelation relationWheelsDeflated = new UnaryRelation(entityWheels, predicateWheelsInflated, false);
+        actionInflatePreconditions.Add(relationWheelsDeflated);
+
+        List<IRelation> actionInflatePostconditions = new List<IRelation>();
+        UnaryRelation relationWheelsInflated = new UnaryRelation(entityWheels, predicateWheelsInflated, true);
+        actionInflatePostconditions.Add(relationWheelsInflated);
+
+        Action actionInflate = new Action(actionInflatePreconditions, "INFLATE", actionInflateParameters, actionInflatePostconditions);
+        domain.addAction(actionInflate);
+        
+        Action actionDeflate = new Action(actionInflatePostconditions, "DEFLATE", actionInflateParameters ,actionInflatePreconditions);
+        domain.addAction(actionDeflate);    
     }
 
-    private void roverWorldDomainFullDetail(){
-        EntityType rover = new EntityType("ROVER");
-        domain.addEntityType(rover);
+    private TreeNode<WorldState> roverWorldStateFullDetail()
+    {
+        TreeNode<WorldState> detailedtNode = roverWorldStateAbstract();
+        WorldState detailedState = detailedtNode.Data;
+
+        EntityType entityTypeBattery = new EntityType("BATTERY");
+        EntityType entityTypeWheel = new EntityType("WHEEL");
+
+        Entity entityBattery = new Entity(entityTypeBattery, "BATTERY");
+        Entity entityWheels = new Entity(entityTypeWheel, "WHEELS");
+        detailedState.addEntity(entityBattery);
+        detailedState.addEntity(entityWheels);
         
-        EntityType wayPoint = new EntityType("WAYPOINT");
-        domain.addEntityType(wayPoint);
+        UnaryRelation relationBatteryIsCharged = detailedState.Domain.generateRelationFromPredicateName("BATTERY_CHARGED", entityBattery, true);
+        detailedState.addRelation(relationBatteryIsCharged);
+        UnaryRelation relationWheelsInflated = detailedState.Domain.generateRelationFromPredicateName("WHEELS_INFLATED", entityWheels, true);
+        detailedState.addRelation(relationWheelsInflated);
 
-        EntityType sample = new EntityType("SAMPLE");
-        domain.addEntityType(sample);
-
-        EntityType objective = new EntityType("OBJECTIVE");
-        domain.addEntityType(objective);
-
-        //(can-move ?from-waypoint ?to-waypoint)
-        BinaryPredicate canMove = new BinaryPredicate(wayPoint, "CAN_MOVE", wayPoint);
-        domain.addPredicate(canMove);
-        //(is-visible ?objective ?waypoint)
-        BinaryPredicate isVisible = new BinaryPredicate(objective, "IS_VISIBLE", wayPoint);
-        domain.addPredicate(isVisible);
-        //(is-in ?sample ?waypoint)
-        BinaryPredicate isIn = new BinaryPredicate(sample, "IS_IN", wayPoint);
-        domain.addPredicate(isIn);
-        //(been-at ?rover ?waypoint)
-        BinaryPredicate beenAt = new BinaryPredicate(rover, "BEEN_AT", wayPoint);
-        domain.addPredicate(beenAt);
-        //(carry ?rover ?sample)  
-        BinaryPredicate carry = new BinaryPredicate(rover, "CARRY", sample);
-        domain.addPredicate(carry);
-        //(at ?rover ?waypoint)
-        BinaryPredicate at = new BinaryPredicate(rover, "AT", wayPoint);
-        domain.addPredicate(at);
-        //(is-dropping-dock ?waypoint)
-        UnaryPredicate isDroppingDock = new UnaryPredicate(wayPoint, "IS_DROPPING_DOCK");
-        domain.addPredicate(isDroppingDock);
-        //(taken-image ?objective)
-        UnaryPredicate takenImage = new UnaryPredicate(objective, "TAKEN_IMAGE");
-        domain.addPredicate(takenImage);
-        //(stored-sample ?sample)
-        UnaryPredicate storedSample = new UnaryPredicate(sample, "STORED_SAMPLE");
-        domain.addPredicate(storedSample);
-        //(empty ?rover) 
-        UnaryPredicate isEmpty = new UnaryPredicate(rover, "IS_EMPTY");
-        domain.addPredicate(isEmpty);
-
-
-        //              MOVE ACTION
-        // Parameters
-        Entity curiosity = new Entity(rover, "ROVER");
-        Entity fromWayPoint = new Entity(wayPoint, "WAYPOINT1");
-        Entity toWayPoint = new Entity(wayPoint, "WAYPOINT2");        
-
-        List<Entity> moveActionParameters = new List<Entity>();
-        moveActionParameters.Add(curiosity);
-        moveActionParameters.Add(fromWayPoint);
-        moveActionParameters.Add(toWayPoint);        
-
-        // Preconditions
-        List<IRelation> moveActionPreconditions = new List<IRelation>();
-        BinaryRelation roverAtfromWP = new BinaryRelation(curiosity, at, fromWayPoint, true);
-        moveActionPreconditions.Add(roverAtfromWP);
-        BinaryRelation canMoveFromWP1ToWP2 = new BinaryRelation(fromWayPoint, canMove, toWayPoint, true);
-        moveActionPreconditions.Add(canMoveFromWP1ToWP2);
-
-        // Postconditions
-        List<IRelation> moveActionPostconditions = new List<IRelation>();
-        BinaryRelation notRoverAtFromWP = new BinaryRelation(curiosity, at, fromWayPoint, false);
-        moveActionPostconditions.Add(notRoverAtFromWP);
-        BinaryRelation roverAtToWP = new BinaryRelation(curiosity, at, toWayPoint, true);
-        moveActionPostconditions.Add(roverAtToWP);
-        BinaryRelation roverBeenAtToWP = new BinaryRelation(curiosity, beenAt, toWayPoint, true);
-        moveActionPostconditions.Add(roverBeenAtToWP);
-
-        Action moveAction = new Action(moveActionPreconditions, "MOVE", moveActionParameters, moveActionPostconditions);
-        domain.addAction(moveAction);
-
-        //              TAKE SAMPLE ACTION
-        // Parameters
-        Entity ESample = new Entity(sample, "SAMPLE");
-        Entity EWayPoint = new Entity(wayPoint, "WAYPOINT");
-        
-        List<Entity> takeSampleActionParameters = new List<Entity>();
-        takeSampleActionParameters.Add(curiosity);
-        takeSampleActionParameters.Add(ESample);
-        takeSampleActionParameters.Add(EWayPoint);
-
-        // Preconditions
-        List<IRelation> takeSampleActPreconditions = new List<IRelation>();
-        BinaryRelation sampleIsInWayPoint = new BinaryRelation(ESample, isIn, EWayPoint, true);
-        takeSampleActPreconditions.Add(sampleIsInWayPoint);
-        BinaryRelation roverIsAtWayPoint = new BinaryRelation(curiosity, at, EWayPoint, true);
-        takeSampleActPreconditions.Add(roverIsAtWayPoint);
-        UnaryRelation roverIsEmpty = new UnaryRelation(curiosity, isEmpty, true);
-        takeSampleActPreconditions.Add(roverIsEmpty);
-
-        // Postconditions
-        List<IRelation> takeSampleActPostconditions = new List<IRelation>();
-        BinaryRelation sampleIsNotInWayPoint = new BinaryRelation(ESample, isIn, EWayPoint, false);
-        takeSampleActPostconditions.Add(sampleIsNotInWayPoint);
-        UnaryRelation roverIsNotEmpty = new UnaryRelation(curiosity, isEmpty, false);
-        takeSampleActPostconditions.Add(roverIsNotEmpty);        
-        BinaryRelation roverCarriesSample = new BinaryRelation(curiosity, carry, ESample, true);
-        takeSampleActPostconditions.Add(roverCarriesSample); 
-
-        Action takeSampleAction = new Action(takeSampleActPreconditions, "TAKE_SAMPLE", takeSampleActionParameters, takeSampleActPostconditions);
-        domain.addAction(takeSampleAction);
-
-        //              DROP SAMPLE ACTION        
-        // Parameters
-        List<Entity> dropSampleActionParameters = new List<Entity>();
-        dropSampleActionParameters.Add(curiosity);
-        dropSampleActionParameters.Add(ESample);
-        dropSampleActionParameters.Add(EWayPoint);
-
-        // Preconditions
-        List<IRelation> dropSampleActPreconditions = new List<IRelation>();
-        UnaryRelation wayPointIsDroppingDock = new UnaryRelation(EWayPoint, isDroppingDock, true);
-        dropSampleActPreconditions.Add(wayPointIsDroppingDock);
-        dropSampleActPreconditions.Add(roverIsAtWayPoint);
-        dropSampleActPreconditions.Add(roverCarriesSample);
-
-        // Postconditions
-        List<IRelation> dropSampActPostconditions = new List<IRelation>();
-        dropSampActPostconditions.Add(sampleIsInWayPoint);
-        dropSampActPostconditions.Add(roverIsEmpty);
-        BinaryRelation notRoverCarriesSample = new BinaryRelation(curiosity, carry, ESample, false);
-        dropSampActPostconditions.Add(notRoverCarriesSample); 
-
-        Action dropSampleAction = new Action(dropSampleActPreconditions, "DROP_SAMPLE", dropSampleActionParameters, dropSampActPostconditions);
-        domain.addAction(takeSampleAction);
-
-        //              TAKE IMAGE ACTION 
-        // Parameters 
-        Entity EObjective = new Entity(objective, "OBJECTIVE");
-
-        List<Entity> takeImageActionParameters = new List<Entity>();
-        takeImageActionParameters.Add(curiosity);
-        takeImageActionParameters.Add(EObjective);
-        takeImageActionParameters.Add(EWayPoint);
-
-        // Preconditions
-        List<IRelation> takeImageActionPreconditions = new List<IRelation>();
-        takeImageActionPreconditions.Add(roverIsAtWayPoint);
-        BinaryRelation objectiveIsVisibleFromWayPoint = new BinaryRelation(EObjective, isVisible, EWayPoint, true);
-        takeImageActionPreconditions.Add(objectiveIsVisibleFromWayPoint);
-
-        // Postconditions
-        List<IRelation> takeImageActionPostconditions = new List<IRelation>();
-        UnaryRelation roverHasTakenImageOfObjective = new UnaryRelation(EObjective, takenImage, true);
-        takeImageActionPostconditions.Add(roverHasTakenImageOfObjective);
-
-        Action takeImageAction = new Action(takeImageActionPostconditions, "TAKE_IMAGE", takeImageActionParameters, takeImageActionPostconditions);
-        domain.addAction(takeImageAction);
-
+        return detailedtNode;
     }
-
 }

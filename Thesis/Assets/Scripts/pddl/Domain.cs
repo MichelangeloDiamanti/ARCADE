@@ -22,10 +22,6 @@ public class Domain
         _actions = actions;
     }
 
-    public List<IPredicate> Predicates()
-    {
-        return _predicates;
-    }
     public void addPredicate(IPredicate p)
     {
         if (p.GetType() == typeof(BinaryPredicate))
@@ -53,10 +49,19 @@ public class Domain
         _predicates.Add(p);
     }
 
-    public List<EntityType> EntityTypes()
+    public List<EntityType> EntityTypes
     {
-        return _entityTypes;
+        get { return _entityTypes; }
     }
+    public List<IPredicate> Predicates
+    {
+        get { return _predicates; }
+    }
+    public List<Action> Actions
+    {
+        get { return _actions; }
+    }
+
     public void addEntityType(EntityType et)
     {
         if (this.entityTypeExists(et))
@@ -65,10 +70,6 @@ public class Domain
         _entityTypes.Add(et);
     }
 
-    public List<Action> Actions()
-    {
-        return _actions;
-    }
     public void addAction(Action a)
     {
 
