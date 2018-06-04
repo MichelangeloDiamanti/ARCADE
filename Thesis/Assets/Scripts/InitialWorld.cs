@@ -19,7 +19,11 @@ public class InitialWorld : MonoBehaviour
         currentNode = roverWorldStateFullDetail();	
         // Debug.Log("We are now in this world state: " + currentNode.Data.ToString());
         // possibleMoveActions();
-        worldState.getPossibleActions();
+        List<Action> possibleActions = worldState.getPossibleActions();
+        foreach (Action item in possibleActions)
+        {
+            Debug.Log(item.ToString());
+        }
     }
 
     IEnumerator simulation()

@@ -196,7 +196,7 @@ public class WorldState
 
     public WorldState applyAction(Action action)
     {
-        if(canPerformAction(action) == false)
+        if (canPerformAction(action) == false)
             throw new System.ArgumentException("The action " + action.Name + " cannot be performed in the worldState: " + this.ToString());
         WorldState resultingState = this.Clone();
         foreach (IRelation actionEffect in action.PostConditions)
@@ -220,9 +220,10 @@ public class WorldState
         return resultingState;
     }
 
-    public bool canPerformAction(Action action){
-        foreach(IRelation precondition in action.PreConditions)
-            if(_relations.Contains(precondition) == false) return false;
+    public bool canPerformAction(Action action)
+    {
+        foreach (IRelation precondition in action.PreConditions)
+            if (_relations.Contains(precondition) == false) return false;
         return true;
     }
 
@@ -307,7 +308,10 @@ public class WorldState
                     }
                 }
                 Action action = a.sobstituteEntityInAction(sob);
-                Debug.Log(action.ToString());
+                if (canPerformAction(action))
+                {
+                    listActions.Add(action);
+                }
             }
 
         }
@@ -322,16 +326,19 @@ public class WorldState
         List<Entity> list = listEntities.Dequeue();
         foreach (Entity item in list)
         {
-            result.Add(item.Clone());
-            if (listEntities.Count == 0)
+            if (!result.Contains(item))
             {
-                _combinations.Add(copyList(result));
+                result.Add(item.Clone());
+                if (listEntities.Count == 0)
+                {
+                    _combinations.Add(copyList(result));
+                }
+                else
+                {
+                    CombinationRecoursive(listEntities, result);
+                }
+                result.Remove(item);
             }
-            else
-            {
-                CombinationRecoursive(listEntities, result);
-            }
-            result.Remove(item);
         }
         listEntities.Enqueue(list);
     }
