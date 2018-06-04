@@ -219,7 +219,7 @@ public class WorldState
 
     public List<Action> getPossibleActions()
     {
-        List<Action> list = new List<Action>();
+        List<Action> listActions = new List<Action>();
         List<Action> possibleActions = new List<Action>();
         foreach (Action a in _domain.Actions())
         {
@@ -253,34 +253,55 @@ public class WorldState
             }
             Debug.Log(ciao);
 
-            List<Entity> listSobstitution = new List<Entity>();
+            List<List<Entity>> listSobstitution = new List<List<Entity>>();
             foreach (Entity item in a.Parameters)
             {
+                List<Entity> listapp = new List<Entity>();
                 foreach (Entity e in _entities)
                 {
                     if (item.Type.Equals(e.Type))
                     {
-                        listSobstitution.Add(e.Clone());
+                        listapp.Add(e.Clone());
                     }
                 }
+                listSobstitution.Add(listapp);
             }
-            List<List<Entity>> combinations = Utils.ItemCombinations(listSobstitution);
-            string casino = "";
-            foreach (List<Entity> item in combinations)
+
+            List<List<Entity>> listSobstitutionNew = new List<List<Entity>>();
+            int j = 0;
+            foreach (List<Entity> list in listSobstitution)
             {
-                foreach (Entity e in item)
+                int i = 0;
+                foreach (Entity item in list)
                 {
-                    casino+= e.ToString()+",";
+                    if (j == 0)
+                    {
+                        listSobstitutionNew.Add(new List<Entity>(a.Parameters.Count));
+                    }
+                    listSobstitutionNew[i].Add(item);
+                    i++;
                 }
-                casino +="\n";
+                j++;
             }
-            Debug.Log(casino);
-            break;
-            
+
+            string message = "Combinations: \n";
+            foreach (List<Entity> list in listSobstitutionNew)
+            {
+                message+="List: \n";
+                foreach (Entity item in list)
+                {
+                    message += item.ToString() +" ";
+                }
+                message +="\n";
+            }
+            Debug.Log(message);
 
         }
 
 
-        return list;
+        return listActions;
     }
+
+
+
 }
