@@ -42,11 +42,11 @@ public class InitialWorld : MonoBehaviour
     public List<Action> possibleMoveActions()
     {
         List<Action> possibleMoveActions = new List<Action>();
-        Action moveAction = currentNode.Data.Domain.getAction("MOVE");
+        Action generalMoveAction = currentNode.Data.Domain.getAction("MOVE");
         
         // Dictionary<Entity, List<Entity>> possibleParameters = new Dictionary<Entity, List<Entity>>();
         List<List<Entity>> possibleParameters = new List<List<Entity>>();
-        foreach(Entity parameter in moveAction.Parameters)
+        foreach(Entity parameter in generalMoveAction.Parameters)
         {
             // Debug.Log(parameter.Name + " CAN BE SUBSTITUTED WITH: ");
             List<Entity> possibleSubstitutions = new List<Entity>();
@@ -59,14 +59,23 @@ public class InitialWorld : MonoBehaviour
             possibleParameters.Add(possibleSubstitutions);
         }
         List<List<Entity>> possibleCombinations = AllCombinationsOf(possibleParameters.ToArray());
+        // foreach(List<Entity> combination in possibleCombinations)
+        // {
+        //     string substitution = "< ";
+        //     foreach(Entity e in combination)
+        //         substitution += e.Name + ", ";
+        //     substitution = substitution.Substring(0, substitution.Length - 2);
+        //     substitution += " >";
+        //     Debug.Log(substitution);
+        // }
+
         foreach(List<Entity> combination in possibleCombinations)
         {
-            string substitution = "< ";
-            foreach(Entity e in combination)
-                substitution += e.Name + ", ";
-            substitution = substitution.Substring(0, substitution.Length - 2);
-            substitution += " >";
-            Debug.Log(substitution);
+            foreach(IRelation moveActionPrecondition in generalMoveAction.PreConditions)
+            {
+                
+            }
+            
         }
         return possibleMoveActions;
     }
