@@ -8,6 +8,7 @@ public class WorldState
     private Domain _domain;
     private List<IRelation> _relations;
     private List<Entity> _entities;
+    private List<List<Entity>> _combinations = new List<List<Entity>>();
 
     public List<IRelation> Relations
     {
@@ -195,6 +196,8 @@ public class WorldState
 
     public WorldState applyAction(Action action)
     {
+        if (canPerformAction(action) == false)
+            throw new System.ArgumentException("The action " + action.Name + " cannot be performed in the worldState: " + this.ToString());
         WorldState resultingState = this.Clone();
         foreach (IRelation actionEffect in action.PostConditions)
         {
@@ -217,9 +220,16 @@ public class WorldState
         return resultingState;
     }
 
+    public bool canPerformAction(Action action)
+    {
+        foreach (IRelation precondition in action.PreConditions)
+            if (_relations.Contains(precondition) == false) return false;
+        return true;
+    }
+
     public List<Action> getPossibleActions()
     {
-        List<Action> list = new List<Action>();
+        List<Action> listActions = new List<Action>();
         List<Action> possibleActions = new List<Action>();
         foreach (Action a in _domain.Actions)
         {
@@ -246,41 +256,102 @@ public class WorldState
         }
         foreach (Action a in possibleActions)
         {
-            string ciao = "Possible Actions: " + a.ToString() + "\nCoinvolte: \n";
-            foreach (Entity item in a.Parameters)
-            {
-                ciao += item.ToString() + "\n";
-            }
-            Debug.Log(ciao);
+            // string ciao = "Possible Actions: " + a.ToString() + "\nCoinvolte: \n";
+            // foreach (Entity item in a.Parameters)
+            // {
+            //     ciao += item.ToString() + "\n";
+            // }
+            // Debug.Log(ciao);
 
-            List<Entity> listSobstitution = new List<Entity>();
+            Queue<List<Entity>> listSobstitution = new Queue<List<Entity>>();
             foreach (Entity item in a.Parameters)
             {
+                List<Entity> listapp = new List<Entity>();
                 foreach (Entity e in _entities)
                 {
                     if (item.Type.Equals(e.Type))
                     {
-                        listSobstitution.Add(e.Clone());
+                        listapp.Add(e.Clone());
                     }
                 }
+                listSobstitution.Enqueue(listapp);
             }
-            List<List<Entity>> combinations = Utils.ItemCombinations(listSobstitution);
-            string casino = "";
-            foreach (List<Entity> item in combinations)
+
+            _combinations.Clear();
+            List<Entity> result = new List<Entity>();
+            CombinationRecoursive(listSobstitution, result);
+
+            // string message = "Combinations: \n";
+            // foreach (List<Entity> list in _combinations)
+            // {
+            //     message += "List: \n";
+            //     foreach (Entity item in list)
+            //     {
+            //         message += item.ToString() + " ";
+            //     }
+            //     message += "\n";
+            // }
+            // Debug.Log(message);
+
+            foreach (List<Entity> list in _combinations)
             {
-                foreach (Entity e in item)
+                Dictionary<Entity, Entity> sob = new Dictionary<Entity, Entity>();
+                for (int i = 0; i < a.Parameters.Count; i++)
                 {
-                    casino+= e.ToString()+",";
+                    if (a.Parameters[i].Type.Equals(list[i].Type))
+                    {
+                        sob.Add(a.Parameters[i], list[i]);
+                    }
+                    else
+                    {
+                        throw new System.ArgumentException();
+                    }
                 }
-                casino +="\n";
+                Action action = a.sobstituteEntityInAction(sob);
+                if (canPerformAction(action))
+                {
+                    listActions.Add(action);
+                }
             }
-            Debug.Log(casino);
-            break;
-            
 
         }
 
 
-        return list;
+        return listActions;
+    }
+
+
+    void CombinationRecoursive(Queue<List<Entity>> listEntities, List<Entity> result)
+    {
+        List<Entity> list = listEntities.Dequeue();
+        foreach (Entity item in list)
+        {
+            if (!result.Contains(item))
+            {
+                result.Add(item.Clone());
+                if (listEntities.Count == 0)
+                {
+                    _combinations.Add(copyList(result));
+                }
+                else
+                {
+                    CombinationRecoursive(listEntities, result);
+                }
+                result.Remove(item);
+            }
+        }
+        listEntities.Enqueue(list);
+    }
+
+    private List<Entity> copyList(List<Entity> list)
+    {
+        List<Entity> newList = new List<Entity>();
+        list.ForEach((item) =>
+        {
+            newList.Add(item.Clone());
+        });
+        return newList;
     }
 }
+
+
