@@ -7,7 +7,7 @@ public class UnaryRelation : IRelation
 
     private Entity _source;
     private UnaryPredicate _predicate;
-    private bool _value;
+    private RelationValue _value;
     public Entity Source
     {
         get { return _source; }
@@ -16,12 +16,12 @@ public class UnaryRelation : IRelation
     {
         get { return _predicate; }
     }
-    public bool Value
+    public RelationValue Value
     {
         get { return _value; }
         set { _value = value; }
     }
-    public UnaryRelation(Entity source, UnaryPredicate predicate, bool value)
+    public UnaryRelation(Entity source, UnaryPredicate predicate, RelationValue value)
     {
         if (source == null)
             throw new System.ArgumentNullException("Relation source cannot be null", "source");
@@ -75,7 +75,7 @@ public class UnaryRelation : IRelation
             int hashCode = 17;
             hashCode = hashCode * 23 + _source.GetHashCode();
             hashCode = hashCode * 23 + _predicate.GetHashCode();
-            hashCode += (_value == true) ? 1 : 0;
+            hashCode += (int) _value;
             return hashCode;
         }
     }

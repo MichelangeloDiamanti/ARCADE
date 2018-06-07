@@ -49,7 +49,7 @@ public class WorldStateTest {
 		Entity john = new Entity(character, "JOHN");
 		// WorldState.addEntity(john);
 
-		UnaryRelation johnIsRich = new UnaryRelation(john, rich, true);
+		UnaryRelation johnIsRich = new UnaryRelation(john, rich, RelationValue.TRUE);
 		
 		Assert.That(()=> worldState.addRelation(johnIsRich), Throws.ArgumentException);
 	}
@@ -68,7 +68,7 @@ public class WorldStateTest {
 		Entity john = new Entity(character, "JOHN");
 		worldState.addEntity(john);
 
-		UnaryRelation johnIsRich = new UnaryRelation(john, rich, true);
+		UnaryRelation johnIsRich = new UnaryRelation(john, rich, RelationValue.TRUE);
 		
 		Assert.That(()=> worldState.addRelation(johnIsRich), Throws.ArgumentException);
 	}
@@ -93,7 +93,7 @@ public class WorldStateTest {
 		Entity school = new Entity(location, "SCHOOL");
 		worldState.addEntity(school);
 
-		BinaryRelation johnIsAtSchool = new BinaryRelation(john, isAt, school, true);
+		BinaryRelation johnIsAtSchool = new BinaryRelation(john, isAt, school, RelationValue.TRUE);
 		
 		Assert.That(()=> worldState.addRelation(johnIsAtSchool), Throws.ArgumentException);
 	}
@@ -118,7 +118,7 @@ public class WorldStateTest {
 		Entity school = new Entity(location, "SCHOOL");
 		// worldState.addEntity(school);
 
-		BinaryRelation johnIsAtSchool = new BinaryRelation(john, isAt, school, true);
+		BinaryRelation johnIsAtSchool = new BinaryRelation(john, isAt, school, RelationValue.TRUE);
 		
 		Assert.That(()=> worldState.addRelation(johnIsAtSchool), Throws.ArgumentException);
 	}
@@ -143,7 +143,7 @@ public class WorldStateTest {
 		Entity school = new Entity(location, "SCHOOL");
 		worldState.addEntity(school);
 
-		BinaryRelation johnIsAtSchool = new BinaryRelation(john, isAt, school, true);
+		BinaryRelation johnIsAtSchool = new BinaryRelation(john, isAt, school, RelationValue.TRUE);
 		
 		Assert.That(()=> worldState.addRelation(johnIsAtSchool), Throws.ArgumentException);
 	}
@@ -182,18 +182,18 @@ public class WorldStateTest {
 
         // Preconditions
         List<IRelation> actionMovePreconditions = new List<IRelation>();
-        BinaryRelation roverAtfromWP = new BinaryRelation(entityCuriosity, predicateAt, entityFromWayPoint, true);
+        BinaryRelation roverAtfromWP = new BinaryRelation(entityCuriosity, predicateAt, entityFromWayPoint, RelationValue.TRUE);
         actionMovePreconditions.Add(roverAtfromWP);
-        BinaryRelation canMoveFromWP1ToWP2 = new BinaryRelation(entityFromWayPoint, predicateCanMove, entityToWayPoint, true);
+        BinaryRelation canMoveFromWP1ToWP2 = new BinaryRelation(entityFromWayPoint, predicateCanMove, entityToWayPoint, RelationValue.TRUE);
         actionMovePreconditions.Add(canMoveFromWP1ToWP2);
 
         // Postconditions
         List<IRelation> actionMovePostconditions = new List<IRelation>();
-        BinaryRelation notRoverAtFromWP = new BinaryRelation(entityCuriosity, predicateAt, entityFromWayPoint, false);
+        BinaryRelation notRoverAtFromWP = new BinaryRelation(entityCuriosity, predicateAt, entityFromWayPoint, RelationValue.FALSE);
         actionMovePostconditions.Add(notRoverAtFromWP);
-        BinaryRelation roverAtToWP = new BinaryRelation(entityCuriosity, predicateAt, entityToWayPoint, true);
+        BinaryRelation roverAtToWP = new BinaryRelation(entityCuriosity, predicateAt, entityToWayPoint, RelationValue.TRUE);
         actionMovePostconditions.Add(roverAtToWP);
-        BinaryRelation roverBeenAtToWP = new BinaryRelation(entityCuriosity, predicateBeenAt, entityToWayPoint, true);
+        BinaryRelation roverBeenAtToWP = new BinaryRelation(entityCuriosity, predicateBeenAt, entityToWayPoint, RelationValue.TRUE);
         actionMovePostconditions.Add(roverBeenAtToWP);
 
         Action actionMove = new Action(actionMovePreconditions, "MOVE", actionMoveParameters, actionMovePostconditions);
@@ -207,10 +207,10 @@ public class WorldStateTest {
         worldState.addEntity(wayPoint1);
         worldState.addEntity(wayPoint2);
 
-        BinaryRelation canMove1 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint1, wayPoint2, true);
+        BinaryRelation canMove1 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint1, wayPoint2, RelationValue.TRUE);
         worldState.addRelation(canMove1);
 
-        BinaryRelation isAt1 = domain.generateRelationFromPredicateName("AT", entityCuriosity, wayPoint1, true);
+        BinaryRelation isAt1 = domain.generateRelationFromPredicateName("AT", entityCuriosity, wayPoint1, RelationValue.TRUE);
         worldState.addRelation(isAt1);
 
 		List<IRelation> expectedWorldRelationsAfterAction = new List<IRelation>();
@@ -238,10 +238,10 @@ public class WorldStateTest {
         worldState.addEntity(wayPoint1);
         worldState.addEntity(wayPoint2);
 
-        BinaryRelation cannotMove1 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint1, wayPoint2, false);
+        BinaryRelation cannotMove1 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint1, wayPoint2, RelationValue.FALSE);
         worldState.addRelation(cannotMove1);
 
-        BinaryRelation isAt1 = domain.generateRelationFromPredicateName("AT", entityRover, wayPoint1, true);
+        BinaryRelation isAt1 = domain.generateRelationFromPredicateName("AT", entityRover, wayPoint1, RelationValue.TRUE);
         worldState.addRelation(isAt1);
 
         Action actionMove = worldState.Domain.getAction("MOVE");
@@ -264,10 +264,10 @@ public class WorldStateTest {
         worldState.addEntity(wayPoint1);
         worldState.addEntity(wayPoint2);
 
-        BinaryRelation canMove1 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint1, wayPoint2, true);
+        BinaryRelation canMove1 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint1, wayPoint2, RelationValue.TRUE);
         worldState.addRelation(canMove1);
 
-        BinaryRelation isAt1 = domain.generateRelationFromPredicateName("AT", entityRover, wayPoint1, true);
+        BinaryRelation isAt1 = domain.generateRelationFromPredicateName("AT", entityRover, wayPoint1, RelationValue.TRUE);
         worldState.addRelation(isAt1);
 
         Action actionMove = worldState.Domain.getAction("MOVE");
@@ -290,10 +290,10 @@ public class WorldStateTest {
         worldState.addEntity(wayPointAlpha);
         worldState.addEntity(wayPointBravo);
 
-        BinaryRelation canMove1 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPointAlpha, wayPointBravo, true);
+        BinaryRelation canMove1 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPointAlpha, wayPointBravo, RelationValue.TRUE);
         worldState.addRelation(canMove1);
 
-        BinaryRelation isAtAlpha = domain.generateRelationFromPredicateName("AT", entityRover, wayPointAlpha, true);
+        BinaryRelation isAtAlpha = domain.generateRelationFromPredicateName("AT", entityRover, wayPointAlpha, RelationValue.TRUE);
         worldState.addRelation(isAtAlpha);
 
         Action actionMove = worldState.Domain.getAction("MOVE");
@@ -318,9 +318,9 @@ public class WorldStateTest {
         Entity entitySample = new Entity(new EntityType("SAMPLE"), "SAMPLE");
         worldState.addEntity(entitySample);
 
-        BinaryRelation sampleIsInWaypoint = domain.generateRelationFromPredicateName("IS_IN", entitySample, entityWaypoint, true);
-        BinaryRelation roverIsAtWaypoint = domain.generateRelationFromPredicateName("AT", entityRover, entityWaypoint, true);
-        UnaryRelation roverIsEmpty = domain.generateRelationFromPredicateName("IS_EMPTY", entityRover, true);
+        BinaryRelation sampleIsInWaypoint = domain.generateRelationFromPredicateName("IS_IN", entitySample, entityWaypoint, RelationValue.TRUE);
+        BinaryRelation roverIsAtWaypoint = domain.generateRelationFromPredicateName("AT", entityRover, entityWaypoint, RelationValue.TRUE);
+        UnaryRelation roverIsEmpty = domain.generateRelationFromPredicateName("IS_EMPTY", entityRover, RelationValue.TRUE);
         worldState.addRelation(sampleIsInWaypoint);
         worldState.addRelation(roverIsAtWaypoint);
         worldState.addRelation(roverIsEmpty);
@@ -347,9 +347,9 @@ public class WorldStateTest {
         Entity entitySample = new Entity(new EntityType("SAMPLE"), "SAMPLE");
         worldState.addEntity(entitySample);
 
-        UnaryRelation wayPointIsDroppingDock = domain.generateRelationFromPredicateName("IS_DROPPING_DOCK", entityWaypoint, true);
-        BinaryRelation roverIsAtWaypoint = domain.generateRelationFromPredicateName("AT", entityRover, entityWaypoint, true);
-        BinaryRelation roverCarriesSample = domain.generateRelationFromPredicateName("CARRY", entityRover, entitySample, true);
+        UnaryRelation wayPointIsDroppingDock = domain.generateRelationFromPredicateName("IS_DROPPING_DOCK", entityWaypoint, RelationValue.TRUE);
+        BinaryRelation roverIsAtWaypoint = domain.generateRelationFromPredicateName("AT", entityRover, entityWaypoint, RelationValue.TRUE);
+        BinaryRelation roverCarriesSample = domain.generateRelationFromPredicateName("CARRY", entityRover, entitySample, RelationValue.TRUE);
         worldState.addRelation(wayPointIsDroppingDock);
         worldState.addRelation(roverIsAtWaypoint);
         worldState.addRelation(roverCarriesSample);
@@ -376,8 +376,8 @@ public class WorldStateTest {
         Entity entityObjective = new Entity(new EntityType("OBJECTIVE"), "OBJECTIVE");
         worldState.addEntity(entityObjective);
 
-        BinaryRelation roverIsAtWaypoint = domain.generateRelationFromPredicateName("AT", entityRover, entityWaypoint, true);
-        BinaryRelation objectiveIsVisibleFromWaypoint = domain.generateRelationFromPredicateName("IS_VISIBLE", entityObjective, entityWaypoint, true);
+        BinaryRelation roverIsAtWaypoint = domain.generateRelationFromPredicateName("AT", entityRover, entityWaypoint, RelationValue.TRUE);
+        BinaryRelation objectiveIsVisibleFromWaypoint = domain.generateRelationFromPredicateName("IS_VISIBLE", entityObjective, entityWaypoint, RelationValue.TRUE);
         worldState.addRelation(roverIsAtWaypoint);
         worldState.addRelation(objectiveIsVisibleFromWaypoint);
 
@@ -449,18 +449,18 @@ public class WorldStateTest {
 
         // Preconditions
         List<IRelation> moveActionPreconditions = new List<IRelation>();
-        BinaryRelation roverAtfromWP = new BinaryRelation(curiosity, at, fromWayPoint, true);
+        BinaryRelation roverAtfromWP = new BinaryRelation(curiosity, at, fromWayPoint, RelationValue.TRUE);
         moveActionPreconditions.Add(roverAtfromWP);
-        BinaryRelation canMoveFromWP1ToWP2 = new BinaryRelation(fromWayPoint, canMove, toWayPoint, true);
+        BinaryRelation canMoveFromWP1ToWP2 = new BinaryRelation(fromWayPoint, canMove, toWayPoint, RelationValue.TRUE);
         moveActionPreconditions.Add(canMoveFromWP1ToWP2);
 
         // Postconditions
         List<IRelation> moveActionPostconditions = new List<IRelation>();
-        BinaryRelation notRoverAtFromWP = new BinaryRelation(curiosity, at, fromWayPoint, false);
+        BinaryRelation notRoverAtFromWP = new BinaryRelation(curiosity, at, fromWayPoint, RelationValue.FALSE);
         moveActionPostconditions.Add(notRoverAtFromWP);
-        BinaryRelation roverAtToWP = new BinaryRelation(curiosity, at, toWayPoint, true);
+        BinaryRelation roverAtToWP = new BinaryRelation(curiosity, at, toWayPoint, RelationValue.TRUE);
         moveActionPostconditions.Add(roverAtToWP);
-        BinaryRelation roverBeenAtToWP = new BinaryRelation(curiosity, beenAt, toWayPoint, true);
+        BinaryRelation roverBeenAtToWP = new BinaryRelation(curiosity, beenAt, toWayPoint, RelationValue.TRUE);
         moveActionPostconditions.Add(roverBeenAtToWP);
 
         Action moveAction = new Action(moveActionPreconditions, "MOVE", moveActionParameters, moveActionPostconditions);
@@ -478,20 +478,20 @@ public class WorldStateTest {
 
         // Preconditions
         List<IRelation> takeSampleActPreconditions = new List<IRelation>();
-        BinaryRelation sampleIsInWayPoint = new BinaryRelation(ESample, isIn, EWayPoint, true);
+        BinaryRelation sampleIsInWayPoint = new BinaryRelation(ESample, isIn, EWayPoint, RelationValue.TRUE);
         takeSampleActPreconditions.Add(sampleIsInWayPoint);
-        BinaryRelation roverIsAtWayPoint = new BinaryRelation(curiosity, at, EWayPoint, true);
+        BinaryRelation roverIsAtWayPoint = new BinaryRelation(curiosity, at, EWayPoint, RelationValue.TRUE);
         takeSampleActPreconditions.Add(roverIsAtWayPoint);
-        UnaryRelation roverIsEmpty = new UnaryRelation(curiosity, isEmpty, true);
+        UnaryRelation roverIsEmpty = new UnaryRelation(curiosity, isEmpty, RelationValue.TRUE);
         takeSampleActPreconditions.Add(roverIsEmpty);
 
         // Postconditions
         List<IRelation> takeSampleActPostconditions = new List<IRelation>();
-        BinaryRelation sampleIsNotInWayPoint = new BinaryRelation(ESample, isIn, EWayPoint, false);
+        BinaryRelation sampleIsNotInWayPoint = new BinaryRelation(ESample, isIn, EWayPoint, RelationValue.FALSE);
         takeSampleActPostconditions.Add(sampleIsNotInWayPoint);
-        UnaryRelation roverIsNotEmpty = new UnaryRelation(curiosity, isEmpty, false);
+        UnaryRelation roverIsNotEmpty = new UnaryRelation(curiosity, isEmpty, RelationValue.FALSE);
         takeSampleActPostconditions.Add(roverIsNotEmpty);        
-        BinaryRelation roverCarriesSample = new BinaryRelation(curiosity, carry, ESample, true);
+        BinaryRelation roverCarriesSample = new BinaryRelation(curiosity, carry, ESample, RelationValue.TRUE);
         takeSampleActPostconditions.Add(roverCarriesSample); 
 
         Action takeSampleAction = new Action(takeSampleActPreconditions, "TAKE_SAMPLE", takeSampleActionParameters, takeSampleActPostconditions);
@@ -506,7 +506,7 @@ public class WorldStateTest {
 
         // Preconditions
         List<IRelation> dropSampleActPreconditions = new List<IRelation>();
-        UnaryRelation wayPointIsDroppingDock = new UnaryRelation(EWayPoint, isDroppingDock, true);
+        UnaryRelation wayPointIsDroppingDock = new UnaryRelation(EWayPoint, isDroppingDock, RelationValue.TRUE);
         dropSampleActPreconditions.Add(wayPointIsDroppingDock);
         dropSampleActPreconditions.Add(roverIsAtWayPoint);
         dropSampleActPreconditions.Add(roverCarriesSample);
@@ -515,7 +515,7 @@ public class WorldStateTest {
         List<IRelation> dropSampActPostconditions = new List<IRelation>();
         dropSampActPostconditions.Add(sampleIsInWayPoint);
         dropSampActPostconditions.Add(roverIsEmpty);
-        BinaryRelation notRoverCarriesSample = new BinaryRelation(curiosity, carry, ESample, false);
+        BinaryRelation notRoverCarriesSample = new BinaryRelation(curiosity, carry, ESample, RelationValue.FALSE);
         dropSampActPostconditions.Add(notRoverCarriesSample); 
 
         Action dropSampleAction = new Action(dropSampleActPreconditions, "DROP_SAMPLE", dropSampleActionParameters, dropSampActPostconditions);
@@ -533,12 +533,12 @@ public class WorldStateTest {
         // Preconditions
         List<IRelation> takeImageActionPreconditions = new List<IRelation>();
         takeImageActionPreconditions.Add(roverIsAtWayPoint);
-        BinaryRelation objectiveIsVisibleFromWayPoint = new BinaryRelation(EObjective, isVisible, EWayPoint, true);
+        BinaryRelation objectiveIsVisibleFromWayPoint = new BinaryRelation(EObjective, isVisible, EWayPoint, RelationValue.TRUE);
         takeImageActionPreconditions.Add(objectiveIsVisibleFromWayPoint);
 
         // Postconditions
         List<IRelation> takeImageActionPostconditions = new List<IRelation>();
-        UnaryRelation roverHasTakenImageOfObjective = new UnaryRelation(EObjective, takenImage, true);
+        UnaryRelation roverHasTakenImageOfObjective = new UnaryRelation(EObjective, takenImage, RelationValue.TRUE);
         takeImageActionPostconditions.Add(roverHasTakenImageOfObjective);
 
         Action takeImageAction = new Action(takeImageActionPreconditions, "TAKE_IMAGE", takeImageActionParameters, takeImageActionPostconditions);
@@ -565,11 +565,11 @@ public class WorldStateTest {
         actionChargeParameters.Add(entityBattery);
 
         List<IRelation> actionChargePreconditions = new List<IRelation>();
-        UnaryRelation relationBatteryDischarged = new UnaryRelation(entityBattery, predicateBatteryCharged, false);
+        UnaryRelation relationBatteryDischarged = new UnaryRelation(entityBattery, predicateBatteryCharged, RelationValue.FALSE);
         actionChargePreconditions.Add(relationBatteryDischarged);
 
         List<IRelation> actionChargePostconditions = new List<IRelation>();
-        UnaryRelation relationBatteryCharged = new UnaryRelation(entityBattery, predicateBatteryCharged, true);
+        UnaryRelation relationBatteryCharged = new UnaryRelation(entityBattery, predicateBatteryCharged, RelationValue.TRUE);
         actionChargePostconditions.Add(relationBatteryCharged);
 
         Action actionChargeBattery = new Action(actionChargePreconditions, "CHARGE_BATTERY", actionChargeParameters, actionChargePostconditions);
@@ -583,11 +583,11 @@ public class WorldStateTest {
         actionInflateParameters.Add(entityWheels);
 
         List<IRelation> actionInflatePreconditions = new List<IRelation>();
-        UnaryRelation relationWheelsDeflated = new UnaryRelation(entityWheels, predicateWheelsInflated, false);
+        UnaryRelation relationWheelsDeflated = new UnaryRelation(entityWheels, predicateWheelsInflated, RelationValue.FALSE);
         actionInflatePreconditions.Add(relationWheelsDeflated);
 
         List<IRelation> actionInflatePostconditions = new List<IRelation>();
-        UnaryRelation relationWheelsInflated = new UnaryRelation(entityWheels, predicateWheelsInflated, true);
+        UnaryRelation relationWheelsInflated = new UnaryRelation(entityWheels, predicateWheelsInflated, RelationValue.TRUE);
         actionInflatePostconditions.Add(relationWheelsInflated);
 
         Action actionInflate = new Action(actionInflatePreconditions, "INFLATE", actionInflateParameters, actionInflatePostconditions);
@@ -633,18 +633,18 @@ public class WorldStateTest {
 
         // Preconditions
         List<IRelation> actionMovePreconditions = new List<IRelation>();
-        BinaryRelation roverAtfromWP = new BinaryRelation(entityCuriosity, predicateAt, entityFromWayPoint, true);
+        BinaryRelation roverAtfromWP = new BinaryRelation(entityCuriosity, predicateAt, entityFromWayPoint, RelationValue.TRUE);
         actionMovePreconditions.Add(roverAtfromWP);
-        BinaryRelation canMoveFromWP1ToWP2 = new BinaryRelation(entityFromWayPoint, predicateCanMove, entityToWayPoint, true);
+        BinaryRelation canMoveFromWP1ToWP2 = new BinaryRelation(entityFromWayPoint, predicateCanMove, entityToWayPoint, RelationValue.TRUE);
         actionMovePreconditions.Add(canMoveFromWP1ToWP2);
 
         // Postconditions
         List<IRelation> actionMovePostconditions = new List<IRelation>();
-        BinaryRelation notRoverAtFromWP = new BinaryRelation(entityCuriosity, predicateAt, entityFromWayPoint, false);
+        BinaryRelation notRoverAtFromWP = new BinaryRelation(entityCuriosity, predicateAt, entityFromWayPoint, RelationValue.FALSE);
         actionMovePostconditions.Add(notRoverAtFromWP);
-        BinaryRelation roverAtToWP = new BinaryRelation(entityCuriosity, predicateAt, entityToWayPoint, true);
+        BinaryRelation roverAtToWP = new BinaryRelation(entityCuriosity, predicateAt, entityToWayPoint, RelationValue.TRUE);
         actionMovePostconditions.Add(roverAtToWP);
-        BinaryRelation roverBeenAtToWP = new BinaryRelation(entityCuriosity, predicateBeenAt, entityToWayPoint, true);
+        BinaryRelation roverBeenAtToWP = new BinaryRelation(entityCuriosity, predicateBeenAt, entityToWayPoint, RelationValue.TRUE);
         actionMovePostconditions.Add(roverBeenAtToWP);
 
         Action actionMove = new Action(actionMovePreconditions, "MOVE", actionMoveParameters, actionMovePostconditions);

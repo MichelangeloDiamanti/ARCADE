@@ -7,7 +7,7 @@ public class BinaryRelation : IRelation
     private Entity _source;
     private BinaryPredicate _predicate;
     private Entity _destination;
-    private bool _value;
+    private RelationValue _value;
 
     public Entity Source
     {
@@ -21,13 +21,13 @@ public class BinaryRelation : IRelation
     {
         get { return _destination; }
     }
-    public bool Value
+    public RelationValue Value
     {
         get { return _value; }
         set { _value = value; }
     }
 
-    public BinaryRelation(Entity source, BinaryPredicate predicate, Entity destination, bool value)
+    public BinaryRelation(Entity source, BinaryPredicate predicate, Entity destination, RelationValue value)
     {
         if (source == null)
             throw new System.ArgumentNullException("Relation source cannot be null", "source");
@@ -89,7 +89,7 @@ public class BinaryRelation : IRelation
             hashCode = hashCode * 23 + _source.GetHashCode();
             hashCode = hashCode * 23 + _predicate.GetHashCode();
             hashCode = hashCode * 23 + _destination.GetHashCode();
-            hashCode += (_value == true) ? 1 : 0;
+            hashCode += (int) _value;//(_value == RelationValue.TRUE) ? 1 : 0;
             return hashCode;
         }
     }

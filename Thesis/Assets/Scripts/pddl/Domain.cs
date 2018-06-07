@@ -229,7 +229,7 @@ public class Domain
         return null;
     }
 
-    public UnaryRelation generateRelationFromPredicateName(string name, Entity source, bool value)
+    public UnaryRelation generateRelationFromPredicateName(string name, Entity source, RelationValue value)
     {
         UnaryRelation relation = null;
         UnaryPredicate up = null;
@@ -246,7 +246,7 @@ public class Domain
         return relation;
     }
 
-    public BinaryRelation generateRelationFromPredicateName(string name, Entity source, Entity destination, bool value)
+    public BinaryRelation generateRelationFromPredicateName(string name, Entity source, Entity destination, RelationValue value)
     {
         BinaryRelation relation = null;
         BinaryPredicate bp = null;
