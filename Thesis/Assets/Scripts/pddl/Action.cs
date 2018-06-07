@@ -191,7 +191,7 @@ public class Action
         foreach (Entity e in _parameters)
             newParameters.Add(e.Clone());
         foreach (IRelation postcondition in _postConditions)
-            newPreConditions.Add(postcondition.Clone());
+            newPostConditions.Add(postcondition.Clone());
 
         return new Action(newPreConditions, _name, newParameters, newPostConditions);
     }

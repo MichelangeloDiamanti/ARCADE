@@ -6,35 +6,46 @@ using System.Linq;
 
 public class InitialWorld : MonoBehaviour
 {
-    Domain domain;
-    WorldState worldState;
     TreeNode<WorldState> currentNode;
     // Use this for initialization
     void Start()
     {
-        domain = new Domain();
-        worldState = new WorldState();
-        roverWorldDomainFullDetail();
-        worldState.Domain = domain;
-        currentNode = roverWorldStateFullDetail();	
-        // Debug.Log("We are now in this world state: " + currentNode.Data.ToString());
-        // possibleMoveActions();
-        List<Action> possibleActions = worldState.getPossibleActions();
-        foreach (Action item in possibleActions)
-        {
-            Debug.Log(item.ToString());
-        }
+        Domain domain = new Domain();
+        WorldState currentWorldState = new WorldState();
+        
+        domain = roverWorldDomainFullDetail();
+        currentWorldState = roverWorldStateFullDetail(domain);
+        currentNode = new TreeNode<WorldState>(currentWorldState);
+        // List<Action> possibleActions = worldState.getPossibleActions();
+        // foreach (Action item in possibleActions)
+        // {
+        //     Debug.Log(item.ToString());
+        // }
+        StartCoroutine(simulation());
     }
 
-    IEnumerator simulation()
+    private IEnumerator simulation()
     {
-        int randomActionIndex = Random.Range(0, currentNode.Data.Domain.Actions.Count);
-        Action randomAction = currentNode.Data.Domain.Actions[randomActionIndex];
-        WorldState nextState = currentNode.Data.applyAction(randomAction);
-        currentNode = currentNode.AddChild(nextState);
-        Debug.Log("The Following Action was performed: " + randomAction.ToString());
-        Debug.Log("We are now in this world state: " + currentNode.Data.ToString());
-        yield return new WaitForSeconds(1);
+        while(true)
+        {
+            Debug.Log("The current state is: " + currentNode.Data.ToString());
+            List<Action> possibleActions = currentNode.Data.getPossibleActions();
+            
+            if(possibleActions.Count <= 0)
+            {                
+                Debug.Log("There are no more available actions, shutting down the simulation");
+                break;    
+            }
+            
+            int randomActionIndex = Random.Range(0, possibleActions.Count);
+            Action randomAction = possibleActions[randomActionIndex];
+
+            WorldState resultingState = currentNode.Data.applyAction(randomAction);
+            currentNode = new TreeNode<WorldState>(resultingState);
+
+            Debug.Log("The Following Action was performed: " + randomAction.ToString());
+            yield return new WaitForSeconds(1);
+        }
     }
 
     // Update is called once per frame
@@ -43,74 +54,10 @@ public class InitialWorld : MonoBehaviour
         
     }
 
-    public List<Action> possibleMoveActions()
+    private Domain roverWorldDomainAbstract()
     {
-        List<Action> possibleMoveActions = new List<Action>();
-        Action generalMoveAction = currentNode.Data.Domain.getAction("MOVE");
-        
-        // Dictionary<Entity, List<Entity>> possibleParameters = new Dictionary<Entity, List<Entity>>();
-        List<List<Entity>> possibleParameters = new List<List<Entity>>();
-        foreach(Entity parameter in generalMoveAction.Parameters)
-        {
-            // Debug.Log(parameter.Name + " CAN BE SUBSTITUTED WITH: ");
-            List<Entity> possibleSubstitutions = new List<Entity>();
-            foreach(Entity e in currentNode.Data.Entities)
-                if(e.Type.Equals(parameter.Type))
-                {
-                    // Debug.Log(e.Name);
-                    possibleSubstitutions.Add(e);                    
-                }
-            possibleParameters.Add(possibleSubstitutions);
-        }
-        List<List<Entity>> possibleCombinations = AllCombinationsOf(possibleParameters.ToArray());
-        // foreach(List<Entity> combination in possibleCombinations)
-        // {
-        //     string substitution = "< ";
-        //     foreach(Entity e in combination)
-        //         substitution += e.Name + ", ";
-        //     substitution = substitution.Substring(0, substitution.Length - 2);
-        //     substitution += " >";
-        //     Debug.Log(substitution);
-        // }
+        Domain domain = new Domain();
 
-        foreach(List<Entity> combination in possibleCombinations)
-        {
-            foreach(IRelation moveActionPrecondition in generalMoveAction.PreConditions)
-            {
-                
-            }
-            
-        }
-        return possibleMoveActions;
-    }
-
-    public static List<List<T>> AllCombinationsOf<T>(params List<T>[] sets)
-    {
-        // need array bounds checking etc for production
-        var combinations = new List<List<T>>();
-
-        // prime the data
-        foreach (var value in sets[0])
-            combinations.Add(new List<T> { value });
-
-        foreach (var set in sets.Skip(1))
-            combinations = AddExtraSet(combinations, set);
-
-        return combinations;
-    }
-
-    private static List<List<T>> AddExtraSet<T>
-        (List<List<T>> combinations, List<T> set)
-    {
-        var newCombinations = from value in set
-                            from combination in combinations
-                            select new List<T>(combination) { value };
-
-        return newCombinations.ToList();
-    }
-
-    private void roverWorldDomainAbstract()
-    {
         EntityType rover = new EntityType("ROVER");
         domain.addEntityType(rover);
         
@@ -262,10 +209,14 @@ public class InitialWorld : MonoBehaviour
 
         Action takeImageAction = new Action(takeImageActionPreconditions, "TAKE_IMAGE", takeImageActionParameters, takeImageActionPostconditions);
         domain.addAction(takeImageAction);
+
+        return domain;
     }
 
-    private TreeNode<WorldState> roverWorldStateAbstract()
+    private WorldState roverWorldStateAbstract(Domain domain)
     {
+        WorldState worldState = new WorldState(domain);
+
         Entity rover = new Entity(new EntityType("ROVER"), "ROVER");
         worldState.addEntity(rover);
 
@@ -400,11 +351,11 @@ public class InitialWorld : MonoBehaviour
         BinaryRelation isAt6 = domain.generateRelationFromPredicateName("AT", rover, wayPoint6, RelationValue.TRUE);
         worldState.addRelation(isAt6);
 
-        return new TreeNode<WorldState>(worldState);
+        return worldState;
     }
-    private void roverWorldDomainFullDetail()
+    private Domain roverWorldDomainFullDetail()
     {
-        roverWorldDomainAbstract();
+        Domain domain = roverWorldDomainAbstract();
 
         EntityType entityTypeBattery = new EntityType("BATTERY");
         domain.addEntityType(entityTypeBattery);
@@ -449,13 +400,14 @@ public class InitialWorld : MonoBehaviour
         domain.addAction(actionInflate);
         
         Action actionDeflate = new Action(actionInflatePostconditions, "DEFLATE", actionInflateParameters ,actionInflatePreconditions);
-        domain.addAction(actionDeflate);    
+        domain.addAction(actionDeflate);
+
+        return domain;    
     }
 
-    private TreeNode<WorldState> roverWorldStateFullDetail()
+    private WorldState roverWorldStateFullDetail(Domain domain)
     {
-        TreeNode<WorldState> detailedtNode = roverWorldStateAbstract();
-        WorldState detailedState = detailedtNode.Data;
+        WorldState detailedState = roverWorldStateAbstract(domain);
 
         EntityType entityTypeBattery = new EntityType("BATTERY");
         EntityType entityTypeWheel = new EntityType("WHEEL");
@@ -470,6 +422,6 @@ public class InitialWorld : MonoBehaviour
         UnaryRelation relationWheelsInflated = detailedState.Domain.generateRelationFromPredicateName("WHEELS_INFLATED", entityWheels, RelationValue.TRUE);
         detailedState.addRelation(relationWheelsInflated);
 
-        return detailedtNode;
+        return detailedState;
     }
 }
