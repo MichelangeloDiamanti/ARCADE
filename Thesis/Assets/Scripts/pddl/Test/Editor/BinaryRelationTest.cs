@@ -8,7 +8,7 @@ public class BinaryRelationTest {
 
 	[Test]
 	public void BinaryRelationCannotBeNull() {
-		Assert.That(()=> new BinaryRelation(null,null,null,false), Throws.ArgumentNullException);
+		Assert.That(()=> new BinaryRelation(null,null,null,RelationValue.FALSE), Throws.ArgumentNullException);
 	}
 
 	[Test]
@@ -21,7 +21,7 @@ public class BinaryRelationTest {
 
 		BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location);
 
-		Assert.That(()=> new BinaryRelation(school, isAt, school, true), Throws.ArgumentException);
+		Assert.That(()=> new BinaryRelation(school, isAt, school, RelationValue.TRUE), Throws.ArgumentException);
 	}
 
 	[Test]
@@ -34,7 +34,7 @@ public class BinaryRelationTest {
 
 		BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location);
 
-		Assert.That(()=> new BinaryRelation(john, isAt, john, true), Throws.ArgumentException);
+		Assert.That(()=> new BinaryRelation(john, isAt, john, RelationValue.TRUE), Throws.ArgumentException);
 	}
 
 	[Test]
@@ -54,8 +54,8 @@ public class BinaryRelationTest {
 		BinaryPredicate bp1 = new BinaryPredicate(sourceEntityType1, "PICK_UP", destinationEntityType1);
 		BinaryPredicate bp2 = new BinaryPredicate(sourceEntityType2, "PICK_UP", destinationEntityType2);
 
-		BinaryRelation br1 = new BinaryRelation(sourceEntity1, bp1, destinationEntity1, true);
-		BinaryRelation br2 = new BinaryRelation(sourceEntity2, bp2, destinationEntity2, true);
+		BinaryRelation br1 = new BinaryRelation(sourceEntity1, bp1, destinationEntity1, RelationValue.TRUE);
+		BinaryRelation br2 = new BinaryRelation(sourceEntity2, bp2, destinationEntity2, RelationValue.TRUE);
 
 		Assert.True(br1.Equals(br2) && br1.GetHashCode() == br2.GetHashCode());
 	}
@@ -77,8 +77,8 @@ public class BinaryRelationTest {
 		BinaryPredicate bp1 = new BinaryPredicate(sourceEntityType1, "PICK_UP", destinationEntityType1);
 		BinaryPredicate bp2 = new BinaryPredicate(sourceEntityType2, "PICK_UP", destinationEntityType2);
 
-		BinaryRelation br1 = new BinaryRelation(sourceEntity1, bp1, destinationEntity1, true);
-		BinaryRelation br2 = new BinaryRelation(sourceEntity2, bp2, destinationEntity2, true);
+		BinaryRelation br1 = new BinaryRelation(sourceEntity1, bp1, destinationEntity1, RelationValue.TRUE);
+		BinaryRelation br2 = new BinaryRelation(sourceEntity2, bp2, destinationEntity2, RelationValue.TRUE);
 
 		Assert.False(br1.Equals(br2) || br1.GetHashCode() == br2.GetHashCode());
 	}
@@ -100,8 +100,8 @@ public class BinaryRelationTest {
 		BinaryPredicate bp1 = new BinaryPredicate(sourceEntityType1, "PICK_UP", destinationEntityType1);
 		BinaryPredicate bp2 = new BinaryPredicate(sourceEntityType2, "PICK_UP", destinationEntityType2);
 
-		BinaryRelation br1 = new BinaryRelation(sourceEntity1, bp1, destinationEntity1, true);
-		BinaryRelation br2 = new BinaryRelation(sourceEntity2, bp2, destinationEntity2, true);
+		BinaryRelation br1 = new BinaryRelation(sourceEntity1, bp1, destinationEntity1, RelationValue.TRUE);
+		BinaryRelation br2 = new BinaryRelation(sourceEntity2, bp2, destinationEntity2, RelationValue.TRUE);
 
 		Assert.False(br1.Equals(br2) || br1.GetHashCode() == br2.GetHashCode());
 	}
@@ -123,8 +123,8 @@ public class BinaryRelationTest {
 		BinaryPredicate bp1 = new BinaryPredicate(sourceEntityType1, "PICK_UP", destinationEntityType1);
 		BinaryPredicate bp2 = new BinaryPredicate(sourceEntityType2, "PICK_UP2", destinationEntityType2);
 
-		BinaryRelation br1 = new BinaryRelation(sourceEntity1, bp1, destinationEntity1, true);
-		BinaryRelation br2 = new BinaryRelation(sourceEntity2, bp2, destinationEntity2, true);
+		BinaryRelation br1 = new BinaryRelation(sourceEntity1, bp1, destinationEntity1, RelationValue.TRUE);
+		BinaryRelation br2 = new BinaryRelation(sourceEntity2, bp2, destinationEntity2, RelationValue.TRUE);
 
 		Assert.False(br1.Equals(br2) || br1.GetHashCode() == br2.GetHashCode());
 	}
@@ -146,8 +146,8 @@ public class BinaryRelationTest {
 		BinaryPredicate bp1 = new BinaryPredicate(sourceEntityType1, "PICK_UP", destinationEntityType1);
 		BinaryPredicate bp2 = new BinaryPredicate(sourceEntityType2, "PICK_UP", destinationEntityType2);
 
-		BinaryRelation br1 = new BinaryRelation(sourceEntity1, bp1, destinationEntity1, true);
-		BinaryRelation br2 = new BinaryRelation(sourceEntity2, bp2, destinationEntity2, false);
+		BinaryRelation br1 = new BinaryRelation(sourceEntity1, bp1, destinationEntity1, RelationValue.TRUE);
+		BinaryRelation br2 = new BinaryRelation(sourceEntity2, bp2, destinationEntity2, RelationValue.FALSE);
 
 		Assert.False(br1.Equals(br2) || br1.GetHashCode() == br2.GetHashCode());
 	}

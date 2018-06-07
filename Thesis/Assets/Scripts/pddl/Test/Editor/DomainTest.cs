@@ -55,7 +55,7 @@ public class DomainTest {
 		BinaryPredicate bp1 = new BinaryPredicate(sourceEntityType1, "PICK_UP", destinationEntityType1);
 		domain.addPredicate(bp1);
 
-		BinaryRelation br1 = new BinaryRelation(sourceEntity1, bp1, destinationEntity1, true);
+		BinaryRelation br1 = new BinaryRelation(sourceEntity1, bp1, destinationEntity1, RelationValue.TRUE);
 
 		List<Entity> parametersAction1 = new List<Entity>();
 		parametersAction1.Add(sourceEntity1);
@@ -178,18 +178,18 @@ public class DomainTest {
 
         // Preconditions
         List<IRelation> moveActionPreconditions = new List<IRelation>();
-        BinaryRelation roverAtfromWP = new BinaryRelation(curiosity, at, fromWayPoint, true);
+        BinaryRelation roverAtfromWP = new BinaryRelation(curiosity, at, fromWayPoint, RelationValue.TRUE);
         moveActionPreconditions.Add(roverAtfromWP);
-        BinaryRelation canMoveFromWP1ToWP2 = new BinaryRelation(fromWayPoint, canMove, toWayPoint, true);
+        BinaryRelation canMoveFromWP1ToWP2 = new BinaryRelation(fromWayPoint, canMove, toWayPoint, RelationValue.TRUE);
         moveActionPreconditions.Add(canMoveFromWP1ToWP2);
 
         // Postconditions
         List<IRelation> moveActionPostconditions = new List<IRelation>();
-        BinaryRelation notRoverAtFromWP = new BinaryRelation(curiosity, at, fromWayPoint, false);
+        BinaryRelation notRoverAtFromWP = new BinaryRelation(curiosity, at, fromWayPoint, RelationValue.FALSE);
         moveActionPostconditions.Add(notRoverAtFromWP);
-        BinaryRelation roverAtToWP = new BinaryRelation(curiosity, at, toWayPoint, true);
+        BinaryRelation roverAtToWP = new BinaryRelation(curiosity, at, toWayPoint, RelationValue.TRUE);
         moveActionPostconditions.Add(roverAtToWP);
-        BinaryRelation roverBeenAtToWP = new BinaryRelation(curiosity, beenAt, toWayPoint, true);
+        BinaryRelation roverBeenAtToWP = new BinaryRelation(curiosity, beenAt, toWayPoint, RelationValue.TRUE);
         moveActionPostconditions.Add(roverBeenAtToWP);
 
         Action moveAction = new Action(moveActionPreconditions, "MOVE", moveActionParameters, moveActionPostconditions);

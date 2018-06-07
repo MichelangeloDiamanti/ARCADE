@@ -74,7 +74,7 @@ public class PointAndClick : MonoBehaviour {
 			}
 		}
 
-		//Player footprint effect
+		//-----Player footprint effect-----
 		//
 		/*
 		if(agent.remainingDistance > 0.5f){
@@ -125,40 +125,39 @@ public class PointAndClick : MonoBehaviour {
 		string[] action = GetPlayerAction();
 		List<string[]> post = GetPostconditions();		
 
-		Text myText = GameObject.Find("Content").AddComponent<Text>();
-		myText.font = myFont;
-		myText.color = new Color(0f, 0f, 0f);
-		myText.fontSize = 20;
-		myText.text = "";
-		// string[] x = pre[0];
-		// print(x[1]);
+		// Text myText = GameObject.Find("Content").AddComponent<Text>();
+		// myText.font = myFont;
+		// myText.color = new Color(0f, 0f, 0f);
+		// myText.fontSize = 20;
+		// myText.text = "";
+		// // string[] x = pre[0];
+		// // print(x[1]);
 
-		foreach(string[] s in pre){
-			if(s.Length > 1){
-				if(s[1] == "isAt"){
-					myText.text += "The " + s[0] + " was at " + s[2] + "\n";
-				}
-				if(s[1] == "!isAt"){
-					myText.text += "The " + s[0] + " was not at " + s[2] + "\n";
-				}
-			}
-		}
+		// foreach(string[] s in pre){
+		// 	if(s.Length > 1){
+		// 		if(s[1] == "isAt"){
+		// 			myText.text += "The " + s[0] + " was at " + s[2] + "\n";
+		// 		}
+		// 		if(s[1] == "!isAt"){
+		// 			myText.text += "The " + s[0] + " was not at " + s[2] + "\n";
+		// 		}
+		// 	}
+		// }
 
-		if(action[0] == "move"){
-			myText.text += "But then, the " + action[1] + " decided to " + action[0] + " towards " + action[2] + "\n";
-		}
+		// if(action[0] == "move"){
+		// 	myText.text += "But then, the " + action[1] + " decided to " + action[0] + " towards " + action[2] + "\n";
+		// }
 
-		foreach(string[] s in post){
-			if(s.Length > 1){
-				if(s[1] == "isAt"){
-					myText.text += "The " + s[0] + " is now at " + s[2] + "\n";
-				}
-				if(s[1] == "!isAt"){
-					myText.text += "The " + s[0] + " is not at " + pre[0][2] + " anymore.\n";
-				}
-			}
-		}
-	
+		// foreach(string[] s in post){
+		// 	if(s.Length > 1){
+		// 		if(s[1] == "isAt"){
+		// 			myText.text += "The " + s[0] + " is now at " + s[2] + "\n";
+		// 		}
+		// 		if(s[1] == "!isAt"){
+		// 			myText.text += "The " + s[0] + " is not at " + pre[0][2] + " anymore.\n";
+		// 		}
+		// 	}
+		// }
 	}
 
 	private void DestroyDescription() {

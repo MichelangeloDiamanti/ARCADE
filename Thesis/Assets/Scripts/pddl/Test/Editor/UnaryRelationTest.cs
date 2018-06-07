@@ -8,7 +8,7 @@ public class UnaryRelationTest {
 
 	[Test]
 	public void UnaryRelationCannotBeNull() {
-		Assert.That(()=> new UnaryRelation(null,null, true), Throws.ArgumentNullException);
+		Assert.That(()=> new UnaryRelation(null,null, RelationValue.TRUE), Throws.ArgumentNullException);
 	}
 
 	[Test]
@@ -21,7 +21,7 @@ public class UnaryRelationTest {
 
 		UnaryPredicate isRich = new UnaryPredicate(character, "RICH");
 
-		Assert.That(()=> new UnaryRelation(school, isRich, true), Throws.ArgumentException);
+		Assert.That(()=> new UnaryRelation(school, isRich, RelationValue.TRUE), Throws.ArgumentException);
 	}
 
 	[Test]
@@ -35,8 +35,8 @@ public class UnaryRelationTest {
 		UnaryPredicate up1 = new UnaryPredicate(entityType1, "IS_RICH");
 		UnaryPredicate up2 = new UnaryPredicate(entityType2, "IS_RICH");
 
-		UnaryRelation ur1 = new UnaryRelation(entity1, up1, true);
-		UnaryRelation ur2 = new UnaryRelation(entity2, up2, true);
+		UnaryRelation ur1 = new UnaryRelation(entity1, up1, RelationValue.TRUE);
+		UnaryRelation ur2 = new UnaryRelation(entity2, up2, RelationValue.TRUE);
 
 		Assert.True(ur1.Equals(ur2) && ur1.GetHashCode() == ur2.GetHashCode());
 	}
@@ -52,8 +52,8 @@ public class UnaryRelationTest {
 		UnaryPredicate up1 = new UnaryPredicate(entityType1, "IS_RICH");
 		UnaryPredicate up2 = new UnaryPredicate(entityType2, "IS_RICH");
 
-		UnaryRelation ur1 = new UnaryRelation(entity1, up1, true);
-		UnaryRelation ur2 = new UnaryRelation(entity2, up2, true);
+		UnaryRelation ur1 = new UnaryRelation(entity1, up1, RelationValue.TRUE);
+		UnaryRelation ur2 = new UnaryRelation(entity2, up2, RelationValue.TRUE);
 
 		Assert.False(ur1.Equals(ur2) || ur1.GetHashCode() == ur2.GetHashCode());
 	}
@@ -69,8 +69,8 @@ public class UnaryRelationTest {
 		UnaryPredicate up1 = new UnaryPredicate(entityType1, "IS_RICH");
 		UnaryPredicate up2 = new UnaryPredicate(entityType2, "IS_RICH");
 
-		UnaryRelation ur1 = new UnaryRelation(entity1, up1, true);
-		UnaryRelation ur2 = new UnaryRelation(entity2, up2, true);
+		UnaryRelation ur1 = new UnaryRelation(entity1, up1, RelationValue.TRUE);
+		UnaryRelation ur2 = new UnaryRelation(entity2, up2, RelationValue.TRUE);
 
 		Assert.False(ur1.Equals(ur2) || ur1.GetHashCode() == ur2.GetHashCode());
 	}
