@@ -10,7 +10,7 @@ public class TreeNode<T> : IEnumerable<TreeNode<T>>
     public T Data { get; set; }
     public TreeNode<T> Parent { get; set; }
     public ICollection<TreeNode<T>> Children { get; set; }
-    public Action Edge { get; set; }
+    public Action LinkToParent { get; set; }
 
     public Boolean IsRoot
     {
@@ -33,19 +33,19 @@ public class TreeNode<T> : IEnumerable<TreeNode<T>>
     }
 
 
-    public TreeNode(T data, Action edge)
+    public TreeNode(T data, Action linkToParent)
     {
         this.Data = data;
-        this.Edge = edge;
+        this.LinkToParent = linkToParent;
         this.Children = new LinkedList<TreeNode<T>>();
 
         this.ElementsIndex = new LinkedList<TreeNode<T>>();
         this.ElementsIndex.Add(this);
     }
 
-    public TreeNode<T> AddChild(T child, Action edge)
+    public TreeNode<T> AddChild(T child, Action linkToParent)
     {
-        TreeNode<T> childNode = new TreeNode<T>(child, edge) { Parent = this };
+        TreeNode<T> childNode = new TreeNode<T>(child, linkToParent) { Parent = this };
         this.Children.Add(childNode);
 
         this.RegisterChildForSearch(childNode);

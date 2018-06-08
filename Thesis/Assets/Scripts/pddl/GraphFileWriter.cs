@@ -9,16 +9,17 @@ public class GraphFileWriter : MonoBehaviour
     public void SaveFile(string data)
     {
         string destination = Application.persistentDataPath + "/example1.graphml";
+        System.IO.File.WriteAllText (destination, data);
         Debug.Log(Application.persistentDataPath);
-        FileStream file;
+        // FileStream file;
 
-        if (File.Exists(destination)) file = File.OpenWrite(destination);
-        else file = File.Create(destination);
+        // if (File.Exists(destination)) file = File.OpenWrite(destination);
+        // else file = File.Create(destination);
 
-        // GameData data = new GameData(currentScore, currentName, currentTimePlayed);
-        BinaryFormatter bf = new BinaryFormatter();
-        bf.Serialize(file, data);
-        file.Close();
+        // // GameData data = new GameData(currentScore, currentName, currentTimePlayed);
+        // BinaryFormatter bf = new BinaryFormatter();
+        // bf.Serialize(file, data);
+        // file.Close();
     }
 
     public void LoadFile()

@@ -256,13 +256,6 @@ public class WorldState
         }
         foreach (Action a in possibleActions)
         {
-            // string ciao = "Possible Actions: " + a.ToString() + "\nCoinvolte: \n";
-            // foreach (Entity item in a.Parameters)
-            // {
-            //     ciao += item.ToString() + "\n";
-            // }
-            // Debug.Log(ciao);
-
             Queue<List<Entity>> listSobstitution = new Queue<List<Entity>>();
             foreach (Entity item in a.Parameters)
             {
@@ -280,18 +273,6 @@ public class WorldState
             _combinations.Clear();
             List<Entity> result = new List<Entity>();
             CombinationRecoursive(listSobstitution, result);
-
-            // string message = "Combinations: \n";
-            // foreach (List<Entity> list in _combinations)
-            // {
-            //     message += "List: \n";
-            //     foreach (Entity item in list)
-            //     {
-            //         message += item.ToString() + " ";
-            //     }
-            //     message += "\n";
-            // }
-            // Debug.Log(message);
 
             foreach (List<Entity> list in _combinations)
             {

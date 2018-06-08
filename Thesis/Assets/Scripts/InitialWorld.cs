@@ -19,13 +19,11 @@ public class InitialWorld : MonoBehaviour
         currentNode = roverWorldStateFullDetail();	
         // Debug.Log("We are now in this world state: " + currentNode.Data.ToString());
         // possibleMoveActions();
-        List<Action> possibleActions = worldState.getPossibleActions();
-        GraphGenerator graphGenerator = new GraphGenerator(null);
+        GameTreeGenerator gtg = new GameTreeGenerator(worldState);
+        TreeNode<WorldState> graph = gtg.GenerateTree(3);
+        Debug.Log(graph.Level);
+        GraphGenerator graphGenerator = new GraphGenerator(graph);
         graphGenerator.GenerateGraph();
-        foreach (Action item in possibleActions)
-        {
-            Debug.Log(item.ToString());
-        }
     }
 
     IEnumerator simulation()
