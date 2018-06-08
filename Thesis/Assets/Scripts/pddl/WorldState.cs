@@ -34,7 +34,7 @@ public class WorldState
 
     public WorldState(Domain domain)
     {
-        _domain = domain; // check if we should clone instead 
+        _domain = domain.Clone(); // check if we should clone instead 
         _entities = new List<Entity>();
         _relations = new List<IRelation>();
     }

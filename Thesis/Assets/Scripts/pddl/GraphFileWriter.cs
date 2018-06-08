@@ -6,16 +6,16 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 public class GraphFileWriter : MonoBehaviour
 {
-    public void SaveFile()
+    public void SaveFile(string data)
     {
         string destination = Application.persistentDataPath + "/example1.graphml";
+        Debug.Log(Application.persistentDataPath);
         FileStream file;
 
         if (File.Exists(destination)) file = File.OpenWrite(destination);
         else file = File.Create(destination);
 
         // GameData data = new GameData(currentScore, currentName, currentTimePlayed);
-		string data = "";
         BinaryFormatter bf = new BinaryFormatter();
         bf.Serialize(file, data);
         file.Close();

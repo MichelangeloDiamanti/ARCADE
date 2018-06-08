@@ -20,6 +20,8 @@ public class InitialWorld : MonoBehaviour
         // Debug.Log("We are now in this world state: " + currentNode.Data.ToString());
         // possibleMoveActions();
         List<Action> possibleActions = worldState.getPossibleActions();
+        GraphGenerator graphGenerator = new GraphGenerator(null);
+        graphGenerator.GenerateGraph();
         foreach (Action item in possibleActions)
         {
             Debug.Log(item.ToString());
@@ -31,7 +33,7 @@ public class InitialWorld : MonoBehaviour
         int randomActionIndex = Random.Range(0, currentNode.Data.Domain.Actions.Count);
         Action randomAction = currentNode.Data.Domain.Actions[randomActionIndex];
         WorldState nextState = currentNode.Data.applyAction(randomAction);
-        currentNode = currentNode.AddChild(nextState);
+        currentNode = currentNode.AddChild(nextState, null);
         Debug.Log("The Following Action was performed: " + randomAction.ToString());
         Debug.Log("We are now in this world state: " + currentNode.Data.ToString());
         yield return new WaitForSeconds(1);
@@ -400,7 +402,7 @@ public class InitialWorld : MonoBehaviour
         BinaryRelation isAt6 = domain.generateRelationFromPredicateName("AT", rover, wayPoint6, true);
         worldState.addRelation(isAt6);
 
-        return new TreeNode<WorldState>(worldState);
+        return new TreeNode<WorldState>(worldState, null);
     }
     private void roverWorldDomainFullDetail()
     {
