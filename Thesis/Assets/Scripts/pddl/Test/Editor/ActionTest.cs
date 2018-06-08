@@ -23,7 +23,7 @@ public class ActionTest {
 
 		BinaryPredicate bp1 = new BinaryPredicate(sourceEntityType1, "PICK_UP", destinationEntityType1);
 
-		BinaryRelation br1 = new BinaryRelation(sourceEntity1, bp1, destinationEntity1, true);
+		BinaryRelation br1 = new BinaryRelation(sourceEntity1, bp1, destinationEntity1, RelationValue.TRUE);
 
 		List<Entity> parametersAction1 = new List<Entity>();
 		// parametersAction1.Add(sourceEntity1);
@@ -56,8 +56,8 @@ public class ActionTest {
 		BinaryPredicate bp1 = new BinaryPredicate(sourceEntityType1, "PICK_UP", destinationEntityType1);
 		BinaryPredicate bp2 = new BinaryPredicate(sourceEntityType2, "PICK_UP", destinationEntityType2);
 
-		BinaryRelation br1 = new BinaryRelation(sourceEntity1, bp1, destinationEntity1, true);
-		BinaryRelation br2 = new BinaryRelation(sourceEntity2, bp2, destinationEntity2, true);
+		BinaryRelation br1 = new BinaryRelation(sourceEntity1, bp1, destinationEntity1, RelationValue.TRUE);
+		BinaryRelation br2 = new BinaryRelation(sourceEntity2, bp2, destinationEntity2, RelationValue.TRUE);
 
 		List<Entity> parametersAction1 = new List<Entity>();
 		parametersAction1.Add(sourceEntity1);
@@ -99,8 +99,8 @@ public class ActionTest {
 		BinaryPredicate bp1 = new BinaryPredicate(sourceEntityType1, "PICK_UP", destinationEntityType1);
 		BinaryPredicate bp2 = new BinaryPredicate(sourceEntityType2, "PICK_UP", destinationEntityType2);
 
-		BinaryRelation br1 = new BinaryRelation(sourceEntity1, bp1, destinationEntity1, true);
-		BinaryRelation br2 = new BinaryRelation(sourceEntity2, bp2, destinationEntity2, true);
+		BinaryRelation br1 = new BinaryRelation(sourceEntity1, bp1, destinationEntity1, RelationValue.TRUE);
+		BinaryRelation br2 = new BinaryRelation(sourceEntity2, bp2, destinationEntity2, RelationValue.TRUE);
 
 		List<Entity> parametersAction1 = new List<Entity>();
 		parametersAction1.Add(sourceEntity1);

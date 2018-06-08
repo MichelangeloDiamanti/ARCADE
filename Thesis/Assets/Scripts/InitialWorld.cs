@@ -170,18 +170,18 @@ public class InitialWorld : MonoBehaviour
 
         // Preconditions
         List<IRelation> moveActionPreconditions = new List<IRelation>();
-        BinaryRelation roverAtfromWP = new BinaryRelation(curiosity, at, fromWayPoint, true);
+        BinaryRelation roverAtfromWP = new BinaryRelation(curiosity, at, fromWayPoint, RelationValue.TRUE);
         moveActionPreconditions.Add(roverAtfromWP);
-        BinaryRelation canMoveFromWP1ToWP2 = new BinaryRelation(fromWayPoint, canMove, toWayPoint, true);
+        BinaryRelation canMoveFromWP1ToWP2 = new BinaryRelation(fromWayPoint, canMove, toWayPoint, RelationValue.TRUE);
         moveActionPreconditions.Add(canMoveFromWP1ToWP2);
 
         // Postconditions
         List<IRelation> moveActionPostconditions = new List<IRelation>();
-        BinaryRelation notRoverAtFromWP = new BinaryRelation(curiosity, at, fromWayPoint, false);
+        BinaryRelation notRoverAtFromWP = new BinaryRelation(curiosity, at, fromWayPoint, RelationValue.FALSE);
         moveActionPostconditions.Add(notRoverAtFromWP);
-        BinaryRelation roverAtToWP = new BinaryRelation(curiosity, at, toWayPoint, true);
+        BinaryRelation roverAtToWP = new BinaryRelation(curiosity, at, toWayPoint, RelationValue.TRUE);
         moveActionPostconditions.Add(roverAtToWP);
-        BinaryRelation roverBeenAtToWP = new BinaryRelation(curiosity, beenAt, toWayPoint, true);
+        BinaryRelation roverBeenAtToWP = new BinaryRelation(curiosity, beenAt, toWayPoint, RelationValue.TRUE);
         moveActionPostconditions.Add(roverBeenAtToWP);
 
         Action moveAction = new Action(moveActionPreconditions, "MOVE", moveActionParameters, moveActionPostconditions);
@@ -199,20 +199,20 @@ public class InitialWorld : MonoBehaviour
 
         // Preconditions
         List<IRelation> takeSampleActPreconditions = new List<IRelation>();
-        BinaryRelation sampleIsInWayPoint = new BinaryRelation(ESample, isIn, EWayPoint, true);
+        BinaryRelation sampleIsInWayPoint = new BinaryRelation(ESample, isIn, EWayPoint, RelationValue.TRUE);
         takeSampleActPreconditions.Add(sampleIsInWayPoint);
-        BinaryRelation roverIsAtWayPoint = new BinaryRelation(curiosity, at, EWayPoint, true);
+        BinaryRelation roverIsAtWayPoint = new BinaryRelation(curiosity, at, EWayPoint, RelationValue.TRUE);
         takeSampleActPreconditions.Add(roverIsAtWayPoint);
-        UnaryRelation roverIsEmpty = new UnaryRelation(curiosity, isEmpty, true);
+        UnaryRelation roverIsEmpty = new UnaryRelation(curiosity, isEmpty, RelationValue.TRUE);
         takeSampleActPreconditions.Add(roverIsEmpty);
 
         // Postconditions
         List<IRelation> takeSampleActPostconditions = new List<IRelation>();
-        BinaryRelation sampleIsNotInWayPoint = new BinaryRelation(ESample, isIn, EWayPoint, false);
+        BinaryRelation sampleIsNotInWayPoint = new BinaryRelation(ESample, isIn, EWayPoint, RelationValue.FALSE);
         takeSampleActPostconditions.Add(sampleIsNotInWayPoint);
-        UnaryRelation roverIsNotEmpty = new UnaryRelation(curiosity, isEmpty, false);
+        UnaryRelation roverIsNotEmpty = new UnaryRelation(curiosity, isEmpty, RelationValue.FALSE);
         takeSampleActPostconditions.Add(roverIsNotEmpty);        
-        BinaryRelation roverCarriesSample = new BinaryRelation(curiosity, carry, ESample, true);
+        BinaryRelation roverCarriesSample = new BinaryRelation(curiosity, carry, ESample, RelationValue.TRUE);
         takeSampleActPostconditions.Add(roverCarriesSample); 
 
         Action takeSampleAction = new Action(takeSampleActPreconditions, "TAKE_SAMPLE", takeSampleActionParameters, takeSampleActPostconditions);
@@ -227,7 +227,7 @@ public class InitialWorld : MonoBehaviour
 
         // Preconditions
         List<IRelation> dropSampleActPreconditions = new List<IRelation>();
-        UnaryRelation wayPointIsDroppingDock = new UnaryRelation(EWayPoint, isDroppingDock, true);
+        UnaryRelation wayPointIsDroppingDock = new UnaryRelation(EWayPoint, isDroppingDock, RelationValue.TRUE);
         dropSampleActPreconditions.Add(wayPointIsDroppingDock);
         dropSampleActPreconditions.Add(roverIsAtWayPoint);
         dropSampleActPreconditions.Add(roverCarriesSample);
@@ -236,7 +236,7 @@ public class InitialWorld : MonoBehaviour
         List<IRelation> dropSampActPostconditions = new List<IRelation>();
         dropSampActPostconditions.Add(sampleIsInWayPoint);
         dropSampActPostconditions.Add(roverIsEmpty);
-        BinaryRelation notRoverCarriesSample = new BinaryRelation(curiosity, carry, ESample, false);
+        BinaryRelation notRoverCarriesSample = new BinaryRelation(curiosity, carry, ESample, RelationValue.FALSE);
         dropSampActPostconditions.Add(notRoverCarriesSample); 
 
         Action dropSampleAction = new Action(dropSampleActPreconditions, "DROP_SAMPLE", dropSampleActionParameters, dropSampActPostconditions);
@@ -254,12 +254,12 @@ public class InitialWorld : MonoBehaviour
         // Preconditions
         List<IRelation> takeImageActionPreconditions = new List<IRelation>();
         takeImageActionPreconditions.Add(roverIsAtWayPoint);
-        BinaryRelation objectiveIsVisibleFromWayPoint = new BinaryRelation(EObjective, isVisible, EWayPoint, true);
+        BinaryRelation objectiveIsVisibleFromWayPoint = new BinaryRelation(EObjective, isVisible, EWayPoint, RelationValue.TRUE);
         takeImageActionPreconditions.Add(objectiveIsVisibleFromWayPoint);
 
         // Postconditions
         List<IRelation> takeImageActionPostconditions = new List<IRelation>();
-        UnaryRelation roverHasTakenImageOfObjective = new UnaryRelation(EObjective, takenImage, true);
+        UnaryRelation roverHasTakenImageOfObjective = new UnaryRelation(EObjective, takenImage, RelationValue.TRUE);
         takeImageActionPostconditions.Add(roverHasTakenImageOfObjective);
 
         Action takeImageAction = new Action(takeImageActionPreconditions, "TAKE_IMAGE", takeImageActionParameters, takeImageActionPostconditions);
@@ -326,24 +326,24 @@ public class InitialWorld : MonoBehaviour
         worldState.addEntity(objective7);
         worldState.addEntity(objective8);
 
-        BinaryRelation canMove1 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint1, wayPoint5, true);
-        BinaryRelation canMove2 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint2, wayPoint5, true);
-        BinaryRelation canMove3 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint3, wayPoint6, true);
-        BinaryRelation canMove4 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint4, wayPoint8, true);
-        BinaryRelation canMove5 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint5, wayPoint1, true);
-        BinaryRelation canMove6 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint6, wayPoint3, true);
-        BinaryRelation canMove7 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint6, wayPoint8, true);
-        BinaryRelation canMove8 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint8, wayPoint4, true);
-        BinaryRelation canMove9 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint9, wayPoint1, true);
-        BinaryRelation canMove10 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint1, wayPoint9, true);
-        BinaryRelation canMove11 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint3, wayPoint4, true);
-        BinaryRelation canMove12 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint4, wayPoint3, true);
-        BinaryRelation canMove13 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint4, wayPoint9, true);
-        BinaryRelation canMove14 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint5, wayPoint2, true);
-        BinaryRelation canMove15 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint6, wayPoint7, true);
-        BinaryRelation canMove16 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint7, wayPoint6, true);
-        BinaryRelation canMove17 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint8, wayPoint6, true);
-        BinaryRelation canMove18 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint9, wayPoint4, true);
+        BinaryRelation canMove1 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint1, wayPoint5, RelationValue.TRUE);
+        BinaryRelation canMove2 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint2, wayPoint5, RelationValue.TRUE);
+        BinaryRelation canMove3 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint3, wayPoint6, RelationValue.TRUE);
+        BinaryRelation canMove4 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint4, wayPoint8, RelationValue.TRUE);
+        BinaryRelation canMove5 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint5, wayPoint1, RelationValue.TRUE);
+        BinaryRelation canMove6 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint6, wayPoint3, RelationValue.TRUE);
+        BinaryRelation canMove7 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint6, wayPoint8, RelationValue.TRUE);
+        BinaryRelation canMove8 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint8, wayPoint4, RelationValue.TRUE);
+        BinaryRelation canMove9 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint9, wayPoint1, RelationValue.TRUE);
+        BinaryRelation canMove10 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint1, wayPoint9, RelationValue.TRUE);
+        BinaryRelation canMove11 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint3, wayPoint4, RelationValue.TRUE);
+        BinaryRelation canMove12 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint4, wayPoint3, RelationValue.TRUE);
+        BinaryRelation canMove13 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint4, wayPoint9, RelationValue.TRUE);
+        BinaryRelation canMove14 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint5, wayPoint2, RelationValue.TRUE);
+        BinaryRelation canMove15 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint6, wayPoint7, RelationValue.TRUE);
+        BinaryRelation canMove16 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint7, wayPoint6, RelationValue.TRUE);
+        BinaryRelation canMove17 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint8, wayPoint6, RelationValue.TRUE);
+        BinaryRelation canMove18 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint9, wayPoint4, RelationValue.TRUE);
         worldState.addRelation(canMove1);
         worldState.addRelation(canMove2);
         worldState.addRelation(canMove3);
@@ -363,14 +363,14 @@ public class InitialWorld : MonoBehaviour
         worldState.addRelation(canMove17);
         worldState.addRelation(canMove18);
 
-        BinaryRelation isVisible1 = domain.generateRelationFromPredicateName("IS_VISIBLE", objective1, wayPoint2, true);
-        BinaryRelation isVisible2 = domain.generateRelationFromPredicateName("IS_VISIBLE", objective1, wayPoint4, true);
-        BinaryRelation isVisible3 = domain.generateRelationFromPredicateName("IS_VISIBLE", objective2, wayPoint7, true);
-        BinaryRelation isVisible4 = domain.generateRelationFromPredicateName("IS_VISIBLE", objective4, wayPoint5, true);
-        BinaryRelation isVisible5 = domain.generateRelationFromPredicateName("IS_VISIBLE", objective1, wayPoint3, true);
-        BinaryRelation isVisible6 = domain.generateRelationFromPredicateName("IS_VISIBLE", objective2, wayPoint5, true);
-        BinaryRelation isVisible7 = domain.generateRelationFromPredicateName("IS_VISIBLE", objective3, wayPoint8, true);
-        BinaryRelation isVisible8 = domain.generateRelationFromPredicateName("IS_VISIBLE", objective4, wayPoint1, true);
+        BinaryRelation isVisible1 = domain.generateRelationFromPredicateName("IS_VISIBLE", objective1, wayPoint2, RelationValue.TRUE);
+        BinaryRelation isVisible2 = domain.generateRelationFromPredicateName("IS_VISIBLE", objective1, wayPoint4, RelationValue.TRUE);
+        BinaryRelation isVisible3 = domain.generateRelationFromPredicateName("IS_VISIBLE", objective2, wayPoint7, RelationValue.TRUE);
+        BinaryRelation isVisible4 = domain.generateRelationFromPredicateName("IS_VISIBLE", objective4, wayPoint5, RelationValue.TRUE);
+        BinaryRelation isVisible5 = domain.generateRelationFromPredicateName("IS_VISIBLE", objective1, wayPoint3, RelationValue.TRUE);
+        BinaryRelation isVisible6 = domain.generateRelationFromPredicateName("IS_VISIBLE", objective2, wayPoint5, RelationValue.TRUE);
+        BinaryRelation isVisible7 = domain.generateRelationFromPredicateName("IS_VISIBLE", objective3, wayPoint8, RelationValue.TRUE);
+        BinaryRelation isVisible8 = domain.generateRelationFromPredicateName("IS_VISIBLE", objective4, wayPoint1, RelationValue.TRUE);
         worldState.addRelation(isVisible1);
         worldState.addRelation(isVisible2);
         worldState.addRelation(isVisible3);
@@ -380,12 +380,12 @@ public class InitialWorld : MonoBehaviour
         worldState.addRelation(isVisible7);
         worldState.addRelation(isVisible8);  
 
-        BinaryRelation isIn1 = domain.generateRelationFromPredicateName("IS_IN", sample1, wayPoint2, true);
-        BinaryRelation isIn2 = domain.generateRelationFromPredicateName("IS_IN", sample3, wayPoint9, true);
-        BinaryRelation isIn3 = domain.generateRelationFromPredicateName("IS_IN", sample5, wayPoint3, true);
-        BinaryRelation isIn4 = domain.generateRelationFromPredicateName("IS_IN", sample2, wayPoint3, true);
-        BinaryRelation isIn5 = domain.generateRelationFromPredicateName("IS_IN", sample4, wayPoint8, true);
-        BinaryRelation isIn6 = domain.generateRelationFromPredicateName("IS_IN", sample6, wayPoint3, true);
+        BinaryRelation isIn1 = domain.generateRelationFromPredicateName("IS_IN", sample1, wayPoint2, RelationValue.TRUE);
+        BinaryRelation isIn2 = domain.generateRelationFromPredicateName("IS_IN", sample3, wayPoint9, RelationValue.TRUE);
+        BinaryRelation isIn3 = domain.generateRelationFromPredicateName("IS_IN", sample5, wayPoint3, RelationValue.TRUE);
+        BinaryRelation isIn4 = domain.generateRelationFromPredicateName("IS_IN", sample2, wayPoint3, RelationValue.TRUE);
+        BinaryRelation isIn5 = domain.generateRelationFromPredicateName("IS_IN", sample4, wayPoint8, RelationValue.TRUE);
+        BinaryRelation isIn6 = domain.generateRelationFromPredicateName("IS_IN", sample6, wayPoint3, RelationValue.TRUE);
         worldState.addRelation(isIn1);
         worldState.addRelation(isIn2);
         worldState.addRelation(isIn3);
@@ -393,13 +393,13 @@ public class InitialWorld : MonoBehaviour
         worldState.addRelation(isIn5);
         worldState.addRelation(isIn6);
 
-        UnaryRelation isDroppingDock = domain.generateRelationFromPredicateName("IS_DROPPING_DOCK", wayPoint7, true);
+        UnaryRelation isDroppingDock = domain.generateRelationFromPredicateName("IS_DROPPING_DOCK", wayPoint7, RelationValue.TRUE);
         worldState.addRelation(isDroppingDock);
 
-        UnaryRelation isEmpty = domain.generateRelationFromPredicateName("IS_EMPTY", rover, true);
+        UnaryRelation isEmpty = domain.generateRelationFromPredicateName("IS_EMPTY", rover, RelationValue.TRUE);
         worldState.addRelation(isEmpty);
 
-        BinaryRelation isAt6 = domain.generateRelationFromPredicateName("AT", rover, wayPoint6, true);
+        BinaryRelation isAt6 = domain.generateRelationFromPredicateName("AT", rover, wayPoint6, RelationValue.TRUE);
         worldState.addRelation(isAt6);
 
         return new TreeNode<WorldState>(worldState, null);
@@ -422,11 +422,11 @@ public class InitialWorld : MonoBehaviour
         actionChargeParameters.Add(entityBattery);
 
         List<IRelation> actionChargePreconditions = new List<IRelation>();
-        UnaryRelation relationBatteryDischarged = new UnaryRelation(entityBattery, predicateBatteryCharged, false);
+        UnaryRelation relationBatteryDischarged = new UnaryRelation(entityBattery, predicateBatteryCharged, RelationValue.FALSE);
         actionChargePreconditions.Add(relationBatteryDischarged);
 
         List<IRelation> actionChargePostconditions = new List<IRelation>();
-        UnaryRelation relationBatteryCharged = new UnaryRelation(entityBattery, predicateBatteryCharged, true);
+        UnaryRelation relationBatteryCharged = new UnaryRelation(entityBattery, predicateBatteryCharged, RelationValue.TRUE);
         actionChargePostconditions.Add(relationBatteryCharged);
 
         Action actionChargeBattery = new Action(actionChargePreconditions, "CHARGE_BATTERY", actionChargeParameters, actionChargePostconditions);
@@ -440,11 +440,11 @@ public class InitialWorld : MonoBehaviour
         actionInflateParameters.Add(entityWheels);
 
         List<IRelation> actionInflatePreconditions = new List<IRelation>();
-        UnaryRelation relationWheelsDeflated = new UnaryRelation(entityWheels, predicateWheelsInflated, false);
+        UnaryRelation relationWheelsDeflated = new UnaryRelation(entityWheels, predicateWheelsInflated, RelationValue.FALSE);
         actionInflatePreconditions.Add(relationWheelsDeflated);
 
         List<IRelation> actionInflatePostconditions = new List<IRelation>();
-        UnaryRelation relationWheelsInflated = new UnaryRelation(entityWheels, predicateWheelsInflated, true);
+        UnaryRelation relationWheelsInflated = new UnaryRelation(entityWheels, predicateWheelsInflated, RelationValue.TRUE);
         actionInflatePostconditions.Add(relationWheelsInflated);
 
         Action actionInflate = new Action(actionInflatePreconditions, "INFLATE", actionInflateParameters, actionInflatePostconditions);
@@ -467,9 +467,9 @@ public class InitialWorld : MonoBehaviour
         detailedState.addEntity(entityBattery);
         detailedState.addEntity(entityWheels);
         
-        UnaryRelation relationBatteryIsCharged = detailedState.Domain.generateRelationFromPredicateName("BATTERY_CHARGED", entityBattery, true);
+        UnaryRelation relationBatteryIsCharged = detailedState.Domain.generateRelationFromPredicateName("BATTERY_CHARGED", entityBattery, RelationValue.TRUE);
         detailedState.addRelation(relationBatteryIsCharged);
-        UnaryRelation relationWheelsInflated = detailedState.Domain.generateRelationFromPredicateName("WHEELS_INFLATED", entityWheels, true);
+        UnaryRelation relationWheelsInflated = detailedState.Domain.generateRelationFromPredicateName("WHEELS_INFLATED", entityWheels, RelationValue.TRUE);
         detailedState.addRelation(relationWheelsInflated);
 
         return detailedtNode;
