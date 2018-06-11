@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using UnityEngine;
 
 public class WorldState
@@ -352,6 +353,41 @@ public class WorldState
         });
         return newList;
     }
+
+	public override bool Equals(object obj)
+	{
+		WorldState other = obj as WorldState;
+
+		if (other == null)
+			return false;
+
+        bool equalEntities = _entities.All(other.Entities.Contains) && _entities.Count == other.Entities.Count;
+        if(equalEntities == false)
+            return false;
+
+        bool equalRelations = _relations.All(other.Relations.Contains) && _relations.Count == other.Relations.Count;
+        if(equalRelations == false)
+            return false;
+
+		return true;
+	}
+
+	public override int GetHashCode()
+	{
+        unchecked
+        {
+            int hashCode = 17;
+
+            foreach(Entity e in _entities)
+    			hashCode = hashCode * -1521134295 + e.GetHashCode();
+
+            foreach(IRelation r in _relations)
+    			hashCode = hashCode * -1521134295 + r.GetHashCode();
+
+            return hashCode;
+        }
+	}
+
 }
 
 

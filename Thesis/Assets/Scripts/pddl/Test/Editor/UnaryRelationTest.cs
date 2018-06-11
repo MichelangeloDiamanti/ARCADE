@@ -74,4 +74,15 @@ public class UnaryRelationTest {
 
 		Assert.False(ur1.Equals(ur2) || ur1.GetHashCode() == ur2.GetHashCode());
 	}
+
+	[Test]
+	public void CloneReturnsEqualUnaryRelation() {
+        EntityType entityTyperRover = new EntityType("ROVER");
+		Entity entityRover = new Entity(entityTyperRover, "ROVER");
+        UnaryPredicate predicateRoverisEmpty = new UnaryPredicate(entityTyperRover, "IS_EMPTY");
+		UnaryRelation relationRoverIsEmpty = new UnaryRelation(entityRover, predicateRoverisEmpty, RelationValue.TRUE);
+		UnaryRelation relationClonedRoverIsEmpty = relationRoverIsEmpty.Clone() as UnaryRelation;
+		Assert.AreEqual(relationRoverIsEmpty, relationClonedRoverIsEmpty);
+	}
+
 }

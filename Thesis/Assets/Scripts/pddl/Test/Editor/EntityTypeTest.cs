@@ -31,4 +31,11 @@ public class EntityTypeTest {
 		Assert.False(et1.Equals(et2));
 	}
 
+	[Test]
+	public void CloneReturnsEqualEntityType() {
+		EntityType et1 = new EntityType("CHARACTER");
+		EntityType et2 = et1.Clone();
+		Assert.AreEqual(et1, et2);
+	}
+
 }

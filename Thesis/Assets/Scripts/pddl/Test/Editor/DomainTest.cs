@@ -197,4 +197,58 @@ public class DomainTest {
 		Assert.That(()=> domain.addAction(moveAction), Throws.ArgumentException);
 	}
 
+	[Test]
+	public void CloneReturnsEqualDomain() {
+		Domain domain = new Domain();
+       
+        EntityType rover = new EntityType("ROVER");
+        domain.addEntityType(rover);
+        
+        EntityType wayPoint = new EntityType("WAYPOINT");
+        domain.addEntityType(wayPoint);
+
+        //(can-move ?from-waypoint ?to-waypoint)
+        BinaryPredicate canMove = new BinaryPredicate(wayPoint, "CAN_MOVE", wayPoint);
+        domain.addPredicate(canMove);
+        //(been-at ?rover ?waypoint)
+        BinaryPredicate beenAt = new BinaryPredicate(rover, "BEEN_AT", wayPoint);
+        domain.addPredicate(beenAt);
+        //(at ?rover ?waypoint)
+        BinaryPredicate at = new BinaryPredicate(rover, "AT", wayPoint);
+        domain.addPredicate(at);
+	    //              MOVE ACTION
+        // Parameters
+        Entity curiosity = new Entity(rover, "ROVER");
+        Entity fromWayPoint = new Entity(wayPoint, "WAYPOINT1");
+        Entity toWayPoint = new Entity(wayPoint, "WAYPOINT2");        
+
+        List<Entity> moveActionParameters = new List<Entity>();
+        moveActionParameters.Add(curiosity);
+        moveActionParameters.Add(fromWayPoint);
+        moveActionParameters.Add(toWayPoint);        
+
+        // Preconditions
+        List<IRelation> moveActionPreconditions = new List<IRelation>();
+        BinaryRelation roverAtfromWP = new BinaryRelation(curiosity, at, fromWayPoint, RelationValue.TRUE);
+        moveActionPreconditions.Add(roverAtfromWP);
+        BinaryRelation canMoveFromWP1ToWP2 = new BinaryRelation(fromWayPoint, canMove, toWayPoint, RelationValue.TRUE);
+        moveActionPreconditions.Add(canMoveFromWP1ToWP2);
+
+        // Postconditions
+        List<IRelation> moveActionPostconditions = new List<IRelation>();
+        BinaryRelation notRoverAtFromWP = new BinaryRelation(curiosity, at, fromWayPoint, RelationValue.FALSE);
+        moveActionPostconditions.Add(notRoverAtFromWP);
+        BinaryRelation roverAtToWP = new BinaryRelation(curiosity, at, toWayPoint, RelationValue.TRUE);
+        moveActionPostconditions.Add(roverAtToWP);
+        BinaryRelation roverBeenAtToWP = new BinaryRelation(curiosity, beenAt, toWayPoint, RelationValue.TRUE);
+        moveActionPostconditions.Add(roverBeenAtToWP);
+
+        Action moveAction = new Action(moveActionPreconditions, "MOVE", moveActionParameters, moveActionPostconditions);
+		domain.addAction(moveAction);
+
+		Domain clonedDomain = domain.Clone();
+
+		Assert.AreEqual(domain, clonedDomain);
+	}
+
 }

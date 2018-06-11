@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class Domain
 {
@@ -311,4 +312,44 @@ public class Domain
         
         return new Domain(newEntityTypes, newPredicates, newActions);
     }
+
+	public override bool Equals(object obj)
+	{
+		Domain other = obj as Domain;
+
+		if (other == null)
+			return false;
+        bool equalEntityTypes = _entityTypes.All(other.EntityTypes.Contains) && _entityTypes.Count == other.EntityTypes.Count;
+        if(equalEntityTypes == false)
+            return false;
+        
+        bool equalPredicates = _predicates.All(other.Predicates.Contains) && _predicates.Count == other.Predicates.Count;
+        if(equalPredicates == false)
+            return false;
+
+        bool equalActions = _actions.All(other.Actions.Contains) && _actions.Count == other.Actions.Count;
+        if(equalActions == false)
+            return false;
+        
+		return true;
+	}
+
+	public override int GetHashCode()
+	{
+        unchecked
+        {
+            int hashCode = 17;
+
+            foreach(EntityType et in _entityTypes)
+    			hashCode = hashCode * -1521134295 + et.GetHashCode();
+
+            foreach(IPredicate p in _predicates)
+    			hashCode = hashCode * -1521134295 + p.GetHashCode();
+
+            foreach(Action a in _actions)
+    			hashCode = hashCode * -1521134295 + a.GetHashCode();
+                        
+            return hashCode;
+        }
+	}
 }

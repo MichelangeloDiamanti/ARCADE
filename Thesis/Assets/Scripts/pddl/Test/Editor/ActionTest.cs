@@ -125,4 +125,43 @@ public class ActionTest {
 		Assert.False(a1.Equals(a2) || a1.GetHashCode() == a2.GetHashCode());
 	}
 	
+	[Test]
+	public void CloneReturnsEqualAction() {
+        EntityType rover = new EntityType("ROVER");
+        EntityType wayPoint = new EntityType("WAYPOINT");
+
+		Entity curiosity = new Entity(rover, "ROVER");
+        Entity fromWayPoint = new Entity(wayPoint, "WAYPOINT1");
+        Entity toWayPoint = new Entity(wayPoint, "WAYPOINT2");        
+
+        BinaryPredicate canMove = new BinaryPredicate(wayPoint, "CAN_MOVE", wayPoint);
+        BinaryPredicate at = new BinaryPredicate(rover, "AT", wayPoint);
+        BinaryPredicate beenAt = new BinaryPredicate(rover, "BEEN_AT", wayPoint);
+
+        List<Entity> moveActionParameters = new List<Entity>();
+        moveActionParameters.Add(curiosity);
+        moveActionParameters.Add(fromWayPoint);
+        moveActionParameters.Add(toWayPoint);        
+
+        // Preconditions
+        List<IRelation> moveActionPreconditions = new List<IRelation>();
+        BinaryRelation roverAtfromWP = new BinaryRelation(curiosity, at, fromWayPoint, RelationValue.TRUE);
+        moveActionPreconditions.Add(roverAtfromWP);
+        BinaryRelation canMoveFromWP1ToWP2 = new BinaryRelation(fromWayPoint, canMove, toWayPoint, RelationValue.TRUE);
+        moveActionPreconditions.Add(canMoveFromWP1ToWP2);
+
+        // Postconditions
+        List<IRelation> moveActionPostconditions = new List<IRelation>();
+        BinaryRelation notRoverAtFromWP = new BinaryRelation(curiosity, at, fromWayPoint, RelationValue.FALSE);
+        moveActionPostconditions.Add(notRoverAtFromWP);
+        BinaryRelation roverAtToWP = new BinaryRelation(curiosity, at, toWayPoint, RelationValue.TRUE);
+        moveActionPostconditions.Add(roverAtToWP);
+        BinaryRelation roverBeenAtToWP = new BinaryRelation(curiosity, beenAt, toWayPoint, RelationValue.TRUE);
+        moveActionPostconditions.Add(roverBeenAtToWP);
+
+        Action moveAction = new Action(moveActionPreconditions, "MOVE", moveActionParameters, moveActionPostconditions);
+		Action clonedMoveAction = moveAction.Clone();
+		Assert.AreEqual(moveAction, clonedMoveAction);
+	}
+
 }

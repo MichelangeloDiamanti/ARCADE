@@ -388,6 +388,32 @@ public class WorldStateTest {
         Assert.AreEqual(worldState.getPossibleActions(), performableActions);
 	}
 
+    [Test]
+
+    public void CloneReturnsEqualWorldState(){
+        Domain domain = this.roverWorldDomainFullDetail();
+
+		WorldState worldState = new WorldState(domain);
+
+        Entity entityRover = new Entity(new EntityType("ROVER"), "ROVER");
+        worldState.addEntity(entityRover);
+
+        Entity entityWaypoint = new Entity(new EntityType("WAYPOINT"), "WAYPOINT");
+        worldState.addEntity(entityWaypoint);
+        
+        Entity entityObjective = new Entity(new EntityType("OBJECTIVE"), "OBJECTIVE");
+        worldState.addEntity(entityObjective);
+
+        BinaryRelation roverIsAtWaypoint = domain.generateRelationFromPredicateName("AT", entityRover, entityWaypoint, RelationValue.TRUE);
+        BinaryRelation objectiveIsVisibleFromWaypoint = domain.generateRelationFromPredicateName("IS_VISIBLE", entityObjective, entityWaypoint, RelationValue.TRUE);
+        worldState.addRelation(roverIsAtWaypoint);
+        worldState.addRelation(objectiveIsVisibleFromWaypoint);
+
+        WorldState clonedWorldState = worldState.Clone();
+
+        Assert.AreEqual(worldState, clonedWorldState); 
+    }
+
     private Domain roverWorldDomainAbstract()
     {
         Domain domain = new Domain();

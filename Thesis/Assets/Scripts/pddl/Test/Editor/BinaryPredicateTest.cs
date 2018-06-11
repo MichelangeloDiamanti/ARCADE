@@ -51,4 +51,11 @@ public class BinaryPredicateTest {
 		Assert.False(bp1.Equals(bp2) || bp1.GetHashCode() == bp2.GetHashCode());
 	}
 
+	[Test]
+	public void CloneReturnsEqualBinaryPredicate() {
+		BinaryPredicate bp1 = new BinaryPredicate(new EntityType("CHARACTER"), "IS_AT", new EntityType("LOCATION"));
+		BinaryPredicate bp2 = bp1.Clone() as BinaryPredicate;
+		Assert.AreEqual(bp1, bp2);
+	}
+
 }
