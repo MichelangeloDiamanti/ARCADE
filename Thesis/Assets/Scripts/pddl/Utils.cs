@@ -351,6 +351,24 @@ public class Utils{
         Action actionDeflate = new Action(actionInflatePostconditions, "DEFLATE", actionInflateParameters ,actionInflatePreconditions);
         domain.addAction(actionDeflate);
 
+        Action moveAction = domain.getAction("MOVE");
+        moveAction.addParameter(entityBattery);
+        moveAction.addParameter(entityWheels);        
+        moveAction.PreConditions.Add(relationBatteryCharged);
+        moveAction.PreConditions.Add(relationWheelsInflated);
+
+        Action takeSampleAction = domain.getAction("TAKE_SAMPLE");
+        takeSampleAction.addParameter(entityBattery);
+        takeSampleAction.addPrecondition(relationBatteryCharged);
+        
+        Action dropSampleAction = domain.getAction("DROP_SAMPLE");
+        dropSampleAction.addParameter(entityBattery);
+        dropSampleAction.addPrecondition(relationBatteryCharged);
+
+        Action takeImageAction = domain.getAction("TAKE_IMAGE");
+        takeImageAction.addParameter(entityBattery);
+        takeImageAction.addPrecondition(relationBatteryCharged);
+
         return domain;    
     }
 

@@ -48,6 +48,29 @@ public class Action
         _postConditions = postconditions;
     }
 
+    public void addParameter(Entity parameter)
+    {
+        if(_parameters.Contains(parameter) == false)
+            _parameters.Add(parameter);
+        else
+            throw new System.ArgumentException("The parameter: " + parameter.ToString() + " was already defined");
+    }
+
+    public void addPrecondition(IRelation precondition)
+    {
+        if(_preConditions.Contains(precondition) == false)
+            _preConditions.Add(precondition);
+        else
+            throw new System.ArgumentException("The precondition: " + precondition.ToString() + " was already defined");
+    }
+
+    public void addPostcondition(IRelation postcondition)
+    {
+        if(_postConditions.Contains(postcondition) == false)
+            _postConditions.Add(postcondition);
+        else
+            throw new System.ArgumentException("The precondition: " + postcondition.ToString() + " was already defined");
+    }
 
     //TODO: ask david for actions, can an action have same name but different pre/post condition?
     public override bool Equals(object obj)

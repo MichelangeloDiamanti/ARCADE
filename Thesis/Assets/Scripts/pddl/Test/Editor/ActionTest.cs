@@ -164,4 +164,92 @@ public class ActionTest {
 		Assert.AreEqual(moveAction, clonedMoveAction);
 	}
 
+	[Test]
+	public void AddParameterChangesTheParametersOfTheAction() 
+	{
+		Domain domain = Utils.roverWorldDomainAbstract();
+		Action moveAction = domain.getAction("MOVE");
+
+		List<Entity> expectedParameters = new List<Entity>();
+		foreach(Entity e in moveAction.Parameters)
+			expectedParameters.Add(e.Clone());
+		
+        EntityType entityTypeBattery = new EntityType("BATTERY");
+        EntityType entityTypeWheel = new EntityType("WHEEL");
+        
+		UnaryPredicate predicateBatteryCharged = new UnaryPredicate(entityTypeBattery, "BATTERY_CHARGED");
+        UnaryPredicate predicateWheelsInflated = new UnaryPredicate(entityTypeWheel, "WHEELS_INFLATED");
+		
+		Entity entityBattery = new Entity(entityTypeBattery, "BATTERY");
+		Entity entityWheels = new Entity(entityTypeWheel, "WHEELS");
+
+		expectedParameters.Add(entityBattery);
+		expectedParameters.Add(entityWheels);
+
+		moveAction.addParameter(entityBattery);
+		moveAction.addParameter(entityWheels);
+
+		Assert.AreEqual(moveAction.Parameters, expectedParameters);
+	}
+
+	[Test]
+	public void AddPreconditionChangesThePreconditionsOfTheAction() 
+	{
+		Domain domain = Utils.roverWorldDomainAbstract();
+		Action moveAction = domain.getAction("MOVE");
+
+		List<IRelation> expectedPreconditions = new List<IRelation>();
+		foreach(IRelation r in moveAction.PreConditions)
+			expectedPreconditions.Add(r.Clone());
+		
+        EntityType entityTypeBattery = new EntityType("BATTERY");
+        EntityType entityTypeWheel = new EntityType("WHEEL");
+        
+		UnaryPredicate predicateBatteryCharged = new UnaryPredicate(entityTypeBattery, "BATTERY_CHARGED");
+        UnaryPredicate predicateWheelsInflated = new UnaryPredicate(entityTypeWheel, "WHEELS_INFLATED");
+		
+		UnaryRelation relationBatteryCharged = new UnaryRelation(new Entity(entityTypeBattery, "BATTERY"), 
+			predicateBatteryCharged, RelationValue.TRUE);
+		UnaryRelation relationWheelsInflated = new UnaryRelation(new Entity(entityTypeWheel, "WHEELS"), 
+			predicateWheelsInflated, RelationValue.TRUE);
+		
+		expectedPreconditions.Add(relationBatteryCharged);
+		expectedPreconditions.Add(relationWheelsInflated);
+
+		moveAction.addPrecondition(relationBatteryCharged);
+		moveAction.addPrecondition(relationWheelsInflated);
+
+		Assert.AreEqual(moveAction.PreConditions, expectedPreconditions);
+	}
+
+	[Test]
+	public void AddPostconditionChangesThePostconditionsOfTheAction() 
+	{
+		Domain domain = Utils.roverWorldDomainFullDetail();
+		Action moveAction = domain.getAction("MOVE");
+
+		List<IRelation> expectedPostconditions = new List<IRelation>();
+		foreach(IRelation r in moveAction.PostConditions)
+			expectedPostconditions.Add(r.Clone());
+		
+        EntityType entityTypeBattery = new EntityType("BATTERY");
+        EntityType entityTypeWheel = new EntityType("WHEEL");
+        
+		UnaryPredicate predicateBatteryCharged = new UnaryPredicate(entityTypeBattery, "BATTERY_CHARGED");
+        UnaryPredicate predicateWheelsInflated = new UnaryPredicate(entityTypeWheel, "WHEELS_INFLATED");
+		
+		UnaryRelation relationBatteryCharged = new UnaryRelation(new Entity(entityTypeBattery, "BATTERY"), 
+			predicateBatteryCharged, RelationValue.TRUE);
+		UnaryRelation relationWheelsInflated = new UnaryRelation(new Entity(entityTypeWheel, "WHEELS"), 
+			predicateWheelsInflated, RelationValue.TRUE);
+		
+		expectedPostconditions.Add(relationBatteryCharged);
+		expectedPostconditions.Add(relationWheelsInflated);
+
+		moveAction.addPostcondition(relationBatteryCharged);
+		moveAction.addPostcondition(relationWheelsInflated);
+
+		Assert.AreEqual(moveAction.PostConditions, expectedPostconditions);
+	}
+
 }

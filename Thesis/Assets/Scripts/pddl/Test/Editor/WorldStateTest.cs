@@ -277,7 +277,7 @@ public class WorldStateTest {
 
 	[Test]
 	public void getPossibleActionsReturnsMoveActionIfCanMove() {
-        Domain domain = Utils.roverWorldDomainFullDetail();
+        Domain domain = Utils.roverWorldDomainAbstract();
 
 		WorldState worldState = new WorldState(domain);
 
@@ -305,7 +305,7 @@ public class WorldStateTest {
 
 	[Test]
 	public void getPossibleActionsReturnsTakeSampleActionIfCanTakeSample() {
-        Domain domain = Utils.roverWorldDomainFullDetail();
+        Domain domain = Utils.roverWorldDomainAbstract();
 
 		WorldState worldState = new WorldState(domain);
 
@@ -334,7 +334,7 @@ public class WorldStateTest {
 
 	[Test]
 	public void getPossibleActionsReturnsDropSampleActionIfCanDropSample() {
-        Domain domain = Utils.roverWorldDomainFullDetail();
+        Domain domain = Utils.roverWorldDomainAbstract();
 
 		WorldState worldState = new WorldState(domain);
 
@@ -363,7 +363,7 @@ public class WorldStateTest {
 
 	[Test]
 	public void getPossibleActionsReturnsTakeImageActionIfCanTakeImage() {
-        Domain domain = Utils.roverWorldDomainFullDetail();
+        Domain domain = Utils.roverWorldDomainAbstract();
 
 		WorldState worldState = new WorldState(domain);
 

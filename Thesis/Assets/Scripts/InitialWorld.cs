@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Data;
 using System.Linq;
+using Newtonsoft.Json;
 
 public class InitialWorld : MonoBehaviour
 {
@@ -16,15 +17,16 @@ public class InitialWorld : MonoBehaviour
         domain = Utils.roverWorldDomainFullDetail();
         currentWorldState = Utils.roverWorldStateFullDetail(domain);
         currentNode = new TreeNode<WorldState>(currentWorldState);
-        // List<Action> possibleActions = worldState.getPossibleActions();
+        // List<Action> possibleActions = currentNode.Data.getPossibleActions();
         // foreach (Action item in possibleActions)
         // {
         //     Debug.Log(item.ToString());
         // }
-        StartCoroutine(simulation());
+        //StartCoroutine(simpleSimulation());
+
     }
 
-    private IEnumerator simulation()
+    private IEnumerator simpleSimulation()
     {
         while(true)
         {
