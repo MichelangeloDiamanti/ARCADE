@@ -7,15 +7,15 @@ using UnityEngine;
 public class WorldState
 {
     private Domain _domain;
-    private List<IRelation> _relations;
-    private List<Entity> _entities;
+    private HashSet<IRelation> _relations;
+    private HashSet<Entity> _entities;
     private List<List<Entity>> _combinations = new List<List<Entity>>();
 
-    public List<IRelation> Relations
+    public HashSet<IRelation> Relations
     {
         get { return _relations; }
     }
-    public List<Entity> Entities
+    public HashSet<Entity> Entities
     {
         get { return _entities; }
     }
@@ -29,15 +29,15 @@ public class WorldState
     public WorldState()
     {
         _domain = new Domain();
-        _entities = new List<Entity>();
-        _relations = new List<IRelation>();
+        _entities = new HashSet<Entity>();
+        _relations = new HashSet<IRelation>();
     }
 
     public WorldState(Domain domain)
     {
         _domain = domain.Clone(); // check if we should clone instead 
-        _entities = new List<Entity>();
-        _relations = new List<IRelation>();
+        _entities = new HashSet<Entity>();
+        _relations = new HashSet<IRelation>();
     }
 
     public WorldState(Domain domain, List<Entity> entities, List<IRelation> relations)
@@ -50,8 +50,8 @@ public class WorldState
             throw new System.ArgumentNullException("Relations cannot be null or empty", "List<Relation> relations");
 
         _domain = domain;
-        _entities = new List<Entity>();
-        _relations = new List<IRelation>();
+        _entities = new HashSet<Entity>();
+        _relations = new HashSet<IRelation>();
 
         foreach (Entity e in entities)
             this.addEntity(e);
@@ -342,12 +342,13 @@ public class WorldState
 		if (other == null)
 			return false;
 
-        bool equalEntities = _entities.All(other.Entities.Contains) && _entities.Count == other.Entities.Count;
-        if(equalEntities == false)
+        if(_domain.Equals(other.Domain) == false)
             return false;
 
-        bool equalRelations = _relations.All(other.Relations.Contains) && _relations.Count == other.Relations.Count;
-        if(equalRelations == false)
+        if(_entities.SetEquals(other.Entities) == false)
+            return false;
+
+        if(_relations.SetEquals(other.Relations) == false)
             return false;
 
 		return true;
@@ -358,6 +359,8 @@ public class WorldState
         unchecked
         {
             int hashCode = 17;
+
+            hashCode = hashCode * -1521134295 + _domain.GetHashCode();
 
             foreach(Entity e in _entities)
     			hashCode = hashCode * -1521134295 + e.GetHashCode();

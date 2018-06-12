@@ -277,7 +277,7 @@ public class WorldStateTest {
 
 	[Test]
 	public void getPossibleActionsReturnsMoveActionIfCanMove() {
-        Domain domain = this.roverWorldDomainFullDetail();
+        Domain domain = Utils.roverWorldDomainFullDetail();
 
 		WorldState worldState = new WorldState(domain);
 
@@ -305,7 +305,7 @@ public class WorldStateTest {
 
 	[Test]
 	public void getPossibleActionsReturnsTakeSampleActionIfCanTakeSample() {
-        Domain domain = this.roverWorldDomainFullDetail();
+        Domain domain = Utils.roverWorldDomainFullDetail();
 
 		WorldState worldState = new WorldState(domain);
 
@@ -334,7 +334,7 @@ public class WorldStateTest {
 
 	[Test]
 	public void getPossibleActionsReturnsDropSampleActionIfCanDropSample() {
-        Domain domain = this.roverWorldDomainFullDetail();
+        Domain domain = Utils.roverWorldDomainFullDetail();
 
 		WorldState worldState = new WorldState(domain);
 
@@ -363,7 +363,7 @@ public class WorldStateTest {
 
 	[Test]
 	public void getPossibleActionsReturnsTakeImageActionIfCanTakeImage() {
-        Domain domain = this.roverWorldDomainFullDetail();
+        Domain domain = Utils.roverWorldDomainFullDetail();
 
 		WorldState worldState = new WorldState(domain);
 
@@ -388,10 +388,177 @@ public class WorldStateTest {
         Assert.AreEqual(worldState.getPossibleActions(), performableActions);
 	}
 
+	[Test]
+	public void equalsReturnsTrueIfDomainEntitiesRelationsAreEqual() {
+        Domain domain = Utils.roverWorldDomainFullDetail();
+
+		WorldState worldState1 = new WorldState(domain);
+
+        Entity entityRover1 = new Entity(new EntityType("ROVER"), "ROVER");
+        worldState1.addEntity(entityRover1);
+
+        Entity entityWaypoint1 = new Entity(new EntityType("WAYPOINT"), "WAYPOINT");
+        worldState1.addEntity(entityWaypoint1);
+        
+        Entity entityObjective1 = new Entity(new EntityType("OBJECTIVE"), "OBJECTIVE");
+        worldState1.addEntity(entityObjective1);
+
+        BinaryRelation roverIsAtWaypoint1 = domain.generateRelationFromPredicateName("AT", entityRover1, entityWaypoint1, RelationValue.TRUE);
+        BinaryRelation objectiveIsVisibleFromWaypoint1 = domain.generateRelationFromPredicateName("IS_VISIBLE", entityObjective1, entityWaypoint1, RelationValue.TRUE);
+        worldState1.addRelation(roverIsAtWaypoint1);
+        worldState1.addRelation(objectiveIsVisibleFromWaypoint1);
+
+        Domain domain2 = Utils.roverWorldDomainFullDetail();
+		WorldState worldState2 = new WorldState(domain2);
+
+        Entity entityRover2 = new Entity(new EntityType("ROVER"), "ROVER");
+        worldState2.addEntity(entityRover2);
+
+        Entity entityWaypoint2 = new Entity(new EntityType("WAYPOINT"), "WAYPOINT");
+        worldState2.addEntity(entityWaypoint2);
+        
+        Entity entityObjective2 = new Entity(new EntityType("OBJECTIVE"), "OBJECTIVE");
+        worldState2.addEntity(entityObjective2);
+
+        BinaryRelation roverIsAtWaypoint2 = domain.generateRelationFromPredicateName("AT", entityRover2, entityWaypoint2, RelationValue.TRUE);
+        BinaryRelation objectiveIsVisibleFromWaypoint2 = domain.generateRelationFromPredicateName("IS_VISIBLE", entityObjective2, entityWaypoint2, RelationValue.TRUE);
+        worldState2.addRelation(roverIsAtWaypoint2);
+        worldState2.addRelation(objectiveIsVisibleFromWaypoint2);
+
+        Assert.AreEqual(worldState1, worldState2);
+	}
+
+	[Test]
+	public void equalsReturnsFalseIfDomainIsNotEqual() {
+        Domain domain = Utils.roverWorldDomainFullDetail();
+
+		WorldState worldState1 = new WorldState(domain);
+
+        Entity entityRover1 = new Entity(new EntityType("ROVER"), "ROVER");
+        worldState1.addEntity(entityRover1);
+
+        Entity entityWaypoint1 = new Entity(new EntityType("WAYPOINT"), "WAYPOINT");
+        worldState1.addEntity(entityWaypoint1);
+        
+        Entity entityObjective1 = new Entity(new EntityType("OBJECTIVE"), "OBJECTIVE");
+        worldState1.addEntity(entityObjective1);
+
+        BinaryRelation roverIsAtWaypoint1 = domain.generateRelationFromPredicateName("AT", entityRover1, entityWaypoint1, RelationValue.TRUE);
+        BinaryRelation objectiveIsVisibleFromWaypoint1 = domain.generateRelationFromPredicateName("IS_VISIBLE", entityObjective1, entityWaypoint1, RelationValue.TRUE);
+        worldState1.addRelation(roverIsAtWaypoint1);
+        worldState1.addRelation(objectiveIsVisibleFromWaypoint1);
+
+        Domain domain2 = Utils.roverWorldDomainFullDetail();
+        domain2.addEntityType(new EntityType("DIFFERENT_ENTITY_TYPE"));
+
+		WorldState worldState2 = new WorldState(domain2);
+
+        Entity entityRover2 = new Entity(new EntityType("ROVER"), "ROVER");
+        worldState2.addEntity(entityRover2);
+
+        Entity entityWaypoint2 = new Entity(new EntityType("WAYPOINT"), "WAYPOINT");
+        worldState2.addEntity(entityWaypoint2);
+        
+        Entity entityObjective2 = new Entity(new EntityType("OBJECTIVE"), "OBJECTIVE");
+        worldState2.addEntity(entityObjective2);
+
+        BinaryRelation roverIsAtWaypoint2 = domain.generateRelationFromPredicateName("AT", entityRover2, entityWaypoint2, RelationValue.TRUE);
+        BinaryRelation objectiveIsVisibleFromWaypoint2 = domain.generateRelationFromPredicateName("IS_VISIBLE", entityObjective2, entityWaypoint2, RelationValue.TRUE);
+        worldState2.addRelation(roverIsAtWaypoint2);
+        worldState2.addRelation(objectiveIsVisibleFromWaypoint2);
+
+        Assert.AreNotEqual(worldState1, worldState2);
+	}
+
+	[Test]
+	public void equalsReturnsFalseIfEntitiesAreNotEqual() {
+        Domain domain = Utils.roverWorldDomainFullDetail();
+
+		WorldState worldState1 = new WorldState(domain);
+
+        Entity entityRover1 = new Entity(new EntityType("ROVER"), "ROVER");
+        worldState1.addEntity(entityRover1);
+
+        Entity entityWaypoint1 = new Entity(new EntityType("WAYPOINT"), "WAYPOINT");
+        worldState1.addEntity(entityWaypoint1);
+        
+        Entity entityObjective1 = new Entity(new EntityType("OBJECTIVE"), "OBJECTIVE");
+        worldState1.addEntity(entityObjective1);
+
+        BinaryRelation roverIsAtWaypoint1 = domain.generateRelationFromPredicateName("AT", entityRover1, entityWaypoint1, RelationValue.TRUE);
+        BinaryRelation objectiveIsVisibleFromWaypoint1 = domain.generateRelationFromPredicateName("IS_VISIBLE", entityObjective1, entityWaypoint1, RelationValue.TRUE);
+        worldState1.addRelation(roverIsAtWaypoint1);
+        worldState1.addRelation(objectiveIsVisibleFromWaypoint1);
+
+        Domain domain2 = Utils.roverWorldDomainFullDetail();
+
+		WorldState worldState2 = new WorldState(domain2);
+
+        Entity entityRover2 = new Entity(new EntityType("ROVER"), "ROVER");
+        worldState2.addEntity(entityRover2);
+
+        Entity entityWaypoint2 = new Entity(new EntityType("WAYPOINT"), "WAYPOINT");
+        worldState2.addEntity(entityWaypoint2);
+        
+        Entity entityObjective2 = new Entity(new EntityType("OBJECTIVE"), "OBJECTIVE");
+        worldState2.addEntity(entityObjective2);
+
+        Entity entitySample2 = new Entity(new EntityType("SAMPLE"), "SAMPLE");
+        worldState2.addEntity(entitySample2);
+
+        BinaryRelation roverIsAtWaypoint2 = domain.generateRelationFromPredicateName("AT", entityRover2, entityWaypoint2, RelationValue.TRUE);
+        BinaryRelation objectiveIsVisibleFromWaypoint2 = domain.generateRelationFromPredicateName("IS_VISIBLE", entityObjective2, entityWaypoint2, RelationValue.TRUE);
+        worldState2.addRelation(roverIsAtWaypoint2);
+        worldState2.addRelation(objectiveIsVisibleFromWaypoint2);
+
+        Assert.AreNotEqual(worldState1, worldState2);
+	}
+
+	[Test]
+	public void equalsReturnsFalseIfRelationsAreNotEqual() {
+        Domain domain = Utils.roverWorldDomainFullDetail();
+
+		WorldState worldState1 = new WorldState(domain);
+
+        Entity entityRover1 = new Entity(new EntityType("ROVER"), "ROVER");
+        worldState1.addEntity(entityRover1);
+
+        Entity entityWaypoint1 = new Entity(new EntityType("WAYPOINT"), "WAYPOINT");
+        worldState1.addEntity(entityWaypoint1);
+        
+        Entity entityObjective1 = new Entity(new EntityType("OBJECTIVE"), "OBJECTIVE");
+        worldState1.addEntity(entityObjective1);
+
+        BinaryRelation roverIsAtWaypoint1 = domain.generateRelationFromPredicateName("AT", entityRover1, entityWaypoint1, RelationValue.TRUE);
+        BinaryRelation objectiveIsVisibleFromWaypoint1 = domain.generateRelationFromPredicateName("IS_VISIBLE", entityObjective1, entityWaypoint1, RelationValue.TRUE);
+        worldState1.addRelation(roverIsAtWaypoint1);
+        worldState1.addRelation(objectiveIsVisibleFromWaypoint1);
+
+        Domain domain2 = Utils.roverWorldDomainFullDetail();
+
+		WorldState worldState2 = new WorldState(domain2);
+
+        Entity entityRover2 = new Entity(new EntityType("ROVER"), "ROVER");
+        worldState2.addEntity(entityRover2);
+
+        Entity entityWaypoint2 = new Entity(new EntityType("WAYPOINT"), "WAYPOINT");
+        worldState2.addEntity(entityWaypoint2);
+        
+        Entity entityObjective2 = new Entity(new EntityType("OBJECTIVE"), "OBJECTIVE");
+        worldState2.addEntity(entityObjective2);
+
+        BinaryRelation roverIsAtWaypoint2 = domain.generateRelationFromPredicateName("AT", entityRover2, entityWaypoint2, RelationValue.FALSE);
+        BinaryRelation objectiveIsVisibleFromWaypoint2 = domain.generateRelationFromPredicateName("IS_VISIBLE", entityObjective2, entityWaypoint2, RelationValue.TRUE);
+        worldState2.addRelation(roverIsAtWaypoint2);
+        worldState2.addRelation(objectiveIsVisibleFromWaypoint2);
+
+        Assert.AreNotEqual(worldState1, worldState2);
+	}
+
     [Test]
 
     public void CloneReturnsEqualWorldState(){
-        Domain domain = this.roverWorldDomainFullDetail();
+        Domain domain = Utils.roverWorldDomainFullDetail();
 
 		WorldState worldState = new WorldState(domain);
 
@@ -412,217 +579,6 @@ public class WorldStateTest {
         WorldState clonedWorldState = worldState.Clone();
 
         Assert.AreEqual(worldState, clonedWorldState); 
-    }
-
-    private Domain roverWorldDomainAbstract()
-    {
-        Domain domain = new Domain();
-
-        EntityType rover = new EntityType("ROVER");
-        domain.addEntityType(rover);
-        
-        EntityType wayPoint = new EntityType("WAYPOINT");
-        domain.addEntityType(wayPoint);
-
-        EntityType sample = new EntityType("SAMPLE");
-        domain.addEntityType(sample);
-
-        EntityType objective = new EntityType("OBJECTIVE");
-        domain.addEntityType(objective);
-
-        //(can-move ?from-waypoint ?to-waypoint)
-        BinaryPredicate canMove = new BinaryPredicate(wayPoint, "CAN_MOVE", wayPoint);
-        domain.addPredicate(canMove);
-        //(is-visible ?objective ?waypoint)
-        BinaryPredicate isVisible = new BinaryPredicate(objective, "IS_VISIBLE", wayPoint);
-        domain.addPredicate(isVisible);
-        //(is-in ?sample ?waypoint)
-        BinaryPredicate isIn = new BinaryPredicate(sample, "IS_IN", wayPoint);
-        domain.addPredicate(isIn);
-        //(been-at ?rover ?waypoint)
-        BinaryPredicate beenAt = new BinaryPredicate(rover, "BEEN_AT", wayPoint);
-        domain.addPredicate(beenAt);
-        //(carry ?rover ?sample)  
-        BinaryPredicate carry = new BinaryPredicate(rover, "CARRY", sample);
-        domain.addPredicate(carry);
-        //(at ?rover ?waypoint)
-        BinaryPredicate at = new BinaryPredicate(rover, "AT", wayPoint);
-        domain.addPredicate(at);
-        //(is-dropping-dock ?waypoint)
-        UnaryPredicate isDroppingDock = new UnaryPredicate(wayPoint, "IS_DROPPING_DOCK");
-        domain.addPredicate(isDroppingDock);
-        //(taken-image ?objective)
-        UnaryPredicate takenImage = new UnaryPredicate(objective, "TAKEN_IMAGE");
-        domain.addPredicate(takenImage);
-        //(stored-sample ?sample)
-        UnaryPredicate storedSample = new UnaryPredicate(sample, "STORED_SAMPLE");
-        domain.addPredicate(storedSample);
-        //(empty ?rover) 
-        UnaryPredicate isEmpty = new UnaryPredicate(rover, "IS_EMPTY");
-        domain.addPredicate(isEmpty);
-
-
-        //              MOVE ACTION
-        // Parameters
-        Entity curiosity = new Entity(rover, "ROVER");
-        Entity fromWayPoint = new Entity(wayPoint, "WAYPOINT1");
-        Entity toWayPoint = new Entity(wayPoint, "WAYPOINT2");        
-
-        List<Entity> moveActionParameters = new List<Entity>();
-        moveActionParameters.Add(curiosity);
-        moveActionParameters.Add(fromWayPoint);
-        moveActionParameters.Add(toWayPoint);        
-
-        // Preconditions
-        List<IRelation> moveActionPreconditions = new List<IRelation>();
-        BinaryRelation roverAtfromWP = new BinaryRelation(curiosity, at, fromWayPoint, RelationValue.TRUE);
-        moveActionPreconditions.Add(roverAtfromWP);
-        BinaryRelation canMoveFromWP1ToWP2 = new BinaryRelation(fromWayPoint, canMove, toWayPoint, RelationValue.TRUE);
-        moveActionPreconditions.Add(canMoveFromWP1ToWP2);
-
-        // Postconditions
-        List<IRelation> moveActionPostconditions = new List<IRelation>();
-        BinaryRelation notRoverAtFromWP = new BinaryRelation(curiosity, at, fromWayPoint, RelationValue.FALSE);
-        moveActionPostconditions.Add(notRoverAtFromWP);
-        BinaryRelation roverAtToWP = new BinaryRelation(curiosity, at, toWayPoint, RelationValue.TRUE);
-        moveActionPostconditions.Add(roverAtToWP);
-        BinaryRelation roverBeenAtToWP = new BinaryRelation(curiosity, beenAt, toWayPoint, RelationValue.TRUE);
-        moveActionPostconditions.Add(roverBeenAtToWP);
-
-        Action moveAction = new Action(moveActionPreconditions, "MOVE", moveActionParameters, moveActionPostconditions);
-        domain.addAction(moveAction);
-
-        //              TAKE SAMPLE ACTION
-        // Parameters
-        Entity ESample = new Entity(sample, "SAMPLE");
-        Entity EWayPoint = new Entity(wayPoint, "WAYPOINT");
-        
-        List<Entity> takeSampleActionParameters = new List<Entity>();
-        takeSampleActionParameters.Add(curiosity);
-        takeSampleActionParameters.Add(ESample);
-        takeSampleActionParameters.Add(EWayPoint);
-
-        // Preconditions
-        List<IRelation> takeSampleActPreconditions = new List<IRelation>();
-        BinaryRelation sampleIsInWayPoint = new BinaryRelation(ESample, isIn, EWayPoint, RelationValue.TRUE);
-        takeSampleActPreconditions.Add(sampleIsInWayPoint);
-        BinaryRelation roverIsAtWayPoint = new BinaryRelation(curiosity, at, EWayPoint, RelationValue.TRUE);
-        takeSampleActPreconditions.Add(roverIsAtWayPoint);
-        UnaryRelation roverIsEmpty = new UnaryRelation(curiosity, isEmpty, RelationValue.TRUE);
-        takeSampleActPreconditions.Add(roverIsEmpty);
-
-        // Postconditions
-        List<IRelation> takeSampleActPostconditions = new List<IRelation>();
-        BinaryRelation sampleIsNotInWayPoint = new BinaryRelation(ESample, isIn, EWayPoint, RelationValue.FALSE);
-        takeSampleActPostconditions.Add(sampleIsNotInWayPoint);
-        UnaryRelation roverIsNotEmpty = new UnaryRelation(curiosity, isEmpty, RelationValue.FALSE);
-        takeSampleActPostconditions.Add(roverIsNotEmpty);        
-        BinaryRelation roverCarriesSample = new BinaryRelation(curiosity, carry, ESample, RelationValue.TRUE);
-        takeSampleActPostconditions.Add(roverCarriesSample); 
-
-        Action takeSampleAction = new Action(takeSampleActPreconditions, "TAKE_SAMPLE", takeSampleActionParameters, takeSampleActPostconditions);
-        domain.addAction(takeSampleAction);
-
-        //              DROP SAMPLE ACTION        
-        // Parameters
-        List<Entity> dropSampleActionParameters = new List<Entity>();
-        dropSampleActionParameters.Add(curiosity);
-        dropSampleActionParameters.Add(ESample);
-        dropSampleActionParameters.Add(EWayPoint);
-
-        // Preconditions
-        List<IRelation> dropSampleActPreconditions = new List<IRelation>();
-        UnaryRelation wayPointIsDroppingDock = new UnaryRelation(EWayPoint, isDroppingDock, RelationValue.TRUE);
-        dropSampleActPreconditions.Add(wayPointIsDroppingDock);
-        dropSampleActPreconditions.Add(roverIsAtWayPoint);
-        dropSampleActPreconditions.Add(roverCarriesSample);
-
-        // Postconditions
-        List<IRelation> dropSampActPostconditions = new List<IRelation>();
-        dropSampActPostconditions.Add(sampleIsInWayPoint);
-        dropSampActPostconditions.Add(roverIsEmpty);
-        BinaryRelation notRoverCarriesSample = new BinaryRelation(curiosity, carry, ESample, RelationValue.FALSE);
-        dropSampActPostconditions.Add(notRoverCarriesSample); 
-
-        Action dropSampleAction = new Action(dropSampleActPreconditions, "DROP_SAMPLE", dropSampleActionParameters, dropSampActPostconditions);
-        domain.addAction(dropSampleAction);
-
-        //              TAKE IMAGE ACTION 
-        // Parameters 
-        Entity EObjective = new Entity(objective, "OBJECTIVE");
-
-        List<Entity> takeImageActionParameters = new List<Entity>();
-        takeImageActionParameters.Add(curiosity);
-        takeImageActionParameters.Add(EObjective);
-        takeImageActionParameters.Add(EWayPoint);
-
-        // Preconditions
-        List<IRelation> takeImageActionPreconditions = new List<IRelation>();
-        takeImageActionPreconditions.Add(roverIsAtWayPoint);
-        BinaryRelation objectiveIsVisibleFromWayPoint = new BinaryRelation(EObjective, isVisible, EWayPoint, RelationValue.TRUE);
-        takeImageActionPreconditions.Add(objectiveIsVisibleFromWayPoint);
-
-        // Postconditions
-        List<IRelation> takeImageActionPostconditions = new List<IRelation>();
-        UnaryRelation roverHasTakenImageOfObjective = new UnaryRelation(EObjective, takenImage, RelationValue.TRUE);
-        takeImageActionPostconditions.Add(roverHasTakenImageOfObjective);
-
-        Action takeImageAction = new Action(takeImageActionPreconditions, "TAKE_IMAGE", takeImageActionParameters, takeImageActionPostconditions);
-        domain.addAction(takeImageAction);
-
-        return domain;
-    }
-
-    private Domain roverWorldDomainFullDetail()
-    {
-        Domain domain = roverWorldDomainAbstract();
-
-        EntityType entityTypeBattery = new EntityType("BATTERY");
-        domain.addEntityType(entityTypeBattery);
-        EntityType entityTypeWheel = new EntityType("WHEEL");
-        domain.addEntityType(entityTypeWheel);
-        UnaryPredicate predicateBatteryCharged = new UnaryPredicate(entityTypeBattery, "BATTERY_CHARGED");
-        domain.addPredicate(predicateBatteryCharged);
-        UnaryPredicate predicateWheelsInflated = new UnaryPredicate(entityTypeWheel, "WHEELS_INFLATED");
-        domain.addPredicate(predicateWheelsInflated);
-
-        List<Entity> actionChargeParameters = new List<Entity>();
-        Entity entityBattery = new Entity(entityTypeBattery, "BATTERY");
-        actionChargeParameters.Add(entityBattery);
-
-        List<IRelation> actionChargePreconditions = new List<IRelation>();
-        UnaryRelation relationBatteryDischarged = new UnaryRelation(entityBattery, predicateBatteryCharged, RelationValue.FALSE);
-        actionChargePreconditions.Add(relationBatteryDischarged);
-
-        List<IRelation> actionChargePostconditions = new List<IRelation>();
-        UnaryRelation relationBatteryCharged = new UnaryRelation(entityBattery, predicateBatteryCharged, RelationValue.TRUE);
-        actionChargePostconditions.Add(relationBatteryCharged);
-
-        Action actionChargeBattery = new Action(actionChargePreconditions, "CHARGE_BATTERY", actionChargeParameters, actionChargePostconditions);
-        domain.addAction(actionChargeBattery);
-
-        Action actionDischargeBattery = new Action(actionChargePostconditions, "DISCHARGE_BATTERY", actionChargeParameters, actionChargePreconditions);
-        domain.addAction(actionDischargeBattery);
-
-        List<Entity> actionInflateParameters = new List<Entity>();
-        Entity entityWheels = new Entity(entityTypeWheel, "WHEELS");
-        actionInflateParameters.Add(entityWheels);
-
-        List<IRelation> actionInflatePreconditions = new List<IRelation>();
-        UnaryRelation relationWheelsDeflated = new UnaryRelation(entityWheels, predicateWheelsInflated, RelationValue.FALSE);
-        actionInflatePreconditions.Add(relationWheelsDeflated);
-
-        List<IRelation> actionInflatePostconditions = new List<IRelation>();
-        UnaryRelation relationWheelsInflated = new UnaryRelation(entityWheels, predicateWheelsInflated, RelationValue.TRUE);
-        actionInflatePostconditions.Add(relationWheelsInflated);
-
-        Action actionInflate = new Action(actionInflatePreconditions, "INFLATE", actionInflateParameters, actionInflatePostconditions);
-        domain.addAction(actionInflate);
-        
-        Action actionDeflate = new Action(actionInflatePostconditions, "DEFLATE", actionInflateParameters ,actionInflatePreconditions);
-        domain.addAction(actionDeflate);
-
-        return domain; 
     }
 
     private Domain getSimpleMoveDomain()

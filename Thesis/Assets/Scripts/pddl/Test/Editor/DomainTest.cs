@@ -198,6 +198,57 @@ public class DomainTest {
 	}
 
 	[Test]
+	public void equalsReturnsTrueIfEntityTypesPredicatesActionsAreEqual() {
+		Domain domain = Utils.roverWorldDomainFullDetail();
+		Domain domain2 = Utils.roverWorldDomainFullDetail();
+		
+		Assert.AreEqual(domain, domain2);
+	}
+
+	[Test]
+	public void equalsReturnsFalseIfEntityTypesAreNotEqual() {
+		Domain domain = Utils.roverWorldDomainFullDetail();
+		Domain domain2 = Utils.roverWorldDomainFullDetail();
+		
+		domain2.addEntityType(new EntityType("DIFFERENT_ENTITY_TYPE"));
+
+		Assert.AreNotEqual(domain, domain2);
+	}
+
+	[Test]
+	public void equalsReturnsFalseIfPredicatesAreNotEqual() {
+		Domain domain = Utils.roverWorldDomainFullDetail();
+		Domain domain2 = Utils.roverWorldDomainFullDetail();
+		
+		UnaryPredicate predicateDifference = new UnaryPredicate(new EntityType("ROVER"), "DIFFERENT_PREDICATE");
+		domain2.addPredicate(predicateDifference);
+
+		Assert.AreNotEqual(domain, domain2);
+	}
+
+	[Test]
+	public void equalsReturnsFalseIfActionsAreNotEqual() {
+		Domain domain = Utils.roverWorldDomainFullDetail();
+		Domain domain2 = Utils.roverWorldDomainFullDetail();
+
+		List<Entity> actionDifferenceParameters = new List<Entity>();
+		Entity entity1 = new Entity(new EntityType("ROVER"), "ROVER");
+		actionDifferenceParameters.Add(entity1);
+
+		List<IRelation> actionDifferencePreconditions = new List<IRelation>();
+		actionDifferencePreconditions.Add(domain2.generateRelationFromPredicateName("IS_EMPTY", entity1, RelationValue.TRUE));
+
+		List<IRelation> actionDifferencePostconditions = new List<IRelation>();
+		actionDifferencePostconditions.Add(domain2.generateRelationFromPredicateName("IS_EMPTY", entity1, RelationValue.FALSE));
+		
+		domain2.addAction(new Action(actionDifferencePreconditions, "DIFFERENT_ACTION", 
+			actionDifferenceParameters, actionDifferencePostconditions));
+
+		Assert.AreNotEqual(domain, domain2);
+	}
+
+
+	[Test]
 	public void CloneReturnsEqualDomain() {
 		Domain domain = new Domain();
        

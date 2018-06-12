@@ -5,18 +5,18 @@ using System.Linq;
 
 public class Domain
 {
-    private List<EntityType> _entityTypes;
-    private List<IPredicate> _predicates;
-    private List<Action> _actions;
+    private HashSet<EntityType> _entityTypes;
+    private HashSet<IPredicate> _predicates;
+    private HashSet<Action> _actions;
 
     public Domain()
     {
-        _entityTypes = new List<EntityType>();
-        _predicates = new List<IPredicate>();
-        _actions = new List<Action>();
+        _entityTypes = new HashSet<EntityType>();
+        _predicates = new HashSet<IPredicate>();
+        _actions = new HashSet<Action>();
     }
 
-    public Domain(List<EntityType> entityTypes, List<IPredicate> predicates, List<Action> actions)
+    public Domain(HashSet<EntityType> entityTypes, HashSet<IPredicate> predicates, HashSet<Action> actions)
     {
         _entityTypes = entityTypes;
         _predicates = predicates;
@@ -50,15 +50,15 @@ public class Domain
         _predicates.Add(p);
     }
 
-    public List<EntityType> EntityTypes
+    public HashSet<EntityType> EntityTypes
     {
         get { return _entityTypes; }
     }
-    public List<IPredicate> Predicates
+    public HashSet<IPredicate> Predicates
     {
         get { return _predicates; }
     }
-    public List<Action> Actions
+    public HashSet<Action> Actions
     {
         get { return _actions; }
     }
@@ -299,9 +299,9 @@ public class Domain
 
     public Domain Clone()
     {
-        List<EntityType> newEntityTypes = new List<EntityType>();
-        List<IPredicate> newPredicates = new List<IPredicate>();
-        List<Action> newActions = new List<Action>();
+        HashSet<EntityType> newEntityTypes = new HashSet<EntityType>();
+        HashSet<IPredicate> newPredicates = new HashSet<IPredicate>();
+        HashSet<Action> newActions = new HashSet<Action>();
 
         foreach(EntityType et in _entityTypes)
             newEntityTypes.Add(et.Clone()); 
@@ -319,16 +319,14 @@ public class Domain
 
 		if (other == null)
 			return false;
-        bool equalEntityTypes = _entityTypes.All(other.EntityTypes.Contains) && _entityTypes.Count == other.EntityTypes.Count;
-        if(equalEntityTypes == false)
-            return false;
-        
-        bool equalPredicates = _predicates.All(other.Predicates.Contains) && _predicates.Count == other.Predicates.Count;
-        if(equalPredicates == false)
+
+        if(_entityTypes.SetEquals(other.EntityTypes) == false)
             return false;
 
-        bool equalActions = _actions.All(other.Actions.Contains) && _actions.Count == other.Actions.Count;
-        if(equalActions == false)
+        if(_predicates.SetEquals(other.Predicates) == false)
+            return false;
+        
+        if(_actions.SetEquals(other.Actions) == false)
             return false;
         
 		return true;
