@@ -53,6 +53,17 @@ public class TreeNode<T> : IEnumerable<TreeNode<T>>
 		return childNode;
 	}
 
+	public TreeNode<T> AddChild(TreeNode<T> child, Action parentAction)
+	{
+		child.Parent = this;
+		this.Children.Add(child);
+		child.ParentAction = parentAction;
+
+		this.RegisterChildForSearch(child);
+
+		return child;
+	}
+
 	public override string ToString()
 	{
 		return Data != null ? Data.ToString() : "[data null]";

@@ -12,7 +12,7 @@ public class InitialWorld : MonoBehaviour
     {
         Domain domain = new Domain();
         WorldState currentWorldState = new WorldState();
-        
+
         domain = roverWorldDomainFullDetail();
         currentWorldState = roverWorldStateFullDetail(domain);
         currentNode = new TreeNode<WorldState>(currentWorldState);
@@ -21,22 +21,28 @@ public class InitialWorld : MonoBehaviour
         // {
         //     Debug.Log(item.ToString());
         // }
-        StartCoroutine(simulation());
+        // StartCoroutine(simulation());
+        AutomaticTreeGenerator();
+
     }
 
+    private void AutomaticTreeGenerator()
+    {
+        new GraphGenerator(new GameTreeGenerator(currentNode).GenerateTree(2)).GenerateGraph();
+    }
     private IEnumerator simulation()
     {
-        while(true)
+        while (true)
         {
             Debug.Log("The current state is: " + currentNode.Data.ToString());
             List<Action> possibleActions = currentNode.Data.getPossibleActions();
-            
-            if(possibleActions.Count <= 0)
-            {                
+
+            if (possibleActions.Count <= 0)
+            {
                 Debug.Log("There are no more available actions, shutting down the simulation");
-                break;    
+                break;
             }
-            
+
             int randomActionIndex = Random.Range(0, possibleActions.Count);
             Action randomAction = possibleActions[randomActionIndex];
 
@@ -51,7 +57,7 @@ public class InitialWorld : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     private Domain roverWorldDomainAbstract()
@@ -60,7 +66,7 @@ public class InitialWorld : MonoBehaviour
 
         EntityType rover = new EntityType("ROVER");
         domain.addEntityType(rover);
-        
+
         EntityType wayPoint = new EntityType("WAYPOINT");
         domain.addEntityType(wayPoint);
 
@@ -106,12 +112,12 @@ public class InitialWorld : MonoBehaviour
         // Parameters
         Entity curiosity = new Entity(rover, "ROVER");
         Entity fromWayPoint = new Entity(wayPoint, "WAYPOINT1");
-        Entity toWayPoint = new Entity(wayPoint, "WAYPOINT2");        
+        Entity toWayPoint = new Entity(wayPoint, "WAYPOINT2");
 
         List<Entity> moveActionParameters = new List<Entity>();
         moveActionParameters.Add(curiosity);
         moveActionParameters.Add(fromWayPoint);
-        moveActionParameters.Add(toWayPoint);        
+        moveActionParameters.Add(toWayPoint);
 
         // Preconditions
         List<IRelation> moveActionPreconditions = new List<IRelation>();
@@ -136,7 +142,7 @@ public class InitialWorld : MonoBehaviour
         // Parameters
         Entity ESample = new Entity(sample, "SAMPLE");
         Entity EWayPoint = new Entity(wayPoint, "WAYPOINT");
-        
+
         List<Entity> takeSampleActionParameters = new List<Entity>();
         takeSampleActionParameters.Add(curiosity);
         takeSampleActionParameters.Add(ESample);
@@ -156,9 +162,9 @@ public class InitialWorld : MonoBehaviour
         BinaryRelation sampleIsNotInWayPoint = new BinaryRelation(ESample, isIn, EWayPoint, RelationValue.FALSE);
         takeSampleActPostconditions.Add(sampleIsNotInWayPoint);
         UnaryRelation roverIsNotEmpty = new UnaryRelation(curiosity, isEmpty, RelationValue.FALSE);
-        takeSampleActPostconditions.Add(roverIsNotEmpty);        
+        takeSampleActPostconditions.Add(roverIsNotEmpty);
         BinaryRelation roverCarriesSample = new BinaryRelation(curiosity, carry, ESample, RelationValue.TRUE);
-        takeSampleActPostconditions.Add(roverCarriesSample); 
+        takeSampleActPostconditions.Add(roverCarriesSample);
 
         Action takeSampleAction = new Action(takeSampleActPreconditions, "TAKE_SAMPLE", takeSampleActionParameters, takeSampleActPostconditions);
         domain.addAction(takeSampleAction);
@@ -182,7 +188,7 @@ public class InitialWorld : MonoBehaviour
         dropSampActPostconditions.Add(sampleIsInWayPoint);
         dropSampActPostconditions.Add(roverIsEmpty);
         BinaryRelation notRoverCarriesSample = new BinaryRelation(curiosity, carry, ESample, RelationValue.FALSE);
-        dropSampActPostconditions.Add(notRoverCarriesSample); 
+        dropSampActPostconditions.Add(notRoverCarriesSample);
 
         Action dropSampleAction = new Action(dropSampleActPreconditions, "DROP_SAMPLE", dropSampleActionParameters, dropSampActPostconditions);
         domain.addAction(dropSampleAction);
@@ -244,7 +250,7 @@ public class InitialWorld : MonoBehaviour
         worldState.addEntity(wayPoint7);
         worldState.addEntity(wayPoint8);
         worldState.addEntity(wayPoint9);
-        
+
         Entity sample1 = new Entity(new EntityType("SAMPLE"), "SAMPLE1");
         Entity sample2 = new Entity(new EntityType("SAMPLE"), "SAMPLE2");
         Entity sample3 = new Entity(new EntityType("SAMPLE"), "SAMPLE3");
@@ -327,7 +333,7 @@ public class InitialWorld : MonoBehaviour
         worldState.addRelation(isVisible5);
         worldState.addRelation(isVisible6);
         worldState.addRelation(isVisible7);
-        worldState.addRelation(isVisible8);  
+        worldState.addRelation(isVisible8);
 
         BinaryRelation isIn1 = domain.generateRelationFromPredicateName("IS_IN", sample1, wayPoint2, RelationValue.TRUE);
         BinaryRelation isIn2 = domain.generateRelationFromPredicateName("IS_IN", sample3, wayPoint9, RelationValue.TRUE);
@@ -398,11 +404,11 @@ public class InitialWorld : MonoBehaviour
 
         Action actionInflate = new Action(actionInflatePreconditions, "INFLATE", actionInflateParameters, actionInflatePostconditions);
         domain.addAction(actionInflate);
-        
-        Action actionDeflate = new Action(actionInflatePostconditions, "DEFLATE", actionInflateParameters ,actionInflatePreconditions);
+
+        Action actionDeflate = new Action(actionInflatePostconditions, "DEFLATE", actionInflateParameters, actionInflatePreconditions);
         domain.addAction(actionDeflate);
 
-        return domain;    
+        return domain;
     }
 
     private WorldState roverWorldStateFullDetail(Domain domain)
@@ -416,7 +422,7 @@ public class InitialWorld : MonoBehaviour
         Entity entityWheels = new Entity(entityTypeWheel, "WHEELS");
         detailedState.addEntity(entityBattery);
         detailedState.addEntity(entityWheels);
-        
+
         UnaryRelation relationBatteryIsCharged = detailedState.Domain.generateRelationFromPredicateName("BATTERY_CHARGED", entityBattery, RelationValue.TRUE);
         detailedState.addRelation(relationBatteryIsCharged);
         UnaryRelation relationWheelsInflated = detailedState.Domain.generateRelationFromPredicateName("WHEELS_INFLATED", entityWheels, RelationValue.TRUE);
