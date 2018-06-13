@@ -4,6 +4,7 @@ using System.Collections.Generic;
 public class GameTreeGenerator
 {
     private TreeNode<WorldState> _rootNode;
+    string value = "";
 
     public GameTreeGenerator(TreeNode<WorldState> rootNode)
     {
@@ -17,7 +18,7 @@ public class GameTreeGenerator
 
     public TreeNode<WorldState> GenerateTree(int level)
     {
-        GenerateTreeRecoursive(_rootNode, 3);
+        GenerateTreeRecoursive(_rootNode, level);
         return _rootNode;
     }
 
@@ -39,9 +40,9 @@ public class GameTreeGenerator
             {
                 GenerateTreeRecoursive(item, level - 1);
             }
-		}
-		
-        return currentNode;
         }
 
+        return currentNode;
     }
+
+}
