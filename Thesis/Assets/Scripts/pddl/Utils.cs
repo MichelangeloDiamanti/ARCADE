@@ -345,10 +345,10 @@ public class Utils{
         UnaryRelation relationWheelsInflated = new UnaryRelation(entityWheels, predicateWheelsInflated, RelationValue.TRUE);
         actionInflatePostconditions.Add(relationWheelsInflated);
 
-        Action actionInflate = new Action(actionInflatePreconditions, "INFLATE", actionInflateParameters, actionInflatePostconditions);
+        Action actionInflate = new Action(actionInflatePreconditions, "INFLATE_WHEELS", actionInflateParameters, actionInflatePostconditions);
         domain.addAction(actionInflate);
         
-        Action actionDeflate = new Action(actionInflatePostconditions, "DEFLATE", actionInflateParameters ,actionInflatePreconditions);
+        Action actionDeflate = new Action(actionInflatePostconditions, "DEFLATE_WHEELS", actionInflateParameters ,actionInflatePreconditions);
         domain.addAction(actionDeflate);
 
         Action moveAction = domain.getAction("MOVE");

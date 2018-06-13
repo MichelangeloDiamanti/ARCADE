@@ -300,7 +300,7 @@ public class WorldStateTest {
         List<Action> performableActions = new List<Action>();
         performableActions.Add(actionMove);
 
-        Assert.AreEqual(worldState.getPossibleActions(), performableActions);
+        Assert.AreEqual(performableActions, worldState.getPossibleActions());
 	}
 
 	[Test]
@@ -329,7 +329,7 @@ public class WorldStateTest {
         List<Action> performableActions = new List<Action>();
         performableActions.Add(actionTakeSample);
 
-        Assert.AreEqual(worldState.getPossibleActions(), performableActions);
+        Assert.AreEqual(performableActions, worldState.getPossibleActions());
 	}
 
 	[Test]
@@ -358,7 +358,7 @@ public class WorldStateTest {
         List<Action> performableActions = new List<Action>();
         performableActions.Add(actionDropSample);
 
-        Assert.AreEqual(worldState.getPossibleActions(), performableActions);
+        Assert.AreEqual(performableActions, worldState.getPossibleActions());
 	}
 
 	[Test]
@@ -385,7 +385,51 @@ public class WorldStateTest {
         List<Action> performableActions = new List<Action>();
         performableActions.Add(actionTakeImage);
 
-        Assert.AreEqual(worldState.getPossibleActions(), performableActions);
+        Assert.AreEqual(performableActions, worldState.getPossibleActions());
+	}
+
+	[Test]
+	public void getPossibleActionsReturnsMoveActionIfCanMoveWithFullDetailedDomain() {
+        Domain domain = Utils.roverWorldDomainFullDetail();
+
+		WorldState worldState = new WorldState(domain);
+
+        EntityType entityTypeRover = new EntityType("ROVER");
+        Entity entityRover = new Entity(entityTypeRover, "ROVER");
+        worldState.addEntity(entityRover);
+
+        EntityType entityTypeBattery = new EntityType("BATTERY");
+        Entity entityBattery = new Entity(entityTypeBattery, "BATTERY");
+        worldState.addEntity(entityBattery);
+
+        EntityType entityTypeWheel = new EntityType("WHEEL");
+        Entity entityWheels = new Entity(entityTypeWheel, "WHEELS");
+        worldState.addEntity(entityWheels);
+
+
+        Entity wayPointAlpha = new Entity(new EntityType("WAYPOINT"), "ALPHA");
+        Entity wayPointBravo = new Entity(new EntityType("WAYPOINT"), "BRAVO");
+
+        worldState.addEntity(wayPointAlpha);
+        worldState.addEntity(wayPointBravo);
+
+        UnaryRelation batteryCharged = domain.generateRelationFromPredicateName("BATTERY_CHARGED", entityBattery, RelationValue.TRUE);
+        worldState.addRelation(batteryCharged);
+
+        UnaryRelation wheelsInflated = domain.generateRelationFromPredicateName("WHEELS_INFLATED", entityWheels, RelationValue.TRUE);
+        worldState.addRelation(wheelsInflated);
+
+        BinaryRelation canMove1 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPointAlpha, wayPointBravo, RelationValue.TRUE);
+        worldState.addRelation(canMove1);
+
+        BinaryRelation isAtAlpha = domain.generateRelationFromPredicateName("AT", entityRover, wayPointAlpha, RelationValue.TRUE);
+        worldState.addRelation(isAtAlpha);
+
+        Action actionMove = worldState.Domain.getAction("MOVE");
+        List<Action> performableActions = new List<Action>();
+        performableActions.Add(actionMove);
+
+        Assert.AreEqual(performableActions, worldState.getPossibleActions());
 	}
 
 	[Test]

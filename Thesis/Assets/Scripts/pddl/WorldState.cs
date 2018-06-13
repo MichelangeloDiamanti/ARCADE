@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using UnityEngine;
+using Newtonsoft.Json;
 
 public class WorldState
 {
@@ -232,8 +233,11 @@ public class WorldState
     {
         List<Action> listActions = new List<Action>();
         List<Action> possibleActions = new List<Action>();
+
         foreach (Action a in _domain.Actions)
         {
+            // check if the current world state could contain the the preconditions
+            // of the action (checking only the predicates count)
             int count = 0;
             foreach (IRelation r in a.PreConditions)
             {
@@ -255,46 +259,91 @@ public class WorldState
                 }
             }
         }
+
+
         foreach (Action a in possibleActions)
         {
-            Queue<List<Entity>> listSobstitution = new Queue<List<Entity>>();
+            // Queue<List<Entity>> listSobstitution = new Queue<List<Entity>>();
+            Dictionary<string, List<string>> dictSobstitution = new Dictionary<string, List<string>>();
+            HashSet<Dictionary<string, string>> sobstitutions = new HashSet<Dictionary<string, string>>();
+
             foreach (Entity item in a.Parameters)
             {
-                List<Entity> listapp = new List<Entity>();
+                List<string> listapp = new List<string>();
                 foreach (Entity e in _entities)
                 {
                     if (item.Type.Equals(e.Type))
                     {
-                        listapp.Add(e.Clone());
+                        listapp.Add(e.Name);
                     }
                 }
-                listSobstitution.Enqueue(listapp);
+                dictSobstitution.Add(item.Name, listapp);// Enqueue(listapp);
             }
 
-            _combinations.Clear();
-            List<Entity> result = new List<Entity>();
-            CombinationRecoursive(listSobstitution, result);
-
-            foreach (List<Entity> list in _combinations)
+            string firstKey = dictSobstitution.Keys.First();
+            List<string> sobList = dictSobstitution[firstKey];
+            foreach(string s in sobList)
             {
-                Dictionary<Entity, Entity> sob = new Dictionary<Entity, Entity>();
-                for (int i = 0; i < a.Parameters.Count; i++)
-                {
-                    if (a.Parameters[i].Type.Equals(list[i].Type))
-                    {
-                        sob.Add(a.Parameters[i], list[i]);
-                    }
-                    else
-                    {
-                        throw new System.ArgumentException();
-                    }
-                }
-                Action action = a.sobstituteEntityInAction(sob);
-                if (canPerformAction(action))
-                {
-                    listActions.Add(action);
-                }
+                Dictionary<string, string> sobstitution = new Dictionary<string, string>();
+                sobstitution.Add(firstKey, s);
+                sobstitutions.Add(sobstitution);
             }
+
+            dictSobstitution.Remove(firstKey);
+
+
+
+
+            foreach(KeyValuePair<string, List<string>> entry in dictSobstitution)
+            {
+                // entry.Key = name of the variable we are sobstituting
+                // entry.Value = list of possible entities we can make the sobstitution with
+                HashSet<Dictionary<string, string>> tmpSobstitutions = new HashSet<Dictionary<string, string>>();
+                foreach(Dictionary<string, string> sobstitution in sobstitutions)
+                {
+                    foreach(string s in entry.Value)
+                    {
+                        Dictionary<string, string> tmpSobstitution = new Dictionary<string, string>(sobstitution);
+                        tmpSobstitution.Add(entry.Key, s);
+                        tmpSobstitutions.Add(tmpSobstitution);
+                    }
+                }
+                sobstitutions = tmpSobstitutions;
+            }
+
+
+            string json = JsonConvert.SerializeObject(dictSobstitution, Formatting.Indented);
+            json += "\n\n\n" + JsonConvert.SerializeObject(sobstitutions, Formatting.Indented);
+            Debug.Log(json);
+
+
+            // string json = JsonConvert.SerializeObject(listSobstitution, Formatting.Indented);
+            // Debug.Log(json);
+
+            // _combinations.Clear();
+            // List<Entity> result = new List<Entity>();
+            // // CombinationRecoursive(listSobstitution, result);
+
+            // foreach (List<Entity> list in _combinations)
+            // {
+            //     Dictionary<Entity, Entity> sob = new Dictionary<Entity, Entity>();
+            //     for (int i = 0; i < a.Parameters.Count; i++)
+            //     {
+            //         if (a.Parameters[i].Type.Equals(list[i].Type))
+            //         {
+            //             sob.Add(a.Parameters[i], list[i]);
+            //         }
+            //         else
+            //         {
+            //             throw new System.ArgumentException();
+            //         }
+            //     }
+            //     Action action = a.sobstituteEntityInAction(sob);
+            //     if (canPerformAction(action))
+            //     {
+            //         listActions.Add(action);
+            //     }
+            // }
 
         }
 
@@ -302,8 +351,8 @@ public class WorldState
         return listActions;
     }
 
-
-    void CombinationRecoursive(Queue<List<Entity>> listEntities, List<Entity> result)
+    // void CombinationRecoursive(Dictionary<string, List<Entity>> listEntities, List<Entity> result)
+    void CombinationRecoursive(Queue<List<Entity>> listEntities, List<Entity> result)    
     {
         List<Entity> list = listEntities.Dequeue();
         foreach (Entity item in list)
