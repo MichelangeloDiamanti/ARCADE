@@ -17,41 +17,31 @@ public class GameTreeGenerator
 
     public TreeNode<WorldState> GenerateTree(int level)
     {
-        TreeNode<WorldState> node = GenerateTreeRecoursive(_rootNode, 3);
-        return node;
+        GenerateTreeRecoursive(_rootNode, 3);
+        return _rootNode;
     }
 
     private TreeNode<WorldState> GenerateTreeRecoursive(TreeNode<WorldState> currentNode, int level)
     {
+        if (level <= 0)
+        {
+            return null;
+        }
         List<Action> possibleActions = currentNode.Data.getPossibleActions();
-        // foreach (Action item in possibleActions)
-        // {
-        //     WorldState ws = currentNode.Data.applyAction(item);
-        //     currentNode.AddChild(ws, item);
-
-        // }
-        // if (level - 1 > 0)
-        // {
-        //     foreach (TreeNode<WorldState> item in currentNode.Children)
-        //     {
-        //         GenerateTreeRecoursive(item, level - 1);
-        //     }
-        // }
         foreach (Action item in possibleActions)
         {
             WorldState ws = currentNode.Data.applyAction(item);
-            if (level - 1 > 0)
+            currentNode.AddChild(ws, item);
+        }
+        if (level - 1 > 0)
+        {
+            foreach (TreeNode<WorldState> item in currentNode.Children)
             {
-                TreeNode<WorldState> node = GenerateTreeRecoursive(new TreeNode<WorldState>(ws), level - 1);
-                currentNode.AddChild(node, item);
+                GenerateTreeRecoursive(item, level - 1);
             }
-            else
-            {
-                currentNode.AddChild(ws, item);
-            }
+		}
+		
+        return currentNode;
         }
 
-        return currentNode;
     }
-
-}
