@@ -45,7 +45,7 @@ public class GraphGenerator
                 value += "<node id=\"" + parentIdLabel + "\"/>\n";
                 ids.Add(parentIdLabel);
             }
-            Debug.Log(value);
+            // Debug.Log(value);
             value += navigateTreeRecoursive(item, parentIdLabel);
         }
         return value;

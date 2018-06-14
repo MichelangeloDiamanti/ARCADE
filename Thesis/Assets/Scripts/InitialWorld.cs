@@ -15,8 +15,10 @@ public class InitialWorld : MonoBehaviour
         Domain domain = new Domain();
         WorldState currentWorldState = new WorldState();
 
-        domain = Utils.roverWorldDomainFullDetail();
-        currentWorldState = Utils.roverWorldStateFullDetail(domain);
+        // domain = Utils.roverWorldDomainFullDetail();
+        // currentWorldState = Utils.roverWorldStateFullDetail(domain);
+        domain = Utils.roverWorldDomainAbstract();
+        currentWorldState = Utils.roverWorldStateAbstract(domain);
         currentNode = new TreeNode<WorldState>(currentWorldState);
         // List<Action> possibleActions = currentNode.Data.getPossibleActions();
         // foreach (Action item in possibleActions)
