@@ -57,20 +57,20 @@ public class Utils{
         Entity fromWayPoint = new Entity(wayPoint, "WAYPOINT1");
         Entity toWayPoint = new Entity(wayPoint, "WAYPOINT2");        
 
-        List<Entity> moveActionParameters = new List<Entity>();
+        HashSet<Entity> moveActionParameters = new HashSet<Entity>();
         moveActionParameters.Add(curiosity);
         moveActionParameters.Add(fromWayPoint);
         moveActionParameters.Add(toWayPoint);        
 
         // Preconditions
-        List<IRelation> moveActionPreconditions = new List<IRelation>();
+        HashSet<IRelation> moveActionPreconditions = new HashSet<IRelation>();
         BinaryRelation roverAtfromWP = new BinaryRelation(curiosity, at, fromWayPoint, RelationValue.TRUE);
         moveActionPreconditions.Add(roverAtfromWP);
         BinaryRelation canMoveFromWP1ToWP2 = new BinaryRelation(fromWayPoint, canMove, toWayPoint, RelationValue.TRUE);
         moveActionPreconditions.Add(canMoveFromWP1ToWP2);
 
         // Postconditions
-        List<IRelation> moveActionPostconditions = new List<IRelation>();
+        HashSet<IRelation> moveActionPostconditions = new HashSet<IRelation>();
         BinaryRelation notRoverAtFromWP = new BinaryRelation(curiosity, at, fromWayPoint, RelationValue.FALSE);
         moveActionPostconditions.Add(notRoverAtFromWP);
         BinaryRelation roverAtToWP = new BinaryRelation(curiosity, at, toWayPoint, RelationValue.TRUE);
@@ -86,13 +86,13 @@ public class Utils{
         Entity ESample = new Entity(sample, "SAMPLE");
         Entity EWayPoint = new Entity(wayPoint, "WAYPOINT");
         
-        List<Entity> takeSampleActionParameters = new List<Entity>();
+        HashSet<Entity> takeSampleActionParameters = new HashSet<Entity>();
         takeSampleActionParameters.Add(curiosity);
         takeSampleActionParameters.Add(ESample);
         takeSampleActionParameters.Add(EWayPoint);
 
         // Preconditions
-        List<IRelation> takeSampleActPreconditions = new List<IRelation>();
+        HashSet<IRelation> takeSampleActPreconditions = new HashSet<IRelation>();
         BinaryRelation sampleIsInWayPoint = new BinaryRelation(ESample, isIn, EWayPoint, RelationValue.TRUE);
         takeSampleActPreconditions.Add(sampleIsInWayPoint);
         BinaryRelation roverIsAtWayPoint = new BinaryRelation(curiosity, at, EWayPoint, RelationValue.TRUE);
@@ -101,7 +101,7 @@ public class Utils{
         takeSampleActPreconditions.Add(roverIsEmpty);
 
         // Postconditions
-        List<IRelation> takeSampleActPostconditions = new List<IRelation>();
+        HashSet<IRelation> takeSampleActPostconditions = new HashSet<IRelation>();
         BinaryRelation sampleIsNotInWayPoint = new BinaryRelation(ESample, isIn, EWayPoint, RelationValue.FALSE);
         takeSampleActPostconditions.Add(sampleIsNotInWayPoint);
         UnaryRelation roverIsNotEmpty = new UnaryRelation(curiosity, isEmpty, RelationValue.FALSE);
@@ -114,20 +114,20 @@ public class Utils{
 
         //              DROP SAMPLE ACTION        
         // Parameters
-        List<Entity> dropSampleActionParameters = new List<Entity>();
+        HashSet<Entity> dropSampleActionParameters = new HashSet<Entity>();
         dropSampleActionParameters.Add(curiosity);
         dropSampleActionParameters.Add(ESample);
         dropSampleActionParameters.Add(EWayPoint);
 
         // Preconditions
-        List<IRelation> dropSampleActPreconditions = new List<IRelation>();
+        HashSet<IRelation> dropSampleActPreconditions = new HashSet<IRelation>();
         UnaryRelation wayPointIsDroppingDock = new UnaryRelation(EWayPoint, isDroppingDock, RelationValue.TRUE);
         dropSampleActPreconditions.Add(wayPointIsDroppingDock);
         dropSampleActPreconditions.Add(roverIsAtWayPoint);
         dropSampleActPreconditions.Add(roverCarriesSample);
 
         // Postconditions
-        List<IRelation> dropSampActPostconditions = new List<IRelation>();
+        HashSet<IRelation> dropSampActPostconditions = new HashSet<IRelation>();
         dropSampActPostconditions.Add(sampleIsInWayPoint);
         dropSampActPostconditions.Add(roverIsEmpty);
         BinaryRelation notRoverCarriesSample = new BinaryRelation(curiosity, carry, ESample, RelationValue.FALSE);
@@ -140,19 +140,19 @@ public class Utils{
         // Parameters 
         Entity EObjective = new Entity(objective, "OBJECTIVE");
 
-        List<Entity> takeImageActionParameters = new List<Entity>();
+        HashSet<Entity> takeImageActionParameters = new HashSet<Entity>();
         takeImageActionParameters.Add(curiosity);
         takeImageActionParameters.Add(EObjective);
         takeImageActionParameters.Add(EWayPoint);
 
         // Preconditions
-        List<IRelation> takeImageActionPreconditions = new List<IRelation>();
+        HashSet<IRelation> takeImageActionPreconditions = new HashSet<IRelation>();
         takeImageActionPreconditions.Add(roverIsAtWayPoint);
         BinaryRelation objectiveIsVisibleFromWayPoint = new BinaryRelation(EObjective, isVisible, EWayPoint, RelationValue.TRUE);
         takeImageActionPreconditions.Add(objectiveIsVisibleFromWayPoint);
 
         // Postconditions
-        List<IRelation> takeImageActionPostconditions = new List<IRelation>();
+        HashSet<IRelation> takeImageActionPostconditions = new HashSet<IRelation>();
         UnaryRelation roverHasTakenImageOfObjective = new UnaryRelation(EObjective, takenImage, RelationValue.TRUE);
         takeImageActionPostconditions.Add(roverHasTakenImageOfObjective);
 
@@ -315,15 +315,15 @@ public class Utils{
         UnaryPredicate predicateWheelsInflated = new UnaryPredicate(entityTypeWheel, "WHEELS_INFLATED");
         domain.addPredicate(predicateWheelsInflated);
 
-        List<Entity> actionChargeParameters = new List<Entity>();
+        HashSet<Entity> actionChargeParameters = new HashSet<Entity>();
         Entity entityBattery = new Entity(entityTypeBattery, "BATTERY");
         actionChargeParameters.Add(entityBattery);
 
-        List<IRelation> actionChargePreconditions = new List<IRelation>();
+        HashSet<IRelation> actionChargePreconditions = new HashSet<IRelation>();
         UnaryRelation relationBatteryDischarged = new UnaryRelation(entityBattery, predicateBatteryCharged, RelationValue.FALSE);
         actionChargePreconditions.Add(relationBatteryDischarged);
 
-        List<IRelation> actionChargePostconditions = new List<IRelation>();
+        HashSet<IRelation> actionChargePostconditions = new HashSet<IRelation>();
         UnaryRelation relationBatteryCharged = new UnaryRelation(entityBattery, predicateBatteryCharged, RelationValue.TRUE);
         actionChargePostconditions.Add(relationBatteryCharged);
 
@@ -333,15 +333,15 @@ public class Utils{
         Action actionDischargeBattery = new Action(actionChargePostconditions, "DISCHARGE_BATTERY", actionChargeParameters, actionChargePreconditions);
         domain.addAction(actionDischargeBattery);
 
-        List<Entity> actionInflateParameters = new List<Entity>();
+        HashSet<Entity> actionInflateParameters = new HashSet<Entity>();
         Entity entityWheels = new Entity(entityTypeWheel, "WHEELS");
         actionInflateParameters.Add(entityWheels);
 
-        List<IRelation> actionInflatePreconditions = new List<IRelation>();
+        HashSet<IRelation> actionInflatePreconditions = new HashSet<IRelation>();
         UnaryRelation relationWheelsDeflated = new UnaryRelation(entityWheels, predicateWheelsInflated, RelationValue.FALSE);
         actionInflatePreconditions.Add(relationWheelsDeflated);
 
-        List<IRelation> actionInflatePostconditions = new List<IRelation>();
+        HashSet<IRelation> actionInflatePostconditions = new HashSet<IRelation>();
         UnaryRelation relationWheelsInflated = new UnaryRelation(entityWheels, predicateWheelsInflated, RelationValue.TRUE);
         actionInflatePostconditions.Add(relationWheelsInflated);
 

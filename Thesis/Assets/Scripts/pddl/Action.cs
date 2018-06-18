@@ -5,12 +5,12 @@ using System;
 public class Action
 {
 
-    private List<IRelation> _preConditions;
+    private HashSet<IRelation> _preConditions;
     private string _name;
-    private List<Entity> _parameters;
-    private List<IRelation> _postConditions;
+    private HashSet<Entity> _parameters;
+    private HashSet<IRelation> _postConditions;
 
-    public List<IRelation> PreConditions
+    public HashSet<IRelation> PreConditions
     {
         get { return _preConditions; }
     }
@@ -18,25 +18,25 @@ public class Action
     {
         get { return _name; }
     }
-    public List<Entity> Parameters
+    public HashSet<Entity> Parameters
     {
         get { return _parameters; }
     }
-    public List<IRelation> PostConditions
+    public HashSet<IRelation> PostConditions
     {
         get { return _postConditions; }
     }
 
-    public Action(List<IRelation> preconditions, string name, List<Entity> parameters, List<IRelation> postconditions)
+    public Action(HashSet<IRelation> preconditions, string name, HashSet<Entity> parameters, HashSet<IRelation> postconditions)
     {
         if (preconditions == null)
-            throw new System.ArgumentNullException("ActionDefinition: List of precondiction cannot be null or empty", "List<IPredicate> precondition");
+            throw new System.ArgumentNullException("ActionDefinition: The set of precondiction cannot be null or empty", "HashSet<IPredicate> precondition");
         if (name == null)
             throw new System.ArgumentNullException("ActionDefinition: name cannot be null", "name");
         if (postconditions == null)
-            throw new System.ArgumentNullException("ActionDefinition: List of postcondition cannot be null or empty", "List<IPredicate> postcondition");
+            throw new System.ArgumentNullException("ActionDefinition: The set of postcondition cannot be null or empty", "HashSet<IPredicate> postcondition");
         if (parameters == null)
-            throw new System.ArgumentNullException("ActionDefinition: List of parameter cannot be null or empty", "List<EntityType> parameter");
+            throw new System.ArgumentNullException("ActionDefinition: The set of parameter cannot be null or empty", "HashSet<EntityType> parameter");
 
         checkVariableInRelation(preconditions, parameters);
         checkVariableInRelation(postconditions, parameters);
@@ -72,17 +72,17 @@ public class Action
             throw new System.ArgumentException("The precondition: " + postcondition.ToString() + " was already defined");
     }
 
-    //TODO: ask david for actions, can an action have same name but different pre/post condition?
     public override bool Equals(object obj)
     {
-        var other = obj as Action;
 
-        if (other == null)
+        if (obj == null)
         {
             return false;
         }
 
-        if (this.Name.Equals(other.Name) == false)
+        Action other = obj as Action;
+
+        if (_name.Equals(other.Name) == false)
         {
             return false;
         }
@@ -92,10 +92,10 @@ public class Action
 
     public override int GetHashCode()
     {
-        return this.Name.GetHashCode();
+        return _name.GetHashCode() * 17;
     }
 
-    private void checkVariableInRelation(List<IRelation> relations, List<Entity> parameters)
+    private void checkVariableInRelation(HashSet<IRelation> relations, HashSet<Entity> parameters)
     {
         foreach (IRelation r in relations)
         {
@@ -104,11 +104,11 @@ public class Action
                 BinaryRelation br = r as BinaryRelation;
                 if (parameters.Contains(br.Source) == false)
                 {
-                    throw new System.ArgumentException("ActionDefinition: One variable of pre or post condition is not inside parameter list", "List<Entity> parameters: " + br.Source.Name + " is missing");
+                    throw new System.ArgumentException("ActionDefinition: One variable of pre or post condition is not inside parameter set", "HashSet<Entity> parameters: " + br.Source.Name + " is missing");
                 }
                 if (parameters.Contains(br.Destination) == false)
                 {
-                    throw new System.ArgumentException("ActionDefinition: One variable of pre or post condition is not inside parameter list", "List<Entity> parameters: " + br.Destination.Name + " is missing");
+                    throw new System.ArgumentException("ActionDefinition: One variable of pre or post condition is not inside parameter set", "HashSet<Entity> parameters: " + br.Destination.Name + " is missing");
                 }
             }
             else if (r.GetType() == typeof(UnaryRelation))
@@ -116,7 +116,7 @@ public class Action
                 UnaryRelation ur = r as UnaryRelation;
                 if (parameters.Contains(ur.Source) == false)
                 {
-                    throw new System.ArgumentException("ActionDefinition: One variable of pre or post condition is not inside parameter list", "List<Entity> parameters: " + ur.Source.Name + " is missing");
+                    throw new System.ArgumentException("ActionDefinition: One variable of pre or post condition is not inside parameter set", "HashSet<Entity> parameters: " + ur.Source.Name + " is missing");
                 }
             }
         }
@@ -165,9 +165,9 @@ public class Action
     public Action sobstituteEntityInAction(Dictionary<Entity, Entity> sobstitutions)
     {
         Action newAction = null;
-        List<IRelation> newPreConditions = sobstituteRoutine(sobstitutions, _preConditions);
-        List<IRelation> newPostConditions = sobstituteRoutine(sobstitutions, _postConditions);
-        List<Entity> entitiesInvolved = new List<Entity>();
+        HashSet<IRelation> newPreConditions = sobstituteRoutine(sobstitutions, _preConditions);
+        HashSet<IRelation> newPostConditions = sobstituteRoutine(sobstitutions, _postConditions);
+        HashSet<Entity> entitiesInvolved = new HashSet<Entity>();
         foreach (Entity item in sobstitutions.Values)
         {
             entitiesInvolved.Add(item);
@@ -176,9 +176,9 @@ public class Action
         return newAction;
     }
 
-    private List<IRelation> sobstituteRoutine(Dictionary<Entity, Entity> sobstitutions, List<IRelation> condictions)
+    private HashSet<IRelation> sobstituteRoutine(Dictionary<Entity, Entity> sobstitutions, HashSet<IRelation> condictions)
     {
-        List<IRelation> newConditions = new List<IRelation>();
+        HashSet<IRelation> newConditions = new HashSet<IRelation>();
         foreach (IRelation item in condictions)
         {
             if (item.GetType() == typeof(UnaryRelation))
@@ -205,9 +205,9 @@ public class Action
 
     public Action Clone()
     {
-        List<IRelation> newPreConditions = new List<IRelation>();
-        List<Entity> newParameters = new List<Entity>();
-        List<IRelation> newPostConditions = new List<IRelation>();
+        HashSet<IRelation> newPreConditions = new HashSet<IRelation>();
+        HashSet<Entity> newParameters = new HashSet<Entity>();
+        HashSet<IRelation> newPostConditions = new HashSet<IRelation>();
 
         foreach (IRelation precondition in _preConditions)
             newPreConditions.Add(precondition.Clone());

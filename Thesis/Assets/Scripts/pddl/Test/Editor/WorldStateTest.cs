@@ -12,8 +12,7 @@ public class WorldStateTest {
 		EntityType character = new EntityType("CHARACTER");
 		// domain.addEntityType(character);
 
-		WorldState worldState = new WorldState();
-		worldState.Domain = domain;
+		WorldState worldState = new WorldState(domain);
 		Entity john = new Entity(character, "JOHN");
 
 
@@ -26,8 +25,7 @@ public class WorldStateTest {
 		EntityType character = new EntityType("CHARACTER");
 		domain.addEntityType(character);
 
-		WorldState worldState = new WorldState();
-		worldState.Domain = domain;
+		WorldState worldState = new WorldState(domain);
 		Entity john = new Entity(character, "JOHN");
 		worldState.addEntity(john);
 
@@ -44,8 +42,7 @@ public class WorldStateTest {
 		UnaryPredicate rich = new UnaryPredicate(character, "RICH");
 		domain.addPredicate(rich);
 
-		WorldState worldState = new WorldState();
-		worldState.Domain = domain;
+		WorldState worldState = new WorldState(domain);
 		Entity john = new Entity(character, "JOHN");
 		// WorldState.addEntity(john);
 
@@ -63,8 +60,7 @@ public class WorldStateTest {
 		UnaryPredicate rich = new UnaryPredicate(character, "RICH");
 		// domain.addPredicate(rich);
 
-		WorldState worldState = new WorldState();
-		worldState.Domain = domain;
+		WorldState worldState = new WorldState(domain);
 		Entity john = new Entity(character, "JOHN");
 		worldState.addEntity(john);
 
@@ -85,8 +81,7 @@ public class WorldStateTest {
 		BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location);
 		domain.addPredicate(isAt);
 
-		WorldState worldState = new WorldState();
-		worldState.Domain = domain;
+		WorldState worldState = new WorldState(domain);
 		Entity john = new Entity(character, "JOHN");
 		// worldState.addEntity(john);
 
@@ -110,8 +105,7 @@ public class WorldStateTest {
 		BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location);
 		domain.addPredicate(isAt);
 
-		WorldState worldState = new WorldState();
-		worldState.Domain = domain;
+		WorldState worldState = new WorldState(domain);
 		Entity john = new Entity(character, "JOHN");
 		worldState.addEntity(john);
 
@@ -135,8 +129,7 @@ public class WorldStateTest {
 		BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location);
 		// domain.addPredicate(isAt);
 
-		WorldState worldState = new WorldState();
-		worldState.Domain = domain;
+		WorldState worldState = new WorldState(domain);
 		Entity john = new Entity(character, "JOHN");
 		worldState.addEntity(john);
 
@@ -175,20 +168,20 @@ public class WorldStateTest {
         Entity entityFromWayPoint = new Entity(entityTypewayPoint, "WAYPOINT1");
         Entity entityToWayPoint = new Entity(entityTypewayPoint, "WAYPOINT2");        
 
-        List<Entity> actionMoveParameters = new List<Entity>();
+        HashSet<Entity> actionMoveParameters = new HashSet<Entity>();
         actionMoveParameters.Add(entityCuriosity);
         actionMoveParameters.Add(entityFromWayPoint);
         actionMoveParameters.Add(entityToWayPoint);        
 
         // Preconditions
-        List<IRelation> actionMovePreconditions = new List<IRelation>();
+        HashSet<IRelation> actionMovePreconditions = new HashSet<IRelation>();
         BinaryRelation roverAtfromWP = new BinaryRelation(entityCuriosity, predicateAt, entityFromWayPoint, RelationValue.TRUE);
         actionMovePreconditions.Add(roverAtfromWP);
         BinaryRelation canMoveFromWP1ToWP2 = new BinaryRelation(entityFromWayPoint, predicateCanMove, entityToWayPoint, RelationValue.TRUE);
         actionMovePreconditions.Add(canMoveFromWP1ToWP2);
 
         // Postconditions
-        List<IRelation> actionMovePostconditions = new List<IRelation>();
+        HashSet<IRelation> actionMovePostconditions = new HashSet<IRelation>();
         BinaryRelation notRoverAtFromWP = new BinaryRelation(entityCuriosity, predicateAt, entityFromWayPoint, RelationValue.FALSE);
         actionMovePostconditions.Add(notRoverAtFromWP);
         BinaryRelation roverAtToWP = new BinaryRelation(entityCuriosity, predicateAt, entityToWayPoint, RelationValue.TRUE);
@@ -213,7 +206,7 @@ public class WorldStateTest {
         BinaryRelation isAt1 = domain.generateRelationFromPredicateName("AT", entityCuriosity, wayPoint1, RelationValue.TRUE);
         worldState.addRelation(isAt1);
 
-		List<IRelation> expectedWorldRelationsAfterAction = new List<IRelation>();
+		HashSet<IRelation> expectedWorldRelationsAfterAction = new HashSet<IRelation>();
 		expectedWorldRelationsAfterAction.Add(canMove1);
 		expectedWorldRelationsAfterAction.Add(notRoverAtFromWP);
 		expectedWorldRelationsAfterAction.Add(roverAtToWP);
@@ -297,7 +290,7 @@ public class WorldStateTest {
         worldState.addRelation(isAtAlpha);
 
         Action actionMove = worldState.Domain.getAction("MOVE");
-        List<Action> performableActions = new List<Action>();
+        HashSet<Action> performableActions = new HashSet<Action>();
         performableActions.Add(actionMove);
 
         Assert.AreEqual(performableActions, worldState.getPossibleActions());
@@ -326,7 +319,7 @@ public class WorldStateTest {
         worldState.addRelation(roverIsEmpty);
 
         Action actionTakeSample = worldState.Domain.getAction("TAKE_SAMPLE");
-        List<Action> performableActions = new List<Action>();
+        HashSet<Action> performableActions = new HashSet<Action>();
         performableActions.Add(actionTakeSample);
 
         Assert.AreEqual(performableActions, worldState.getPossibleActions());
@@ -355,7 +348,7 @@ public class WorldStateTest {
         worldState.addRelation(roverCarriesSample);
 
         Action actionDropSample = worldState.Domain.getAction("DROP_SAMPLE");
-        List<Action> performableActions = new List<Action>();
+        HashSet<Action> performableActions = new HashSet<Action>();
         performableActions.Add(actionDropSample);
 
         Assert.AreEqual(performableActions, worldState.getPossibleActions());
@@ -382,7 +375,7 @@ public class WorldStateTest {
         worldState.addRelation(objectiveIsVisibleFromWaypoint);
 
         Action actionTakeImage = worldState.Domain.getAction("TAKE_IMAGE");
-        List<Action> performableActions = new List<Action>();
+        HashSet<Action> performableActions = new HashSet<Action>();
         performableActions.Add(actionTakeImage);
 
         Assert.AreEqual(performableActions, worldState.getPossibleActions());
@@ -426,7 +419,7 @@ public class WorldStateTest {
         worldState.addRelation(isAtAlpha);
 
         Action actionMove = worldState.Domain.getAction("MOVE");
-        List<Action> performableActions = new List<Action>();
+        HashSet<Action> performableActions = new HashSet<Action>();
         performableActions.Add(actionMove);
 
         Assert.AreEqual(performableActions, worldState.getPossibleActions());
@@ -625,6 +618,51 @@ public class WorldStateTest {
         Assert.AreEqual(worldState, clonedWorldState); 
     }
 
+	[Test]
+	public void GenericSetContainsRelationIfEquals() {
+        Domain domain = Utils.roverWorldDomainAbstract();
+
+		WorldState worldState = new WorldState(domain);
+
+        EntityType entityTypeRover = new EntityType("ROVER");
+        Entity entityRover = new Entity(entityTypeRover, "ROVER");
+        worldState.addEntity(entityRover);
+
+        Entity wayPointAlpha = new Entity(new EntityType("WAYPOINT"), "WAYPOINT1");
+        Entity wayPointBravo = new Entity(new EntityType("WAYPOINT"), "WAYPOINT2");
+        worldState.addEntity(wayPointAlpha);
+        worldState.addEntity(wayPointBravo);
+
+        BinaryRelation canMove1 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPointAlpha, wayPointBravo, RelationValue.TRUE);
+        worldState.addRelation(canMove1);
+
+        BinaryRelation isAtAlpha = domain.generateRelationFromPredicateName("AT", entityRover, wayPointAlpha, RelationValue.TRUE);
+        worldState.addRelation(isAtAlpha);
+
+        Action actionMove = worldState.Domain.getAction("MOVE");
+        
+        foreach(IRelation precondition in actionMove.PreConditions)
+            Assert.IsTrue(worldState.Relations.Contains(precondition));
+	}
+
+	[Test]
+	public void RelationsHashCodesAreTheSame() {
+        Domain domain = Utils.roverWorldDomainFullDetail();
+        WorldState worldState = Utils.roverWorldStateFullDetail(domain);
+
+        List<IRelation> worldStateRelations = new List<IRelation>();
+        List<IRelation> clonedWorldStateRelations = new List<IRelation>();
+
+        foreach(IRelation r in worldState.Relations)
+        {
+            worldStateRelations.Add(r);
+            clonedWorldStateRelations.Add(r);
+        }
+
+        for(int i = 0; i<worldStateRelations.Count; i++)
+            Assert.IsTrue(worldStateRelations[i].GetHashCode().Equals(clonedWorldStateRelations[i].GetHashCode()));
+    }
+
     private Domain getSimpleMoveDomain()
     {
 		Domain domain = new Domain();
@@ -652,20 +690,20 @@ public class WorldStateTest {
         Entity entityFromWayPoint = new Entity(entityTypewayPoint, "WAYPOINT1");
         Entity entityToWayPoint = new Entity(entityTypewayPoint, "WAYPOINT2");        
 
-        List<Entity> actionMoveParameters = new List<Entity>();
+        HashSet<Entity> actionMoveParameters = new HashSet<Entity>();
         actionMoveParameters.Add(entityCuriosity);
         actionMoveParameters.Add(entityFromWayPoint);
         actionMoveParameters.Add(entityToWayPoint);        
 
         // Preconditions
-        List<IRelation> actionMovePreconditions = new List<IRelation>();
+        HashSet<IRelation> actionMovePreconditions = new HashSet<IRelation>();
         BinaryRelation roverAtfromWP = new BinaryRelation(entityCuriosity, predicateAt, entityFromWayPoint, RelationValue.TRUE);
         actionMovePreconditions.Add(roverAtfromWP);
         BinaryRelation canMoveFromWP1ToWP2 = new BinaryRelation(entityFromWayPoint, predicateCanMove, entityToWayPoint, RelationValue.TRUE);
         actionMovePreconditions.Add(canMoveFromWP1ToWP2);
 
         // Postconditions
-        List<IRelation> actionMovePostconditions = new List<IRelation>();
+        HashSet<IRelation> actionMovePostconditions = new HashSet<IRelation>();
         BinaryRelation notRoverAtFromWP = new BinaryRelation(entityCuriosity, predicateAt, entityFromWayPoint, RelationValue.FALSE);
         actionMovePostconditions.Add(notRoverAtFromWP);
         BinaryRelation roverAtToWP = new BinaryRelation(entityCuriosity, predicateAt, entityToWayPoint, RelationValue.TRUE);
