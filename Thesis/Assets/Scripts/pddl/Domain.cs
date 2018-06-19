@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
-public class Domain
+public class Domain : System.IEquatable<Domain>
 {
     private HashSet<EntityType> _entityTypes;
     private HashSet<IPredicate> _predicates;
@@ -51,7 +51,7 @@ public class Domain
     }
     public void addPredicate(IPredicate p)
     {
-        if(_predicates.Contains(p))
+        if (_predicates.Contains(p))
             throw new System.ArgumentException("Predicate has already been declared", p.Name);
         if (_entityTypes.Contains(p.Source) == false)
             throw new System.ArgumentException("The specified Entity Type does not exist", p.Source.ToString());
@@ -178,7 +178,7 @@ public class Domain
     {
         foreach (EntityType et in _entityTypes)
         {
-            if(et.Type.Equals(name))
+            if (et.Type.Equals(name))
                 return et;
         }
         return null;
@@ -198,7 +198,7 @@ public class Domain
     {
         foreach (Action a in _actions)
         {
-            if(a.Name.Equals(name))
+            if (a.Name.Equals(name))
                 return a;
         }
         return null;
@@ -244,50 +244,50 @@ public class Domain
         HashSet<IPredicate> newPredicates = new HashSet<IPredicate>();
         HashSet<Action> newActions = new HashSet<Action>();
 
-        foreach(EntityType et in _entityTypes)
-            newEntityTypes.Add(et.Clone()); 
-        foreach(IPredicate predicate in _predicates)
+        foreach (EntityType et in _entityTypes)
+            newEntityTypes.Add(et.Clone());
+        foreach (IPredicate predicate in _predicates)
             newPredicates.Add(predicate.Clone());
-        foreach(Action a in _actions)
+        foreach (Action a in _actions)
             newActions.Add(a.Clone());
-        
+
         return new Domain(newEntityTypes, newPredicates, newActions);
     }
 
-	public override bool Equals(object obj)
-	{
-		Domain other = obj as Domain;
+    public override bool Equals(object obj)
+    {
+        Domain other = obj as Domain;
 
-		if (other == null)
-			return false;
-
-        if(_entityTypes.SetEquals(other.EntityTypes) == false)
+        if (other == null)
             return false;
 
-        if(_predicates.SetEquals(other.Predicates) == false)
+        if (_entityTypes.SetEquals(other.EntityTypes) == false)
             return false;
-        
-        if(_actions.SetEquals(other.Actions) == false)
-            return false;
-        
-		return true;
-	}
 
-	public override int GetHashCode()
-	{
+        if (_predicates.SetEquals(other.Predicates) == false)
+            return false;
+
+        if (_actions.SetEquals(other.Actions) == false)
+            return false;
+
+        return true;
+    }
+
+    public override int GetHashCode()
+    {
         int hashCode = 17;
 
-        foreach(EntityType et in _entityTypes)
+        foreach (EntityType et in _entityTypes)
             hashCode += et.GetHashCode() * 17;
 
-        foreach(IPredicate p in _predicates)
+        foreach (IPredicate p in _predicates)
             hashCode += p.GetHashCode() * 17;
 
-        foreach(Action a in _actions)
+        foreach (Action a in _actions)
             hashCode = a.GetHashCode() * 17;
-                    
+
         return hashCode;
-	}
+    }
 
     public override string ToString()
     {
@@ -320,5 +320,22 @@ public class Domain
         }
 
         return value;
+    }
+
+    public bool Equals(Domain other)
+    {
+        if (other == null)
+            return false;
+
+        if (_entityTypes.SetEquals(other.EntityTypes) == false)
+            return false;
+
+        if (_predicates.SetEquals(other.Predicates) == false)
+            return false;
+
+        if (_actions.SetEquals(other.Actions) == false)
+            return false;
+
+        return true;
     }
 }

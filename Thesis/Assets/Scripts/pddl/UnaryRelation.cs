@@ -59,11 +59,19 @@ public class UnaryRelation : IRelation, System.IEquatable<IRelation>
 
     public bool Equals(IRelation other)
     {
-        if(EqualsWithoutValue(other) == false)
+		if (other == null)
+			return false;
+            
+        if(other.GetType() != typeof(UnaryRelation))
             return false;
 
-		UnaryRelation otherRelation = other as UnaryRelation;
-        if(_value.Equals(otherRelation.Value) == false)
+        if(_source.Equals(other.Source) == false)
+            return false;
+
+        if(_predicate.Equals(other.Predicate) == false)
+            return false;
+
+        if(_value.Equals(other.Value) == false)
             return false;
         return true;
     }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System;
 
-public class Action
+public class Action : System.IEquatable<Action>
 {
 
     private HashSet<IRelation> _preConditions;
@@ -50,7 +50,7 @@ public class Action
 
     public void addParameter(Entity parameter)
     {
-        if(_parameters.Contains(parameter) == false)
+        if (_parameters.Contains(parameter) == false)
             _parameters.Add(parameter);
         else
             throw new System.ArgumentException("The parameter: " + parameter.ToString() + " was already defined");
@@ -58,7 +58,7 @@ public class Action
 
     public void addPrecondition(IRelation precondition)
     {
-        if(_preConditions.Contains(precondition) == false)
+        if (_preConditions.Contains(precondition) == false)
             _preConditions.Add(precondition);
         else
             throw new System.ArgumentException("The precondition: " + precondition.ToString() + " was already defined");
@@ -66,7 +66,7 @@ public class Action
 
     public void addPostcondition(IRelation postcondition)
     {
-        if(_postConditions.Contains(postcondition) == false)
+        if (_postConditions.Contains(postcondition) == false)
             _postConditions.Add(postcondition);
         else
             throw new System.ArgumentException("The precondition: " + postcondition.ToString() + " was already defined");
@@ -217,5 +217,16 @@ public class Action
             newPostConditions.Add(postcondition.Clone());
 
         return new Action(newPreConditions, _name, newParameters, newPostConditions);
+    }
+
+    public bool Equals(Action other)
+    {
+        if (other == null)
+            return false;
+
+        if (_name.Equals(other.Name) == false)
+            return false;
+
+        return true;
     }
 }

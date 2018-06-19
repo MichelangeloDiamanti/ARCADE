@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UnaryPredicate : IPredicate
+public class UnaryPredicate : IPredicate, System.IEquatable<IPredicate>
 {
 
     private EntityType _source;
@@ -58,5 +58,16 @@ public class UnaryPredicate : IPredicate
     public override string ToString()
     {
         return _source + " " + _name;
+    }
+
+    public bool Equals(IPredicate other)
+    {
+        if(other.GetType() != typeof(UnaryPredicate))
+            return false;
+        if (_source.Equals(other.Source) == false)
+            return false;
+        if (_name.Equals(other.Name) == false)
+            return false;
+        return true;
     }
 }

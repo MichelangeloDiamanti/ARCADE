@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BinaryPredicate : IPredicate
+public class BinaryPredicate : IPredicate, System.IEquatable<IPredicate>
 {
     private EntityType _source;
     private EntityType _destination;
@@ -65,5 +65,20 @@ public class BinaryPredicate : IPredicate
     public override string ToString()
     {
         return _source + " " + _name + " " + _destination;
+    }
+
+    public bool Equals(IPredicate other)
+    {
+        if(other.GetType() != typeof(BinaryPredicate))
+            return false;
+        if (_source.Equals(other.Source) == false)
+            return false;
+        if (_name.Equals(other.Name) == false)
+            return false;
+        
+        BinaryPredicate otherBinaryPredicate = other as BinaryPredicate;
+        if (_destination.Equals(otherBinaryPredicate.Destination) == false)
+            return false;
+        return true;
     }
 }

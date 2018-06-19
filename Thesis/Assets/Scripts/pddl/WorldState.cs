@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEngine;
 using Newtonsoft.Json;
 
-public class WorldState
+public class WorldState : System.IEquatable<WorldState>
 {
     private Domain _domain;
     private HashSet<IRelation> _relations;
@@ -267,6 +267,23 @@ public class WorldState
         }
 
         return s;
+    }
+
+    public bool Equals(WorldState other)
+    {
+        if (other == null)
+            return false;
+
+        if (_domain.Equals(other.Domain) == false)
+            return false;
+
+        if (_entities.SetEquals(other.Entities) == false)
+            return false;
+
+        if (_relations.SetEquals(other.Relations) == false)
+            return false;
+
+        return true;
     }
 }
 
