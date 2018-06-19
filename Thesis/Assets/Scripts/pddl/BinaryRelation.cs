@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BinaryRelation : IRelation
+public class BinaryRelation : IRelation, System.IEquatable<IRelation>
 {
     private Entity _source;
     private BinaryPredicate _predicate;
@@ -13,7 +13,7 @@ public class BinaryRelation : IRelation
     {
         get { return _source; }
     }
-    public BinaryPredicate Predicate
+    public IPredicate Predicate
     {
         get { return _predicate; }
     }
@@ -24,10 +24,9 @@ public class BinaryRelation : IRelation
     public RelationValue Value
     {
         get { return _value; }
-        set { _value = value; }
     }
 
-    public BinaryRelation(Entity source, BinaryPredicate predicate, Entity destination, RelationValue value)
+    public BinaryRelation(Entity source, IPredicate predicate, Entity destination, RelationValue value)
     {
         if (source == null)
             throw new System.ArgumentNullException("Relation source cannot be null", "source");
@@ -36,31 +35,30 @@ public class BinaryRelation : IRelation
         if (destination == null)
             throw new System.ArgumentNullException("Relation destination cannot be null", "destination");
 
+        if (predicate.GetType() != typeof(BinaryPredicate))
+            throw new System.ArgumentNullException("Binary relation predicate must be a binary predicate", "predicate");
+        
+        BinaryPredicate binaryPredicate = predicate as BinaryPredicate;
         if (source.Type.Equals(predicate.Source) == false)
             throw new System.ArgumentException("Relation source is not of the specified predicate type", source + " " + predicate.Source);
-        if (destination.Type.Equals(predicate.Destination) == false)
-            throw new System.ArgumentException("Relation destination is not of the specified predicate type", source + " " + predicate.Destination);
+        if (destination.Type.Equals(binaryPredicate.Destination) == false)
+            throw new System.ArgumentException("Relation destination is not of the specified predicate type", source + " " + binaryPredicate.Destination);
 
         _source = source;
-        _predicate = predicate;
+        _predicate = binaryPredicate;
         _destination = destination;
         _value = value;
     }
 
-    public override string ToString()
+    public bool EqualsWithoutValue(IRelation other)
     {
-        return _source.Name + " " + _predicate.Name + " " + _destination.Name + ": " + _value;
-    }
-
-    public bool EqualsWithoutValue(object obj)
-    {
-		if (obj == null)
+		if (other == null)
 			return false;
             
-        if(obj.GetType() != typeof(BinaryRelation))
+        if(other.GetType() != typeof(BinaryRelation))
             return false;
 
-		BinaryRelation otherRelation = obj as BinaryRelation;
+		BinaryRelation otherRelation = other as BinaryRelation;
         if(_source.Equals(otherRelation.Source) == false)
             return false;
         if(_predicate.Equals(otherRelation.Predicate) == false)
@@ -72,10 +70,31 @@ public class BinaryRelation : IRelation
 
     public override bool Equals(object obj)
     {
-        if(EqualsWithoutValue(obj) == false)
+		if (obj == null)
+			return false;
+            
+        if(obj.GetType() != typeof(BinaryRelation))
+            return false;
+        
+        BinaryRelation other = obj as BinaryRelation;
+        if(other.Source.Equals(_source) == false)
+            return false;
+        if(other.Predicate.Equals(_predicate) == false)
+            return false;
+        if(other.Destination.Equals(_destination) == false)
+            return false;
+        if(other.Value.Equals(_value) == false)
             return false;
 
-		BinaryRelation otherRelation = obj as BinaryRelation;
+        return true;
+    }
+
+    public bool Equals(IRelation other)
+    {
+        if(EqualsWithoutValue(other) == false)
+            return false;
+
+		BinaryRelation otherRelation = other as BinaryRelation;
         if(_value.Equals(otherRelation.Value) == false)
             return false;
         return true;
@@ -83,47 +102,41 @@ public class BinaryRelation : IRelation
 
     public override int GetHashCode()
     {
-        unchecked
-        {
-            int hashCode = 17;
-            hashCode = hashCode * 23 + _source.GetHashCode();
-            hashCode = hashCode * 23 + _predicate.GetHashCode();
-            hashCode = hashCode * 23 + _destination.GetHashCode();
-            hashCode += (int) _value;//(_value == RelationValue.TRUE) ? 1 : 0;
-            return hashCode;
-        }
+
+        int hashCode = _source.GetHashCode() * 17;
+        hashCode += _predicate.GetHashCode() * 17;
+        hashCode += _destination.GetHashCode() * 17;
+        hashCode += (int) _value * 17;
+        return hashCode;
     }
 
-    public IPredicate getPredicate()
+    public bool EqualsThroughPredicate(IRelation other)
     {
-        return _predicate;
-    }
-
-    public bool EqualsThroughPredicate(object obj)
-    {
-        var other = obj as BinaryRelation;
-
-        if (other == null)
-        {
+		if (other == null)
+			return false;
+            
+        if(other.GetType() != typeof(BinaryRelation))
             return false;
-        }
 
-        if (_source.Type.Equals(other.Source.Type))
-        {
-            if (_destination.Type.Equals(other.Destination.Type))
-            {
-                if (_predicate.Equals(other.Predicate))
-                {
-                    return true;
-                }
-            }
-        }
-        return false;
+        BinaryRelation otherBinaryRelation = other as BinaryRelation;
+        if (_source.Type.Equals(otherBinaryRelation.Source.Type) == false)
+            return false;
+        if (_destination.Type.Equals(otherBinaryRelation.Destination.Type) == false)
+            return false;
+        if (_predicate.Equals(otherBinaryRelation.Predicate))
+            return false;
+
+        return true;
     }
 
     public IRelation Clone()
     { 
         return new BinaryRelation(_source.Clone(), _predicate.Clone() as BinaryPredicate, _destination.Clone(), _value); 
+    }
+
+    public override string ToString()
+    {
+        return _source.Name + " " + _predicate.Name + " " + _destination.Name + ": " + _value;
     }
 
 }

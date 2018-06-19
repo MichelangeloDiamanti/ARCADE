@@ -57,13 +57,13 @@ public class DomainTest {
 
 		BinaryRelation br1 = new BinaryRelation(sourceEntity1, bp1, destinationEntity1, RelationValue.TRUE);
 
-		List<Entity> parametersAction1 = new List<Entity>();
+		HashSet<Entity> parametersAction1 = new HashSet<Entity>();
 		parametersAction1.Add(sourceEntity1);
 		parametersAction1.Add(destinationEntity1);
 
-		List<IRelation> preconditionsAction1 = new List<IRelation>();
+		HashSet<IRelation> preconditionsAction1 = new HashSet<IRelation>();
 		preconditionsAction1.Add(br1);
-		List<IRelation> postconditionsAction1 = new List<IRelation>();
+		HashSet<IRelation> postconditionsAction1 = new HashSet<IRelation>();
 		postconditionsAction1.Add(br1);
 
 		Action action = new Action(preconditionsAction1, "PICK_UP", parametersAction1, postconditionsAction1);
@@ -171,20 +171,20 @@ public class DomainTest {
         Entity fromWayPoint = new Entity(wayPoint, "WAYPOINT1");
         Entity toWayPoint = new Entity(wayPoint, "WAYPOINT2");        
 
-        List<Entity> moveActionParameters = new List<Entity>();
+        HashSet<Entity> moveActionParameters = new HashSet<Entity>();
         moveActionParameters.Add(curiosity);
         moveActionParameters.Add(fromWayPoint);
         moveActionParameters.Add(toWayPoint);        
 
         // Preconditions
-        List<IRelation> moveActionPreconditions = new List<IRelation>();
+        HashSet<IRelation> moveActionPreconditions = new HashSet<IRelation>();
         BinaryRelation roverAtfromWP = new BinaryRelation(curiosity, at, fromWayPoint, RelationValue.TRUE);
         moveActionPreconditions.Add(roverAtfromWP);
         BinaryRelation canMoveFromWP1ToWP2 = new BinaryRelation(fromWayPoint, canMove, toWayPoint, RelationValue.TRUE);
         moveActionPreconditions.Add(canMoveFromWP1ToWP2);
 
         // Postconditions
-        List<IRelation> moveActionPostconditions = new List<IRelation>();
+        HashSet<IRelation> moveActionPostconditions = new HashSet<IRelation>();
         BinaryRelation notRoverAtFromWP = new BinaryRelation(curiosity, at, fromWayPoint, RelationValue.FALSE);
         moveActionPostconditions.Add(notRoverAtFromWP);
         BinaryRelation roverAtToWP = new BinaryRelation(curiosity, at, toWayPoint, RelationValue.TRUE);
@@ -231,14 +231,14 @@ public class DomainTest {
 		Domain domain = Utils.roverWorldDomainFullDetail();
 		Domain domain2 = Utils.roverWorldDomainFullDetail();
 
-		List<Entity> actionDifferenceParameters = new List<Entity>();
+		HashSet<Entity> actionDifferenceParameters = new HashSet<Entity>();
 		Entity entity1 = new Entity(new EntityType("ROVER"), "ROVER");
 		actionDifferenceParameters.Add(entity1);
 
-		List<IRelation> actionDifferencePreconditions = new List<IRelation>();
+		HashSet<IRelation> actionDifferencePreconditions = new HashSet<IRelation>();
 		actionDifferencePreconditions.Add(domain2.generateRelationFromPredicateName("IS_EMPTY", entity1, RelationValue.TRUE));
 
-		List<IRelation> actionDifferencePostconditions = new List<IRelation>();
+		HashSet<IRelation> actionDifferencePostconditions = new HashSet<IRelation>();
 		actionDifferencePostconditions.Add(domain2.generateRelationFromPredicateName("IS_EMPTY", entity1, RelationValue.FALSE));
 		
 		domain2.addAction(new Action(actionDifferencePreconditions, "DIFFERENT_ACTION", 
@@ -273,20 +273,20 @@ public class DomainTest {
         Entity fromWayPoint = new Entity(wayPoint, "WAYPOINT1");
         Entity toWayPoint = new Entity(wayPoint, "WAYPOINT2");        
 
-        List<Entity> moveActionParameters = new List<Entity>();
+        HashSet<Entity> moveActionParameters = new HashSet<Entity>();
         moveActionParameters.Add(curiosity);
         moveActionParameters.Add(fromWayPoint);
         moveActionParameters.Add(toWayPoint);        
 
         // Preconditions
-        List<IRelation> moveActionPreconditions = new List<IRelation>();
+        HashSet<IRelation> moveActionPreconditions = new HashSet<IRelation>();
         BinaryRelation roverAtfromWP = new BinaryRelation(curiosity, at, fromWayPoint, RelationValue.TRUE);
         moveActionPreconditions.Add(roverAtfromWP);
         BinaryRelation canMoveFromWP1ToWP2 = new BinaryRelation(fromWayPoint, canMove, toWayPoint, RelationValue.TRUE);
         moveActionPreconditions.Add(canMoveFromWP1ToWP2);
 
         // Postconditions
-        List<IRelation> moveActionPostconditions = new List<IRelation>();
+        HashSet<IRelation> moveActionPostconditions = new HashSet<IRelation>();
         BinaryRelation notRoverAtFromWP = new BinaryRelation(curiosity, at, fromWayPoint, RelationValue.FALSE);
         moveActionPostconditions.Add(notRoverAtFromWP);
         BinaryRelation roverAtToWP = new BinaryRelation(curiosity, at, toWayPoint, RelationValue.TRUE);

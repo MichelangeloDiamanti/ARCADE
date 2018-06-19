@@ -31,7 +31,7 @@ public class EntityType{
 
 	public override int GetHashCode()
 	{
-		return _type.GetHashCode();
+		return _type.GetHashCode() * 17;
 	}
 
 	public override string ToString(){

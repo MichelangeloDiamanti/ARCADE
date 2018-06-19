@@ -4,8 +4,9 @@ using UnityEngine;
 
 public interface IPredicate
 {
-	string ToString();
-    bool Equals(object obj); 
-	string GetName();
+	string Name{get;}
+	EntityType Source{get;}
 	IPredicate Clone();
+    bool Equals(object obj); 
+	string ToString();
 }

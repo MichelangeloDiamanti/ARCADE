@@ -25,13 +25,13 @@ public class ActionTest {
 
 		BinaryRelation br1 = new BinaryRelation(sourceEntity1, bp1, destinationEntity1, RelationValue.TRUE);
 
-		List<Entity> parametersAction1 = new List<Entity>();
+		HashSet<Entity> parametersAction1 = new HashSet<Entity>();
 		// parametersAction1.Add(sourceEntity1);
 		// parametersAction1.Add(destinationEntity1);
 
-		List<IRelation> preconditionsAction1 = new List<IRelation>();
+		HashSet<IRelation> preconditionsAction1 = new HashSet<IRelation>();
 		preconditionsAction1.Add(br1);
-		List<IRelation> postconditionsAction1 = new List<IRelation>();
+		HashSet<IRelation> postconditionsAction1 = new HashSet<IRelation>();
 		postconditionsAction1.Add(br1);
 
 		Assert.That(()=> new Action(preconditionsAction1, "PICK_UP", parametersAction1, postconditionsAction1), Throws.ArgumentException);
@@ -59,22 +59,22 @@ public class ActionTest {
 		BinaryRelation br1 = new BinaryRelation(sourceEntity1, bp1, destinationEntity1, RelationValue.TRUE);
 		BinaryRelation br2 = new BinaryRelation(sourceEntity2, bp2, destinationEntity2, RelationValue.TRUE);
 
-		List<Entity> parametersAction1 = new List<Entity>();
+		HashSet<Entity> parametersAction1 = new HashSet<Entity>();
 		parametersAction1.Add(sourceEntity1);
 		parametersAction1.Add(destinationEntity1);
-		List<IRelation> preconditionsAction1 = new List<IRelation>();
+		HashSet<IRelation> preconditionsAction1 = new HashSet<IRelation>();
 		preconditionsAction1.Add(br1);
-		List<IRelation> postconditionsAction1 = new List<IRelation>();
+		HashSet<IRelation> postconditionsAction1 = new HashSet<IRelation>();
 		postconditionsAction1.Add(br1);
 
 		Action a1 = new Action(preconditionsAction1, "PICK_UP", parametersAction1, postconditionsAction1);
 
-		List<Entity> parametersAction2 = new List<Entity>();
+		HashSet<Entity> parametersAction2 = new HashSet<Entity>();
 		parametersAction2.Add(sourceEntity2);
 		parametersAction2.Add(destinationEntity2);
-		List<IRelation> preconditionsAction2 = new List<IRelation>();
+		HashSet<IRelation> preconditionsAction2 = new HashSet<IRelation>();
 		preconditionsAction2.Add(br2);
-		List<IRelation> postconditionsAction2 = new List<IRelation>();
+		HashSet<IRelation> postconditionsAction2 = new HashSet<IRelation>();
 		postconditionsAction2.Add(br2);
 
 		Action a2 = new Action(preconditionsAction2, "PICK_UP", parametersAction2, postconditionsAction2);
@@ -102,22 +102,22 @@ public class ActionTest {
 		BinaryRelation br1 = new BinaryRelation(sourceEntity1, bp1, destinationEntity1, RelationValue.TRUE);
 		BinaryRelation br2 = new BinaryRelation(sourceEntity2, bp2, destinationEntity2, RelationValue.TRUE);
 
-		List<Entity> parametersAction1 = new List<Entity>();
+		HashSet<Entity> parametersAction1 = new HashSet<Entity>();
 		parametersAction1.Add(sourceEntity1);
 		parametersAction1.Add(destinationEntity1);
-		List<IRelation> preconditionsAction1 = new List<IRelation>();
+		HashSet<IRelation> preconditionsAction1 = new HashSet<IRelation>();
 		preconditionsAction1.Add(br1);
-		List<IRelation> postconditionsAction1 = new List<IRelation>();
+		HashSet<IRelation> postconditionsAction1 = new HashSet<IRelation>();
 		postconditionsAction1.Add(br1);
 
 		Action a1 = new Action(preconditionsAction1, "PICK_UP", parametersAction1, postconditionsAction1);
 
-		List<Entity> parametersAction2 = new List<Entity>();
+		HashSet<Entity> parametersAction2 = new HashSet<Entity>();
 		parametersAction2.Add(sourceEntity2);
 		parametersAction2.Add(destinationEntity2);
-		List<IRelation> preconditionsAction2 = new List<IRelation>();
+		HashSet<IRelation> preconditionsAction2 = new HashSet<IRelation>();
 		preconditionsAction2.Add(br2);
-		List<IRelation> postconditionsAction2 = new List<IRelation>();
+		HashSet<IRelation> postconditionsAction2 = new HashSet<IRelation>();
 		postconditionsAction2.Add(br2);
 
 		Action a2 = new Action(preconditionsAction2, "PICK_UP2", parametersAction2, postconditionsAction2);
@@ -138,20 +138,20 @@ public class ActionTest {
         BinaryPredicate at = new BinaryPredicate(rover, "AT", wayPoint);
         BinaryPredicate beenAt = new BinaryPredicate(rover, "BEEN_AT", wayPoint);
 
-        List<Entity> moveActionParameters = new List<Entity>();
+        HashSet<Entity> moveActionParameters = new HashSet<Entity>();
         moveActionParameters.Add(curiosity);
         moveActionParameters.Add(fromWayPoint);
         moveActionParameters.Add(toWayPoint);        
 
         // Preconditions
-        List<IRelation> moveActionPreconditions = new List<IRelation>();
+        HashSet<IRelation> moveActionPreconditions = new HashSet<IRelation>();
         BinaryRelation roverAtfromWP = new BinaryRelation(curiosity, at, fromWayPoint, RelationValue.TRUE);
         moveActionPreconditions.Add(roverAtfromWP);
         BinaryRelation canMoveFromWP1ToWP2 = new BinaryRelation(fromWayPoint, canMove, toWayPoint, RelationValue.TRUE);
         moveActionPreconditions.Add(canMoveFromWP1ToWP2);
 
         // Postconditions
-        List<IRelation> moveActionPostconditions = new List<IRelation>();
+        HashSet<IRelation> moveActionPostconditions = new HashSet<IRelation>();
         BinaryRelation notRoverAtFromWP = new BinaryRelation(curiosity, at, fromWayPoint, RelationValue.FALSE);
         moveActionPostconditions.Add(notRoverAtFromWP);
         BinaryRelation roverAtToWP = new BinaryRelation(curiosity, at, toWayPoint, RelationValue.TRUE);
@@ -170,7 +170,7 @@ public class ActionTest {
 		Domain domain = Utils.roverWorldDomainAbstract();
 		Action moveAction = domain.getAction("MOVE");
 
-		List<Entity> expectedParameters = new List<Entity>();
+		HashSet<Entity> expectedParameters = new HashSet<Entity>();
 		foreach(Entity e in moveAction.Parameters)
 			expectedParameters.Add(e.Clone());
 		
@@ -198,7 +198,7 @@ public class ActionTest {
 		Domain domain = Utils.roverWorldDomainAbstract();
 		Action moveAction = domain.getAction("MOVE");
 
-		List<IRelation> expectedPreconditions = new List<IRelation>();
+		HashSet<IRelation> expectedPreconditions = new HashSet<IRelation>();
 		foreach(IRelation r in moveAction.PreConditions)
 			expectedPreconditions.Add(r.Clone());
 		
@@ -228,7 +228,7 @@ public class ActionTest {
 		Domain domain = Utils.roverWorldDomainFullDetail();
 		Action moveAction = domain.getAction("MOVE");
 
-		List<IRelation> expectedPostconditions = new List<IRelation>();
+		HashSet<IRelation> expectedPostconditions = new HashSet<IRelation>();
 		foreach(IRelation r in moveAction.PostConditions)
 			expectedPostconditions.Add(r.Clone());
 		

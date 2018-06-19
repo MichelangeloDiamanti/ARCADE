@@ -12,21 +12,17 @@ public class InitialWorld : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        Domain domain = new Domain();
-        WorldState currentWorldState = new WorldState();
-
-        // domain = Utils.roverWorldDomainFullDetail();
-        // currentWorldState = Utils.roverWorldStateFullDetail(domain);
-        domain = Utils.roverWorldDomainAbstract();
-        currentWorldState = Utils.roverWorldStateAbstract(domain);
+        Domain domain = Utils.roverWorldDomainAbstract();
+        WorldState currentWorldState = Utils.roverWorldStateAbstract(domain);
+        
         currentNode = new TreeNode<WorldState>(currentWorldState);
         // List<Action> possibleActions = currentNode.Data.getPossibleActions();
         // foreach (Action item in possibleActions)
         // {
         //     Debug.Log(item.ToString());
         // }
-        // StartCoroutine(simulation());
-        AutomaticTreeGenerator();
+        // StartCoroutine(simpleSimulation());
+
     }
 
     private IEnumerator simulation()

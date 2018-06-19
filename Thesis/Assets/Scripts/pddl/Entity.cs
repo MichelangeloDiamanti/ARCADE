@@ -40,13 +40,7 @@ public class Entity {
 
 	public override int GetHashCode()
 	{
-        unchecked
-        {
-            int hashCode = 17;
-			hashCode = hashCode * -1521134295 + _name.GetHashCode();
-			hashCode = hashCode * -1521134295 + _type.GetHashCode();
-            return hashCode;
-        }
+		return _name.GetHashCode() * 17 + _type.GetHashCode();
 	}
 
 	public override string ToString(){
