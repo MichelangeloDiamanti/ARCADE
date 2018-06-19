@@ -28,6 +28,10 @@ public class Graph
         {
             AddNode(source);
         }
+        if (!Nodes.Contains(destination))
+        {
+            AddNode(destination);
+        }
         HashSet<WorldState> app;
         if (Edges.TryGetValue(source, out app))
         {

@@ -8,14 +8,16 @@ using Newtonsoft.Json;
 public class InitialWorld : MonoBehaviour
 {
     TreeNode<WorldState> currentNode;
+    WorldState currentState;
     public int numberOfLevels = 2;
     // Use this for initialization
     void Start()
     {
         Domain domain = Utils.roverWorldDomainAbstract();
-        WorldState currentWorldState = Utils.roverWorldStateAbstract(domain);
+        currentState = Utils.roverWorldStateAbstract(domain);
         
-        currentNode = new TreeNode<WorldState>(currentWorldState);
+        currentNode = new TreeNode<WorldState>(currentState);
+        AutomaticGraphGenerator();
         // List<Action> possibleActions = currentNode.Data.getPossibleActions();
         // foreach (Action item in possibleActions)
         // {
@@ -57,6 +59,11 @@ public class InitialWorld : MonoBehaviour
 
     private void AutomaticTreeGenerator()
     {
-        new GraphGenerator(new GameTreeGenerator(currentNode).GenerateTree(numberOfLevels)).GenerateGraph();
+        new GraphGenerator(new GameTreeGenerator(currentNode).GenerateTree(numberOfLevels)).GenerateTree();
+    }
+
+    private void AutomaticGraphGenerator()
+    {
+        new GraphGenerator(new GraphDataGenerator(currentState).GenerateData(numberOfLevels)).GenerateGraph();
     }
 }
