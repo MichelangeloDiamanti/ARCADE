@@ -16,17 +16,20 @@ public class InitialWorld : MonoBehaviour
         Domain domain = Utils.roverWorldDomainFullDetail();
         WorldState currentWorldState = Utils.roverWorldStateFullDetail(domain);
 
-        currentNode = new TreeNode<WorldState>(currentWorldState);
+        currentState = currentWorldState.Clone();
+        AutomaticGraphGenerator();
+        
+        // currentNode = new TreeNode<WorldState>(currentWorldState);
 
-        do10Actions();
+        // do10Actions();
         
-        TreeNode<WorldState> lastDetailedNode = currentNode;
+        // TreeNode<WorldState> lastDetailedNode = currentNode;
         
-        while(currentNode.Parent != null)
-        {
-            Debug.Log(currentNode.Data.ToString() + " " + currentNode.ParentAction.ToString());
-            currentNode = currentNode.Parent;
-        }
+        // while(currentNode.Parent != null)
+        // {
+        //     Debug.Log(currentNode.Data.ToString() + " " + currentNode.ParentAction.ToString());
+        //     currentNode = currentNode.Parent;
+        // }
         
         // StartCoroutine(simpleSimulation());
 

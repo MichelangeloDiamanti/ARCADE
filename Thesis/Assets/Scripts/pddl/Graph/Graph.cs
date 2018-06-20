@@ -40,7 +40,11 @@ public class Graph
         {
             app.Add(destination);
             Edges[source] = app;
-            Actions.Add(new KeyValuePair<WorldState, WorldState>(source, destination), ac);
+            KeyValuePair<WorldState, WorldState> kv = new KeyValuePair<WorldState, WorldState>(source, destination);
+            if (!Actions.ContainsKey(kv))
+            {
+                Actions.Add(kv, ac);
+            }
         }
     }
 
