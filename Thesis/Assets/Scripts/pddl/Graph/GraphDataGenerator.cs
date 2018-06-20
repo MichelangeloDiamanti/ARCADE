@@ -27,7 +27,7 @@ public class GraphDataGenerator
         foreach (Action item in possibleActions)
         {
             WorldState ws = currentState.applyAction(item);
-            _graph.addEdge(currentState, ws);
+            _graph.addEdge(currentState, ws, item);
             GenerateDataRoutine(ws, level - 1);
         }
     }
