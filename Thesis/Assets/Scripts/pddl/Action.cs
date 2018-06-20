@@ -229,4 +229,15 @@ public class Action : System.IEquatable<Action>
 
         return true;
     }
+    
+    public string ShortToString()
+    {
+        string value = "Action: " + _name + "(";
+        foreach (Entity item in _parameters)
+        {
+            value += item.Name + " ,";
+        }
+        value += ")";
+        return value;
+    }
 }
