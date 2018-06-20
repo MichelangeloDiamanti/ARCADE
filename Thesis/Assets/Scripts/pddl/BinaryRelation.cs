@@ -115,7 +115,6 @@ public class BinaryRelation : IRelation, System.IEquatable<IRelation>
 
     public override int GetHashCode()
     {
-
         int hashCode = _source.GetHashCode() * 17;
         hashCode += _predicate.GetHashCode() * 17;
         hashCode += _destination.GetHashCode() * 17;

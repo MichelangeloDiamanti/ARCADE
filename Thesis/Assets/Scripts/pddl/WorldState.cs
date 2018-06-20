@@ -89,6 +89,14 @@ public class WorldState : System.IEquatable<WorldState>
         }
         _relations.Add(r);
     }
+
+    // private bool test(IRelation x)
+    // {
+    //     RelationWithoutValueEqualityComparer comparer = new RelationWithoutValueEqualityComparer();
+    //     if(comparer.Equals(x,x) == true)
+    //         return true;
+    //     return false;
+    // }
     public WorldState applyAction(Action action)
     {
         if (canPerformAction(action) == false)
@@ -100,7 +108,10 @@ public class WorldState : System.IEquatable<WorldState>
             bool found = false;
 
             // TODO use contains with a custom comparer for efficiency like:
-            // if(resultingState.Relations.Contains(actionEffect, new EqualsWithoutValueComparer));
+            // if(resultingState.Relations.Contains(actionEffect, new RelationWithoutValueEqualityComparer()))
+            // {
+            //     resultingState.Relations.RemoveWhere(test);
+            // }
 
             foreach (IRelation newWorldRelation in resultingState.Relations)
             {

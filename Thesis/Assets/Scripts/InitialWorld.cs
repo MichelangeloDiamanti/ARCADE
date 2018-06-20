@@ -11,39 +11,61 @@ public class InitialWorld : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        Domain domain = Utils.roverWorldDomainAbstract();
-        WorldState currentWorldState = Utils.roverWorldStateAbstract(domain);
-        
-        currentNode = new TreeNode<WorldState>(currentWorldState);
-        // List<Action> possibleActions = currentNode.Data.getPossibleActions();
-        // foreach (Action item in possibleActions)
-        // {
-        //     Debug.Log(item.ToString());
-        // }
-        StartCoroutine(simpleSimulation());
+        Domain domain = Utils.roverWorldDomainFullDetail();
+        WorldState currentWorldState = Utils.roverWorldStateFullDetail(domain);
 
+        currentNode = new TreeNode<WorldState>(currentWorldState);
+
+        do10Actions();
+        
+        TreeNode<WorldState> lastDetailedNode = currentNode;
+        
+        while(currentNode.Parent != null)
+        {
+            Debug.Log(currentNode.Data.ToString() + " " + currentNode.ParentAction.ToString());
+            currentNode = currentNode.Parent;
+        }
+        
+        // StartCoroutine(simpleSimulation());
+
+    }
+
+    private void do10Actions()
+    {
+        for(int i = 0; i < 10; i++)
+        {
+            TreeNode<WorldState> nextNode = getNextState();
+            if (nextNode == null)
+                Debug.Log("There are no more available actions, shutting down the simulation");
+            currentNode = nextNode;
+        }
+    }
+
+    private TreeNode<WorldState> getNextState()
+    {
+        // Debug.Log("The current state is: " + currentNode.Data.ToString());
+        List<Action> possibleActions = currentNode.Data.getPossibleActions();
+
+        if (possibleActions.Count <= 0)
+            return null;
+
+        int randomActionIndex = Random.Range(0, possibleActions.Count);
+        Action randomAction = possibleActions[randomActionIndex];
+
+        WorldState resultingState = currentNode.Data.applyAction(randomAction);
+        return currentNode.AddChild(resultingState, randomAction);
+
+        // Debug.Log("The Following Action was performed: " + randomAction.ToString());
     }
 
     private IEnumerator simpleSimulation()
     {
-        while(true)
+        while (true)
         {
-            Debug.Log("The current state is: " + currentNode.Data.ToString());
-            List<Action> possibleActions = currentNode.Data.getPossibleActions();
-            
-            if(possibleActions.Count <= 0)
-            {                
+            TreeNode<WorldState> nextNode = getNextState();
+            if (nextNode == null)
                 Debug.Log("There are no more available actions, shutting down the simulation");
-                break;    
-            }
-            
-            int randomActionIndex = Random.Range(0, possibleActions.Count);
-            Action randomAction = possibleActions[randomActionIndex];
-
-            WorldState resultingState = currentNode.Data.applyAction(randomAction);
-            currentNode = new TreeNode<WorldState>(resultingState);
-
-            Debug.Log("The Following Action was performed: " + randomAction.ToString());
+            currentNode = nextNode;
             yield return new WaitForSeconds(1);
         }
     }
@@ -51,6 +73,6 @@ public class InitialWorld : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }

@@ -1,8 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
-
 public class Domain : System.IEquatable<Domain>
 {
     private HashSet<EntityType> _entityTypes;
@@ -31,11 +29,11 @@ public class Domain : System.IEquatable<Domain>
 
     public Domain(HashSet<EntityType> entityTypes, HashSet<IPredicate> predicates, HashSet<Action> actions)
     {
-        if (entityTypes == null || entityTypes.Count == 0)
+        if (entityTypes == null)
             throw new System.ArgumentNullException("EntityTypes cannot be null or empty", "HashSet<EntityType> entityTypes");
-        if (predicates == null || predicates.Count == 0)
+        if (predicates == null)
             throw new System.ArgumentNullException("Predicates cannot be null or empty", "HashSet<IPredicate> predicates");
-        if (actions == null || actions.Count == 0)
+        if (actions == null)
             throw new System.ArgumentNullException("Actions cannot be null or empty", "HashSet<Actions> actions");
 
         _entityTypes = entityTypes;
@@ -70,19 +68,8 @@ public class Domain : System.IEquatable<Domain>
         // check that the preconditions use only predicates defined in the domain
         foreach (IRelation r in a.PreConditions)
         {
-            // if(_predicates.Contains())
-            if (r.GetType() == typeof(UnaryRelation))
-            {
-                UnaryRelation ur = r as UnaryRelation;
-                if (_predicates.Contains(ur.Predicate) == false)
-                    throw new System.ArgumentException("Relation predicate must be an existing predicate", ur.Predicate.ToString());
-            }
-            else if (r.GetType() == typeof(BinaryRelation))
-            {
-                BinaryRelation br = r as BinaryRelation;
-                if (_predicates.Contains(br.Predicate) == false)
-                    throw new System.ArgumentException("Relation predicate must be an existing predicate", br.Predicate.ToString());
-            }
+            if (_predicates.Contains(r.Predicate) == false)
+                throw new System.ArgumentException("Relation predicate must be an existing predicate", r.Predicate.ToString());
         }
 
         // check that the entities in the parameters are of types defined in the current domain
@@ -95,83 +82,11 @@ public class Domain : System.IEquatable<Domain>
         // check that the postconditions use only predicates defined in the domain
         foreach (IRelation r in a.PostConditions)
         {
-            if (r.GetType() == typeof(UnaryRelation))
-            {
-                UnaryRelation ur = r as UnaryRelation;
-                if (_predicates.Contains(ur.Predicate) == false)
-                    throw new System.ArgumentException("Relation predicate must be an existing predicate", ur.Predicate.ToString());
-            }
-            else if (r.GetType() == typeof(BinaryRelation))
-            {
-                BinaryRelation br = r as BinaryRelation;
-                if (_predicates.Contains(br.Predicate) == false)
-                    throw new System.ArgumentException("Relation predicate must be an existing predicate", br.Predicate.ToString());
-            }
+            if (_predicates.Contains(r.Predicate) == false)
+                throw new System.ArgumentException("Relation predicate must be an existing predicate", r.Predicate.ToString());
         }
 
         _actions.Add(a);
-    }
-
-    public bool predicateExists(EntityType source, string name, EntityType destination)
-    {
-        foreach (IPredicate p in _predicates)
-        {
-            if (p.GetType() == typeof(BinaryPredicate))
-            {
-                BinaryPredicate bp = p as BinaryPredicate;
-                if (bp.Source.Equals(source) && bp.Name.Equals(name) && bp.Destination.Equals(destination))
-                {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    public bool predicateExists(EntityType source, string name)
-    {
-        foreach (IPredicate p in _predicates)
-        {
-            if (p.GetType() == typeof(UnaryPredicate))
-            {
-                UnaryPredicate bp = p as UnaryPredicate;
-                if (bp.Source.Equals(source) && bp.Name.Equals(name))
-                {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    public bool predicatesExist(List<IPredicate> pList)
-    {
-        foreach (IPredicate p in pList)
-            if (_predicates.Contains(p) == false)
-                return false;
-        return true;
-    }
-
-    public bool entityTypeExists(string type)
-    {
-        foreach (EntityType et in _entityTypes)
-        {
-            if (et.Type.Equals(type))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public bool actionExists(string name)
-    {
-        foreach (Action a in _actions)
-        {
-            if (a.Name.Equals(name))
-            {
-                return true;
-            }
-        }
-        return false;
     }
 
     public EntityType getEntityType(string name)
