@@ -10,6 +10,7 @@ public class InitialWorld : MonoBehaviour
     TreeNode<WorldState> currentNode;
     WorldState currentState;
     public int numberOfLevels = 2;
+    public bool liteGraph = true;
     // Use this for initialization
     void Start()
     {
@@ -88,6 +89,6 @@ public class InitialWorld : MonoBehaviour
 
     private void AutomaticGraphGenerator()
     {
-        new GraphGenerator(new GraphDataGenerator(currentState).GenerateData(numberOfLevels)).GenerateGraph();
+        new GraphGenerator(new GraphDataGenerator(currentState).GenerateData(numberOfLevels)).GenerateGraph(liteGraph);
     }
 }

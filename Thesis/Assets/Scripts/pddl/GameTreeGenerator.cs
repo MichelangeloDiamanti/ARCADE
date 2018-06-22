@@ -43,7 +43,7 @@ public class GameTreeGenerator
             }
             else
             {
-                Debug.Log(ws.ToString());
+                // Debug.Log(item.ToString() + "\nDIO\n" + ws.ToString());
             }
             currentNode.AddChild(ws, item);
         }

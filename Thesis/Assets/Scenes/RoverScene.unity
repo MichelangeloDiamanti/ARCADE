@@ -222,6 +222,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   numberOfLevels: 5
+  liteGraph: 1
 --- !u!4 &248321232
 Transform:
   m_ObjectHideFlags: 0

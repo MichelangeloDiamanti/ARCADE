@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System;
+using UnityEngine;
 
 public class Graph
 {
@@ -44,6 +45,10 @@ public class Graph
             if (!Actions.ContainsKey(kv))
             {
                 Actions.Add(kv, ac);
+            }
+            else
+            {
+                Debug.Log(ac + "\n" + source + "\n" + destination + "\n");
             }
         }
     }
