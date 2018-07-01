@@ -1,7 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System;
+<<<<<<< HEAD
 using UnityEngine;
+=======
+>>>>>>> michelangelo-dev
 
 public class Graph
 {
@@ -41,6 +44,7 @@ public class Graph
         {
             app.Add(destination);
             Edges[source] = app;
+<<<<<<< HEAD
             KeyValuePair<WorldState, WorldState> kv = new KeyValuePair<WorldState, WorldState>(source, destination);
             if (!Actions.ContainsKey(kv))
             {
@@ -50,6 +54,9 @@ public class Graph
             {
                 Debug.Log(ac + "\n" + source + "\n" + destination + "\n");
             }
+=======
+            Actions.Add(new KeyValuePair<WorldState, WorldState>(source, destination), ac);
+>>>>>>> michelangelo-dev
         }
     }
 

@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class ActionDescription : MonoBehaviour {
 
-	List<Action> actions = new List<Action>();
+	HashSet<Action> actions = new HashSet<Action>();
 	public Font myFont;
 	public bool flag;
 	
@@ -31,20 +31,20 @@ public class ActionDescription : MonoBehaviour {
         Entity location1 = new Entity(location, "LOCATION1");
         Entity location2 = new Entity(location, "LOCATION2");        
 
-        List<Entity> moveActionParameters = new List<Entity>();
+        HashSet<Entity> moveActionParameters = new HashSet<Entity>();
         moveActionParameters.Add(character1);
         moveActionParameters.Add(location1);
         moveActionParameters.Add(location2);        
 
         // Preconditions
-        List<IRelation> moveActionPreconditions = new List<IRelation>();
+        HashSet<IRelation> moveActionPreconditions = new HashSet<IRelation>();
         BinaryRelation characterAtL1 = new BinaryRelation(character1, at, location1, RelationValue.TRUE);
         moveActionPreconditions.Add(characterAtL1);
         BinaryRelation canMoveFromL1ToL2 = new BinaryRelation(location1, canMove, location2, RelationValue.TRUE);
         moveActionPreconditions.Add(canMoveFromL1ToL2);
 
         // Postconditions
-        List<IRelation> moveActionPostconditions = new List<IRelation>();
+        HashSet<IRelation> moveActionPostconditions = new HashSet<IRelation>();
         BinaryRelation notCharacterAtL1 = new BinaryRelation(character1, at, location1, RelationValue.FALSE);
         moveActionPostconditions.Add(notCharacterAtL1);
         BinaryRelation characterAtL2 = new BinaryRelation(character1, at, location2, RelationValue.TRUE);
