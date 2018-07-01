@@ -4,11 +4,13 @@ using UnityEngine;
 
 public interface IRelation
 {
-	IPredicate getPredicate();
-	RelationValue Value{ get; set;}
-	bool EqualsThroughPredicate(object obj);
-	string ToString();
-    bool Equals(object obj); 
-	bool EqualsWithoutValue(object obj);
-	IRelation Clone();
+    Entity Source { get; }
+    IPredicate Predicate { get; }
+    RelationValue Value { get; }
+    bool EqualsThroughPredicate(IRelation other);
+    bool EqualsWithoutValue(IRelation other);
+    bool Equals(object obj);
+    IRelation Clone();
+    int GetHashCode();
+    string ToString();
 }

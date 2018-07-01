@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
-public class EntityType{
+public class EntityType : System.IEquatable<EntityType>{
 
     private string _type;
 
@@ -31,7 +31,7 @@ public class EntityType{
 
 	public override int GetHashCode()
 	{
-		return _type.GetHashCode();
+		return _type.GetHashCode() * 17;
 	}
 
 	public override string ToString(){
@@ -40,4 +40,13 @@ public class EntityType{
 
 	public EntityType Clone(){ return new EntityType(_type); }
 
+    public bool Equals(EntityType other)
+    {
+		if (other == null)
+			return false;
+
+		if(_type.Equals(other.Type) == false)
+			return false;
+
+		return true;    }
 }

@@ -1,56 +1,49 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using UnityEngine;
+using Newtonsoft.Json;
 
-public class WorldState
+public class WorldState : System.IEquatable<WorldState>
 {
     private Domain _domain;
-    private List<IRelation> _relations;
-    private List<Entity> _entities;
-    private List<List<Entity>> _combinations = new List<List<Entity>>();
+    private HashSet<IRelation> _relations;
+    private HashSet<Entity> _entities;
 
-    public List<IRelation> Relations
+    public HashSet<IRelation> Relations
     {
         get { return _relations; }
     }
-    public List<Entity> Entities
+    public HashSet<Entity> Entities
     {
         get { return _entities; }
     }
-
     public Domain Domain
     {
         get { return _domain; }
-        set { _domain = value; }
     }
-
-    public WorldState()
-    {
-        _domain = new Domain();
-        _entities = new List<Entity>();
-        _relations = new List<IRelation>();
-    }
-
     public WorldState(Domain domain)
     {
-        _domain = domain; // check if we should clone instead 
-        _entities = new List<Entity>();
-        _relations = new List<IRelation>();
+        if (domain == null)
+            throw new System.ArgumentNullException("The domain of the worldState cannot be null", "Domain");
+        _domain = domain;
+        _entities = new HashSet<Entity>();
+        _relations = new HashSet<IRelation>();
     }
 
-    public WorldState(Domain domain, List<Entity> entities, List<IRelation> relations)
+    public WorldState(Domain domain, HashSet<Entity> entities, HashSet<IRelation> relations)
     {
         if (domain == null)
             throw new System.ArgumentNullException("The domain of the worldState cannot be null", "Domain");
         if (entities == null || entities.Count == 0)
-            throw new System.ArgumentNullException("Entities cannot be null or empty", "List<Entity> entities");
+            throw new System.ArgumentNullException("Entities cannot be null or empty", "HashSet<Entity> entities");
         if (relations == null || relations.Count == 0)
-            throw new System.ArgumentNullException("Relations cannot be null or empty", "List<Relation> relations");
+            throw new System.ArgumentNullException("Relations cannot be null or empty", "HashSet<Relation> relations");
 
         _domain = domain;
-        _entities = new List<Entity>();
-        _relations = new List<IRelation>();
+        _entities = new HashSet<Entity>();
+        _relations = new HashSet<IRelation>();
 
         foreach (Entity e in entities)
             this.addEntity(e);
@@ -60,10 +53,10 @@ public class WorldState
 
     public void addEntity(Entity e)
     {
-        if (_domain.entityTypeExists(e.Type) == false)
+        if (_domain.EntityTypes.Contains(e.Type) == false)
             throw new System.ArgumentException(e.Name + " is of a type which has not been declared in the domain");
-        if (entityExists(e))
-            throw new System.ArgumentException(e.Name + " already added to the list of entities", "List<Entity> Entities");
+        if (_entities.Contains(e))
+            throw new System.ArgumentException(e.Name + " already added to the list of entities", "HashSet<Entity> Entities");
 
         _entities.Add(e);
     }
@@ -79,7 +72,7 @@ public class WorldState
             if (_entities.Contains(ur.Source) == false)
                 throw new System.ArgumentException("Relation source " + ur.Source + " does not exist in this state");
             // check that all the predicate in the relation is defined in the domain
-            if (this.Domain.predicateExists(ur.Predicate) == false)
+            if (_domain.Predicates.Contains(ur.Predicate) == false)
                 throw new System.ArgumentException("Relation predicate " + ur.Predicate + " does not exist in this domain");
         }
         if (r.GetType() == typeof(BinaryRelation))
@@ -91,61 +84,179 @@ public class WorldState
             if (_entities.Contains(br.Destination) == false)
                 throw new System.ArgumentException("Relation destination " + br.Destination + " does not exist in this state");
             // check that all the predicate in the relation is defined in the domain
-            if (this.Domain.predicateExists(br.Predicate) == false)
+            if (_domain.Predicates.Contains(br.Predicate) == false)
                 throw new System.ArgumentException("Relation predicate " + br.Predicate + " does not exist in this domain");
         }
         _relations.Add(r);
     }
 
-    public bool relationExists(IRelation relation)
+    // private bool test(IRelation x)
+    // {
+    //     RelationWithoutValueEqualityComparer comparer = new RelationWithoutValueEqualityComparer();
+    //     if(comparer.Equals(x,x) == true)
+    //         return true;
+    //     return false;
+    // }
+    public WorldState applyAction(Action action)
     {
+        if (canPerformAction(action) == false)
+            throw new System.ArgumentException("The action " + action.Name + " cannot be performed in the worldState: " + this.ToString());
+
+        WorldState resultingState = this.Clone();
+        foreach (IRelation actionEffect in action.PostConditions)
+        {
+            bool found = false;
+
+            // TODO use contains with a custom comparer for efficiency like:
+            // if(resultingState.Relations.Contains(actionEffect, new RelationWithoutValueEqualityComparer()))
+            // {
+            //     resultingState.Relations.RemoveWhere(test);
+            // }
+
+            foreach (IRelation newWorldRelation in resultingState.Relations)
+            {
+                // check if the postcondition is already part of the state
+                // maybe with a different value which must be updated
+                if (newWorldRelation.EqualsWithoutValue(actionEffect))
+                {
+                    resultingState.Relations.Remove(newWorldRelation);
+                    resultingState.Relations.Add(actionEffect);
+                    // newWorldRelation.Value = actionEffect.Value;
+                    found = true;
+                    break;
+                }
+            }
+            // if the realtion wasn't there in the first place we need to add it
+            if (found == false)
+                resultingState.addRelation(actionEffect.Clone());
+        }
+        return resultingState;
+    }
+    public bool canPerformAction(Action action)
+    {
+        foreach (IRelation precondition in action.PreConditions)
+            if (_relations.Contains(precondition) == false)
+                return false;
+        return true;
+    }
+    public List<Action> getPossibleActions()
+    {
+        List<Action> listActions = new List<Action>();
+        List<Action> possibleActions = new List<Action>();
+        foreach (Action a in _domain.Actions)
+        {
+            // The idea behind this algorithm is to first generate a dictionary which maps each entity to a 
+            // list of possible entities suitable to be sobstituted in the action. 
+            // Then we compute all the possible combinations of substitutions in the form of a set of tuples
+            Dictionary<Entity, List<Entity>> dictSobstitution = new Dictionary<Entity, List<Entity>>();
+            HashSet<Dictionary<Entity, Entity>> sobstitutions = new HashSet<Dictionary<Entity, Entity>>();
+
+            // For each parameter of the action we get all the possible entities in the
+            // current worldState which could be substituted, according to their type 
+            foreach (Entity item in a.Parameters)
+            {
+                List<Entity> listapp = new List<Entity>();
+                foreach (Entity e in _entities)
+                {
+                    if (item.Type.Equals(e.Type))
+                    {
+                        listapp.Add(e);
+                    }
+                }
+                dictSobstitution.Add(item, listapp);
+            }
+
+            // We initialize the set of mappings with the elements of the first list
+            // so for example, if we had to substitute a list of waypoints
+            //   "WAYPOINT1": [             ["WAYPOINT1": "ALPHA"]
+            //     "ALPHA",                 ["WAYPOINT1": "BRAVO"]
+            //     "BRAVO"
+            //   ],
+            Entity firstKey = dictSobstitution.Keys.First();
+            List<Entity> sobList = dictSobstitution[firstKey];
+            foreach (Entity e in sobList)
+            {
+                Dictionary<Entity, Entity> sobstitution = new Dictionary<Entity, Entity>();
+                sobstitution.Add(firstKey, e);
+                sobstitutions.Add(sobstitution);
+            }
+            dictSobstitution.Remove(firstKey);
+
+            // We iterate over the remaining lists of entities and each time we combine them
+            // with every element of the set of partial combinations that we already computed
+            foreach (KeyValuePair<Entity, List<Entity>> entry in dictSobstitution)
+            {
+                // entry.Key = name of the variable we are sobstituting
+                // entry.Value = list of possible entities we can make the sobstitution with
+                HashSet<Dictionary<Entity, Entity>> tmpSobstitutions = new HashSet<Dictionary<Entity, Entity>>();
+                foreach (Dictionary<Entity, Entity> sobstitution in sobstitutions)
+                {
+                    foreach (Entity e in entry.Value)
+                    {
+                        Dictionary<Entity, Entity> tmpSobstitution = new Dictionary<Entity, Entity>(sobstitution);
+                        tmpSobstitution.Add(entry.Key, e);
+                        tmpSobstitutions.Add(tmpSobstitution);
+                    }
+                }
+                sobstitutions = tmpSobstitutions;
+            }
+
+            // Every sobstitution represents a possible action wich may or may not be
+            // performable in the current state, so we check if its preconditions
+            // are satisfied and, if so, we add it to the list of possible actions
+            foreach (Dictionary<Entity, Entity> sobstitution in sobstitutions)
+            {
+                Action action = a.sobstituteEntityInAction(sobstitution);
+                if (canPerformAction(action))
+                    listActions.Add(action);
+            }
+        }
+        return listActions;
+    }
+
+    public override bool Equals(object obj)
+    {
+        WorldState other = obj as WorldState;
+
+        if (other == null)
+            return false;
+
+        if (_domain.Equals(other.Domain) == false)
+            return false;
+
+        if (_entities.SetEquals(other.Entities) == false)
+            return false;
+
+        if (_relations.SetEquals(other.Relations) == false)
+            return false;
+
+        return true;
+    }
+
+    public override int GetHashCode()
+    {
+        int hashCode = _domain.GetHashCode() * 17;
+
+        foreach (Entity e in _entities)
+            hashCode += e.GetHashCode() * 17;
+
         foreach (IRelation r in _relations)
-        {
-            if (r.GetType() == typeof(BinaryRelation) && relation == typeof(BinaryRelation))
-            {
-                BinaryRelation br1 = r as BinaryRelation;
-                BinaryRelation br2 = relation as BinaryRelation;
-                if (br1.Equals(br2) == false)
-                {
-                    return true;
-                }
-            }
-            else if (r.GetType() == typeof(UnaryRelation) && relation == typeof(UnaryRelation))
-            {
-                UnaryRelation br1 = r as UnaryRelation;
-                UnaryRelation br2 = relation as UnaryRelation;
-                if (br1.Equals(br2) == false)
-                {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+            hashCode += r.GetHashCode() * 17;
 
-    public bool entityExists(EntityType type, string name)
-    {
-        foreach (Entity e in _entities)
-        {
-            if (e.Type.Equals(type) && e.Name.Equals(name))
-            {
-                return true;
-            }
-        }
-        return false;
+        return hashCode;
     }
-    public bool entityExists(Entity entity)
+    public WorldState Clone()
     {
-        foreach (Entity e in _entities)
-        {
-            if (e.Equals(entity))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
+        HashSet<Entity> newEntities = new HashSet<Entity>();
+        HashSet<IRelation> newRelations = new HashSet<IRelation>();
 
+        foreach (Entity e in _entities)
+            newEntities.Add(e.Clone());
+        foreach (IRelation ir in _relations)
+            newRelations.Add(ir.Clone());
+
+        return new WorldState(_domain.Clone(), newEntities, newRelations);
+    }
     public override string ToString()
     {
 
@@ -169,188 +280,21 @@ public class WorldState
         return s;
     }
 
-    private bool relationsContains(IRelation rel)
+    public bool Equals(WorldState other)
     {
-        foreach (IRelation item in _relations)
-        {
-            if (rel.EqualsThroughPredicate(item))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
+        if (other == null)
+            return false;
 
-    public WorldState Clone()
-    {
-        List<Entity> newEntities = new List<Entity>();
-        List<IRelation> newRelations = new List<IRelation>();
+        if (_domain.Equals(other.Domain) == false)
+            return false;
 
-        foreach (Entity e in _entities)
-            newEntities.Add(e.Clone());
-        foreach (IRelation ir in _relations)
-            newRelations.Add(ir.Clone());
+        if (_entities.SetEquals(other.Entities) == false)
+            return false;
 
-        return new WorldState(_domain.Clone(), newEntities, newRelations);
-    }
+        if (_relations.SetEquals(other.Relations) == false)
+            return false;
 
-    public WorldState applyAction(Action action)
-    {
-        if (canPerformAction(action) == false)
-            throw new System.ArgumentException("The action " + action.Name + " cannot be performed in the worldState: " + this.ToString());
-        WorldState resultingState = this.Clone();
-        foreach (IRelation actionEffect in action.PostConditions)
-        {
-            bool found = false;
-            foreach (IRelation newWorldRelation in resultingState.Relations)
-            {
-                // check if the postcondition is already part of the state
-                // maybe with a different value which must be updated
-                if (newWorldRelation.EqualsWithoutValue(actionEffect))
-                {
-                    newWorldRelation.Value = actionEffect.Value;
-                    found = true;
-                    break;
-                }
-            }
-            // if the realtion wasn't there in the first place we need to add it
-            if (found == false)
-                resultingState.addRelation(actionEffect.Clone());
-        }
-        return resultingState;
-    }
-
-    public bool canPerformAction(Action action)
-    {
-        foreach (IRelation precondition in action.PreConditions)
-            if (_relations.Contains(precondition) == false) return false;
         return true;
-    }
-
-    public List<Action> getPossibleActions()
-    {
-        List<Action> listActions = new List<Action>();
-        List<Action> possibleActions = new List<Action>();
-        foreach (Action a in _domain.Actions)
-        {
-            int count = 0;
-            foreach (IRelation r in a.PreConditions)
-            {
-                if (relationsContains(r))
-                {
-                    count++;
-                }
-                else
-                {
-                    count = 0;
-                    break;
-                }
-            }
-            if (count == a.PreConditions.Count)
-            {
-                if (!possibleActions.Contains(a))
-                {
-                    possibleActions.Add(a);
-                }
-            }
-        }
-        foreach (Action a in possibleActions)
-        {
-            // string ciao = "Possible Actions: " + a.ToString() + "\nCoinvolte: \n";
-            // foreach (Entity item in a.Parameters)
-            // {
-            //     ciao += item.ToString() + "\n";
-            // }
-            // Debug.Log(ciao);
-
-            Queue<List<Entity>> listSobstitution = new Queue<List<Entity>>();
-            foreach (Entity item in a.Parameters)
-            {
-                List<Entity> listapp = new List<Entity>();
-                foreach (Entity e in _entities)
-                {
-                    if (item.Type.Equals(e.Type))
-                    {
-                        listapp.Add(e.Clone());
-                    }
-                }
-                listSobstitution.Enqueue(listapp);
-            }
-
-            _combinations.Clear();
-            List<Entity> result = new List<Entity>();
-            CombinationRecoursive(listSobstitution, result);
-
-            // string message = "Combinations: \n";
-            // foreach (List<Entity> list in _combinations)
-            // {
-            //     message += "List: \n";
-            //     foreach (Entity item in list)
-            //     {
-            //         message += item.ToString() + " ";
-            //     }
-            //     message += "\n";
-            // }
-            // Debug.Log(message);
-
-            foreach (List<Entity> list in _combinations)
-            {
-                Dictionary<Entity, Entity> sob = new Dictionary<Entity, Entity>();
-                for (int i = 0; i < a.Parameters.Count; i++)
-                {
-                    if (a.Parameters[i].Type.Equals(list[i].Type))
-                    {
-                        sob.Add(a.Parameters[i], list[i]);
-                    }
-                    else
-                    {
-                        throw new System.ArgumentException();
-                    }
-                }
-                Action action = a.sobstituteEntityInAction(sob);
-                if (canPerformAction(action))
-                {
-                    listActions.Add(action);
-                }
-            }
-
-        }
-
-
-        return listActions;
-    }
-
-
-    void CombinationRecoursive(Queue<List<Entity>> listEntities, List<Entity> result)
-    {
-        List<Entity> list = listEntities.Dequeue();
-        foreach (Entity item in list)
-        {
-            if (!result.Contains(item))
-            {
-                result.Add(item.Clone());
-                if (listEntities.Count == 0)
-                {
-                    _combinations.Add(copyList(result));
-                }
-                else
-                {
-                    CombinationRecoursive(listEntities, result);
-                }
-                result.Remove(item);
-            }
-        }
-        listEntities.Enqueue(list);
-    }
-
-    private List<Entity> copyList(List<Entity> list)
-    {
-        List<Entity> newList = new List<Entity>();
-        list.ForEach((item) =>
-        {
-            newList.Add(item.Clone());
-        });
-        return newList;
     }
 }
 

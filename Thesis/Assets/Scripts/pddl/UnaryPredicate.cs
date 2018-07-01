@@ -2,24 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UnaryPredicate : IPredicate
+public class UnaryPredicate : IPredicate, System.IEquatable<IPredicate>
 {
 
     private EntityType _source;
     private string _name;
 
-    public string Name
-    {
-        get { return _name; }
-    }
-
     public EntityType Source
     {
         get { return _source; }
     }
-    public string GetName()
+    public string Name
     {
-        return _name;
+        get { return _name; }
     }
 
     public UnaryPredicate(EntityType source, string name)
@@ -33,36 +28,46 @@ public class UnaryPredicate : IPredicate
         _name = name;
     }
 
+    public override int GetHashCode()
+    {
+        int hash = _source.GetHashCode() * 17;
+        hash += _name.GetHashCode() * 17;
+        return hash;
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (obj == null)
+            return false;
+
+        if (obj.GetType() != typeof(UnaryPredicate))
+            return false;
+
+        UnaryPredicate otherPredicate = obj as UnaryPredicate;
+        if (_source.Equals(otherPredicate.Source) == false)
+            return false;
+        if (_name.Equals(otherPredicate.Name) == false)
+            return false;
+        return true;
+    }
+    public IPredicate Clone()
+    {
+        return new UnaryPredicate(_source.Clone(), _name);
+    }
+
     public override string ToString()
     {
         return _source + " " + _name;
     }
 
-    public override int GetHashCode()
+    public bool Equals(IPredicate other)
     {
-        unchecked
-        {
-            int hash = 17;
-            hash = hash * 23 + _source.GetHashCode();
-            hash = hash * 23 + _name.GetHashCode();
-            return hash;
-        }
-    }
-
-    public override bool Equals(object obj)
-    {
-		if (obj == null)
-			return false;
-
-        if(obj.GetType() != typeof(UnaryPredicate))
+        if(other.GetType() != typeof(UnaryPredicate))
             return false;
-
-		UnaryPredicate otherPredicate = obj as UnaryPredicate;
-        if(_source.Equals(otherPredicate.Source) == false)
+        if (_source.Equals(other.Source) == false)
             return false;
-        if(_name.Equals(otherPredicate.Name) == false)
+        if (_name.Equals(other.Name) == false)
             return false;
         return true;
     }
-    public IPredicate Clone(){ return new UnaryPredicate(_source.Clone(), _name); }
 }

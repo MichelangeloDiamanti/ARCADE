@@ -152,4 +152,18 @@ public class BinaryRelationTest {
 		Assert.False(br1.Equals(br2) || br1.GetHashCode() == br2.GetHashCode());
 	}
 
+	[Test]
+	public void CloneReturnsEqualBinaryRelation() {
+        EntityType entityTypeRover = new EntityType("ROVER");
+		Entity entityRover = new Entity(entityTypeRover, "ROVER");
+        
+		EntityType entityTypeWaypoint = new EntityType("WAYPOINT");
+		Entity entityWaypoint = new Entity(entityTypeWaypoint, "WAYPOINT");
+		
+		BinaryPredicate predicateRoverisAtWaypoint = new BinaryPredicate(entityTypeRover, "IS_AT", entityTypeWaypoint);
+		BinaryRelation relationRoverIsAtWaypoint = new BinaryRelation(entityRover, predicateRoverisAtWaypoint, entityWaypoint, RelationValue.TRUE);
+		BinaryRelation relationClonedRoverIsAtWaypoint = relationRoverIsAtWaypoint.Clone() as BinaryRelation;
+		Assert.AreEqual(relationRoverIsAtWaypoint, relationClonedRoverIsAtWaypoint);
+	}
+
 }

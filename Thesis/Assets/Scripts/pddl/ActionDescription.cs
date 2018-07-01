@@ -66,12 +66,87 @@ public class ActionDescription : MonoBehaviour {
 
 	public void VisualizeAction(){
 
-		Text myText = GameObject.Find("Content").AddComponent<Text>();
-		myText.font = myFont;
-		myText.color = new Color(0f, 0f, 0f);
-		myText.fontSize = 20;
-		myText.text = "VISUALIZE ACTION!!! " + actions.Count;
+		Text myText = GameObject.Find("Content").GetComponent<Text>();
+		// myText.font = myFont;
+		// myText.color = new Color(0f, 0f, 0f);
+		// myText.fontSize = 20;
 
+		foreach(Action act in actions){
+			print(act.Name);
+			List<IRelation> preconditions = act.PreConditions;
+			string name = act.Name;
+			List<Entity> parameters = act.Parameters;
+			List<IRelation> postconditions = act.PostConditions;
+			
+			switch(name){
+
+				case "MOVE":
+					foreach(IRelation pre in preconditions){
+						string preName = pre.getPredicate().GetName();
+						if(preName == "AT"){
+							BinaryRelation rel = pre as BinaryRelation;
+							myText.text += "The " + rel.Source.Name + " was at " + rel.Destination.Name + "\n";
+							print(rel.Source.Name);
+						}
+						Entity source;
+						// string predicate = pre.getPredicate().ToString();
+						string relation = pre.ToString();
+						Entity _destination;
+						RelationValue _value;
+						
+						// if(pre.GetType() == typeof(BinaryRelation))
+            			// {	
+						// 	IPredicate predicate = pre.getPredicate();
+						// 	string predicateName = predicate.GetName();
+						// 	if(predicateName == "AT"){
+
+						// 	}
+						// 	Entity source;
+						// 	// string predicate = pre.getPredicate().ToString();
+						// 	string relation = pre.ToString();
+						// 	print(predicateName);
+						// 	Entity _destination;
+						// 	RelationValue _value;
+						// }else{
+							
+						// }
+					}
+					foreach(Entity param in parameters){
+
+					}
+					foreach(IRelation post in postconditions){
+						
+					}
+
+					break;
+
+				case "action2":
+					
+					break;
+
+				case "action3":
+					
+					break;
+
+				case "action4":
+					
+					break;
+
+				default:
+					break;
+
+			}
+			
+			foreach(IRelation pre in preconditions){
+				
+			}
+			foreach(Entity param in parameters){
+
+			}
+			foreach(IRelation post in postconditions){
+				
+			}
+		}
 
 
 		// foreach(string[] s in pre){

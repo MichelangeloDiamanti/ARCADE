@@ -44,4 +44,11 @@ public class EntityTest {
 		Assert.True(e1.GetHashCode() == e2.GetHashCode());
 	}
 
+	[Test]
+	public void CloneReturnsEqualEntity() {
+		Entity e1 = new Entity(new EntityType("CHARACTER"), "PLAYER");
+		Entity e2 = e1.Clone();
+		Assert.AreEqual(e1, e2);
+	}
+
 }

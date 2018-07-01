@@ -35,4 +35,12 @@ public class UnaryPredicateTest {
 		UnaryPredicate up2 = new UnaryPredicate(character, "IS_RICH2");
 		Assert.False(up1.Equals(up2));
 	}
+
+	[Test]
+	public void CloneReturnsEqualUnaryPredicate() {
+		UnaryPredicate up1 = new UnaryPredicate(new EntityType("CHARACTER"), "IS_RICH");
+		UnaryPredicate up2 = up1.Clone() as UnaryPredicate;
+		Assert.AreEqual(up1, up2);
+	}
+
 }
