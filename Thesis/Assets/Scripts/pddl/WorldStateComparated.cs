@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using PDDL;
 using UnityEngine;
+
 
 public class WorldStateComparated : System.IEquatable<WorldStateComparated>
 {

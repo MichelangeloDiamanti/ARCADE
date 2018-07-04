@@ -4,96 +4,101 @@ using System.Collections.Generic;
 using System.Linq;
 
 
-public class TreeNode<T> : IEnumerable<TreeNode<T>>
+namespace PDDL
 {
+    /// <summary>
+    /// </summary>
+    public class TreeNode<T> : IEnumerable<TreeNode<T>>
+    {
 
-	public T Data { get; set; }
-	public TreeNode<T> Parent { get; set; }
-	public Action ParentAction { get; set; }
-	public ICollection<TreeNode<T>> Children { get; set; }
+        public T Data { get; set; }
+        public TreeNode<T> Parent { get; set; }
+        public Action ParentAction { get; set; }
+        public ICollection<TreeNode<T>> Children { get; set; }
 
-	public Boolean IsRoot
-	{
-		get { return Parent == null; }
-	}
+        public Boolean IsRoot
+        {
+            get { return Parent == null; }
+        }
 
-	public Boolean IsLeaf
-	{
-		get { return Children.Count == 0; }
-	}
+        public Boolean IsLeaf
+        {
+            get { return Children.Count == 0; }
+        }
 
-	public int Level
-	{
-		get
-		{
-			if (this.IsRoot)
-				return 0;
-			return Parent.Level + 1;
-		}
-	}
-
-
-	public TreeNode(T data)
-	{
-		this.Data = data;
-		this.Children = new LinkedList<TreeNode<T>>();
-
-		this.ElementsIndex = new LinkedList<TreeNode<T>>();
-		this.ElementsIndex.Add(this);
-	}
-
-	public TreeNode<T> AddChild(T child, Action parentAction)
-	{
-		TreeNode<T> childNode = new TreeNode<T>(child) { Parent = this };
-		this.Children.Add(childNode);
-		childNode.ParentAction = parentAction;
-
-		this.RegisterChildForSearch(childNode);
-
-		return childNode;
-	}
-
-	public override string ToString()
-	{
-		return Data != null ? Data.ToString() : "[data null]";
-	}
+        public int Level
+        {
+            get
+            {
+                if (this.IsRoot)
+                    return 0;
+                return Parent.Level + 1;
+            }
+        }
 
 
-	#region searching
-	
-	private ICollection<TreeNode<T>> ElementsIndex { get; set; }
+        public TreeNode(T data)
+        {
+            this.Data = data;
+            this.Children = new LinkedList<TreeNode<T>>();
 
-	private void RegisterChildForSearch(TreeNode<T> node)
-	{
-		ElementsIndex.Add(node);
-		if (Parent != null)
-			Parent.RegisterChildForSearch(node);
-	}
+            this.ElementsIndex = new LinkedList<TreeNode<T>>();
+            this.ElementsIndex.Add(this);
+        }
 
-	public TreeNode<T> FindTreeNode(Func<TreeNode<T>, bool> predicate)
-	{
-		return this.ElementsIndex.FirstOrDefault(predicate);
-	}
+        public TreeNode<T> AddChild(T child, Action parentAction)
+        {
+            TreeNode<T> childNode = new TreeNode<T>(child) { Parent = this };
+            this.Children.Add(childNode);
+            childNode.ParentAction = parentAction;
 
-	#endregion
+            this.RegisterChildForSearch(childNode);
+
+            return childNode;
+        }
+
+        public override string ToString()
+        {
+            return Data != null ? Data.ToString() : "[data null]";
+        }
 
 
-	#region iterating
-	
-	IEnumerator IEnumerable.GetEnumerator()
-	{
-		return GetEnumerator();
-	}
+        #region searching
 
-	public IEnumerator<TreeNode<T>> GetEnumerator()
-	{
-		yield return this;
-		foreach (var directChild in this.Children)
-		{
-			foreach (var anyChild in directChild)
-				yield return anyChild;
-		}
-	}
+        private ICollection<TreeNode<T>> ElementsIndex { get; set; }
 
-	#endregion
+        private void RegisterChildForSearch(TreeNode<T> node)
+        {
+            ElementsIndex.Add(node);
+            if (Parent != null)
+                Parent.RegisterChildForSearch(node);
+        }
+
+        public TreeNode<T> FindTreeNode(Func<TreeNode<T>, bool> predicate)
+        {
+            return this.ElementsIndex.FirstOrDefault(predicate);
+        }
+
+        #endregion
+
+
+        #region iterating
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        public IEnumerator<TreeNode<T>> GetEnumerator()
+        {
+            yield return this;
+            foreach (var directChild in this.Children)
+            {
+                foreach (var anyChild in directChild)
+                    yield return anyChild;
+            }
+        }
+
+        #endregion
+    }
 }

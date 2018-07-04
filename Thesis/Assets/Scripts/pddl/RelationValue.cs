@@ -2,10 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum RelationValue {
-	TRUE = 1, 
-	FALSE = 2, 
-	//UNKNOWN, 
-	PENDINGTRUE = 3, 
-	PENDINGFALSE = 4
-};
+
+namespace PDDL
+{
+    /// <summary>
+    /// </summary>
+    public enum RelationValue
+    {
+        TRUE = 1,
+        FALSE = 2,
+        //UNKNOWN, 
+        PENDINGTRUE = 3,
+        PENDINGFALSE = 4
+    };
+}

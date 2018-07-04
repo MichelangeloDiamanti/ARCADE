@@ -1,8 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
 
+using PDDL;
 public class GraphGenerator
 {
 
@@ -112,7 +112,7 @@ public class GraphGenerator
                 foreach (WorldState ws in item.Value)
                 {
                     string destination;
-                    Action ac;
+                    PDDL.Action ac;
                     if (_nodes.TryGetValue(ws, out destination))
                     {
                         graphml += "<edge source=\"" + source + "\" target=\"" + destination + "\">\n";
@@ -176,9 +176,9 @@ public class GraphGenerator
             hex = dec % 16;
 
             if (hex < 10)
-                hexStr = hexStr.Insert(0, Convert.ToChar(hex + 48).ToString());
+                hexStr = hexStr.Insert(0, System.Convert.ToChar(hex + 48).ToString());
             else
-                hexStr = hexStr.Insert(0, Convert.ToChar(hex + 55).ToString());
+                hexStr = hexStr.Insert(0, System.Convert.ToChar(hex + 55).ToString());
 
             dec /= 16;
         }
