@@ -391,4 +391,53 @@ public class Utils{
 
         return detailedState;
     }
+
+    // this is a classic BFS search algorithm, we expand the game tree
+    // performing actions and we look for the goalState using as a goalTest
+    // the function equalRelations.
+    // desiredAccuracy => when are we satisfied by the value returning by the evaluation function
+    // cutOff => after how many levels do we stop looking
+    public static TreeNode<WorldState> breadthFirstSearch(WorldState initialState,
+        WorldState goalState, double desiredAccuracy = 1, double cutoff = Mathf.Infinity)
+    {
+        TreeNode<WorldState> node = new TreeNode<WorldState>(initialState);
+        double nodeAccuracy = equalRelations(goalState, node.Data);
+        if (nodeAccuracy == desiredAccuracy)
+            return node;
+
+        Queue<TreeNode<WorldState>> frontier = new Queue<TreeNode<WorldState>>(node);
+        HashSet<WorldState> explored = new HashSet<WorldState>();
+
+        while (node.Level < cutoff)
+        {
+            if (frontier.Count == 0)
+                return null;
+            node = frontier.Dequeue();
+            explored.Add(node.Data);
+            foreach (Action a in node.Data.getPossibleActions())
+            {
+                TreeNode<WorldState> child = node.AddChild(node.Data.applyAction(a), a);
+                if (explored.Contains(child.Data) == false && frontier.Contains(child) == false)
+                {
+                    double childAccuracy = equalRelations(goalState, child.Data);
+                    if (childAccuracy == desiredAccuracy)
+                        return child;
+                    frontier.Enqueue(child);
+                }
+            }
+        }
+
+        return null;
+    }
+
+    // computes how many equal relations  
+    // there are between two worldstates
+    private static double equalRelations(WorldState a, WorldState b)
+    {
+        int equalRelations = 0;
+        foreach (IRelation r in a.Relations)
+            if (b.Relations.Contains(r))
+                equalRelations++;
+        return (double)equalRelations / (double)a.Relations.Count;
+    }
 }
