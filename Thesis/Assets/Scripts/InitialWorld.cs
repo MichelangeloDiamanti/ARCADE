@@ -11,6 +11,7 @@ public class InitialWorld : MonoBehaviour
     WorldState currentState;
     public int numberOfLevels = 2;
     public bool liteGraph = true;
+    public bool ComparationBetweenStates = false;
     // Use this for initialization
     void Start()
     {
@@ -19,26 +20,26 @@ public class InitialWorld : MonoBehaviour
 
         currentState = currentWorldState.Clone();
         AutomaticGraphGenerator();
-        
+
         // currentNode = new TreeNode<WorldState>(currentWorldState);
 
         // do10Actions();
-        
+
         // TreeNode<WorldState> lastDetailedNode = currentNode;
-        
+
         // while(currentNode.Parent != null)
         // {
         //     Debug.Log(currentNode.Data.ToString() + " " + currentNode.ParentAction.ToString());
         //     currentNode = currentNode.Parent;
         // }
-        
+
         // StartCoroutine(simpleSimulation());
 
     }
 
     private void do10Actions()
     {
-        for(int i = 0; i < 10; i++)
+        for (int i = 0; i < 10; i++)
         {
             TreeNode<WorldState> nextNode = getNextState();
             if (nextNode == null)
@@ -89,6 +90,15 @@ public class InitialWorld : MonoBehaviour
 
     private void AutomaticGraphGenerator()
     {
-        new GraphGenerator(new GraphDataGenerator(currentState).GenerateData(numberOfLevels)).GenerateGraph(liteGraph);
+        GraphDataGenerator gdg = new GraphDataGenerator(currentState);
+        Graph g = gdg.GenerateData(numberOfLevels);
+
+        if (ComparationBetweenStates)
+        {
+            HashSet<WorldStateComparated> wsc = gdg.CompareWorldState();
+        }
+        new GraphGenerator(g).GenerateGraphML(liteGraph);
+
+
     }
 }

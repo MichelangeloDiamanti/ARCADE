@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class GraphGenerator
 {
@@ -10,6 +11,8 @@ public class GraphGenerator
     private int id;
     private Graph _graph;
     private Dictionary<WorldState, string> _nodes;
+    private UnityEngine.Random rnd = new UnityEngine.Random();
+    private HashSet<string> _colors;
 
 
     public GraphGenerator(TreeNode<WorldState> rootNode)
@@ -18,12 +21,14 @@ public class GraphGenerator
         ids = new HashSet<string>();
         id = 0;
         _graph = null;
+        _colors = null;
     }
 
     public GraphGenerator(Graph graph)
     {
         _graph = graph;
         _nodes = new Dictionary<WorldState, string>();
+        _colors = new HashSet<string>();
         _root = null;
         ids = null;
         id = 0;
@@ -65,7 +70,7 @@ public class GraphGenerator
         return value;
     }
 
-    public void GenerateGraph(bool lite = false)
+    public void GenerateGraphML(bool lite = false)
     {
         double time = Time.realtimeSinceStartup;
         if (_graph == null) return;
@@ -87,12 +92,14 @@ public class GraphGenerator
             if (!lite)
             {
                 graphml += "\t<data key=\"d4\" xml:space=\"preserve\"><![CDATA[" + item.ToString() + "]]></data>\n";
-                graphml += "\t<data key=\"d5\">\n";
-                graphml += "<y:ShapeNode>\n";
-                graphml += "<y:NodeLabel>" + nodeName + "</y:NodeLabel>\n";
-                graphml += "</y:ShapeNode>\n";
-                graphml += "</data>\n";
             }
+            graphml += "\t<data key=\"d5\">\n";
+            graphml += "<y:ShapeNode>\n";
+            graphml += "<y:Fill color=\"#" + RandomColor() + "\" transparent=\"false\"/>";
+            graphml += "<y:NodeLabel>" + nodeName + "</y:NodeLabel>\n";
+            
+            graphml += "</y:ShapeNode>\n";
+            graphml += "</data>\n";
             graphml += "</node>\n";
             id++;
         }
@@ -138,6 +145,45 @@ public class GraphGenerator
         Debug.Log("Graph Generation time: " + (Time.realtimeSinceStartup - time));
 
         new GraphFileWriter().SaveFile(graphml);
+    }
+
+
+    public string RandomColor()
+    {
+        string result = "";
+        do
+        {
+            string rs = DecimalToHexadecimal(UnityEngine.Random.Range(0, 256));
+            string gs = DecimalToHexadecimal(UnityEngine.Random.Range(0, 256));
+            string bs = DecimalToHexadecimal(UnityEngine.Random.Range(0, 256));
+            result = rs + gs + bs;
+        } while (_colors.Contains(result));
+        _colors.Add(result);
+        // Debug.Log(result);
+        return result;
+    }
+
+    private static string DecimalToHexadecimal(int dec)
+    {
+        if (dec <= 0)
+            return "00";
+
+        int hex = dec;
+        string hexStr = string.Empty;
+
+        while (dec > 0)
+        {
+            hex = dec % 16;
+
+            if (hex < 10)
+                hexStr = hexStr.Insert(0, Convert.ToChar(hex + 48).ToString());
+            else
+                hexStr = hexStr.Insert(0, Convert.ToChar(hex + 55).ToString());
+
+            dec /= 16;
+        }
+
+        return hexStr;
     }
 
 }
