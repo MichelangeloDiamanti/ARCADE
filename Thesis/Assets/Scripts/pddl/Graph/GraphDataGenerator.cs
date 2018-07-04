@@ -9,6 +9,7 @@ public class GraphDataGenerator
     private HashSet<WorldState> _visitedStates;
     private HashSet<WorldState> _finalStates;
     private HashSet<WorldStateComparated> _worldStateComparated;
+
     public GraphDataGenerator(WorldState ws)
     {
         _startingState = ws.Clone();
@@ -55,14 +56,10 @@ public class GraphDataGenerator
         {
             WorldStateComparated wsc = new WorldStateComparated(_startingState, item);
             wsc.CompareStates();
-
-            if (!_worldStateComparated.Contains(wsc))
-            {
-                _worldStateComparated.Add(wsc);
-                Debug.Log(wsc);
-            }
-
+            _worldStateComparated.Add(wsc);
+            Debug.Log(wsc);
         }
+        
         return _worldStateComparated;
     }
 }
