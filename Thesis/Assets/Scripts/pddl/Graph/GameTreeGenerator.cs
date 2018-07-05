@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using PDDL;
+using ru.cadia.pddlFramework;
 public class GameTreeGenerator
 {
     private TreeNode<WorldState> _rootNode;

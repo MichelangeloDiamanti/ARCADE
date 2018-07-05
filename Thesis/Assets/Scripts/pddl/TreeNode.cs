@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 
-namespace PDDL
+namespace ru.cadia.pddlFramework
 {
     /// <summary>
     /// </summary>

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using PDDL;
+using ru.cadia.pddlFramework;
 
 public class GraphDataGenerator
 {
@@ -48,6 +48,14 @@ public class GraphDataGenerator
                     GenerateDataRoutine(ws, level - 1);
                 }
             }
+            else
+            {
+                _graph.addEdge(currentState, ws, item);
+                if (level - 1 <= 0)
+                {
+                    _finalStates.Add(ws.Clone());
+                }
+            }
         }
     }
 
@@ -60,7 +68,7 @@ public class GraphDataGenerator
             _worldStateComparated.Add(wsc);
             Debug.Log(wsc);
         }
-        
+
         return _worldStateComparated;
     }
 }

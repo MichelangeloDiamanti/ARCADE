@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System;
 
-namespace PDDL
+namespace ru.cadia.pddlFramework
 {
     /// <summary>
     /// </summary>

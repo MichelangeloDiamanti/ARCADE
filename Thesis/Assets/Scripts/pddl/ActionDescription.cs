@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace PDDL
+namespace ru.cadia.pddlFramework
 {
     /// <summary>
     /// </summary>

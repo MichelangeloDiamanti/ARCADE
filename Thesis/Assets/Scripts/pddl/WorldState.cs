@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEngine;
 using Newtonsoft.Json;
 
-namespace PDDL
+namespace ru.cadia.pddlFramework
 {
     /// <summary>
     /// </summary>

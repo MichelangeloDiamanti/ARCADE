@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEngine.TestTools;
 using NUnit.Framework;
 using System.Collections.Generic;
-using PDDL;
+using ru.cadia.pddlFramework;
 
 public class ActionTest {
 

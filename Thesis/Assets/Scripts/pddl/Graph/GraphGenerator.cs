@@ -1,8 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ru.cadia.pddlFramework;
 
-using PDDL;
 public class GraphGenerator
 {
 
@@ -112,7 +112,7 @@ public class GraphGenerator
                 foreach (WorldState ws in item.Value)
                 {
                     string destination;
-                    PDDL.Action ac;
+                    ru.cadia.pddlFramework.Action ac;
                     if (_nodes.TryGetValue(ws, out destination))
                     {
                         graphml += "<edge source=\"" + source + "\" target=\"" + destination + "\">\n";
