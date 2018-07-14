@@ -2,33 +2,49 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LevelOfDetailSwitcher : MonoBehaviour {
+public class LevelOfDetailSwitcher : MonoBehaviour
+{
 
-	public GameObject player;
-	public int detailLevel;		// Simulation LoD higher => more detailed
-	Collider m_Collider;
-	Vector3 m_Point;
+    public GameObject player;
+    public Simulation simulation;
+    public int detailLevel;     // Simulation LoD higher => more detailed
+    private Domain _domain;
 
-	// Use this for initialization
-	void Start () {
-        //Fetch the Collider from the GameObject this script is attached to
-        m_Collider = GetComponent<Collider>();
-        //Assign the point to be that of the Transform you assign in the Inspector window
-        m_Point = player.transform.position;
+    public Domain Domain
+    {
+        get { return _domain; }
+        set { _domain = value; }
+    }
 
-        //If the first GameObject's Bounds contains the Transform's position, output a message in the console
-        if (m_Collider.bounds.Contains(m_Point))
+    // Use this for initialization
+    void Start()
+    {
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.transform.gameObject == player)
         {
-            Debug.Log("Bounds of " + gameObject.name + " contain the point : " + m_Point);
+            Debug.Log(other.transform.name + " is entering" + transform.name);
+            simulation.CurrentLevelOfDetail = detailLevel;
         }
-		else
-		{
-            Debug.Log("Bounds of " + gameObject.name + " do NOT contain the point : " + m_Point);
-		}
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        if (other.transform.gameObject == player)
+        {
+            Debug.Log(other.transform.name + " is leaving" + transform.name);
+            simulation.setLastObservedStateAtLevel(detailLevel, simulation.CurrentNode);
+            simulation.CurrentLevelOfDetail = (detailLevel > 1) ? detailLevel - 1 : 1;
+        }
+    }
+
 }

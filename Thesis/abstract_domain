@@ -1,0 +1,691 @@
+{
+  "EntityTypes": [
+    {
+      "Type": "ROVER"
+    },
+    {
+      "Type": "WAYPOINT"
+    },
+    {
+      "Type": "SAMPLE"
+    },
+    {
+      "Type": "OBJECTIVE"
+    }
+  ],
+  "Predicates": [
+    {
+      "$type": "BinaryPredicate, Assembly-CSharp",
+      "Source": {
+        "Type": "WAYPOINT"
+      },
+      "Name": "CAN_MOVE",
+      "Destination": {
+        "Type": "WAYPOINT"
+      }
+    },
+    {
+      "$type": "BinaryPredicate, Assembly-CSharp",
+      "Source": {
+        "Type": "OBJECTIVE"
+      },
+      "Name": "IS_VISIBLE",
+      "Destination": {
+        "Type": "WAYPOINT"
+      }
+    },
+    {
+      "$type": "BinaryPredicate, Assembly-CSharp",
+      "Source": {
+        "Type": "SAMPLE"
+      },
+      "Name": "IS_IN",
+      "Destination": {
+        "Type": "WAYPOINT"
+      }
+    },
+    {
+      "$type": "BinaryPredicate, Assembly-CSharp",
+      "Source": {
+        "Type": "ROVER"
+      },
+      "Name": "BEEN_AT",
+      "Destination": {
+        "Type": "WAYPOINT"
+      }
+    },
+    {
+      "$type": "BinaryPredicate, Assembly-CSharp",
+      "Source": {
+        "Type": "ROVER"
+      },
+      "Name": "CARRY",
+      "Destination": {
+        "Type": "SAMPLE"
+      }
+    },
+    {
+      "$type": "BinaryPredicate, Assembly-CSharp",
+      "Source": {
+        "Type": "ROVER"
+      },
+      "Name": "AT",
+      "Destination": {
+        "Type": "WAYPOINT"
+      }
+    },
+    {
+      "$type": "UnaryPredicate, Assembly-CSharp",
+      "Source": {
+        "Type": "WAYPOINT"
+      },
+      "Name": "IS_DROPPING_DOCK"
+    },
+    {
+      "$type": "UnaryPredicate, Assembly-CSharp",
+      "Source": {
+        "Type": "OBJECTIVE"
+      },
+      "Name": "TAKEN_IMAGE"
+    },
+    {
+      "$type": "UnaryPredicate, Assembly-CSharp",
+      "Source": {
+        "Type": "SAMPLE"
+      },
+      "Name": "STORED_SAMPLE"
+    },
+    {
+      "$type": "UnaryPredicate, Assembly-CSharp",
+      "Source": {
+        "Type": "ROVER"
+      },
+      "Name": "IS_EMPTY"
+    }
+  ],
+  "Actions": [
+    {
+      "PreConditions": [
+        {
+          "$type": "BinaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "ROVER"
+            },
+            "Name": "ROVER"
+          },
+          "Predicate": {
+            "$type": "BinaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "ROVER"
+            },
+            "Name": "AT",
+            "Destination": {
+              "Type": "WAYPOINT"
+            }
+          },
+          "Destination": {
+            "Type": {
+              "Type": "WAYPOINT"
+            },
+            "Name": "WAYPOINT1"
+          },
+          "Value": 1
+        },
+        {
+          "$type": "BinaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "WAYPOINT"
+            },
+            "Name": "WAYPOINT1"
+          },
+          "Predicate": {
+            "$type": "BinaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "WAYPOINT"
+            },
+            "Name": "CAN_MOVE",
+            "Destination": {
+              "Type": "WAYPOINT"
+            }
+          },
+          "Destination": {
+            "Type": {
+              "Type": "WAYPOINT"
+            },
+            "Name": "WAYPOINT2"
+          },
+          "Value": 1
+        }
+      ],
+      "Name": "MOVE",
+      "Parameters": [
+        {
+          "Type": {
+            "Type": "ROVER"
+          },
+          "Name": "ROVER"
+        },
+        {
+          "Type": {
+            "Type": "WAYPOINT"
+          },
+          "Name": "WAYPOINT1"
+        },
+        {
+          "Type": {
+            "Type": "WAYPOINT"
+          },
+          "Name": "WAYPOINT2"
+        }
+      ],
+      "PostConditions": [
+        {
+          "$type": "BinaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "ROVER"
+            },
+            "Name": "ROVER"
+          },
+          "Predicate": {
+            "$type": "BinaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "ROVER"
+            },
+            "Name": "AT",
+            "Destination": {
+              "Type": "WAYPOINT"
+            }
+          },
+          "Destination": {
+            "Type": {
+              "Type": "WAYPOINT"
+            },
+            "Name": "WAYPOINT1"
+          },
+          "Value": 2
+        },
+        {
+          "$type": "BinaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "ROVER"
+            },
+            "Name": "ROVER"
+          },
+          "Predicate": {
+            "$type": "BinaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "ROVER"
+            },
+            "Name": "AT",
+            "Destination": {
+              "Type": "WAYPOINT"
+            }
+          },
+          "Destination": {
+            "Type": {
+              "Type": "WAYPOINT"
+            },
+            "Name": "WAYPOINT2"
+          },
+          "Value": 1
+        },
+        {
+          "$type": "BinaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "ROVER"
+            },
+            "Name": "ROVER"
+          },
+          "Predicate": {
+            "$type": "BinaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "ROVER"
+            },
+            "Name": "BEEN_AT",
+            "Destination": {
+              "Type": "WAYPOINT"
+            }
+          },
+          "Destination": {
+            "Type": {
+              "Type": "WAYPOINT"
+            },
+            "Name": "WAYPOINT2"
+          },
+          "Value": 1
+        }
+      ]
+    },
+    {
+      "PreConditions": [
+        {
+          "$type": "BinaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "SAMPLE"
+            },
+            "Name": "SAMPLE"
+          },
+          "Predicate": {
+            "$type": "BinaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "SAMPLE"
+            },
+            "Name": "IS_IN",
+            "Destination": {
+              "Type": "WAYPOINT"
+            }
+          },
+          "Destination": {
+            "Type": {
+              "Type": "WAYPOINT"
+            },
+            "Name": "WAYPOINT"
+          },
+          "Value": 1
+        },
+        {
+          "$type": "BinaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "ROVER"
+            },
+            "Name": "ROVER"
+          },
+          "Predicate": {
+            "$type": "BinaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "ROVER"
+            },
+            "Name": "AT",
+            "Destination": {
+              "Type": "WAYPOINT"
+            }
+          },
+          "Destination": {
+            "Type": {
+              "Type": "WAYPOINT"
+            },
+            "Name": "WAYPOINT"
+          },
+          "Value": 1
+        },
+        {
+          "$type": "UnaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "ROVER"
+            },
+            "Name": "ROVER"
+          },
+          "Predicate": {
+            "$type": "UnaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "ROVER"
+            },
+            "Name": "IS_EMPTY"
+          },
+          "Value": 1
+        }
+      ],
+      "Name": "TAKE_SAMPLE",
+      "Parameters": [
+        {
+          "Type": {
+            "Type": "ROVER"
+          },
+          "Name": "ROVER"
+        },
+        {
+          "Type": {
+            "Type": "SAMPLE"
+          },
+          "Name": "SAMPLE"
+        },
+        {
+          "Type": {
+            "Type": "WAYPOINT"
+          },
+          "Name": "WAYPOINT"
+        }
+      ],
+      "PostConditions": [
+        {
+          "$type": "BinaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "SAMPLE"
+            },
+            "Name": "SAMPLE"
+          },
+          "Predicate": {
+            "$type": "BinaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "SAMPLE"
+            },
+            "Name": "IS_IN",
+            "Destination": {
+              "Type": "WAYPOINT"
+            }
+          },
+          "Destination": {
+            "Type": {
+              "Type": "WAYPOINT"
+            },
+            "Name": "WAYPOINT"
+          },
+          "Value": 2
+        },
+        {
+          "$type": "UnaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "ROVER"
+            },
+            "Name": "ROVER"
+          },
+          "Predicate": {
+            "$type": "UnaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "ROVER"
+            },
+            "Name": "IS_EMPTY"
+          },
+          "Value": 2
+        },
+        {
+          "$type": "BinaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "ROVER"
+            },
+            "Name": "ROVER"
+          },
+          "Predicate": {
+            "$type": "BinaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "ROVER"
+            },
+            "Name": "CARRY",
+            "Destination": {
+              "Type": "SAMPLE"
+            }
+          },
+          "Destination": {
+            "Type": {
+              "Type": "SAMPLE"
+            },
+            "Name": "SAMPLE"
+          },
+          "Value": 1
+        }
+      ]
+    },
+    {
+      "PreConditions": [
+        {
+          "$type": "UnaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "WAYPOINT"
+            },
+            "Name": "WAYPOINT"
+          },
+          "Predicate": {
+            "$type": "UnaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "WAYPOINT"
+            },
+            "Name": "IS_DROPPING_DOCK"
+          },
+          "Value": 1
+        },
+        {
+          "$type": "BinaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "ROVER"
+            },
+            "Name": "ROVER"
+          },
+          "Predicate": {
+            "$type": "BinaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "ROVER"
+            },
+            "Name": "AT",
+            "Destination": {
+              "Type": "WAYPOINT"
+            }
+          },
+          "Destination": {
+            "Type": {
+              "Type": "WAYPOINT"
+            },
+            "Name": "WAYPOINT"
+          },
+          "Value": 1
+        },
+        {
+          "$type": "BinaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "ROVER"
+            },
+            "Name": "ROVER"
+          },
+          "Predicate": {
+            "$type": "BinaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "ROVER"
+            },
+            "Name": "CARRY",
+            "Destination": {
+              "Type": "SAMPLE"
+            }
+          },
+          "Destination": {
+            "Type": {
+              "Type": "SAMPLE"
+            },
+            "Name": "SAMPLE"
+          },
+          "Value": 1
+        }
+      ],
+      "Name": "DROP_SAMPLE",
+      "Parameters": [
+        {
+          "Type": {
+            "Type": "ROVER"
+          },
+          "Name": "ROVER"
+        },
+        {
+          "Type": {
+            "Type": "SAMPLE"
+          },
+          "Name": "SAMPLE"
+        },
+        {
+          "Type": {
+            "Type": "WAYPOINT"
+          },
+          "Name": "WAYPOINT"
+        }
+      ],
+      "PostConditions": [
+        {
+          "$type": "BinaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "SAMPLE"
+            },
+            "Name": "SAMPLE"
+          },
+          "Predicate": {
+            "$type": "BinaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "SAMPLE"
+            },
+            "Name": "IS_IN",
+            "Destination": {
+              "Type": "WAYPOINT"
+            }
+          },
+          "Destination": {
+            "Type": {
+              "Type": "WAYPOINT"
+            },
+            "Name": "WAYPOINT"
+          },
+          "Value": 1
+        },
+        {
+          "$type": "UnaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "ROVER"
+            },
+            "Name": "ROVER"
+          },
+          "Predicate": {
+            "$type": "UnaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "ROVER"
+            },
+            "Name": "IS_EMPTY"
+          },
+          "Value": 1
+        },
+        {
+          "$type": "BinaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "ROVER"
+            },
+            "Name": "ROVER"
+          },
+          "Predicate": {
+            "$type": "BinaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "ROVER"
+            },
+            "Name": "CARRY",
+            "Destination": {
+              "Type": "SAMPLE"
+            }
+          },
+          "Destination": {
+            "Type": {
+              "Type": "SAMPLE"
+            },
+            "Name": "SAMPLE"
+          },
+          "Value": 2
+        }
+      ]
+    },
+    {
+      "PreConditions": [
+        {
+          "$type": "BinaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "ROVER"
+            },
+            "Name": "ROVER"
+          },
+          "Predicate": {
+            "$type": "BinaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "ROVER"
+            },
+            "Name": "AT",
+            "Destination": {
+              "Type": "WAYPOINT"
+            }
+          },
+          "Destination": {
+            "Type": {
+              "Type": "WAYPOINT"
+            },
+            "Name": "WAYPOINT"
+          },
+          "Value": 1
+        },
+        {
+          "$type": "BinaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "OBJECTIVE"
+            },
+            "Name": "OBJECTIVE"
+          },
+          "Predicate": {
+            "$type": "BinaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "OBJECTIVE"
+            },
+            "Name": "IS_VISIBLE",
+            "Destination": {
+              "Type": "WAYPOINT"
+            }
+          },
+          "Destination": {
+            "Type": {
+              "Type": "WAYPOINT"
+            },
+            "Name": "WAYPOINT"
+          },
+          "Value": 1
+        }
+      ],
+      "Name": "TAKE_IMAGE",
+      "Parameters": [
+        {
+          "Type": {
+            "Type": "ROVER"
+          },
+          "Name": "ROVER"
+        },
+        {
+          "Type": {
+            "Type": "OBJECTIVE"
+          },
+          "Name": "OBJECTIVE"
+        },
+        {
+          "Type": {
+            "Type": "WAYPOINT"
+          },
+          "Name": "WAYPOINT"
+        }
+      ],
+      "PostConditions": [
+        {
+          "$type": "UnaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "OBJECTIVE"
+            },
+            "Name": "OBJECTIVE"
+          },
+          "Predicate": {
+            "$type": "UnaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "OBJECTIVE"
+            },
+            "Name": "TAKEN_IMAGE"
+          },
+          "Value": 1
+        }
+      ]
+    }
+  ]
+}

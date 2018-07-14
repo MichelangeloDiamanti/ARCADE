@@ -82,6 +82,9 @@ public class Action : System.IEquatable<Action>
 
         Action other = obj as Action;
 
+        if(other == null)
+            return false;
+
         if (_name.Equals(other.Name) == false)
         {
             return false;
