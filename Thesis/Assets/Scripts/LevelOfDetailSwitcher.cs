@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using ru.cadia.pddlFramework;
+
 public class LevelOfDetailSwitcher : MonoBehaviour
 {
 

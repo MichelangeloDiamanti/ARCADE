@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System;
-
+using UnityEngine;
+using ru.cadia.pddlFramework;
 public class Graph
 {
     public HashSet<WorldState> Nodes;
@@ -40,7 +40,15 @@ public class Graph
         {
             app.Add(destination);
             Edges[source] = app;
-            Actions.Add(new KeyValuePair<WorldState, WorldState>(source, destination), ac);
+            KeyValuePair<WorldState, WorldState> kv = new KeyValuePair<WorldState, WorldState>(source, destination);
+            if (!Actions.ContainsKey(kv))
+            {
+                Actions.Add(kv, ac);
+            }
+            else
+            {
+                Debug.Log(ac + "\n" + source + "\n" + destination + "\n");
+            }
         }
     }
 

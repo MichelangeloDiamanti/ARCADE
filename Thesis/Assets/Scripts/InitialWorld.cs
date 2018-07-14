@@ -4,90 +4,98 @@ using UnityEngine;
 using System.Data;
 using System.Linq;
 using Newtonsoft.Json;
+using ru.cadia.pddlFramework;
 
 public class InitialWorld : MonoBehaviour
 {
-
+    TreeNode<WorldState> currentNode;
+    WorldState currentState;
+    public int numberOfLevels = 2;
+    public bool liteGraph = true;
+    public bool ComparationBetweenStates = false;
     // Use this for initialization
     void Start()
     {
         Domain domainFullDetail = Utils.roverWorldDomainFullDetail();
         WorldState worldStateFullDetail = Utils.roverWorldStateFullDetail(domainFullDetail);
 
-        TreeNode<WorldState> treenodeFullDetail = new TreeNode<WorldState>(worldStateFullDetail);
-        treenodeFullDetail = do10RandomActions(treenodeFullDetail);
+        currentState = worldStateFullDetail.Clone();
+        AutomaticGraphGenerator();
 
-        Domain domainAbstract = Utils.roverWorldDomainAbstract();
-        WorldState worldStateAbstract = new WorldState(domainAbstract);
+        // TreeNode<WorldState> treenodeFullDetail = new TreeNode<WorldState>(worldStateFullDetail);
+        // treenodeFullDetail = do10RandomActions(treenodeFullDetail);
 
-        foreach (Entity e in treenodeFullDetail.Data.Entities)
-        {
-            try
-            {
-                worldStateAbstract.addEntity(e);
-            }
-            catch (System.ArgumentException ex)
-            {
-                // Debug.Log("The entity " + e.Name + " was discarded because it is inconsistent with the new domain");
-            }
-        }
+        // Domain domainAbstract = Utils.roverWorldDomainAbstract();
+        // WorldState worldStateAbstract = new WorldState(domainAbstract);
 
-        foreach (IRelation r in treenodeFullDetail.Data.Relations)
-        {
-            try
-            {
-                worldStateAbstract.addRelation(r);
-            }
-            catch (System.ArgumentException ex)
-            {
-                // Debug.Log("The relation " + r.ToString() + " was discarded because it is inconsistent with the new domain");
-            }
-        }
+        // foreach (Entity e in treenodeFullDetail.Data.Entities)
+        // {
+        //     try
+        //     {
+        //         worldStateAbstract.addEntity(e);
+        //     }
+        //     catch (System.ArgumentException ex)
+        //     {
+        //         // Debug.Log("The entity " + e.Name + " was discarded because it is inconsistent with the new domain");
+        //     }
+        // }
 
-        TreeNode<WorldState> treenodeAbstract = new TreeNode<WorldState>(worldStateAbstract);
-        treenodeAbstract = do10RandomActions(treenodeAbstract);
+        // foreach (IRelation r in treenodeFullDetail.Data.Relations)
+        // {
+        //     try
+        //     {
+        //         worldStateAbstract.addRelation(r);
+        //     }
+        //     catch (System.ArgumentException ex)
+        //     {
+        //         // Debug.Log("The relation " + r.ToString() + " was discarded because it is inconsistent with the new domain");
+        //     }
+        // }
 
-        // roll back the 10 actions to get to the root
-        while (treenodeAbstract.IsRoot == false)
-            treenodeAbstract = treenodeAbstract.Parent;
+        // TreeNode<WorldState> treenodeAbstract = new TreeNode<WorldState>(worldStateAbstract);
+        // treenodeAbstract = do10RandomActions(treenodeAbstract);
 
-        Debug.Log(treenodeFullDetail.ToString());
-        Debug.Log(treenodeAbstract.ToString());
+        // // roll back the 10 actions to get to the root
+        // while (treenodeAbstract.IsRoot == false)
+        //     treenodeAbstract = treenodeAbstract.Parent;
+
+        // Debug.Log(treenodeFullDetail.ToString());
+        // Debug.Log(treenodeAbstract.ToString());
 
 
 
 
-        Dictionary<Action, List<Action>> actionTranslation = new Dictionary<Action, List<Action>>();
-        
-        while (treenodeAbstract.IsLeaf == false)
-        {
+        // Dictionary<Action, List<Action>> actionTranslation = new Dictionary<Action, List<Action>>();
 
-            // double desiredAccuracy = 1; // How accurate should be the translation 0 <= x <= 1
-            // int cutoff = 10;            // After how many levels we stop looking
+        // while (treenodeAbstract.IsLeaf == false)
+        // {
 
-            treenodeAbstract = treenodeAbstract.Children.First();
+        //     // double desiredAccuracy = 1; // How accurate should be the translation 0 <= x <= 1
+        //     // int cutoff = 10;            // After how many levels we stop looking
 
-            TreeNode<WorldState> solution = Utils.breadthFirstSearch(treenodeFullDetail.Data, treenodeAbstract.Data);
+        //     treenodeAbstract = treenodeAbstract.Children.First();
 
-            Debug.Log("In the abstract simulation the following action was performed: " + treenodeAbstract.ParentAction.ShortToString());
+        //     TreeNode<WorldState> solution = Utils.breadthFirstSearch(treenodeFullDetail.Data, treenodeAbstract.Data);
 
-            string s = "In the full detail simulation that was translated with these actions:\n";
+        //     Debug.Log("In the abstract simulation the following action was performed: " + treenodeAbstract.ParentAction.ShortToString());
 
-            List<Action> sortedActions = new List<Action>();
-            while(solution.IsRoot == false)
-            {
-                sortedActions.Add(solution.ParentAction);
-                solution = solution.Parent;
-            }
-            sortedActions.Reverse();
-            foreach(Action a in sortedActions)
-            {    
-                s += a.ShortToString();
-                treenodeFullDetail = treenodeFullDetail.AddChild(treenodeFullDetail.Data.applyAction(a), a);
-            }
+        //     string s = "In the full detail simulation that was translated with these actions:\n";
 
-            Debug.Log(s);
-        }
+        //     List<Action> sortedActions = new List<Action>();
+        //     while(solution.IsRoot == false)
+        //     {
+        //         sortedActions.Add(solution.ParentAction);
+        //         solution = solution.Parent;
+        //     }
+        //     sortedActions.Reverse();
+        //     foreach(Action a in sortedActions)
+        //     {    
+        //         s += a.ShortToString();
+        //         treenodeFullDetail = treenodeFullDetail.AddChild(treenodeFullDetail.Data.applyAction(a), a);
+        //     }
+
+        //     Debug.Log(s);
+        // }
 
 
 
@@ -210,6 +218,25 @@ public class InitialWorld : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+    }
+
+    private void AutomaticTreeGenerator()
+    {
+        new GraphGenerator(new GameTreeGenerator(currentNode).GenerateTree(numberOfLevels)).GenerateTree();
+    }
+
+    private void AutomaticGraphGenerator()
+    {
+        GraphDataGenerator gdg = new GraphDataGenerator(currentState);
+        Graph g = gdg.GenerateData(numberOfLevels);
+
+        if (ComparationBetweenStates)
+        {
+            HashSet<WorldStateComparated> wsc = gdg.CompareWorldState();
+        }
+        new GraphGenerator(g).GenerateGraphML(liteGraph);
+
 
     }
 }

@@ -3,6 +3,7 @@ using UnityEditor;
 using UnityEngine.TestTools;
 using NUnit.Framework;
 using System.Collections;
+using ru.cadia.pddlFramework;
 
 public class EntityTest {
 

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using ru.cadia.pddlFramework;
 public class GameTreeGenerator
 {
     private TreeNode<WorldState> _rootNode;
@@ -43,7 +43,7 @@ public class GameTreeGenerator
             }
             else
             {
-                Debug.Log(ws.ToString());
+                // Debug.Log(item.ToString() + "\nDIO\n" + ws.ToString());
             }
             currentNode.AddChild(ws, item);
         }

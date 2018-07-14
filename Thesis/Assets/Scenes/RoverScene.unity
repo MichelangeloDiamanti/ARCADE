@@ -221,7 +221,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7bb09fd9332c5404fad0755d2fbeb08d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  numberOfLevels: 5
+  numberOfLevels: 3
+  liteGraph: 0
+  ComparationBetweenStates: 1
 --- !u!4 &248321232
 Transform:
   m_ObjectHideFlags: 0

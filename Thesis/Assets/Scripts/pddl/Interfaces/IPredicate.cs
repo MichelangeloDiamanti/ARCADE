@@ -2,11 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IPredicate
+namespace ru.cadia.pddlFramework
 {
-	string Name{get;}
-	EntityType Source{get;}
-	IPredicate Clone();
-    bool Equals(object obj); 
-	string ToString();
+    /// <summary>
+    /// </summary>
+    public interface IPredicate
+    {
+        string Name { get; }
+        EntityType Source { get; }
+        IPredicate Clone();
+        bool Equals(object obj);
+        string ToString();
+    }
 }

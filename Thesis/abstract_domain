@@ -15,7 +15,7 @@
   ],
   "Predicates": [
     {
-      "$type": "BinaryPredicate, Assembly-CSharp",
+      "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
       "Source": {
         "Type": "WAYPOINT"
       },
@@ -25,7 +25,7 @@
       }
     },
     {
-      "$type": "BinaryPredicate, Assembly-CSharp",
+      "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
       "Source": {
         "Type": "OBJECTIVE"
       },
@@ -35,7 +35,7 @@
       }
     },
     {
-      "$type": "BinaryPredicate, Assembly-CSharp",
+      "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
       "Source": {
         "Type": "SAMPLE"
       },
@@ -45,7 +45,7 @@
       }
     },
     {
-      "$type": "BinaryPredicate, Assembly-CSharp",
+      "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
       "Source": {
         "Type": "ROVER"
       },
@@ -55,7 +55,7 @@
       }
     },
     {
-      "$type": "BinaryPredicate, Assembly-CSharp",
+      "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
       "Source": {
         "Type": "ROVER"
       },
@@ -65,7 +65,7 @@
       }
     },
     {
-      "$type": "BinaryPredicate, Assembly-CSharp",
+      "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
       "Source": {
         "Type": "ROVER"
       },
@@ -75,28 +75,28 @@
       }
     },
     {
-      "$type": "UnaryPredicate, Assembly-CSharp",
+      "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
       "Source": {
         "Type": "WAYPOINT"
       },
       "Name": "IS_DROPPING_DOCK"
     },
     {
-      "$type": "UnaryPredicate, Assembly-CSharp",
+      "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
       "Source": {
         "Type": "OBJECTIVE"
       },
       "Name": "TAKEN_IMAGE"
     },
     {
-      "$type": "UnaryPredicate, Assembly-CSharp",
+      "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
       "Source": {
         "Type": "SAMPLE"
       },
       "Name": "STORED_SAMPLE"
     },
     {
-      "$type": "UnaryPredicate, Assembly-CSharp",
+      "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
       "Source": {
         "Type": "ROVER"
       },
@@ -107,7 +107,7 @@
     {
       "PreConditions": [
         {
-          "$type": "BinaryRelation, Assembly-CSharp",
+          "$type": "ru.cadia.pddlFramework.BinaryRelation, Assembly-CSharp",
           "Source": {
             "Type": {
               "Type": "ROVER"
@@ -115,7 +115,7 @@
             "Name": "ROVER"
           },
           "Predicate": {
-            "$type": "BinaryPredicate, Assembly-CSharp",
+            "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
             "Source": {
               "Type": "ROVER"
             },
@@ -133,7 +133,7 @@
           "Value": 1
         },
         {
-          "$type": "BinaryRelation, Assembly-CSharp",
+          "$type": "ru.cadia.pddlFramework.BinaryRelation, Assembly-CSharp",
           "Source": {
             "Type": {
               "Type": "WAYPOINT"
@@ -141,7 +141,7 @@
             "Name": "WAYPOINT1"
           },
           "Predicate": {
-            "$type": "BinaryPredicate, Assembly-CSharp",
+            "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
             "Source": {
               "Type": "WAYPOINT"
             },
@@ -182,7 +182,7 @@
       ],
       "PostConditions": [
         {
-          "$type": "BinaryRelation, Assembly-CSharp",
+          "$type": "ru.cadia.pddlFramework.BinaryRelation, Assembly-CSharp",
           "Source": {
             "Type": {
               "Type": "ROVER"
@@ -190,7 +190,7 @@
             "Name": "ROVER"
           },
           "Predicate": {
-            "$type": "BinaryPredicate, Assembly-CSharp",
+            "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
             "Source": {
               "Type": "ROVER"
             },
@@ -208,7 +208,7 @@
           "Value": 2
         },
         {
-          "$type": "BinaryRelation, Assembly-CSharp",
+          "$type": "ru.cadia.pddlFramework.BinaryRelation, Assembly-CSharp",
           "Source": {
             "Type": {
               "Type": "ROVER"
@@ -216,7 +216,7 @@
             "Name": "ROVER"
           },
           "Predicate": {
-            "$type": "BinaryPredicate, Assembly-CSharp",
+            "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
             "Source": {
               "Type": "ROVER"
             },
@@ -234,7 +234,7 @@
           "Value": 1
         },
         {
-          "$type": "BinaryRelation, Assembly-CSharp",
+          "$type": "ru.cadia.pddlFramework.BinaryRelation, Assembly-CSharp",
           "Source": {
             "Type": {
               "Type": "ROVER"
@@ -242,7 +242,7 @@
             "Name": "ROVER"
           },
           "Predicate": {
-            "$type": "BinaryPredicate, Assembly-CSharp",
+            "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
             "Source": {
               "Type": "ROVER"
             },
@@ -264,7 +264,7 @@
     {
       "PreConditions": [
         {
-          "$type": "BinaryRelation, Assembly-CSharp",
+          "$type": "ru.cadia.pddlFramework.BinaryRelation, Assembly-CSharp",
           "Source": {
             "Type": {
               "Type": "SAMPLE"
@@ -272,7 +272,7 @@
             "Name": "SAMPLE"
           },
           "Predicate": {
-            "$type": "BinaryPredicate, Assembly-CSharp",
+            "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
             "Source": {
               "Type": "SAMPLE"
             },
@@ -290,7 +290,7 @@
           "Value": 1
         },
         {
-          "$type": "BinaryRelation, Assembly-CSharp",
+          "$type": "ru.cadia.pddlFramework.BinaryRelation, Assembly-CSharp",
           "Source": {
             "Type": {
               "Type": "ROVER"
@@ -298,7 +298,7 @@
             "Name": "ROVER"
           },
           "Predicate": {
-            "$type": "BinaryPredicate, Assembly-CSharp",
+            "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
             "Source": {
               "Type": "ROVER"
             },
@@ -316,7 +316,7 @@
           "Value": 1
         },
         {
-          "$type": "UnaryRelation, Assembly-CSharp",
+          "$type": "ru.cadia.pddlFramework.UnaryRelation, Assembly-CSharp",
           "Source": {
             "Type": {
               "Type": "ROVER"
@@ -324,7 +324,7 @@
             "Name": "ROVER"
           },
           "Predicate": {
-            "$type": "UnaryPredicate, Assembly-CSharp",
+            "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
             "Source": {
               "Type": "ROVER"
             },
@@ -356,7 +356,7 @@
       ],
       "PostConditions": [
         {
-          "$type": "BinaryRelation, Assembly-CSharp",
+          "$type": "ru.cadia.pddlFramework.BinaryRelation, Assembly-CSharp",
           "Source": {
             "Type": {
               "Type": "SAMPLE"
@@ -364,7 +364,7 @@
             "Name": "SAMPLE"
           },
           "Predicate": {
-            "$type": "BinaryPredicate, Assembly-CSharp",
+            "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
             "Source": {
               "Type": "SAMPLE"
             },
@@ -382,7 +382,7 @@
           "Value": 2
         },
         {
-          "$type": "UnaryRelation, Assembly-CSharp",
+          "$type": "ru.cadia.pddlFramework.UnaryRelation, Assembly-CSharp",
           "Source": {
             "Type": {
               "Type": "ROVER"
@@ -390,7 +390,7 @@
             "Name": "ROVER"
           },
           "Predicate": {
-            "$type": "UnaryPredicate, Assembly-CSharp",
+            "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
             "Source": {
               "Type": "ROVER"
             },
@@ -399,7 +399,7 @@
           "Value": 2
         },
         {
-          "$type": "BinaryRelation, Assembly-CSharp",
+          "$type": "ru.cadia.pddlFramework.BinaryRelation, Assembly-CSharp",
           "Source": {
             "Type": {
               "Type": "ROVER"
@@ -407,7 +407,7 @@
             "Name": "ROVER"
           },
           "Predicate": {
-            "$type": "BinaryPredicate, Assembly-CSharp",
+            "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
             "Source": {
               "Type": "ROVER"
             },
@@ -429,7 +429,7 @@
     {
       "PreConditions": [
         {
-          "$type": "UnaryRelation, Assembly-CSharp",
+          "$type": "ru.cadia.pddlFramework.UnaryRelation, Assembly-CSharp",
           "Source": {
             "Type": {
               "Type": "WAYPOINT"
@@ -437,7 +437,7 @@
             "Name": "WAYPOINT"
           },
           "Predicate": {
-            "$type": "UnaryPredicate, Assembly-CSharp",
+            "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
             "Source": {
               "Type": "WAYPOINT"
             },
@@ -446,7 +446,7 @@
           "Value": 1
         },
         {
-          "$type": "BinaryRelation, Assembly-CSharp",
+          "$type": "ru.cadia.pddlFramework.BinaryRelation, Assembly-CSharp",
           "Source": {
             "Type": {
               "Type": "ROVER"
@@ -454,7 +454,7 @@
             "Name": "ROVER"
           },
           "Predicate": {
-            "$type": "BinaryPredicate, Assembly-CSharp",
+            "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
             "Source": {
               "Type": "ROVER"
             },
@@ -472,7 +472,7 @@
           "Value": 1
         },
         {
-          "$type": "BinaryRelation, Assembly-CSharp",
+          "$type": "ru.cadia.pddlFramework.BinaryRelation, Assembly-CSharp",
           "Source": {
             "Type": {
               "Type": "ROVER"
@@ -480,7 +480,7 @@
             "Name": "ROVER"
           },
           "Predicate": {
-            "$type": "BinaryPredicate, Assembly-CSharp",
+            "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
             "Source": {
               "Type": "ROVER"
             },
@@ -521,7 +521,7 @@
       ],
       "PostConditions": [
         {
-          "$type": "BinaryRelation, Assembly-CSharp",
+          "$type": "ru.cadia.pddlFramework.BinaryRelation, Assembly-CSharp",
           "Source": {
             "Type": {
               "Type": "SAMPLE"
@@ -529,7 +529,7 @@
             "Name": "SAMPLE"
           },
           "Predicate": {
-            "$type": "BinaryPredicate, Assembly-CSharp",
+            "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
             "Source": {
               "Type": "SAMPLE"
             },
@@ -547,7 +547,7 @@
           "Value": 1
         },
         {
-          "$type": "UnaryRelation, Assembly-CSharp",
+          "$type": "ru.cadia.pddlFramework.UnaryRelation, Assembly-CSharp",
           "Source": {
             "Type": {
               "Type": "ROVER"
@@ -555,7 +555,7 @@
             "Name": "ROVER"
           },
           "Predicate": {
-            "$type": "UnaryPredicate, Assembly-CSharp",
+            "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
             "Source": {
               "Type": "ROVER"
             },
@@ -564,7 +564,7 @@
           "Value": 1
         },
         {
-          "$type": "BinaryRelation, Assembly-CSharp",
+          "$type": "ru.cadia.pddlFramework.BinaryRelation, Assembly-CSharp",
           "Source": {
             "Type": {
               "Type": "ROVER"
@@ -572,7 +572,7 @@
             "Name": "ROVER"
           },
           "Predicate": {
-            "$type": "BinaryPredicate, Assembly-CSharp",
+            "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
             "Source": {
               "Type": "ROVER"
             },
@@ -594,7 +594,7 @@
     {
       "PreConditions": [
         {
-          "$type": "BinaryRelation, Assembly-CSharp",
+          "$type": "ru.cadia.pddlFramework.BinaryRelation, Assembly-CSharp",
           "Source": {
             "Type": {
               "Type": "ROVER"
@@ -602,7 +602,7 @@
             "Name": "ROVER"
           },
           "Predicate": {
-            "$type": "BinaryPredicate, Assembly-CSharp",
+            "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
             "Source": {
               "Type": "ROVER"
             },
@@ -620,7 +620,7 @@
           "Value": 1
         },
         {
-          "$type": "BinaryRelation, Assembly-CSharp",
+          "$type": "ru.cadia.pddlFramework.BinaryRelation, Assembly-CSharp",
           "Source": {
             "Type": {
               "Type": "OBJECTIVE"
@@ -628,7 +628,7 @@
             "Name": "OBJECTIVE"
           },
           "Predicate": {
-            "$type": "BinaryPredicate, Assembly-CSharp",
+            "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
             "Source": {
               "Type": "OBJECTIVE"
             },
@@ -669,7 +669,7 @@
       ],
       "PostConditions": [
         {
-          "$type": "UnaryRelation, Assembly-CSharp",
+          "$type": "ru.cadia.pddlFramework.UnaryRelation, Assembly-CSharp",
           "Source": {
             "Type": {
               "Type": "OBJECTIVE"
@@ -677,7 +677,7 @@
             "Name": "OBJECTIVE"
           },
           "Predicate": {
-            "$type": "UnaryPredicate, Assembly-CSharp",
+            "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
             "Source": {
               "Type": "OBJECTIVE"
             },

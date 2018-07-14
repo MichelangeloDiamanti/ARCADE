@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using ru.cadia.pddlFramework;
+
 [System.Serializable]
 public class SimulationBoundary
 {
