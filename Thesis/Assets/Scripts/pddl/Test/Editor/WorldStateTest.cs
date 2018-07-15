@@ -154,8 +154,8 @@ public class WorldStateTest {
 
 
         //(can-move ?from-waypoint ?to-waypoint)
-        BinaryPredicate predicateCanMove = new BinaryPredicate(entityTypewayPoint, "CAN_MOVE", entityTypewayPoint);
-        domain.addPredicate(predicateCanMove);
+        BinaryPredicate predicateisConnectedTo = new BinaryPredicate(entityTypewayPoint, "IS_CONNECTED_TO", entityTypewayPoint);
+        domain.addPredicate(predicateisConnectedTo);
         //(been-at ?rover ?waypoint)
         BinaryPredicate predicateBeenAt = new BinaryPredicate(entityTypeRover, "BEEN_AT", entityTypewayPoint);
         domain.addPredicate(predicateBeenAt);
@@ -178,8 +178,8 @@ public class WorldStateTest {
         HashSet<IRelation> actionMovePreconditions = new HashSet<IRelation>();
         BinaryRelation roverAtfromWP = new BinaryRelation(entityCuriosity, predicateAt, entityFromWayPoint, RelationValue.TRUE);
         actionMovePreconditions.Add(roverAtfromWP);
-        BinaryRelation canMoveFromWP1ToWP2 = new BinaryRelation(entityFromWayPoint, predicateCanMove, entityToWayPoint, RelationValue.TRUE);
-        actionMovePreconditions.Add(canMoveFromWP1ToWP2);
+        BinaryRelation isConnectedFromWP1ToWP2 = new BinaryRelation(entityFromWayPoint, predicateisConnectedTo, entityToWayPoint, RelationValue.TRUE);
+        actionMovePreconditions.Add(isConnectedFromWP1ToWP2);
 
         // Postconditions
         HashSet<IRelation> actionMovePostconditions = new HashSet<IRelation>();
@@ -201,14 +201,14 @@ public class WorldStateTest {
         worldState.addEntity(wayPoint1);
         worldState.addEntity(wayPoint2);
 
-        BinaryRelation canMove1 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint1, wayPoint2, RelationValue.TRUE);
-        worldState.addRelation(canMove1);
+        BinaryRelation isConnected1 = domain.generateRelationFromPredicateName("IS_CONNECTED_TO", wayPoint1, wayPoint2, RelationValue.TRUE);
+        worldState.addRelation(isConnected1);
 
         BinaryRelation isAt1 = domain.generateRelationFromPredicateName("AT", entityCuriosity, wayPoint1, RelationValue.TRUE);
         worldState.addRelation(isAt1);
 
 		HashSet<IRelation> expectedWorldRelationsAfterAction = new HashSet<IRelation>();
-		expectedWorldRelationsAfterAction.Add(canMove1);
+		expectedWorldRelationsAfterAction.Add(isConnected1);
 		expectedWorldRelationsAfterAction.Add(notRoverAtFromWP);
 		expectedWorldRelationsAfterAction.Add(roverAtToWP);
 		expectedWorldRelationsAfterAction.Add(roverBeenAtToWP);
@@ -232,7 +232,7 @@ public class WorldStateTest {
         worldState.addEntity(wayPoint1);
         worldState.addEntity(wayPoint2);
 
-        BinaryRelation cannotMove1 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint1, wayPoint2, RelationValue.FALSE);
+        BinaryRelation cannotMove1 = domain.generateRelationFromPredicateName("IS_CONNECTED_TO", wayPoint1, wayPoint2, RelationValue.FALSE);
         worldState.addRelation(cannotMove1);
 
         BinaryRelation isAt1 = domain.generateRelationFromPredicateName("AT", entityRover, wayPoint1, RelationValue.TRUE);
@@ -258,8 +258,8 @@ public class WorldStateTest {
         worldState.addEntity(wayPoint1);
         worldState.addEntity(wayPoint2);
 
-        BinaryRelation canMove1 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint1, wayPoint2, RelationValue.TRUE);
-        worldState.addRelation(canMove1);
+        BinaryRelation isConnected1 = domain.generateRelationFromPredicateName("IS_CONNECTED_TO", wayPoint1, wayPoint2, RelationValue.TRUE);
+        worldState.addRelation(isConnected1);
 
         BinaryRelation isAt1 = domain.generateRelationFromPredicateName("AT", entityRover, wayPoint1, RelationValue.TRUE);
         worldState.addRelation(isAt1);
@@ -270,8 +270,8 @@ public class WorldStateTest {
 	}
 
 	[Test]
-	public void getPossibleActionsReturnsMoveActionIfCanMove() {
-        Domain domain = Utils.roverWorldDomainAbstract();
+	public void getPossibleActionsReturnsMoveActionIfisConnected() {
+        Domain domain = Utils.roverWorldDomainFirstLevel();
 
 		WorldState worldState = new WorldState(domain);
 
@@ -284,8 +284,8 @@ public class WorldStateTest {
         worldState.addEntity(wayPointAlpha);
         worldState.addEntity(wayPointBravo);
 
-        BinaryRelation canMove1 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPointAlpha, wayPointBravo, RelationValue.TRUE);
-        worldState.addRelation(canMove1);
+        BinaryRelation isConnected1 = domain.generateRelationFromPredicateName("IS_CONNECTED_TO", wayPointAlpha, wayPointBravo, RelationValue.TRUE);
+        worldState.addRelation(isConnected1);
 
         BinaryRelation isAtAlpha = domain.generateRelationFromPredicateName("AT", entityRover, wayPointAlpha, RelationValue.TRUE);
         worldState.addRelation(isAtAlpha);
@@ -299,7 +299,7 @@ public class WorldStateTest {
 
 	[Test]
 	public void getPossibleActionsReturnsTakeSampleActionIfCanTakeSample() {
-        Domain domain = Utils.roverWorldDomainAbstract();
+        Domain domain = Utils.roverWorldDomainFirstLevel();
 
 		WorldState worldState = new WorldState(domain);
 
@@ -328,7 +328,7 @@ public class WorldStateTest {
 
 	[Test]
 	public void getPossibleActionsReturnsDropSampleActionIfCanDropSample() {
-        Domain domain = Utils.roverWorldDomainAbstract();
+        Domain domain = Utils.roverWorldDomainFirstLevel();
 
 		WorldState worldState = new WorldState(domain);
 
@@ -357,7 +357,7 @@ public class WorldStateTest {
 
 	[Test]
 	public void getPossibleActionsReturnsTakeImageActionIfCanTakeImage() {
-        Domain domain = Utils.roverWorldDomainAbstract();
+        Domain domain = Utils.roverWorldDomainFirstLevel();
 
 		WorldState worldState = new WorldState(domain);
 
@@ -383,8 +383,8 @@ public class WorldStateTest {
 	}
 
 	[Test]
-	public void getPossibleActionsReturnsMoveActionIfCanMoveWithFullDetailedDomain() {
-        Domain domain = Utils.roverWorldDomainFullDetail();
+	public void getPossibleActionsReturnsMoveActionIfisConnectedWithFullDetailedDomain() {
+        Domain domain = Utils.roverWorldDomainThirdLevel();
 
 		WorldState worldState = new WorldState(domain);
 
@@ -413,22 +413,25 @@ public class WorldStateTest {
         UnaryRelation wheelsInflated = domain.generateRelationFromPredicateName("WHEELS_INFLATED", entityWheels, RelationValue.TRUE);
         worldState.addRelation(wheelsInflated);
 
-        BinaryRelation canMove1 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPointAlpha, wayPointBravo, RelationValue.TRUE);
-        worldState.addRelation(canMove1);
+        BinaryRelation isConnected1 = domain.generateRelationFromPredicateName("IS_CONNECTED_TO", wayPointAlpha, wayPointBravo, RelationValue.TRUE);
+        worldState.addRelation(isConnected1);
 
         BinaryRelation isAtAlpha = domain.generateRelationFromPredicateName("AT", entityRover, wayPointAlpha, RelationValue.TRUE);
         worldState.addRelation(isAtAlpha);
 
         Action actionMove = worldState.Domain.getAction("MOVE");
+
         HashSet<Action> performableActions = new HashSet<Action>();
         performableActions.Add(actionMove);
+        performableActions.Add(domain.getAction("DISCHARGE_BATTERY"));
+        performableActions.Add(domain.getAction("DEFLATE_WHEELS"));
 
         Assert.AreEqual(performableActions, worldState.getPossibleActions());
 	}
 
 	[Test]
 	public void equalsReturnsTrueIfDomainEntitiesRelationsAreEqual() {
-        Domain domain = Utils.roverWorldDomainFullDetail();
+        Domain domain = Utils.roverWorldDomainThirdLevel();
 
 		WorldState worldState1 = new WorldState(domain);
 
@@ -446,7 +449,7 @@ public class WorldStateTest {
         worldState1.addRelation(roverIsAtWaypoint1);
         worldState1.addRelation(objectiveIsVisibleFromWaypoint1);
 
-        Domain domain2 = Utils.roverWorldDomainFullDetail();
+        Domain domain2 = Utils.roverWorldDomainThirdLevel();
 		WorldState worldState2 = new WorldState(domain2);
 
         Entity entityRover2 = new Entity(new EntityType("ROVER"), "ROVER");
@@ -468,7 +471,7 @@ public class WorldStateTest {
 
 	[Test]
 	public void equalsReturnsFalseIfDomainIsNotEqual() {
-        Domain domain = Utils.roverWorldDomainFullDetail();
+        Domain domain = Utils.roverWorldDomainThirdLevel();
 
 		WorldState worldState1 = new WorldState(domain);
 
@@ -486,7 +489,7 @@ public class WorldStateTest {
         worldState1.addRelation(roverIsAtWaypoint1);
         worldState1.addRelation(objectiveIsVisibleFromWaypoint1);
 
-        Domain domain2 = Utils.roverWorldDomainFullDetail();
+        Domain domain2 = Utils.roverWorldDomainThirdLevel();
         domain2.addEntityType(new EntityType("DIFFERENT_ENTITY_TYPE"));
 
 		WorldState worldState2 = new WorldState(domain2);
@@ -510,7 +513,7 @@ public class WorldStateTest {
 
 	[Test]
 	public void equalsReturnsFalseIfEntitiesAreNotEqual() {
-        Domain domain = Utils.roverWorldDomainFullDetail();
+        Domain domain = Utils.roverWorldDomainThirdLevel();
 
 		WorldState worldState1 = new WorldState(domain);
 
@@ -528,7 +531,7 @@ public class WorldStateTest {
         worldState1.addRelation(roverIsAtWaypoint1);
         worldState1.addRelation(objectiveIsVisibleFromWaypoint1);
 
-        Domain domain2 = Utils.roverWorldDomainFullDetail();
+        Domain domain2 = Utils.roverWorldDomainThirdLevel();
 
 		WorldState worldState2 = new WorldState(domain2);
 
@@ -554,7 +557,7 @@ public class WorldStateTest {
 
 	[Test]
 	public void equalsReturnsFalseIfRelationsAreNotEqual() {
-        Domain domain = Utils.roverWorldDomainFullDetail();
+        Domain domain = Utils.roverWorldDomainThirdLevel();
 
 		WorldState worldState1 = new WorldState(domain);
 
@@ -572,7 +575,7 @@ public class WorldStateTest {
         worldState1.addRelation(roverIsAtWaypoint1);
         worldState1.addRelation(objectiveIsVisibleFromWaypoint1);
 
-        Domain domain2 = Utils.roverWorldDomainFullDetail();
+        Domain domain2 = Utils.roverWorldDomainThirdLevel();
 
 		WorldState worldState2 = new WorldState(domain2);
 
@@ -596,7 +599,7 @@ public class WorldStateTest {
     [Test]
 
     public void CloneReturnsEqualWorldState(){
-        Domain domain = Utils.roverWorldDomainFullDetail();
+        Domain domain = Utils.roverWorldDomainThirdLevel();
 
 		WorldState worldState = new WorldState(domain);
 
@@ -621,7 +624,7 @@ public class WorldStateTest {
 
 	[Test]
 	public void GenericSetContainsRelationIfEquals() {
-        Domain domain = Utils.roverWorldDomainAbstract();
+        Domain domain = Utils.roverWorldDomainFirstLevel();
 
 		WorldState worldState = new WorldState(domain);
 
@@ -634,8 +637,8 @@ public class WorldStateTest {
         worldState.addEntity(wayPointAlpha);
         worldState.addEntity(wayPointBravo);
 
-        BinaryRelation canMove1 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPointAlpha, wayPointBravo, RelationValue.TRUE);
-        worldState.addRelation(canMove1);
+        BinaryRelation isConnected1 = domain.generateRelationFromPredicateName("IS_CONNECTED_TO", wayPointAlpha, wayPointBravo, RelationValue.TRUE);
+        worldState.addRelation(isConnected1);
 
         BinaryRelation isAtAlpha = domain.generateRelationFromPredicateName("AT", entityRover, wayPointAlpha, RelationValue.TRUE);
         worldState.addRelation(isAtAlpha);
@@ -648,8 +651,8 @@ public class WorldStateTest {
 
 	[Test]
 	public void RelationsHashCodesAreTheSame() {
-        Domain domain = Utils.roverWorldDomainFullDetail();
-        WorldState worldState = Utils.roverWorldStateFullDetail(domain);
+        Domain domain = Utils.roverWorldDomainThirdLevel();
+        WorldState worldState = Utils.roverWorldStateThirdLevel(domain);
 
         List<IRelation> worldStateRelations = new List<IRelation>();
         List<IRelation> clonedWorldStateRelations = new List<IRelation>();
@@ -676,8 +679,8 @@ public class WorldStateTest {
 
 
         //(can-move ?from-waypoint ?to-waypoint)
-        BinaryPredicate predicateCanMove = new BinaryPredicate(entityTypewayPoint, "CAN_MOVE", entityTypewayPoint);
-        domain.addPredicate(predicateCanMove);
+        BinaryPredicate predicateIsConncetedTo = new BinaryPredicate(entityTypewayPoint, "IS_CONNECTED_TO", entityTypewayPoint);
+        domain.addPredicate(predicateIsConncetedTo);
         //(been-at ?rover ?waypoint)
         BinaryPredicate predicateBeenAt = new BinaryPredicate(entityTypeRover, "BEEN_AT", entityTypewayPoint);
         domain.addPredicate(predicateBeenAt);
@@ -700,8 +703,8 @@ public class WorldStateTest {
         HashSet<IRelation> actionMovePreconditions = new HashSet<IRelation>();
         BinaryRelation roverAtfromWP = new BinaryRelation(entityCuriosity, predicateAt, entityFromWayPoint, RelationValue.TRUE);
         actionMovePreconditions.Add(roverAtfromWP);
-        BinaryRelation canMoveFromWP1ToWP2 = new BinaryRelation(entityFromWayPoint, predicateCanMove, entityToWayPoint, RelationValue.TRUE);
-        actionMovePreconditions.Add(canMoveFromWP1ToWP2);
+        BinaryRelation isConnectedFromWP1ToWP2 = new BinaryRelation(entityFromWayPoint, predicateIsConncetedTo, entityToWayPoint, RelationValue.TRUE);
+        actionMovePreconditions.Add(isConnectedFromWP1ToWP2);
 
         // Postconditions
         HashSet<IRelation> actionMovePostconditions = new HashSet<IRelation>();

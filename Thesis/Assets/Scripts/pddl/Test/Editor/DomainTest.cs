@@ -158,8 +158,8 @@ public class DomainTest {
         domain.addEntityType(wayPoint);
 
         //(can-move ?from-waypoint ?to-waypoint)
-        BinaryPredicate canMove = new BinaryPredicate(wayPoint, "CAN_MOVE", wayPoint);
-        // domain.addPredicate(canMove);
+        BinaryPredicate isConnectedTo = new BinaryPredicate(wayPoint, "IS_CONNECTED_TO", wayPoint);
+        // domain.addPredicate(isConnectedTo);
         //(been-at ?rover ?waypoint)
         BinaryPredicate beenAt = new BinaryPredicate(rover, "BEEN_AT", wayPoint);
         // domain.addPredicate(beenAt);
@@ -181,8 +181,8 @@ public class DomainTest {
         HashSet<IRelation> moveActionPreconditions = new HashSet<IRelation>();
         BinaryRelation roverAtfromWP = new BinaryRelation(curiosity, at, fromWayPoint, RelationValue.TRUE);
         moveActionPreconditions.Add(roverAtfromWP);
-        BinaryRelation canMoveFromWP1ToWP2 = new BinaryRelation(fromWayPoint, canMove, toWayPoint, RelationValue.TRUE);
-        moveActionPreconditions.Add(canMoveFromWP1ToWP2);
+        BinaryRelation isConnectedFromWP1ToWP2 = new BinaryRelation(fromWayPoint, isConnectedTo, toWayPoint, RelationValue.TRUE);
+        moveActionPreconditions.Add(isConnectedFromWP1ToWP2);
 
         // Postconditions
         HashSet<IRelation> moveActionPostconditions = new HashSet<IRelation>();
@@ -200,16 +200,16 @@ public class DomainTest {
 
 	[Test]
 	public void equalsReturnsTrueIfEntityTypesPredicatesActionsAreEqual() {
-		Domain domain = Utils.roverWorldDomainFullDetail();
-		Domain domain2 = Utils.roverWorldDomainFullDetail();
+		Domain domain = Utils.roverWorldDomainThirdLevel();
+		Domain domain2 = Utils.roverWorldDomainThirdLevel();
 		
 		Assert.AreEqual(domain, domain2);
 	}
 
 	[Test]
 	public void equalsReturnsFalseIfEntityTypesAreNotEqual() {
-		Domain domain = Utils.roverWorldDomainFullDetail();
-		Domain domain2 = Utils.roverWorldDomainFullDetail();
+		Domain domain = Utils.roverWorldDomainThirdLevel();
+		Domain domain2 = Utils.roverWorldDomainThirdLevel();
 		
 		domain2.addEntityType(new EntityType("DIFFERENT_ENTITY_TYPE"));
 
@@ -218,8 +218,8 @@ public class DomainTest {
 
 	[Test]
 	public void equalsReturnsFalseIfPredicatesAreNotEqual() {
-		Domain domain = Utils.roverWorldDomainFullDetail();
-		Domain domain2 = Utils.roverWorldDomainFullDetail();
+		Domain domain = Utils.roverWorldDomainThirdLevel();
+		Domain domain2 = Utils.roverWorldDomainThirdLevel();
 		
 		UnaryPredicate predicateDifference = new UnaryPredicate(new EntityType("ROVER"), "DIFFERENT_PREDICATE");
 		domain2.addPredicate(predicateDifference);
@@ -229,8 +229,8 @@ public class DomainTest {
 
 	[Test]
 	public void equalsReturnsFalseIfActionsAreNotEqual() {
-		Domain domain = Utils.roverWorldDomainFullDetail();
-		Domain domain2 = Utils.roverWorldDomainFullDetail();
+		Domain domain = Utils.roverWorldDomainThirdLevel();
+		Domain domain2 = Utils.roverWorldDomainThirdLevel();
 
 		HashSet<Entity> actionDifferenceParameters = new HashSet<Entity>();
 		Entity entity1 = new Entity(new EntityType("ROVER"), "ROVER");
@@ -260,8 +260,8 @@ public class DomainTest {
         domain.addEntityType(wayPoint);
 
         //(can-move ?from-waypoint ?to-waypoint)
-        BinaryPredicate canMove = new BinaryPredicate(wayPoint, "CAN_MOVE", wayPoint);
-        domain.addPredicate(canMove);
+        BinaryPredicate isConnectedTo = new BinaryPredicate(wayPoint, "IS_CONNECTED_TO", wayPoint);
+        domain.addPredicate(isConnectedTo);
         //(been-at ?rover ?waypoint)
         BinaryPredicate beenAt = new BinaryPredicate(rover, "BEEN_AT", wayPoint);
         domain.addPredicate(beenAt);
@@ -283,8 +283,8 @@ public class DomainTest {
         HashSet<IRelation> moveActionPreconditions = new HashSet<IRelation>();
         BinaryRelation roverAtfromWP = new BinaryRelation(curiosity, at, fromWayPoint, RelationValue.TRUE);
         moveActionPreconditions.Add(roverAtfromWP);
-        BinaryRelation canMoveFromWP1ToWP2 = new BinaryRelation(fromWayPoint, canMove, toWayPoint, RelationValue.TRUE);
-        moveActionPreconditions.Add(canMoveFromWP1ToWP2);
+        BinaryRelation isConnectedFromWP1ToWP2 = new BinaryRelation(fromWayPoint, isConnectedTo, toWayPoint, RelationValue.TRUE);
+        moveActionPreconditions.Add(isConnectedFromWP1ToWP2);
 
         // Postconditions
         HashSet<IRelation> moveActionPostconditions = new HashSet<IRelation>();

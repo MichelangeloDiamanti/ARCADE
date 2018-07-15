@@ -19,7 +19,7 @@
       "Source": {
         "Type": "WAYPOINT"
       },
-      "Name": "CAN_MOVE",
+      "Name": "IS_CONNECTED_TO",
       "Destination": {
         "Type": "WAYPOINT"
       }
@@ -145,7 +145,7 @@
             "Source": {
               "Type": "WAYPOINT"
             },
-            "Name": "CAN_MOVE",
+            "Name": "IS_CONNECTED_TO",
             "Destination": {
               "Type": "WAYPOINT"
             }

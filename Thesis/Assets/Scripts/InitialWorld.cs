@@ -16,8 +16,8 @@ public class InitialWorld : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        Domain domainFullDetail = Utils.roverWorldDomainFullDetail();
-        WorldState worldStateFullDetail = Utils.roverWorldStateFullDetail(domainFullDetail);
+        Domain domainFullDetail = Utils.roverWorldDomainThirdLevel();
+        WorldState worldStateFullDetail = Utils.roverWorldStateThirdLevel(domainFullDetail);
 
         currentState = worldStateFullDetail.Clone();
         AutomaticGraphGenerator();

@@ -120,7 +120,7 @@ public class Simulation : MonoBehaviour
 
         // set the initial state at the most detailed level
         TreeNode<WorldState> initialStateFullDetail = new TreeNode<WorldState>(
-            Utils.roverWorldStateFullDetail(getSimulationBoundaryAtLevel(maxLoD).domain)
+            Utils.roverWorldStateThirdLevel(getSimulationBoundaryAtLevel(maxLoD).domain)
         );
 
         // parse the most detailed state to every level of detaile and initialize
@@ -276,16 +276,16 @@ public class Simulation : MonoBehaviour
         switch (level)
         {
             case 1:
-                Domain domainAbstract = Utils.roverWorldDomainAbstract();
-                worldStateAtLevel = Utils.roverWorldStateAbstract(domainAbstract);
+                Domain domainAbstract = Utils.roverWorldDomainFirstLevel();
+                worldStateAtLevel = Utils.roverWorldStateFirstLevel(domainAbstract);
                 break;
             case 2:
-                Domain domainFullDetail = Utils.roverWorldDomainFullDetail();
-                worldStateAtLevel = Utils.roverWorldStateFullDetail(domainFullDetail);
+                Domain domainFullDetail = Utils.roverWorldDomainThirdLevel();
+                worldStateAtLevel = Utils.roverWorldStateThirdLevel(domainFullDetail);
                 break;
             default:
-                Domain defaultDomain = Utils.roverWorldDomainAbstract();
-                worldStateAtLevel = Utils.roverWorldStateAbstract(defaultDomain);
+                Domain defaultDomain = Utils.roverWorldDomainFirstLevel();
+                worldStateAtLevel = Utils.roverWorldStateFirstLevel(defaultDomain);
                 break;
         }
         return new TreeNode<WorldState>(worldStateAtLevel);

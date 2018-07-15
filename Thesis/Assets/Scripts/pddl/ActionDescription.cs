@@ -24,7 +24,7 @@ namespace ru.cadia.pddlFramework
             EntityType location = new EntityType("LOCATION");
 
             //(can-move ?from-l1 ?to-l2)
-            BinaryPredicate canMove = new BinaryPredicate(location, "CAN_MOVE", location);
+            BinaryPredicate isConnectedTo = new BinaryPredicate(location, "IS_CONNECTED_TO", location);
             //(at ?characther ?location)
             BinaryPredicate at = new BinaryPredicate(character, "AT", location);
             //(been-at ?characther ?location)
@@ -46,8 +46,8 @@ namespace ru.cadia.pddlFramework
             HashSet<IRelation> moveActionPreconditions = new HashSet<IRelation>();
             BinaryRelation characterAtL1 = new BinaryRelation(character1, at, location1, RelationValue.TRUE);
             moveActionPreconditions.Add(characterAtL1);
-            BinaryRelation canMoveFromL1ToL2 = new BinaryRelation(location1, canMove, location2, RelationValue.TRUE);
-            moveActionPreconditions.Add(canMoveFromL1ToL2);
+            BinaryRelation isConnectedFromL1ToL2 = new BinaryRelation(location1, isConnectedTo, location2, RelationValue.TRUE);
+            moveActionPreconditions.Add(isConnectedFromL1ToL2);
 
             // Postconditions
             HashSet<IRelation> moveActionPostconditions = new HashSet<IRelation>();

@@ -135,7 +135,7 @@ public class ActionTest {
         Entity fromWayPoint = new Entity(wayPoint, "WAYPOINT1");
         Entity toWayPoint = new Entity(wayPoint, "WAYPOINT2");        
 
-        BinaryPredicate canMove = new BinaryPredicate(wayPoint, "CAN_MOVE", wayPoint);
+        BinaryPredicate isConnectedTo = new BinaryPredicate(wayPoint, "IS_CONNECTED_TO", wayPoint);
         BinaryPredicate at = new BinaryPredicate(rover, "AT", wayPoint);
         BinaryPredicate beenAt = new BinaryPredicate(rover, "BEEN_AT", wayPoint);
 
@@ -148,8 +148,8 @@ public class ActionTest {
         HashSet<IRelation> moveActionPreconditions = new HashSet<IRelation>();
         BinaryRelation roverAtfromWP = new BinaryRelation(curiosity, at, fromWayPoint, RelationValue.TRUE);
         moveActionPreconditions.Add(roverAtfromWP);
-        BinaryRelation canMoveFromWP1ToWP2 = new BinaryRelation(fromWayPoint, canMove, toWayPoint, RelationValue.TRUE);
-        moveActionPreconditions.Add(canMoveFromWP1ToWP2);
+        BinaryRelation isConnectedFromWP1ToWP2 = new BinaryRelation(fromWayPoint, isConnectedTo, toWayPoint, RelationValue.TRUE);
+        moveActionPreconditions.Add(isConnectedFromWP1ToWP2);
 
         // Postconditions
         HashSet<IRelation> moveActionPostconditions = new HashSet<IRelation>();
@@ -168,7 +168,7 @@ public class ActionTest {
 	[Test]
 	public void AddParameterChangesTheParametersOfTheAction() 
 	{
-		Domain domain = Utils.roverWorldDomainAbstract();
+		Domain domain = Utils.roverWorldDomainFirstLevel();
 		Action moveAction = domain.getAction("MOVE");
 
 		HashSet<Entity> expectedParameters = new HashSet<Entity>();
@@ -196,7 +196,7 @@ public class ActionTest {
 	[Test]
 	public void AddPreconditionChangesThePreconditionsOfTheAction() 
 	{
-		Domain domain = Utils.roverWorldDomainAbstract();
+		Domain domain = Utils.roverWorldDomainFirstLevel();
 		Action moveAction = domain.getAction("MOVE");
 
 		HashSet<IRelation> expectedPreconditions = new HashSet<IRelation>();
@@ -226,7 +226,7 @@ public class ActionTest {
 	[Test]
 	public void AddPostconditionChangesThePostconditionsOfTheAction() 
 	{
-		Domain domain = Utils.roverWorldDomainFullDetail();
+		Domain domain = Utils.roverWorldDomainThirdLevel();
 		Action moveAction = domain.getAction("MOVE");
 
 		HashSet<IRelation> expectedPostconditions = new HashSet<IRelation>();

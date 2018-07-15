@@ -4,7 +4,7 @@ using UnityEngine;
 using ru.cadia.pddlFramework;
 
 public class Utils{
-    public static Domain roverWorldDomainAbstract()
+    public static Domain roverWorldDomainFirstLevel()
     {
         Domain domain = new Domain();
 
@@ -21,8 +21,8 @@ public class Utils{
         domain.addEntityType(objective);
 
         //(can-move ?from-waypoint ?to-waypoint)
-        BinaryPredicate canMove = new BinaryPredicate(wayPoint, "CAN_MOVE", wayPoint);
-        domain.addPredicate(canMove);
+        BinaryPredicate isConnectedTo = new BinaryPredicate(wayPoint, "IS_CONNECTED_TO", wayPoint);
+        domain.addPredicate(isConnectedTo);
         //(is-visible ?objective ?waypoint)
         BinaryPredicate isVisible = new BinaryPredicate(objective, "IS_VISIBLE", wayPoint);
         domain.addPredicate(isVisible);
@@ -67,8 +67,8 @@ public class Utils{
         HashSet<IRelation> moveActionPreconditions = new HashSet<IRelation>();
         BinaryRelation roverAtfromWP = new BinaryRelation(curiosity, at, fromWayPoint, RelationValue.TRUE);
         moveActionPreconditions.Add(roverAtfromWP);
-        BinaryRelation canMoveFromWP1ToWP2 = new BinaryRelation(fromWayPoint, canMove, toWayPoint, RelationValue.TRUE);
-        moveActionPreconditions.Add(canMoveFromWP1ToWP2);
+        BinaryRelation isConnectedFromWP1ToWP2 = new BinaryRelation(fromWayPoint, isConnectedTo, toWayPoint, RelationValue.TRUE);
+        moveActionPreconditions.Add(isConnectedFromWP1ToWP2);
 
         // Postconditions
         HashSet<IRelation> moveActionPostconditions = new HashSet<IRelation>();
@@ -163,7 +163,7 @@ public class Utils{
         return domain;
     }
 
-    public static WorldState roverWorldStateAbstract(Domain domain)
+    public static WorldState roverWorldStateFirstLevel(Domain domain)
     {
         WorldState worldState = new WorldState(domain);
 
@@ -225,42 +225,42 @@ public class Utils{
         worldState.addEntity(objective7);
         worldState.addEntity(objective8);
 
-        BinaryRelation canMove1 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint1, wayPoint5, RelationValue.TRUE);
-        BinaryRelation canMove2 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint2, wayPoint5, RelationValue.TRUE);
-        BinaryRelation canMove3 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint3, wayPoint6, RelationValue.TRUE);
-        BinaryRelation canMove4 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint4, wayPoint8, RelationValue.TRUE);
-        BinaryRelation canMove5 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint5, wayPoint1, RelationValue.TRUE);
-        BinaryRelation canMove6 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint6, wayPoint3, RelationValue.TRUE);
-        BinaryRelation canMove7 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint6, wayPoint8, RelationValue.TRUE);
-        BinaryRelation canMove8 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint8, wayPoint4, RelationValue.TRUE);
-        BinaryRelation canMove9 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint9, wayPoint1, RelationValue.TRUE);
-        BinaryRelation canMove10 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint1, wayPoint9, RelationValue.TRUE);
-        BinaryRelation canMove11 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint3, wayPoint4, RelationValue.TRUE);
-        BinaryRelation canMove12 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint4, wayPoint3, RelationValue.TRUE);
-        BinaryRelation canMove13 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint4, wayPoint9, RelationValue.TRUE);
-        BinaryRelation canMove14 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint5, wayPoint2, RelationValue.TRUE);
-        BinaryRelation canMove15 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint6, wayPoint7, RelationValue.TRUE);
-        BinaryRelation canMove16 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint7, wayPoint6, RelationValue.TRUE);
-        BinaryRelation canMove17 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint8, wayPoint6, RelationValue.TRUE);
-        BinaryRelation canMove18 = domain.generateRelationFromPredicateName("CAN_MOVE", wayPoint9, wayPoint4, RelationValue.TRUE);
-        worldState.addRelation(canMove1);
-        worldState.addRelation(canMove2);
-        worldState.addRelation(canMove3);
-        worldState.addRelation(canMove4);
-        worldState.addRelation(canMove5);
-        worldState.addRelation(canMove6);
-        worldState.addRelation(canMove7);
-        worldState.addRelation(canMove8);
-        worldState.addRelation(canMove9);
-        worldState.addRelation(canMove10);
-        worldState.addRelation(canMove11);
-        worldState.addRelation(canMove12);
-        worldState.addRelation(canMove13);
-        worldState.addRelation(canMove14);
-        worldState.addRelation(canMove15);
-        worldState.addRelation(canMove16);
-        worldState.addRelation(canMove17);
-        worldState.addRelation(canMove18);
+        BinaryRelation isConnected1 = domain.generateRelationFromPredicateName("IS_CONNECTED_TO", wayPoint1, wayPoint5, RelationValue.TRUE);
+        BinaryRelation isConnected2 = domain.generateRelationFromPredicateName("IS_CONNECTED_TO", wayPoint2, wayPoint5, RelationValue.TRUE);
+        BinaryRelation isConnected3 = domain.generateRelationFromPredicateName("IS_CONNECTED_TO", wayPoint3, wayPoint6, RelationValue.TRUE);
+        BinaryRelation isConnected4 = domain.generateRelationFromPredicateName("IS_CONNECTED_TO", wayPoint4, wayPoint8, RelationValue.TRUE);
+        BinaryRelation isConnected5 = domain.generateRelationFromPredicateName("IS_CONNECTED_TO", wayPoint5, wayPoint1, RelationValue.TRUE);
+        BinaryRelation isConnected6 = domain.generateRelationFromPredicateName("IS_CONNECTED_TO", wayPoint6, wayPoint3, RelationValue.TRUE);
+        BinaryRelation isConnected7 = domain.generateRelationFromPredicateName("IS_CONNECTED_TO", wayPoint6, wayPoint8, RelationValue.TRUE);
+        BinaryRelation isConnected8 = domain.generateRelationFromPredicateName("IS_CONNECTED_TO", wayPoint8, wayPoint4, RelationValue.TRUE);
+        BinaryRelation isConnected9 = domain.generateRelationFromPredicateName("IS_CONNECTED_TO", wayPoint9, wayPoint1, RelationValue.TRUE);
+        BinaryRelation isConnected10 = domain.generateRelationFromPredicateName("IS_CONNECTED_TO", wayPoint1, wayPoint9, RelationValue.TRUE);
+        BinaryRelation isConnected11 = domain.generateRelationFromPredicateName("IS_CONNECTED_TO", wayPoint3, wayPoint4, RelationValue.TRUE);
+        BinaryRelation isConnected12 = domain.generateRelationFromPredicateName("IS_CONNECTED_TO", wayPoint4, wayPoint3, RelationValue.TRUE);
+        BinaryRelation isConnected13 = domain.generateRelationFromPredicateName("IS_CONNECTED_TO", wayPoint4, wayPoint9, RelationValue.TRUE);
+        BinaryRelation isConnected14 = domain.generateRelationFromPredicateName("IS_CONNECTED_TO", wayPoint5, wayPoint2, RelationValue.TRUE);
+        BinaryRelation isConnected15 = domain.generateRelationFromPredicateName("IS_CONNECTED_TO", wayPoint6, wayPoint7, RelationValue.TRUE);
+        BinaryRelation isConnected16 = domain.generateRelationFromPredicateName("IS_CONNECTED_TO", wayPoint7, wayPoint6, RelationValue.TRUE);
+        BinaryRelation isConnected17 = domain.generateRelationFromPredicateName("IS_CONNECTED_TO", wayPoint8, wayPoint6, RelationValue.TRUE);
+        BinaryRelation isConnected18 = domain.generateRelationFromPredicateName("IS_CONNECTED_TO", wayPoint9, wayPoint4, RelationValue.TRUE);
+        worldState.addRelation(isConnected1);
+        worldState.addRelation(isConnected2);
+        worldState.addRelation(isConnected3);
+        worldState.addRelation(isConnected4);
+        worldState.addRelation(isConnected5);
+        worldState.addRelation(isConnected6);
+        worldState.addRelation(isConnected7);
+        worldState.addRelation(isConnected8);
+        worldState.addRelation(isConnected9);
+        worldState.addRelation(isConnected10);
+        worldState.addRelation(isConnected11);
+        worldState.addRelation(isConnected12);
+        worldState.addRelation(isConnected13);
+        worldState.addRelation(isConnected14);
+        worldState.addRelation(isConnected15);
+        worldState.addRelation(isConnected16);
+        worldState.addRelation(isConnected17);
+        worldState.addRelation(isConnected18);
 
         BinaryRelation isVisible1 = domain.generateRelationFromPredicateName("IS_VISIBLE", objective1, wayPoint2, RelationValue.TRUE);
         BinaryRelation isVisible2 = domain.generateRelationFromPredicateName("IS_VISIBLE", objective1, wayPoint4, RelationValue.TRUE);
@@ -303,9 +303,15 @@ public class Utils{
 
         return worldState;
     }
-    public static Domain roverWorldDomainFullDetail()
+
+    // public static WorldState roverWorldStateSecondLevel(Domain domain)
+    // {
+
+    // }
+
+    public static Domain roverWorldDomainThirdLevel()
     {
-        Domain domain = roverWorldDomainAbstract();
+        Domain domain = roverWorldDomainFirstLevel();
 
         EntityType entityTypeBattery = new EntityType("BATTERY");
         domain.addEntityType(entityTypeBattery);
@@ -373,9 +379,9 @@ public class Utils{
         return domain;    
     }
 
-    public static WorldState roverWorldStateFullDetail(Domain domain)
+    public static WorldState roverWorldStateThirdLevel(Domain domain)
     {
-        WorldState detailedState = roverWorldStateAbstract(domain);
+        WorldState detailedState = roverWorldStateFirstLevel(domain);
 
         EntityType entityTypeBattery = new EntityType("BATTERY");
         EntityType entityTypeWheel = new EntityType("WHEEL");
