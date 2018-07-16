@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using ru.cadia.pddlFramework;
 
-public class Utils{
+public class Utils
+{
     public static Domain roverWorldDomainFirstLevel()
     {
         Domain domain = new Domain();
 
         EntityType rover = new EntityType("ROVER");
         domain.addEntityType(rover);
-        
+
         EntityType wayPoint = new EntityType("WAYPOINT");
         domain.addEntityType(wayPoint);
 
@@ -56,12 +57,12 @@ public class Utils{
         // Parameters
         Entity curiosity = new Entity(rover, "ROVER");
         Entity fromWayPoint = new Entity(wayPoint, "WAYPOINT1");
-        Entity toWayPoint = new Entity(wayPoint, "WAYPOINT2");        
+        Entity toWayPoint = new Entity(wayPoint, "WAYPOINT2");
 
         HashSet<Entity> moveActionParameters = new HashSet<Entity>();
         moveActionParameters.Add(curiosity);
         moveActionParameters.Add(fromWayPoint);
-        moveActionParameters.Add(toWayPoint);        
+        moveActionParameters.Add(toWayPoint);
 
         // Preconditions
         HashSet<IRelation> moveActionPreconditions = new HashSet<IRelation>();
@@ -86,7 +87,7 @@ public class Utils{
         // Parameters
         Entity ESample = new Entity(sample, "SAMPLE");
         Entity EWayPoint = new Entity(wayPoint, "WAYPOINT");
-        
+
         HashSet<Entity> takeSampleActionParameters = new HashSet<Entity>();
         takeSampleActionParameters.Add(curiosity);
         takeSampleActionParameters.Add(ESample);
@@ -106,9 +107,9 @@ public class Utils{
         BinaryRelation sampleIsNotInWayPoint = new BinaryRelation(ESample, isIn, EWayPoint, RelationValue.FALSE);
         takeSampleActPostconditions.Add(sampleIsNotInWayPoint);
         UnaryRelation roverIsNotEmpty = new UnaryRelation(curiosity, isEmpty, RelationValue.FALSE);
-        takeSampleActPostconditions.Add(roverIsNotEmpty);        
+        takeSampleActPostconditions.Add(roverIsNotEmpty);
         BinaryRelation roverCarriesSample = new BinaryRelation(curiosity, carry, ESample, RelationValue.TRUE);
-        takeSampleActPostconditions.Add(roverCarriesSample); 
+        takeSampleActPostconditions.Add(roverCarriesSample);
 
         Action takeSampleAction = new Action(takeSampleActPreconditions, "TAKE_SAMPLE", takeSampleActionParameters, takeSampleActPostconditions);
         domain.addAction(takeSampleAction);
@@ -132,7 +133,7 @@ public class Utils{
         dropSampActPostconditions.Add(sampleIsInWayPoint);
         dropSampActPostconditions.Add(roverIsEmpty);
         BinaryRelation notRoverCarriesSample = new BinaryRelation(curiosity, carry, ESample, RelationValue.FALSE);
-        dropSampActPostconditions.Add(notRoverCarriesSample); 
+        dropSampActPostconditions.Add(notRoverCarriesSample);
 
         Action dropSampleAction = new Action(dropSampleActPreconditions, "DROP_SAMPLE", dropSampleActionParameters, dropSampActPostconditions);
         domain.addAction(dropSampleAction);
@@ -170,12 +171,6 @@ public class Utils{
         Entity rover = new Entity(new EntityType("ROVER"), "ROVER");
         worldState.addEntity(rover);
 
-        // for(int i = 1; i <= 9; i++)
-        // {
-        //     Entity wayPoint = new Entity(new EntityType("WAYPOINT"), "WAYPOINT" + i);
-        //     worldState.addEntity(wayPoint);
-        // }
-
         Entity wayPoint1 = new Entity(new EntityType("WAYPOINT"), "WAYPOINT1");
         Entity wayPoint2 = new Entity(new EntityType("WAYPOINT"), "WAYPOINT2");
         Entity wayPoint3 = new Entity(new EntityType("WAYPOINT"), "WAYPOINT3");
@@ -194,7 +189,7 @@ public class Utils{
         worldState.addEntity(wayPoint7);
         worldState.addEntity(wayPoint8);
         worldState.addEntity(wayPoint9);
-        
+
         Entity sample1 = new Entity(new EntityType("SAMPLE"), "SAMPLE1");
         Entity sample2 = new Entity(new EntityType("SAMPLE"), "SAMPLE2");
         Entity sample3 = new Entity(new EntityType("SAMPLE"), "SAMPLE3");
@@ -277,7 +272,7 @@ public class Utils{
         worldState.addRelation(isVisible5);
         worldState.addRelation(isVisible6);
         worldState.addRelation(isVisible7);
-        worldState.addRelation(isVisible8);  
+        worldState.addRelation(isVisible8);
 
         BinaryRelation isIn1 = domain.generateRelationFromPredicateName("IS_IN", sample1, wayPoint2, RelationValue.TRUE);
         BinaryRelation isIn2 = domain.generateRelationFromPredicateName("IS_IN", sample3, wayPoint9, RelationValue.TRUE);
@@ -304,14 +299,86 @@ public class Utils{
         return worldState;
     }
 
-    // public static WorldState roverWorldStateSecondLevel(Domain domain)
-    // {
+    public static Domain roverWorldDomainSecondLevel()
+    {
+        Domain domain = roverWorldDomainFirstLevel();
 
-    // }
+        EntityType entityTypeWayPoint = domain.getEntityType("WAYPOINT");
+
+        BinaryPredicate predicateObstacleBetween = new BinaryPredicate(entityTypeWayPoint, "OBSTACLE_BETWEEN", entityTypeWayPoint);
+        domain.addPredicate(predicateObstacleBetween);
+
+        Entity fromWayPoint = new Entity(entityTypeWayPoint, "WAYPOINT1");
+        Entity toWayPoint = new Entity(entityTypeWayPoint, "WAYPOINT2");
+
+        BinaryRelation relationNotObstacleBetween = new BinaryRelation(fromWayPoint, predicateObstacleBetween, toWayPoint, RelationValue.FALSE);
+
+        Action moveAction = domain.getAction("MOVE");
+        moveAction.PreConditions.Add(relationNotObstacleBetween);
+
+        return domain;
+    }
+
+    public static WorldState roverWorldStateSecondLevel(Domain domain)
+    {
+        WorldState detailedState = roverWorldStateFirstLevel(domain);
+
+        Entity wayPoint1 = detailedState.getEntity("WAYPOINT1");
+        Entity wayPoint2 = detailedState.getEntity("WAYPOINT2");
+        Entity wayPoint3 = detailedState.getEntity("WAYPOINT3");
+        Entity wayPoint4 = detailedState.getEntity("WAYPOINT4");
+        Entity wayPoint5 = detailedState.getEntity("WAYPOINT5");
+        Entity wayPoint6 = detailedState.getEntity("WAYPOINT6");
+        Entity wayPoint7 = detailedState.getEntity("WAYPOINT7");
+        Entity wayPoint8 = detailedState.getEntity("WAYPOINT8");
+        Entity wayPoint9 = detailedState.getEntity("WAYPOINT9");
+
+        BinaryRelation relationObstacleBetween4and3 = detailedState.Domain.generateRelationFromPredicateName("OBSTACLE_BETWEEN", wayPoint4, wayPoint3, RelationValue.TRUE);
+        BinaryRelation relationObstacleBetween8and4 = detailedState.Domain.generateRelationFromPredicateName("OBSTACLE_BETWEEN", wayPoint8, wayPoint4, RelationValue.TRUE);
+        BinaryRelation relationObstacleBetween6and8 = detailedState.Domain.generateRelationFromPredicateName("OBSTACLE_BETWEEN", wayPoint6, wayPoint8, RelationValue.TRUE);
+        BinaryRelation relationObstacleBetween3and6 = detailedState.Domain.generateRelationFromPredicateName("OBSTACLE_BETWEEN", wayPoint3, wayPoint6, RelationValue.TRUE);
+
+        detailedState.addRelation(relationObstacleBetween4and3);
+        detailedState.addRelation(relationObstacleBetween8and4);
+        detailedState.addRelation(relationObstacleBetween6and8);
+        detailedState.addRelation(relationObstacleBetween3and6);
+
+        BinaryRelation relationNotObstacleBetween1and5 = domain.generateRelationFromPredicateName("OBSTACLE_BETWEEN", wayPoint1, wayPoint5, RelationValue.FALSE);
+        BinaryRelation relationNotObstacleBetween2and5 = domain.generateRelationFromPredicateName("OBSTACLE_BETWEEN", wayPoint2, wayPoint5, RelationValue.FALSE);
+        BinaryRelation relationNotObstacleBetween4and8 = domain.generateRelationFromPredicateName("OBSTACLE_BETWEEN", wayPoint4, wayPoint8, RelationValue.FALSE);
+        BinaryRelation relationNotObstacleBetween5and1 = domain.generateRelationFromPredicateName("OBSTACLE_BETWEEN", wayPoint5, wayPoint1, RelationValue.FALSE);
+        BinaryRelation relationNotObstacleBetween6and3 = domain.generateRelationFromPredicateName("OBSTACLE_BETWEEN", wayPoint6, wayPoint3, RelationValue.FALSE);
+        BinaryRelation relationNotObstacleBetween9and1 = domain.generateRelationFromPredicateName("OBSTACLE_BETWEEN", wayPoint9, wayPoint1, RelationValue.FALSE);
+        BinaryRelation relationNotObstacleBetween1and9 = domain.generateRelationFromPredicateName("OBSTACLE_BETWEEN", wayPoint1, wayPoint9, RelationValue.FALSE);
+        BinaryRelation relationNotObstacleBetween3and4 = domain.generateRelationFromPredicateName("OBSTACLE_BETWEEN", wayPoint3, wayPoint4, RelationValue.FALSE);
+        BinaryRelation relationNotObstacleBetween4and9 = domain.generateRelationFromPredicateName("OBSTACLE_BETWEEN", wayPoint4, wayPoint9, RelationValue.FALSE);
+        BinaryRelation relationNotObstacleBetween5and2 = domain.generateRelationFromPredicateName("OBSTACLE_BETWEEN", wayPoint5, wayPoint2, RelationValue.FALSE);
+        BinaryRelation relationNotObstacleBetween6and7 = domain.generateRelationFromPredicateName("OBSTACLE_BETWEEN", wayPoint6, wayPoint7, RelationValue.FALSE);
+        BinaryRelation relationNotObstacleBetween7and6 = domain.generateRelationFromPredicateName("OBSTACLE_BETWEEN", wayPoint7, wayPoint6, RelationValue.FALSE);
+        BinaryRelation relationNotObstacleBetween8and6 = domain.generateRelationFromPredicateName("OBSTACLE_BETWEEN", wayPoint8, wayPoint6, RelationValue.FALSE);
+        BinaryRelation relationNotObstacleBetween9and4 = domain.generateRelationFromPredicateName("OBSTACLE_BETWEEN", wayPoint9, wayPoint4, RelationValue.FALSE);
+
+        detailedState.addRelation(relationNotObstacleBetween1and5);
+        detailedState.addRelation(relationNotObstacleBetween2and5);
+        detailedState.addRelation(relationNotObstacleBetween4and8);
+        detailedState.addRelation(relationNotObstacleBetween5and1);
+        detailedState.addRelation(relationNotObstacleBetween6and3);
+        detailedState.addRelation(relationNotObstacleBetween9and1);
+        detailedState.addRelation(relationNotObstacleBetween1and9);
+        detailedState.addRelation(relationNotObstacleBetween3and4);
+        detailedState.addRelation(relationNotObstacleBetween4and9);
+        detailedState.addRelation(relationNotObstacleBetween5and2);
+        detailedState.addRelation(relationNotObstacleBetween6and7);
+        detailedState.addRelation(relationNotObstacleBetween7and6);
+        detailedState.addRelation(relationNotObstacleBetween8and6);
+        detailedState.addRelation(relationNotObstacleBetween9and4);
+
+        return detailedState;
+    }
 
     public static Domain roverWorldDomainThirdLevel()
     {
-        Domain domain = roverWorldDomainFirstLevel();
+        Domain domain = roverWorldDomainSecondLevel();
 
         EntityType entityTypeBattery = new EntityType("BATTERY");
         domain.addEntityType(entityTypeBattery);
@@ -354,20 +421,20 @@ public class Utils{
 
         Action actionInflate = new Action(actionInflatePreconditions, "INFLATE_WHEELS", actionInflateParameters, actionInflatePostconditions);
         domain.addAction(actionInflate);
-        
-        Action actionDeflate = new Action(actionInflatePostconditions, "DEFLATE_WHEELS", actionInflateParameters ,actionInflatePreconditions);
+
+        Action actionDeflate = new Action(actionInflatePostconditions, "DEFLATE_WHEELS", actionInflateParameters, actionInflatePreconditions);
         domain.addAction(actionDeflate);
 
         Action moveAction = domain.getAction("MOVE");
         moveAction.addParameter(entityBattery);
-        moveAction.addParameter(entityWheels);        
+        moveAction.addParameter(entityWheels);
         moveAction.PreConditions.Add(relationBatteryCharged);
         moveAction.PreConditions.Add(relationWheelsInflated);
 
         Action takeSampleAction = domain.getAction("TAKE_SAMPLE");
         takeSampleAction.addParameter(entityBattery);
         takeSampleAction.addPrecondition(relationBatteryCharged);
-        
+
         Action dropSampleAction = domain.getAction("DROP_SAMPLE");
         dropSampleAction.addParameter(entityBattery);
         dropSampleAction.addPrecondition(relationBatteryCharged);
@@ -376,12 +443,12 @@ public class Utils{
         takeImageAction.addParameter(entityBattery);
         takeImageAction.addPrecondition(relationBatteryCharged);
 
-        return domain;    
+        return domain;
     }
 
     public static WorldState roverWorldStateThirdLevel(Domain domain)
     {
-        WorldState detailedState = roverWorldStateFirstLevel(domain);
+        WorldState detailedState = roverWorldStateSecondLevel(domain);
 
         EntityType entityTypeBattery = new EntityType("BATTERY");
         EntityType entityTypeWheel = new EntityType("WHEEL");
@@ -390,7 +457,7 @@ public class Utils{
         Entity entityWheels = new Entity(entityTypeWheel, "WHEELS");
         detailedState.addEntity(entityBattery);
         detailedState.addEntity(entityWheels);
-        
+
         UnaryRelation relationBatteryIsCharged = detailedState.Domain.generateRelationFromPredicateName("BATTERY_CHARGED", entityBattery, RelationValue.TRUE);
         detailedState.addRelation(relationBatteryIsCharged);
         UnaryRelation relationWheelsInflated = detailedState.Domain.generateRelationFromPredicateName("WHEELS_INFLATED", entityWheels, RelationValue.TRUE);

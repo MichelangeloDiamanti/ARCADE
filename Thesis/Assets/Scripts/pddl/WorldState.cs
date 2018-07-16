@@ -23,6 +23,14 @@ namespace ru.cadia.pddlFramework
         {
             get { return _entities; }
         }
+        public Entity getEntity(string name)
+        {
+            foreach (Entity e in _entities)
+                if (e.Name.Equals(name))
+                    return e;
+            return null;
+        }
+
         public Domain Domain
         {
             get { return _domain; }

@@ -416,6 +416,9 @@ public class WorldStateTest {
         BinaryRelation isConnected1 = domain.generateRelationFromPredicateName("IS_CONNECTED_TO", wayPointAlpha, wayPointBravo, RelationValue.TRUE);
         worldState.addRelation(isConnected1);
 
+        BinaryRelation relationNotObstacleBetweenAlphaandBravo = domain.generateRelationFromPredicateName("OBSTACLE_BETWEEN", wayPointAlpha, wayPointBravo, RelationValue.FALSE);
+        worldState.addRelation(relationNotObstacleBetweenAlphaandBravo);
+
         BinaryRelation isAtAlpha = domain.generateRelationFromPredicateName("AT", entityRover, wayPointAlpha, RelationValue.TRUE);
         worldState.addRelation(isAtAlpha);
 

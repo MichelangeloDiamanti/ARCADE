@@ -11,6 +11,12 @@
     },
     {
       "Type": "OBJECTIVE"
+    },
+    {
+      "Type": "BATTERY"
+    },
+    {
+      "Type": "WHEEL"
     }
   ],
   "Predicates": [
@@ -111,6 +117,20 @@
       "Destination": {
         "Type": "WAYPOINT"
       }
+    },
+    {
+      "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
+      "Source": {
+        "Type": "BATTERY"
+      },
+      "Name": "BATTERY_CHARGED"
+    },
+    {
+      "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
+      "Source": {
+        "Type": "WHEEL"
+      },
+      "Name": "WHEELS_INFLATED"
     }
   ],
   "Actions": [
@@ -193,6 +213,40 @@
             "Name": "WAYPOINT2"
           },
           "Value": 2
+        },
+        {
+          "$type": "ru.cadia.pddlFramework.UnaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "BATTERY"
+            },
+            "Name": "BATTERY"
+          },
+          "Predicate": {
+            "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "BATTERY"
+            },
+            "Name": "BATTERY_CHARGED"
+          },
+          "Value": 1
+        },
+        {
+          "$type": "ru.cadia.pddlFramework.UnaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "WHEEL"
+            },
+            "Name": "WHEELS"
+          },
+          "Predicate": {
+            "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "WHEEL"
+            },
+            "Name": "WHEELS_INFLATED"
+          },
+          "Value": 1
         }
       ],
       "Name": "MOVE",
@@ -214,6 +268,18 @@
             "Type": "WAYPOINT"
           },
           "Name": "WAYPOINT2"
+        },
+        {
+          "Type": {
+            "Type": "BATTERY"
+          },
+          "Name": "BATTERY"
+        },
+        {
+          "Type": {
+            "Type": "WHEEL"
+          },
+          "Name": "WHEELS"
         }
       ],
       "PostConditions": [
@@ -367,6 +433,23 @@
             "Name": "IS_EMPTY"
           },
           "Value": 1
+        },
+        {
+          "$type": "ru.cadia.pddlFramework.UnaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "BATTERY"
+            },
+            "Name": "BATTERY"
+          },
+          "Predicate": {
+            "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "BATTERY"
+            },
+            "Name": "BATTERY_CHARGED"
+          },
+          "Value": 1
         }
       ],
       "Name": "TAKE_SAMPLE",
@@ -388,6 +471,12 @@
             "Type": "WAYPOINT"
           },
           "Name": "WAYPOINT"
+        },
+        {
+          "Type": {
+            "Type": "BATTERY"
+          },
+          "Name": "BATTERY"
         }
       ],
       "PostConditions": [
@@ -532,6 +621,23 @@
             "Name": "SAMPLE"
           },
           "Value": 1
+        },
+        {
+          "$type": "ru.cadia.pddlFramework.UnaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "BATTERY"
+            },
+            "Name": "BATTERY"
+          },
+          "Predicate": {
+            "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "BATTERY"
+            },
+            "Name": "BATTERY_CHARGED"
+          },
+          "Value": 1
         }
       ],
       "Name": "DROP_SAMPLE",
@@ -553,6 +659,12 @@
             "Type": "WAYPOINT"
           },
           "Name": "WAYPOINT"
+        },
+        {
+          "Type": {
+            "Type": "BATTERY"
+          },
+          "Name": "BATTERY"
         }
       ],
       "PostConditions": [
@@ -680,6 +792,23 @@
             "Name": "WAYPOINT"
           },
           "Value": 1
+        },
+        {
+          "$type": "ru.cadia.pddlFramework.UnaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "BATTERY"
+            },
+            "Name": "BATTERY"
+          },
+          "Predicate": {
+            "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "BATTERY"
+            },
+            "Name": "BATTERY_CHARGED"
+          },
+          "Value": 1
         }
       ],
       "Name": "TAKE_IMAGE",
@@ -701,6 +830,12 @@
             "Type": "WAYPOINT"
           },
           "Name": "WAYPOINT"
+        },
+        {
+          "Type": {
+            "Type": "BATTERY"
+          },
+          "Name": "BATTERY"
         }
       ],
       "PostConditions": [
@@ -720,6 +855,202 @@
             "Name": "TAKEN_IMAGE"
           },
           "Value": 1
+        }
+      ]
+    },
+    {
+      "PreConditions": [
+        {
+          "$type": "ru.cadia.pddlFramework.UnaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "BATTERY"
+            },
+            "Name": "BATTERY"
+          },
+          "Predicate": {
+            "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "BATTERY"
+            },
+            "Name": "BATTERY_CHARGED"
+          },
+          "Value": 2
+        }
+      ],
+      "Name": "CHARGE_BATTERY",
+      "Parameters": [
+        {
+          "Type": {
+            "Type": "BATTERY"
+          },
+          "Name": "BATTERY"
+        }
+      ],
+      "PostConditions": [
+        {
+          "$type": "ru.cadia.pddlFramework.UnaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "BATTERY"
+            },
+            "Name": "BATTERY"
+          },
+          "Predicate": {
+            "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "BATTERY"
+            },
+            "Name": "BATTERY_CHARGED"
+          },
+          "Value": 1
+        }
+      ]
+    },
+    {
+      "PreConditions": [
+        {
+          "$type": "ru.cadia.pddlFramework.UnaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "BATTERY"
+            },
+            "Name": "BATTERY"
+          },
+          "Predicate": {
+            "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "BATTERY"
+            },
+            "Name": "BATTERY_CHARGED"
+          },
+          "Value": 1
+        }
+      ],
+      "Name": "DISCHARGE_BATTERY",
+      "Parameters": [
+        {
+          "Type": {
+            "Type": "BATTERY"
+          },
+          "Name": "BATTERY"
+        }
+      ],
+      "PostConditions": [
+        {
+          "$type": "ru.cadia.pddlFramework.UnaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "BATTERY"
+            },
+            "Name": "BATTERY"
+          },
+          "Predicate": {
+            "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "BATTERY"
+            },
+            "Name": "BATTERY_CHARGED"
+          },
+          "Value": 2
+        }
+      ]
+    },
+    {
+      "PreConditions": [
+        {
+          "$type": "ru.cadia.pddlFramework.UnaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "WHEEL"
+            },
+            "Name": "WHEELS"
+          },
+          "Predicate": {
+            "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "WHEEL"
+            },
+            "Name": "WHEELS_INFLATED"
+          },
+          "Value": 2
+        }
+      ],
+      "Name": "INFLATE_WHEELS",
+      "Parameters": [
+        {
+          "Type": {
+            "Type": "WHEEL"
+          },
+          "Name": "WHEELS"
+        }
+      ],
+      "PostConditions": [
+        {
+          "$type": "ru.cadia.pddlFramework.UnaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "WHEEL"
+            },
+            "Name": "WHEELS"
+          },
+          "Predicate": {
+            "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "WHEEL"
+            },
+            "Name": "WHEELS_INFLATED"
+          },
+          "Value": 1
+        }
+      ]
+    },
+    {
+      "PreConditions": [
+        {
+          "$type": "ru.cadia.pddlFramework.UnaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "WHEEL"
+            },
+            "Name": "WHEELS"
+          },
+          "Predicate": {
+            "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "WHEEL"
+            },
+            "Name": "WHEELS_INFLATED"
+          },
+          "Value": 1
+        }
+      ],
+      "Name": "DEFLATE_WHEELS",
+      "Parameters": [
+        {
+          "Type": {
+            "Type": "WHEEL"
+          },
+          "Name": "WHEELS"
+        }
+      ],
+      "PostConditions": [
+        {
+          "$type": "ru.cadia.pddlFramework.UnaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "WHEEL"
+            },
+            "Name": "WHEELS"
+          },
+          "Predicate": {
+            "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "WHEEL"
+            },
+            "Name": "WHEELS_INFLATED"
+          },
+          "Value": 2
         }
       ]
     }
