@@ -5,6 +5,8 @@ using ru.cadia.pddlFramework;
 
 public class Utils
 {
+    public static int bfsExploredNodes;
+
     public static Domain roverWorldDomainFirstLevel()
     {
         Domain domain = new Domain();
@@ -474,6 +476,9 @@ public class Utils
     public static TreeNode<WorldState> breadthFirstSearch(WorldState initialState,
         WorldState goalState, double desiredAccuracy = 1, double cutoff = Mathf.Infinity)
     {
+        // TODO: remove this
+        Utils.bfsExploredNodes = 0;
+
         TreeNode<WorldState> node = new TreeNode<WorldState>(initialState);
         double nodeAccuracy = equalRelations(goalState, node.Data);
         if (nodeAccuracy == desiredAccuracy)
@@ -493,6 +498,10 @@ public class Utils
                 TreeNode<WorldState> child = node.AddChild(node.Data.applyAction(a), a);
                 if (explored.Contains(child.Data) == false && frontier.Contains(child) == false)
                 {
+                    
+                    // TODO: remove this
+                    Utils.bfsExploredNodes++;
+
                     double childAccuracy = equalRelations(goalState, child.Data);
                     if (childAccuracy == desiredAccuracy)
                         return child;

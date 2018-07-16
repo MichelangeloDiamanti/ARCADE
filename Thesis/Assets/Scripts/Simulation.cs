@@ -182,11 +182,27 @@ public class Simulation : MonoBehaviour
                 // Refinement
                 if (_currentLevelOfDetail > lastLoD)
                 {
+
+                    var otherWatch = System.Diagnostics.Stopwatch.StartNew();
+                    
+                    TreeNode<WorldState> otherSolution = Utils.breadthFirstSearch(
+                        _lastObservedStates[currentSimulationBoundary].Data, _currentNode.Data);
+                    otherWatch.Stop();
+
+                    long otherElapsedMs = otherWatch.ElapsedMilliseconds;
+
+                    Debug.Log("Normal BFS search time: " + otherElapsedMs + " ms");
+                    Debug.Log("Normal BFS search explored nodes: " + Utils.bfsExploredNodes);
+
+
                     // roll back the simulation until we reach the root of the current level of detail
                     while (_currentNode.IsRoot == false)
                         _currentNode = _currentNode.Parent;
 
                     TreeNode<WorldState> lastNodeAtCurrentLevel = _lastObservedStates[currentSimulationBoundary];
+
+                    int expandedNodes = 0;
+                    long elapsedTimeForSearch = 0;
 
                     // translate each action performed in the previous level of detail to an equivalent list of
                     // actions in the current level of detail. each translation is applied to the last observed
@@ -199,7 +215,18 @@ public class Simulation : MonoBehaviour
 
                         _currentNode = _currentNode.Children.First();
 
+                        var watch = System.Diagnostics.Stopwatch.StartNew();
+
                         TreeNode<WorldState> solution = Utils.breadthFirstSearch(lastNodeAtCurrentLevel.Data, _currentNode.Data);
+
+                        watch.Stop();
+                        long elapsedMs = watch.ElapsedMilliseconds;
+
+                        expandedNodes += Utils.bfsExploredNodes;
+                        elapsedTimeForSearch += elapsedMs;
+
+                        // Debug.Log("BFS time: " + elapsedMs + " ms");
+                        // Debug.Log("BFS explored nodes: " + Utils.bfsExploredNodes);
 
                         Debug.Log("In the abstract simulation the following action was performed: " + _currentNode.ParentAction.ShortToString());
 
@@ -223,6 +250,9 @@ public class Simulation : MonoBehaviour
                     }
 
                     _currentNode = lastNodeAtCurrentLevel;
+
+                    Debug.Log("Translation time: " + elapsedTimeForSearch + " ms");
+                    Debug.Log("Translation explored nodes: " + expandedNodes);
 
                 }
                 // Abstraction
