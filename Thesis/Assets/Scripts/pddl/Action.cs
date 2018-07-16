@@ -7,6 +7,7 @@ public class Action : System.IEquatable<Action>
 
     private HashSet<IRelation> _preConditions;
     private string _name;
+    private string _text;
     private HashSet<Entity> _parameters;
     private HashSet<IRelation> _postConditions;
 
@@ -18,6 +19,10 @@ public class Action : System.IEquatable<Action>
     {
         get { return _name; }
     }
+    public string Text
+    {
+        get { return _text; }
+    }
     public HashSet<Entity> Parameters
     {
         get { return _parameters; }
@@ -27,7 +32,7 @@ public class Action : System.IEquatable<Action>
         get { return _postConditions; }
     }
 
-    public Action(HashSet<IRelation> preconditions, string name, HashSet<Entity> parameters, HashSet<IRelation> postconditions)
+    public Action(HashSet<IRelation> preconditions, string name, HashSet<Entity> parameters, HashSet<IRelation> postconditions, string text)
     {
         if (preconditions == null)
             throw new System.ArgumentNullException("ActionDefinition: The set of precondiction cannot be null or empty", "HashSet<IPredicate> precondition");
@@ -37,6 +42,8 @@ public class Action : System.IEquatable<Action>
             throw new System.ArgumentNullException("ActionDefinition: The set of postcondition cannot be null or empty", "HashSet<IPredicate> postcondition");
         if (parameters == null)
             throw new System.ArgumentNullException("ActionDefinition: The set of parameter cannot be null or empty", "HashSet<EntityType> parameter");
+        if (text == null)
+            throw new System.ArgumentNullException("ActionDefinition: text cannot be null or empty", "text");
 
         checkVariableInRelation(preconditions, parameters);
         checkVariableInRelation(postconditions, parameters);
@@ -46,6 +53,7 @@ public class Action : System.IEquatable<Action>
         _name = name;
         _parameters = parameters;
         _postConditions = postconditions;
+        _text = text;
     }
 
     public void addParameter(Entity parameter)
@@ -172,7 +180,7 @@ public class Action : System.IEquatable<Action>
         {
             entitiesInvolved.Add(item);
         }
-        newAction = new Action(newPreConditions, _name, entitiesInvolved, newPostConditions);
+        newAction = new Action(newPreConditions, _name, entitiesInvolved, newPostConditions, _text);
         return newAction;
     }
 
@@ -216,7 +224,7 @@ public class Action : System.IEquatable<Action>
         foreach (IRelation postcondition in _postConditions)
             newPostConditions.Add(postcondition.Clone());
 
-        return new Action(newPreConditions, _name, newParameters, newPostConditions);
+        return new Action(newPreConditions, _name, newParameters, newPostConditions, _text);
     }
 
     public bool Equals(Action other)

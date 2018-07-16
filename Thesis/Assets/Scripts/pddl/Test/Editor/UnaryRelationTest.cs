@@ -20,7 +20,7 @@ public class UnaryRelationTest {
 		EntityType location = new EntityType("LOCATION");
 		Entity school = new Entity(location, "SCHOOL");
 
-		UnaryPredicate isRich = new UnaryPredicate(character, "RICH");
+		UnaryPredicate isRich = new UnaryPredicate(character, "RICH", "is rich");
 
 		Assert.That(()=> new UnaryRelation(school, isRich, RelationValue.TRUE), Throws.ArgumentException);
 	}
@@ -33,8 +33,8 @@ public class UnaryRelationTest {
 		Entity entity1 = new Entity(entityType1, "JOHN");
 		Entity entity2 = new Entity(entityType2, "JOHN");
 
-		UnaryPredicate up1 = new UnaryPredicate(entityType1, "IS_RICH");
-		UnaryPredicate up2 = new UnaryPredicate(entityType2, "IS_RICH");
+		UnaryPredicate up1 = new UnaryPredicate(entityType1, "IS_RICH", "is rich");
+		UnaryPredicate up2 = new UnaryPredicate(entityType2, "IS_RICH", "is rich");
 
 		UnaryRelation ur1 = new UnaryRelation(entity1, up1, RelationValue.TRUE);
 		UnaryRelation ur2 = new UnaryRelation(entity2, up2, RelationValue.TRUE);
@@ -50,8 +50,8 @@ public class UnaryRelationTest {
 		Entity entity1 = new Entity(entityType1, "JOHN");
 		Entity entity2 = new Entity(entityType2, "JOHN");
 
-		UnaryPredicate up1 = new UnaryPredicate(entityType1, "IS_RICH");
-		UnaryPredicate up2 = new UnaryPredicate(entityType2, "IS_RICH");
+		UnaryPredicate up1 = new UnaryPredicate(entityType1, "IS_RICH", "is rich");
+		UnaryPredicate up2 = new UnaryPredicate(entityType2, "IS_RICH", "is rich");
 
 		UnaryRelation ur1 = new UnaryRelation(entity1, up1, RelationValue.TRUE);
 		UnaryRelation ur2 = new UnaryRelation(entity2, up2, RelationValue.TRUE);
@@ -67,8 +67,8 @@ public class UnaryRelationTest {
 		Entity entity1 = new Entity(entityType1, "JOHN");
 		Entity entity2 = new Entity(entityType2, "JOHN2");
 
-		UnaryPredicate up1 = new UnaryPredicate(entityType1, "IS_RICH");
-		UnaryPredicate up2 = new UnaryPredicate(entityType2, "IS_RICH");
+		UnaryPredicate up1 = new UnaryPredicate(entityType1, "IS_RICH", "is rich");
+		UnaryPredicate up2 = new UnaryPredicate(entityType2, "IS_RICH", "is rich");
 
 		UnaryRelation ur1 = new UnaryRelation(entity1, up1, RelationValue.TRUE);
 		UnaryRelation ur2 = new UnaryRelation(entity2, up2, RelationValue.TRUE);
@@ -80,7 +80,7 @@ public class UnaryRelationTest {
 	public void CloneReturnsEqualUnaryRelation() {
         EntityType entityTyperRover = new EntityType("ROVER");
 		Entity entityRover = new Entity(entityTyperRover, "ROVER");
-        UnaryPredicate predicateRoverisEmpty = new UnaryPredicate(entityTyperRover, "IS_EMPTY");
+        UnaryPredicate predicateRoverisEmpty = new UnaryPredicate(entityTyperRover, "IS_EMPTY", "is empty");
 		UnaryRelation relationRoverIsEmpty = new UnaryRelation(entityRover, predicateRoverisEmpty, RelationValue.TRUE);
 		UnaryRelation relationClonedRoverIsEmpty = relationRoverIsEmpty.Clone() as UnaryRelation;
 		Assert.AreEqual(relationRoverIsEmpty, relationClonedRoverIsEmpty);

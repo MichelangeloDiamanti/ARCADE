@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using UnityEngine;
-using Newtonsoft.Json;
+//using Newtonsoft.Json;
 
 public class WorldState : System.IEquatable<WorldState>
 {

@@ -20,34 +20,34 @@ public class Utils{
         domain.addEntityType(objective);
 
         //(can-move ?from-waypoint ?to-waypoint)
-        BinaryPredicate canMove = new BinaryPredicate(wayPoint, "CAN_MOVE", wayPoint);
+        BinaryPredicate canMove = new BinaryPredicate(wayPoint, "CAN_MOVE", wayPoint, "can move to");
         domain.addPredicate(canMove);
         //(is-visible ?objective ?waypoint)
-        BinaryPredicate isVisible = new BinaryPredicate(objective, "IS_VISIBLE", wayPoint);
+        BinaryPredicate isVisible = new BinaryPredicate(objective, "IS_VISIBLE", wayPoint, "is visible at");
         domain.addPredicate(isVisible);
         //(is-in ?sample ?waypoint)
-        BinaryPredicate isIn = new BinaryPredicate(sample, "IS_IN", wayPoint);
+        BinaryPredicate isIn = new BinaryPredicate(sample, "IS_IN", wayPoint, "is at");
         domain.addPredicate(isIn);
         //(been-at ?rover ?waypoint)
-        BinaryPredicate beenAt = new BinaryPredicate(rover, "BEEN_AT", wayPoint);
+        BinaryPredicate beenAt = new BinaryPredicate(rover, "BEEN_AT", wayPoint, "has been at");
         domain.addPredicate(beenAt);
         //(carry ?rover ?sample)  
-        BinaryPredicate carry = new BinaryPredicate(rover, "CARRY", sample);
+        BinaryPredicate carry = new BinaryPredicate(rover, "CARRY", sample, "is carrying");
         domain.addPredicate(carry);
         //(at ?rover ?waypoint)
-        BinaryPredicate at = new BinaryPredicate(rover, "AT", wayPoint);
+        BinaryPredicate at = new BinaryPredicate(rover, "AT", wayPoint, "is at");
         domain.addPredicate(at);
         //(is-dropping-dock ?waypoint)
-        UnaryPredicate isDroppingDock = new UnaryPredicate(wayPoint, "IS_DROPPING_DOCK");
+        UnaryPredicate isDroppingDock = new UnaryPredicate(wayPoint, "IS_DROPPING_DOCK", "is dropping the dock");
         domain.addPredicate(isDroppingDock);
         //(taken-image ?objective)
-        UnaryPredicate takenImage = new UnaryPredicate(objective, "TAKEN_IMAGE");
+        UnaryPredicate takenImage = new UnaryPredicate(objective, "TAKEN_IMAGE", "has taken the image");
         domain.addPredicate(takenImage);
         //(stored-sample ?sample)
-        UnaryPredicate storedSample = new UnaryPredicate(sample, "STORED_SAMPLE");
+        UnaryPredicate storedSample = new UnaryPredicate(sample, "STORED_SAMPLE", "has stored the sample");
         domain.addPredicate(storedSample);
         //(empty ?rover) 
-        UnaryPredicate isEmpty = new UnaryPredicate(rover, "IS_EMPTY");
+        UnaryPredicate isEmpty = new UnaryPredicate(rover, "IS_EMPTY", "is empty");
         domain.addPredicate(isEmpty);
 
 
@@ -78,7 +78,7 @@ public class Utils{
         BinaryRelation roverBeenAtToWP = new BinaryRelation(curiosity, beenAt, toWayPoint, RelationValue.TRUE);
         moveActionPostconditions.Add(roverBeenAtToWP);
 
-        Action moveAction = new Action(moveActionPreconditions, "MOVE", moveActionParameters, moveActionPostconditions);
+        Action moveAction = new Action(moveActionPreconditions, "MOVE", moveActionParameters, moveActionPostconditions, "move to");
         domain.addAction(moveAction);
 
         //              TAKE SAMPLE ACTION
@@ -109,7 +109,7 @@ public class Utils{
         BinaryRelation roverCarriesSample = new BinaryRelation(curiosity, carry, ESample, RelationValue.TRUE);
         takeSampleActPostconditions.Add(roverCarriesSample); 
 
-        Action takeSampleAction = new Action(takeSampleActPreconditions, "TAKE_SAMPLE", takeSampleActionParameters, takeSampleActPostconditions);
+        Action takeSampleAction = new Action(takeSampleActPreconditions, "TAKE_SAMPLE", takeSampleActionParameters, takeSampleActPostconditions, "x");
         domain.addAction(takeSampleAction);
 
         //              DROP SAMPLE ACTION        
@@ -133,7 +133,7 @@ public class Utils{
         BinaryRelation notRoverCarriesSample = new BinaryRelation(curiosity, carry, ESample, RelationValue.FALSE);
         dropSampActPostconditions.Add(notRoverCarriesSample); 
 
-        Action dropSampleAction = new Action(dropSampleActPreconditions, "DROP_SAMPLE", dropSampleActionParameters, dropSampActPostconditions);
+        Action dropSampleAction = new Action(dropSampleActPreconditions, "DROP_SAMPLE", dropSampleActionParameters, dropSampActPostconditions, "x");
         domain.addAction(dropSampleAction);
 
         //              TAKE IMAGE ACTION 
@@ -156,7 +156,7 @@ public class Utils{
         UnaryRelation roverHasTakenImageOfObjective = new UnaryRelation(EObjective, takenImage, RelationValue.TRUE);
         takeImageActionPostconditions.Add(roverHasTakenImageOfObjective);
 
-        Action takeImageAction = new Action(takeImageActionPreconditions, "TAKE_IMAGE", takeImageActionParameters, takeImageActionPostconditions);
+        Action takeImageAction = new Action(takeImageActionPreconditions, "TAKE_IMAGE", takeImageActionParameters, takeImageActionPostconditions, "x");
         domain.addAction(takeImageAction);
 
         return domain;
@@ -310,9 +310,9 @@ public class Utils{
         domain.addEntityType(entityTypeBattery);
         EntityType entityTypeWheel = new EntityType("WHEEL");
         domain.addEntityType(entityTypeWheel);
-        UnaryPredicate predicateBatteryCharged = new UnaryPredicate(entityTypeBattery, "BATTERY_CHARGED");
+        UnaryPredicate predicateBatteryCharged = new UnaryPredicate(entityTypeBattery, "BATTERY_CHARGED", "has charged the battery");
         domain.addPredicate(predicateBatteryCharged);
-        UnaryPredicate predicateWheelsInflated = new UnaryPredicate(entityTypeWheel, "WHEELS_INFLATED");
+        UnaryPredicate predicateWheelsInflated = new UnaryPredicate(entityTypeWheel, "WHEELS_INFLATED", "has inflated the wheels");
         domain.addPredicate(predicateWheelsInflated);
 
         HashSet<Entity> actionChargeParameters = new HashSet<Entity>();
@@ -327,10 +327,10 @@ public class Utils{
         UnaryRelation relationBatteryCharged = new UnaryRelation(entityBattery, predicateBatteryCharged, RelationValue.TRUE);
         actionChargePostconditions.Add(relationBatteryCharged);
 
-        Action actionChargeBattery = new Action(actionChargePreconditions, "CHARGE_BATTERY", actionChargeParameters, actionChargePostconditions);
+        Action actionChargeBattery = new Action(actionChargePreconditions, "CHARGE_BATTERY", actionChargeParameters, actionChargePostconditions, "x");
         domain.addAction(actionChargeBattery);
 
-        Action actionDischargeBattery = new Action(actionChargePostconditions, "DISCHARGE_BATTERY", actionChargeParameters, actionChargePreconditions);
+        Action actionDischargeBattery = new Action(actionChargePostconditions, "DISCHARGE_BATTERY", actionChargeParameters, actionChargePreconditions, "x");
         domain.addAction(actionDischargeBattery);
 
         HashSet<Entity> actionInflateParameters = new HashSet<Entity>();
@@ -345,10 +345,10 @@ public class Utils{
         UnaryRelation relationWheelsInflated = new UnaryRelation(entityWheels, predicateWheelsInflated, RelationValue.TRUE);
         actionInflatePostconditions.Add(relationWheelsInflated);
 
-        Action actionInflate = new Action(actionInflatePreconditions, "INFLATE_WHEELS", actionInflateParameters, actionInflatePostconditions);
+        Action actionInflate = new Action(actionInflatePreconditions, "INFLATE_WHEELS", actionInflateParameters, actionInflatePostconditions, "x");
         domain.addAction(actionInflate);
         
-        Action actionDeflate = new Action(actionInflatePostconditions, "DEFLATE_WHEELS", actionInflateParameters ,actionInflatePreconditions);
+        Action actionDeflate = new Action(actionInflatePostconditions, "DEFLATE_WHEELS", actionInflateParameters ,actionInflatePreconditions, "x");
         domain.addAction(actionDeflate);
 
         Action moveAction = domain.getAction("MOVE");
@@ -391,8 +391,6 @@ public class Utils{
 
         return detailedState;
     }
-<<<<<<< HEAD
-=======
 
     // this is a classic BFS search algorithm, we expand the game tree
     // performing actions and we look for the goalState using as a goalTest
@@ -442,5 +440,4 @@ public class Utils{
                 equalRelations++;
         return (double)equalRelations / (double)a.Relations.Count;
     }
->>>>>>> michelangelo-dev
 }

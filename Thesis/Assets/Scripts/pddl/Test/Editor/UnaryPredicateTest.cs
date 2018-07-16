@@ -8,14 +8,14 @@ public class UnaryPredicateTest {
 	
 	[Test]
 	public void UnaryPredicateCannotBeNull() {
-		Assert.That(()=> new UnaryPredicate(null,null), Throws.ArgumentNullException);
+		Assert.That(()=> new UnaryPredicate(null,null,null), Throws.ArgumentNullException);
 	}
 
 	[Test]
 	public void UnaryPredicatesAreEqualIfAllAttributesAreEqual() {
 		EntityType character = new EntityType("CHARACTER");
-		UnaryPredicate up1 = new UnaryPredicate(character, "IS_RICH");
-		UnaryPredicate up2 = new UnaryPredicate(character, "IS_RICH");
+		UnaryPredicate up1 = new UnaryPredicate(character, "IS_RICH", "is rich");
+		UnaryPredicate up2 = new UnaryPredicate(character, "IS_RICH", "is rich");
 		Assert.True(up1.Equals(up2) && up1.GetHashCode() == up2.GetHashCode());
 	}
 
@@ -23,22 +23,22 @@ public class UnaryPredicateTest {
 	public void UnaryPredicatesAreNotEqualIfTypeIsNotEqual() {
 		EntityType character = new EntityType("CHARACTER");
 		EntityType character2 = new EntityType("CHARACTER2");
-		UnaryPredicate up1 = new UnaryPredicate(character, "IS_RICH");
-		UnaryPredicate up2 = new UnaryPredicate(character2, "IS_RICH");
+		UnaryPredicate up1 = new UnaryPredicate(character, "IS_RICH", "is rich");
+		UnaryPredicate up2 = new UnaryPredicate(character2, "IS_RICH", "is rich");
 		Assert.False(up1.Equals(up2));
 	}
 
 	[Test]
 	public void UnaryPredicatesAreNotEqualIfNameIsNotEqual() {
 		EntityType character = new EntityType("CHARACTER");
-		UnaryPredicate up1 = new UnaryPredicate(character, "IS_RICH");
-		UnaryPredicate up2 = new UnaryPredicate(character, "IS_RICH2");
+		UnaryPredicate up1 = new UnaryPredicate(character, "IS_RICH", "is rich");
+		UnaryPredicate up2 = new UnaryPredicate(character, "IS_RICH2", "is rich");
 		Assert.False(up1.Equals(up2));
 	}
 
 	[Test]
 	public void CloneReturnsEqualUnaryPredicate() {
-		UnaryPredicate up1 = new UnaryPredicate(new EntityType("CHARACTER"), "IS_RICH");
+		UnaryPredicate up1 = new UnaryPredicate(new EntityType("CHARACTER"), "IS_RICH", "is rich");
 		UnaryPredicate up2 = up1.Clone() as UnaryPredicate;
 		Assert.AreEqual(up1, up2);
 	}

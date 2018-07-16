@@ -9,7 +9,7 @@ using System;
 
 public class ActionDescription : MonoBehaviour {
 
-	public static Hashset<Action> actions = new Hashset<Action>();
+	public static HashSet<Action> actions = new HashSet<Action>();
 	public Font myFont;
 	public bool flag;
 	public GameObject description;
@@ -31,11 +31,11 @@ public class ActionDescription : MonoBehaviour {
 
 
 		//(can-move ?from-l1 ?to-l2)
-        BinaryPredicate canMove = new BinaryPredicate(location, "CAN_MOVE", location);
+        BinaryPredicate canMove = new BinaryPredicate(location, "CONNECTED", location, "is connected to");
 		//(at ?characther ?location)
-        BinaryPredicate at = new BinaryPredicate(character, "AT", location);
+        BinaryPredicate at = new BinaryPredicate(character, "AT", location, "is at");
 		//(been-at ?characther ?location)
-		BinaryPredicate beenAt = new BinaryPredicate(character, "BEEN_AT", location);
+		BinaryPredicate beenAt = new BinaryPredicate(character, "BEEN_AT", location, "has been at");
 		domain.addPredicate(canMove);
 		domain.addPredicate(at);
 		domain.addPredicate(beenAt);
@@ -53,7 +53,7 @@ public class ActionDescription : MonoBehaviour {
         //Entity location4 = new Entity(location, "LOCATION4");
 
         // Parameters
-        List<Entity> moveActionParameters = new List<Entity>();
+        HashSet<Entity> moveActionParameters = new HashSet<Entity>();
         moveActionParameters.Add(charac);
         moveActionParameters.Add(start);
         moveActionParameters.Add(destination);
@@ -64,7 +64,7 @@ public class ActionDescription : MonoBehaviour {
         //moveAction2Parameters.Add(location4);      
 
         // Preconditions
-        List<IRelation> moveActionPreconditions = new List<IRelation>();
+        HashSet<IRelation> moveActionPreconditions = new HashSet<IRelation>();
         BinaryRelation characterAtL1 = new BinaryRelation(charac, at, start, RelationValue.TRUE);
         moveActionPreconditions.Add(characterAtL1);
         BinaryRelation canMoveFromL1ToL2 = new BinaryRelation(start, canMove, destination, RelationValue.TRUE);
@@ -77,7 +77,7 @@ public class ActionDescription : MonoBehaviour {
         //moveAction2Preconditions.Add(canMoveFromL3ToL4);
 
         // Postconditions
-        List<IRelation> moveActionPostconditions = new List<IRelation>();
+        HashSet<IRelation> moveActionPostconditions = new HashSet<IRelation>();
         BinaryRelation notCharacterAtL1 = new BinaryRelation(charac, at, start, RelationValue.FALSE);
         moveActionPostconditions.Add(notCharacterAtL1);
         BinaryRelation characterAtL2 = new BinaryRelation(charac, at, destination, RelationValue.TRUE);
@@ -93,7 +93,7 @@ public class ActionDescription : MonoBehaviour {
         //BinaryRelation character2BeenAtL3 = new BinaryRelation(character2, beenAt, location3, RelationValue.TRUE);
         //moveAction2Postconditions.Add(character2BeenAtL3);
 
-        Action move = new Action(moveActionPreconditions, "MOVE", moveActionParameters, moveActionPostconditions);
+        Action move = new Action(moveActionPreconditions, "MOVE", moveActionParameters, moveActionPostconditions, "moved to");
         //Action moveAction2 = new Action(moveAction2Preconditions, "MOVE", moveAction2Parameters, moveAction2Postconditions);
 		domain.addAction(move);
 		actions.Add(move);
@@ -130,93 +130,112 @@ public class ActionDescription : MonoBehaviour {
 
 		foreach(Action act in actions){
 			print(act.Name);
-			List<IRelation> preconditions = act.PreConditions;
-			string name = act.Name;
-			List<Entity> parameters = act.Parameters;
-			List<IRelation> postconditions = act.PostConditions;
+
+			HashSet<IRelation> preconditions = act.PreConditions;
+			HashSet<Entity> parameters = act.Parameters;
+			HashSet<IRelation> postconditions = act.PostConditions;
 			
-			switch(name){
+			string preText = null;
+			string postText = null;
+			string actionText = null;
+			string destination = null;
 
-				case "MOVE":
-					string preText = null;
-					string postText = null;
-					string actionText = null;
-					string destination = null;
-					foreach(IRelation pre in preconditions){
-						string preName = pre.getPredicate().GetName();
-						if(preName == "AT" /*&& pre.Value == RelationValue.TRUE*/){
-							BinaryRelation rel = pre as BinaryRelation;
-							preText += "The " + rel.Source.Name + " was at " + rel.Destination.Name + "\n";
-						}	
+			//PREconditions
+			foreach(IRelation pre in preconditions){
+				if(pre.GetType() == typeof(BinaryRelation)){
+					BinaryRelation r = pre as BinaryRelation;
+					if(r.Value == RelationValue.TRUE){
+						preText += "the " + r.Source.Name + " " + r.Predicate.Text + " " + r.Destination.Name + "\n";
 					}
-					foreach(IRelation post in postconditions){
-						string postName = post.getPredicate().GetName();
-						BinaryRelation rel = post as BinaryRelation;
-						if(postName == "AT" && post.Value == RelationValue.TRUE){
-							postText += "The " + rel.Source.Name + " is now at " + rel.Destination.Name + "\n";
-							destination = rel.Destination.Name;
-						}
+				}else{
+					UnaryRelation r = pre as UnaryRelation;
+					if(r.Value == RelationValue.TRUE){
+						preText += "the " + r.Source.Name + " " + r.Predicate.Text + "\n";	
 					}
-					foreach(Entity param in parameters){
-						if(param.Type.Equals(domain.getEntityType("CHARACTER"))){
-							actionText += "But then, the " + param.Name + " decided to " + name + " towards " + destination + "\n";
-						}
-						//else if(param.Type.Equals(domain.getEntityType("LOCATION")) && param.Name == "DESTINATION"){
-						//	destination = GameObject.Find(param.Name);
-						//}
-					}
-					
-					myText.text += preText + actionText + postText;
-
-					//ActionVisualization av = new ActionVisualization();
-					//av.ShowAction(name, postconditions);
-
-					break;
-
-				case "action2":
-					
-					break;
-
-				case "action3":
-					
-					break;
-
-				case "action4":
-					
-					break;
-
-				default:
-					break;
-
+				}
 			}
+
+			//POSTconditions
+			foreach(IRelation post in postconditions){
+				if(post.GetType() == typeof(BinaryRelation)){
+					BinaryRelation r = post as BinaryRelation;
+					if(r.Value == RelationValue.TRUE){
+						postText += "the " + r.Source.Name + " " + r.Predicate.Text + " " + r.Destination.Name + "\n";
+					}
+				}else{
+					UnaryRelation r = post as UnaryRelation;
+					if(r.Value == RelationValue.TRUE){
+						preText += "the " + r.Source.Name + " " + r.Predicate.Text + "\n";	
+					}
+				}				
+			}
+			foreach(Entity param in parameters){
+				if(param.Type.Equals(domain.getEntityType("CHARACTER"))){
+					actionText += "the " + param.Name + " " + act.Text + " " + destination + "\n";
+				}
+			}
+			
+			myText.text += "Initially " + preText + "\nThen " + actionText + "\nNow " + postText;
+
+			// switch(act.Name){
+
+			// 	case "MOVE":
+			// 		// string preText = null;
+			// 		// string postText = null;
+			// 		// string actionText = null;
+			// 		// string destination = null;
+			// 		// foreach(IRelation pre in preconditions){
+			// 		// 	BinaryRelation rel = pre as BinaryRelation;
+			// 		// 	preText += "The " + rel.Source.Name + " " + rel.Predicate.Text + " " + rel.Destination.Name + "\n";
+						
+			// 		// 	// string preName = pre.Predicate.Name;
+			// 		// 	// if(preName == "AT" /*&& pre.Value == RelationValue.TRUE*/){
+			// 		// 	// 	BinaryRelation rel = pre as BinaryRelation;
+			// 		// 	// 	preText += "The " + rel.Source.Name + " was at " + rel.Destination.Name + "\n";
+			// 		// 	// }	
+			// 		// }
+			// 		// foreach(IRelation post in postconditions){
+			// 		// 	string postName = post.Predicate.Name;
+			// 		// 	BinaryRelation rel = post as BinaryRelation;
+			// 		// 	if(postName == "AT" && post.Value == RelationValue.TRUE){
+			// 		// 		postText += "The " + rel.Source.Name + " is now at " + rel.Destination.Name + "\n";
+			// 		// 		destination = rel.Destination.Name;
+			// 		// 	}
+			// 		// }
+			// 		// foreach(Entity param in parameters){
+			// 		// 	if(param.Type.Equals(domain.getEntityType("CHARACTER"))){
+			// 		// 		actionText += "But then, the " + param.Name + " " + text + " " + destination + "\n";
+			// 		// 	}
+			// 		// 	//else if(param.Type.Equals(domain.getEntityType("LOCATION")) && param.Name == "DESTINATION"){
+			// 		// 	//	destination = GameObject.Find(param.Name);
+			// 		// 	//}
+			// 		// }
+					
+			// 		// myText.text += preText + actionText + postText;
+
+			// 		// //ActionVisualization av = new ActionVisualization();
+			// 		// //av.ShowAction(name, postconditions);
+
+			// 		break;
+
+			// 	case "action2":
+					
+			// 		break;
+
+			// 	case "action3":
+					
+			// 		break;
+
+			// 	case "action4":
+					
+			// 		break;
+
+			// 	default:
+
+			// 		break;
+
+			// }
 		}
-
-
-		// foreach(string[] s in pre){
-		// 	if(s.Length > 1){
-		// 		if(s[1] == "isAt"){
-		// 			myText.text += "The " + s[0] + " was at " + s[2] + "\n";
-		// 		}
-		// 		if(s[1] == "!isAt"){
-		// 			myText.text += "The " + s[0] + " was not at " + s[2] + "\n";
-		// 		}
-		// 	}
-		// }
-
-		// if(action[0] == "move"){
-		// 	myText.text += "But then, the " + action[1] + " decided to " + action[0] + " towards " + action[2] + "\n";
-		// }
-
-		// foreach(string[] s in post){
-		// 	if(s.Length > 1){
-		// 		if(s[1] == "isAt"){
-		// 			myText.text += "The " + s[0] + " is now at " + s[2] + "\n";
-		// 		}
-		// 		if(s[1] == "!isAt"){
-		// 			myText.text += "The " + s[0] + " is not at " + pre[0][2] + " anymore.\n";
-		// 		}
-		// 	}
-		// }
 
 	}
 

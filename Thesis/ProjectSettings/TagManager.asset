@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Building
   - Text
+  - Clickable
   layers:
   - Default
   - TransparentFX

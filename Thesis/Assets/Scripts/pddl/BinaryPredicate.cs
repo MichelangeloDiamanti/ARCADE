@@ -7,6 +7,7 @@ public class BinaryPredicate : IPredicate, System.IEquatable<IPredicate>
     private EntityType _source;
     private EntityType _destination;
     private string _name;
+    private string _text;
 
     public EntityType Source
     {
@@ -20,8 +21,11 @@ public class BinaryPredicate : IPredicate, System.IEquatable<IPredicate>
     {
         get { return _destination; }
     }
-
-    public BinaryPredicate(EntityType source, string name, EntityType destination)
+    public string Text
+    {
+        get { return _text; }
+    }
+    public BinaryPredicate(EntityType source, string name, EntityType destination, string text)
     {
         if (source == null)
             throw new System.ArgumentNullException("Predicate source type cannot be null", "source type");
@@ -29,10 +33,13 @@ public class BinaryPredicate : IPredicate, System.IEquatable<IPredicate>
             throw new System.ArgumentNullException("Predicate name cannot be null", "name");
         if (destination == null)
             throw new System.ArgumentNullException("Predicate destination type cannot be null", "destination type");
+        if (text == null)
+            throw new System.ArgumentNullException("Predicate text type cannot be null", "text");
 
         _source = source;
         _name = name;
         _destination = destination;
+        _text = text;
     }
     public override int GetHashCode()
     {
@@ -60,7 +67,7 @@ public class BinaryPredicate : IPredicate, System.IEquatable<IPredicate>
     }
     public IPredicate Clone()
     {
-        return new BinaryPredicate(_source.Clone(), _name, _destination.Clone());
+        return new BinaryPredicate(_source.Clone(), _name, _destination.Clone(), _text);
     }
     public override string ToString()
     {

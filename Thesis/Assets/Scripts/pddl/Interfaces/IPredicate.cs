@@ -5,6 +5,7 @@ using UnityEngine;
 public interface IPredicate
 {
 	string Name{get;}
+	string Text{get;}
 	EntityType Source{get;}
 	IPredicate Clone();
     bool Equals(object obj); 

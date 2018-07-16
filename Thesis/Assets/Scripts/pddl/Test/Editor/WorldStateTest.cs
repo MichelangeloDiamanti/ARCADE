@@ -39,7 +39,7 @@ public class WorldStateTest {
 		EntityType character = new EntityType("CHARACTER");
 		domain.addEntityType(character);
 
-		UnaryPredicate rich = new UnaryPredicate(character, "RICH");
+		UnaryPredicate rich = new UnaryPredicate(character, "RICH", "is rich");
 		domain.addPredicate(rich);
 
 		WorldState worldState = new WorldState(domain);
@@ -57,7 +57,7 @@ public class WorldStateTest {
 		EntityType character = new EntityType("CHARACTER");
 		domain.addEntityType(character);
 
-		UnaryPredicate rich = new UnaryPredicate(character, "RICH");
+		UnaryPredicate rich = new UnaryPredicate(character, "RICH", "is rich");
 		// domain.addPredicate(rich);
 
 		WorldState worldState = new WorldState(domain);
@@ -78,7 +78,7 @@ public class WorldStateTest {
 		EntityType location = new EntityType("LOCATION");
 		domain.addEntityType(location);
 
-		BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location);
+		BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location, "is at");
 		domain.addPredicate(isAt);
 
 		WorldState worldState = new WorldState(domain);
@@ -102,7 +102,7 @@ public class WorldStateTest {
 		EntityType location = new EntityType("LOCATION");
 		domain.addEntityType(location);
 
-		BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location);
+		BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location, "is at");
 		domain.addPredicate(isAt);
 
 		WorldState worldState = new WorldState(domain);
@@ -126,7 +126,7 @@ public class WorldStateTest {
 		EntityType location = new EntityType("LOCATION");
 		domain.addEntityType(location);
 
-		BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location);
+		BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location, "is at");
 		// domain.addPredicate(isAt);
 
 		WorldState worldState = new WorldState(domain);
@@ -153,13 +153,13 @@ public class WorldStateTest {
 
 
         //(can-move ?from-waypoint ?to-waypoint)
-        BinaryPredicate predicateCanMove = new BinaryPredicate(entityTypewayPoint, "CAN_MOVE", entityTypewayPoint);
+        BinaryPredicate predicateCanMove = new BinaryPredicate(entityTypewayPoint, "CAN_MOVE", entityTypewayPoint, "can move to");
         domain.addPredicate(predicateCanMove);
         //(been-at ?rover ?waypoint)
-        BinaryPredicate predicateBeenAt = new BinaryPredicate(entityTypeRover, "BEEN_AT", entityTypewayPoint);
+        BinaryPredicate predicateBeenAt = new BinaryPredicate(entityTypeRover, "BEEN_AT", entityTypewayPoint, "has been at");
         domain.addPredicate(predicateBeenAt);
         //(at ?rover ?waypoint)
-        BinaryPredicate predicateAt = new BinaryPredicate(entityTypeRover, "AT", entityTypewayPoint);
+        BinaryPredicate predicateAt = new BinaryPredicate(entityTypeRover, "AT", entityTypewayPoint, "is at");
         domain.addPredicate(predicateAt);
 
         //              MOVE ACTION
@@ -189,7 +189,7 @@ public class WorldStateTest {
         BinaryRelation roverBeenAtToWP = new BinaryRelation(entityCuriosity, predicateBeenAt, entityToWayPoint, RelationValue.TRUE);
         actionMovePostconditions.Add(roverBeenAtToWP);
 
-        Action actionMove = new Action(actionMovePreconditions, "MOVE", actionMoveParameters, actionMovePostconditions);
+        Action actionMove = new Action(actionMovePreconditions, "MOVE", actionMoveParameters, actionMovePostconditions, "x");
         domain.addAction(actionMove);
 
 		WorldState worldState = new WorldState(domain);
@@ -675,13 +675,13 @@ public class WorldStateTest {
 
 
         //(can-move ?from-waypoint ?to-waypoint)
-        BinaryPredicate predicateCanMove = new BinaryPredicate(entityTypewayPoint, "CAN_MOVE", entityTypewayPoint);
+        BinaryPredicate predicateCanMove = new BinaryPredicate(entityTypewayPoint, "CAN_MOVE", entityTypewayPoint, "can move to");
         domain.addPredicate(predicateCanMove);
         //(been-at ?rover ?waypoint)
-        BinaryPredicate predicateBeenAt = new BinaryPredicate(entityTypeRover, "BEEN_AT", entityTypewayPoint);
+        BinaryPredicate predicateBeenAt = new BinaryPredicate(entityTypeRover, "BEEN_AT", entityTypewayPoint, "has been at");
         domain.addPredicate(predicateBeenAt);
         //(at ?rover ?waypoint)
-        BinaryPredicate predicateAt = new BinaryPredicate(entityTypeRover, "AT", entityTypewayPoint);
+        BinaryPredicate predicateAt = new BinaryPredicate(entityTypeRover, "AT", entityTypewayPoint, "is at");
         domain.addPredicate(predicateAt);
 
         //              MOVE ACTION
@@ -711,7 +711,7 @@ public class WorldStateTest {
         BinaryRelation roverBeenAtToWP = new BinaryRelation(entityCuriosity, predicateBeenAt, entityToWayPoint, RelationValue.TRUE);
         actionMovePostconditions.Add(roverBeenAtToWP);
 
-        Action actionMove = new Action(actionMovePreconditions, "MOVE", actionMoveParameters, actionMovePostconditions);
+        Action actionMove = new Action(actionMovePreconditions, "MOVE", actionMoveParameters, actionMovePostconditions, "x");
         domain.addAction(actionMove);
         return domain;
     }

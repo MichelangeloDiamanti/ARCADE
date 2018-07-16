@@ -7,7 +7,7 @@ public class UnaryPredicate : IPredicate, System.IEquatable<IPredicate>
 
     private EntityType _source;
     private string _name;
-
+    private string _text;
     public EntityType Source
     {
         get { return _source; }
@@ -16,16 +16,23 @@ public class UnaryPredicate : IPredicate, System.IEquatable<IPredicate>
     {
         get { return _name; }
     }
+    public string Text
+    {
+        get { return _text; }
+    }
 
-    public UnaryPredicate(EntityType source, string name)
+    public UnaryPredicate(EntityType source, string name, string text)
     {
         if (source == null)
             throw new System.ArgumentNullException("Predicate source type cannot be null", "source type");
         if (name == null)
             throw new System.ArgumentNullException("Predicate name cannot be null", "name");
+        if (text == null)
+            throw new System.ArgumentNullException("Predicate text cannot be null", "text");
 
         _source = source;
         _name = name;
+        _text = text;
     }
 
     public override int GetHashCode()
@@ -52,7 +59,7 @@ public class UnaryPredicate : IPredicate, System.IEquatable<IPredicate>
     }
     public IPredicate Clone()
     {
-        return new UnaryPredicate(_source.Clone(), _name);
+        return new UnaryPredicate(_source.Clone(), _name, _text);
     }
 
     public override string ToString()

@@ -14,10 +14,10 @@ public class ActionVisualization : MonoBehaviour {
 		if(flag == true){
 			//ActionDescription ad = new ActionDescription();
 			foreach(Action act in ActionDescription.actions){
-				List<IRelation> preconditions = act.PreConditions;
+				HashSet<IRelation> preconditions = act.PreConditions;
 				string name = act.Name;
-				List<Entity> parameters = act.Parameters;
-				List<IRelation> postconditions = act.PostConditions;
+				HashSet<Entity> parameters = act.Parameters;
+				HashSet<IRelation> postconditions = act.PostConditions;
 				ShowAction(name, postconditions);
 			}
 			
@@ -25,7 +25,7 @@ public class ActionVisualization : MonoBehaviour {
 		}
 	}
 
-	public void ShowAction(string name, List<IRelation> postconditions){
+	public void ShowAction(string name, HashSet<IRelation> postconditions){
 		switch(name){
 
 			case "MOVE":
@@ -33,7 +33,7 @@ public class ActionVisualization : MonoBehaviour {
 				GameObject destination = null;
 
 				foreach (IRelation post in postconditions){
-					string postName = post.getPredicate().GetName();
+					string postName = post.Predicate.Name;
 					BinaryRelation rel = post as BinaryRelation;
 					if(postName == "AT" && post.Value == RelationValue.TRUE){
 						character = GameObject.Find(rel.Source.Name);

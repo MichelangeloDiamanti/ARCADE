@@ -43,11 +43,7 @@ public class GameTreeGenerator
             }
             else
             {
-<<<<<<< HEAD
-                // Debug.Log(item.ToString() + "\nDIO\n" + ws.ToString());
-=======
                 Debug.Log(ws.ToString());
->>>>>>> michelangelo-dev
             }
             currentNode.AddChild(ws, item);
         }

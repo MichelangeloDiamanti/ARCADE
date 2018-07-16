@@ -8,7 +8,7 @@ public class ActionTest {
 
 	[Test]
 	public void ActionDefinitionCannotBeNull() {
-		Assert.That(()=> new Action(null,null,null,null), Throws.ArgumentNullException);
+		Assert.That(()=> new Action(null,null,null,null,null), Throws.ArgumentNullException);
 	}
 	
 	[Test]
@@ -21,7 +21,7 @@ public class ActionTest {
 
 		Entity destinationEntity1 = new Entity(destinationEntityType1, "APPLE");
 
-		BinaryPredicate bp1 = new BinaryPredicate(sourceEntityType1, "PICK_UP", destinationEntityType1);
+		BinaryPredicate bp1 = new BinaryPredicate(sourceEntityType1, "PICK_UP", destinationEntityType1, "picked up");
 
 		BinaryRelation br1 = new BinaryRelation(sourceEntity1, bp1, destinationEntity1, RelationValue.TRUE);
 
@@ -34,7 +34,7 @@ public class ActionTest {
 		HashSet<IRelation> postconditionsAction1 = new HashSet<IRelation>();
 		postconditionsAction1.Add(br1);
 
-		Assert.That(()=> new Action(preconditionsAction1, "PICK_UP", parametersAction1, postconditionsAction1), Throws.ArgumentException);
+		Assert.That(()=> new Action(preconditionsAction1, "PICK_UP", parametersAction1, postconditionsAction1, "x"), Throws.ArgumentException);
 	}
 	
 
@@ -53,8 +53,8 @@ public class ActionTest {
 		Entity destinationEntity1 = new Entity(destinationEntityType1, "APPLE");
 		Entity destinationEntity2 = new Entity(destinationEntityType2, "APPLE");
 
-		BinaryPredicate bp1 = new BinaryPredicate(sourceEntityType1, "PICK_UP", destinationEntityType1);
-		BinaryPredicate bp2 = new BinaryPredicate(sourceEntityType2, "PICK_UP", destinationEntityType2);
+		BinaryPredicate bp1 = new BinaryPredicate(sourceEntityType1, "PICK_UP", destinationEntityType1, "picked up");
+		BinaryPredicate bp2 = new BinaryPredicate(sourceEntityType2, "PICK_UP", destinationEntityType2, "picked up");
 
 		BinaryRelation br1 = new BinaryRelation(sourceEntity1, bp1, destinationEntity1, RelationValue.TRUE);
 		BinaryRelation br2 = new BinaryRelation(sourceEntity2, bp2, destinationEntity2, RelationValue.TRUE);
@@ -67,7 +67,7 @@ public class ActionTest {
 		HashSet<IRelation> postconditionsAction1 = new HashSet<IRelation>();
 		postconditionsAction1.Add(br1);
 
-		Action a1 = new Action(preconditionsAction1, "PICK_UP", parametersAction1, postconditionsAction1);
+		Action a1 = new Action(preconditionsAction1, "PICK_UP", parametersAction1, postconditionsAction1, "x");
 
 		HashSet<Entity> parametersAction2 = new HashSet<Entity>();
 		parametersAction2.Add(sourceEntity2);
@@ -77,7 +77,7 @@ public class ActionTest {
 		HashSet<IRelation> postconditionsAction2 = new HashSet<IRelation>();
 		postconditionsAction2.Add(br2);
 
-		Action a2 = new Action(preconditionsAction2, "PICK_UP", parametersAction2, postconditionsAction2);
+		Action a2 = new Action(preconditionsAction2, "PICK_UP", parametersAction2, postconditionsAction2, "x");
 
 		Assert.True(a1.Equals(a2) && a1.GetHashCode() == a2.GetHashCode());
 	}
@@ -96,8 +96,8 @@ public class ActionTest {
 		Entity destinationEntity1 = new Entity(destinationEntityType1, "APPLE");
 		Entity destinationEntity2 = new Entity(destinationEntityType2, "APPLE");
 
-		BinaryPredicate bp1 = new BinaryPredicate(sourceEntityType1, "PICK_UP", destinationEntityType1);
-		BinaryPredicate bp2 = new BinaryPredicate(sourceEntityType2, "PICK_UP", destinationEntityType2);
+		BinaryPredicate bp1 = new BinaryPredicate(sourceEntityType1, "PICK_UP", destinationEntityType1, "picked up");
+		BinaryPredicate bp2 = new BinaryPredicate(sourceEntityType2, "PICK_UP", destinationEntityType2, "picked up");
 
 		BinaryRelation br1 = new BinaryRelation(sourceEntity1, bp1, destinationEntity1, RelationValue.TRUE);
 		BinaryRelation br2 = new BinaryRelation(sourceEntity2, bp2, destinationEntity2, RelationValue.TRUE);
@@ -110,7 +110,7 @@ public class ActionTest {
 		HashSet<IRelation> postconditionsAction1 = new HashSet<IRelation>();
 		postconditionsAction1.Add(br1);
 
-		Action a1 = new Action(preconditionsAction1, "PICK_UP", parametersAction1, postconditionsAction1);
+		Action a1 = new Action(preconditionsAction1, "PICK_UP", parametersAction1, postconditionsAction1, "x");
 
 		HashSet<Entity> parametersAction2 = new HashSet<Entity>();
 		parametersAction2.Add(sourceEntity2);
@@ -120,7 +120,7 @@ public class ActionTest {
 		HashSet<IRelation> postconditionsAction2 = new HashSet<IRelation>();
 		postconditionsAction2.Add(br2);
 
-		Action a2 = new Action(preconditionsAction2, "PICK_UP2", parametersAction2, postconditionsAction2);
+		Action a2 = new Action(preconditionsAction2, "PICK_UP2", parametersAction2, postconditionsAction2, "x");
 
 		Assert.False(a1.Equals(a2) || a1.GetHashCode() == a2.GetHashCode());
 	}
@@ -134,9 +134,9 @@ public class ActionTest {
         Entity fromWayPoint = new Entity(wayPoint, "WAYPOINT1");
         Entity toWayPoint = new Entity(wayPoint, "WAYPOINT2");        
 
-        BinaryPredicate canMove = new BinaryPredicate(wayPoint, "CAN_MOVE", wayPoint);
-        BinaryPredicate at = new BinaryPredicate(rover, "AT", wayPoint);
-        BinaryPredicate beenAt = new BinaryPredicate(rover, "BEEN_AT", wayPoint);
+        BinaryPredicate canMove = new BinaryPredicate(wayPoint, "CAN_MOVE", wayPoint, "can move to");
+        BinaryPredicate at = new BinaryPredicate(rover, "AT", wayPoint, "is at");
+        BinaryPredicate beenAt = new BinaryPredicate(rover, "BEEN_AT", wayPoint, "has been at");
 
         HashSet<Entity> moveActionParameters = new HashSet<Entity>();
         moveActionParameters.Add(curiosity);
@@ -159,7 +159,7 @@ public class ActionTest {
         BinaryRelation roverBeenAtToWP = new BinaryRelation(curiosity, beenAt, toWayPoint, RelationValue.TRUE);
         moveActionPostconditions.Add(roverBeenAtToWP);
 
-        Action moveAction = new Action(moveActionPreconditions, "MOVE", moveActionParameters, moveActionPostconditions);
+        Action moveAction = new Action(moveActionPreconditions, "MOVE", moveActionParameters, moveActionPostconditions, "x");
 		Action clonedMoveAction = moveAction.Clone();
 		Assert.AreEqual(moveAction, clonedMoveAction);
 	}
@@ -177,8 +177,8 @@ public class ActionTest {
         EntityType entityTypeBattery = new EntityType("BATTERY");
         EntityType entityTypeWheel = new EntityType("WHEEL");
         
-		UnaryPredicate predicateBatteryCharged = new UnaryPredicate(entityTypeBattery, "BATTERY_CHARGED");
-        UnaryPredicate predicateWheelsInflated = new UnaryPredicate(entityTypeWheel, "WHEELS_INFLATED");
+		UnaryPredicate predicateBatteryCharged = new UnaryPredicate(entityTypeBattery, "BATTERY_CHARGED", "battery is charged");
+        UnaryPredicate predicateWheelsInflated = new UnaryPredicate(entityTypeWheel, "WHEELS_INFLATED", "wheels are inflated");
 		
 		Entity entityBattery = new Entity(entityTypeBattery, "BATTERY");
 		Entity entityWheels = new Entity(entityTypeWheel, "WHEELS");
@@ -205,8 +205,8 @@ public class ActionTest {
         EntityType entityTypeBattery = new EntityType("BATTERY");
         EntityType entityTypeWheel = new EntityType("WHEEL");
         
-		UnaryPredicate predicateBatteryCharged = new UnaryPredicate(entityTypeBattery, "BATTERY_CHARGED");
-        UnaryPredicate predicateWheelsInflated = new UnaryPredicate(entityTypeWheel, "WHEELS_INFLATED");
+		UnaryPredicate predicateBatteryCharged = new UnaryPredicate(entityTypeBattery, "BATTERY_CHARGED", "battery is charged");
+        UnaryPredicate predicateWheelsInflated = new UnaryPredicate(entityTypeWheel, "WHEELS_INFLATED", "wheels are inflated");
 		
 		UnaryRelation relationBatteryCharged = new UnaryRelation(new Entity(entityTypeBattery, "BATTERY"), 
 			predicateBatteryCharged, RelationValue.TRUE);
@@ -235,8 +235,8 @@ public class ActionTest {
         EntityType entityTypeBattery = new EntityType("BATTERY");
         EntityType entityTypeWheel = new EntityType("WHEEL");
         
-		UnaryPredicate predicateBatteryCharged = new UnaryPredicate(entityTypeBattery, "BATTERY_CHARGED");
-        UnaryPredicate predicateWheelsInflated = new UnaryPredicate(entityTypeWheel, "WHEELS_INFLATED");
+		UnaryPredicate predicateBatteryCharged = new UnaryPredicate(entityTypeBattery, "BATTERY_CHARGED", "battery is charged");
+        UnaryPredicate predicateWheelsInflated = new UnaryPredicate(entityTypeWheel, "WHEELS_INFLATED", "wheels are inflated");
 		
 		UnaryRelation relationBatteryCharged = new UnaryRelation(new Entity(entityTypeBattery, "BATTERY"), 
 			predicateBatteryCharged, RelationValue.TRUE);

@@ -33,7 +33,7 @@ public class DomainTest {
 		domain.addEntityType(character);
 		domain.addEntityType(artifact);
 		
-		BinaryPredicate binaryPredicate = new BinaryPredicate(character, "PICK_UP", artifact);
+		BinaryPredicate binaryPredicate = new BinaryPredicate(character, "PICK_UP", artifact, "picked up");
 		domain.addPredicate(binaryPredicate);
 
 		object getBinaryPredicate = domain.getPredicate("PICK_UP");
@@ -52,7 +52,7 @@ public class DomainTest {
 		Entity sourceEntity1 = new Entity(sourceEntityType1, "JOHN");
 		Entity destinationEntity1 = new Entity(destinationEntityType1, "APPLE");
 
-		BinaryPredicate bp1 = new BinaryPredicate(sourceEntityType1, "PICK_UP", destinationEntityType1);
+		BinaryPredicate bp1 = new BinaryPredicate(sourceEntityType1, "PICK_UP", destinationEntityType1, "picked up");
 		domain.addPredicate(bp1);
 
 		BinaryRelation br1 = new BinaryRelation(sourceEntity1, bp1, destinationEntity1, RelationValue.TRUE);
@@ -66,7 +66,7 @@ public class DomainTest {
 		HashSet<IRelation> postconditionsAction1 = new HashSet<IRelation>();
 		postconditionsAction1.Add(br1);
 
-		Action action = new Action(preconditionsAction1, "PICK_UP", parametersAction1, postconditionsAction1);
+		Action action = new Action(preconditionsAction1, "PICK_UP", parametersAction1, postconditionsAction1, "x");
 		domain.addAction(action);
 
 		object getAction = domain.getAction("PICK_UP");
@@ -80,7 +80,7 @@ public class DomainTest {
 		EntityType character = new EntityType("CHARACTER");
 		// domain.addEntityType(character);
 		
-		UnaryPredicate up = new UnaryPredicate(character, "RICH");
+		UnaryPredicate up = new UnaryPredicate(character, "RICH", "is rich");
 
 		Assert.That(()=> domain.addPredicate(up), Throws.ArgumentException);
 	}
@@ -92,10 +92,10 @@ public class DomainTest {
 		EntityType character = new EntityType("CHARACTER");
 		domain.addEntityType(character);
 
-		UnaryPredicate up = new UnaryPredicate(character, "RICH");
+		UnaryPredicate up = new UnaryPredicate(character, "RICH", "is rich");
 		domain.addPredicate(up);
 
-		UnaryPredicate up2 = new UnaryPredicate(character, "RICH");
+		UnaryPredicate up2 = new UnaryPredicate(character, "RICH", "is rich");
 
 		Assert.That(()=> domain.addPredicate(up2), Throws.ArgumentException);
 	}
@@ -109,7 +109,7 @@ public class DomainTest {
 		EntityType location = new EntityType("LOCATION");
 		domain.addEntityType(location);
 
-		BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location);
+		BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location, "is at");
 
 		Assert.That(()=> domain.addPredicate(isAt) , Throws.ArgumentException);
 	}
@@ -123,7 +123,7 @@ public class DomainTest {
 		EntityType location = new EntityType("LOCATION");
 		// domain.addEntityType(location);
 
-		BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location);
+		BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location, "is at");
 
 		Assert.That(()=> domain.addPredicate(isAt) , Throws.ArgumentException);
 	}
@@ -138,10 +138,10 @@ public class DomainTest {
 		EntityType location = new EntityType("LOCATION");
 		domain.addEntityType(location);
 
-		BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location);
+		BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location, "is at");
 		domain.addPredicate(isAt);
 
-		BinaryPredicate isAt2 = new BinaryPredicate(character, "IS_AT", location);
+		BinaryPredicate isAt2 = new BinaryPredicate(character, "IS_AT", location, "is at");
 		
 		Assert.That(()=> domain.addPredicate(isAt2), Throws.ArgumentException);
 	}
@@ -157,13 +157,13 @@ public class DomainTest {
         domain.addEntityType(wayPoint);
 
         //(can-move ?from-waypoint ?to-waypoint)
-        BinaryPredicate canMove = new BinaryPredicate(wayPoint, "CAN_MOVE", wayPoint);
+        BinaryPredicate canMove = new BinaryPredicate(wayPoint, "CAN_MOVE", wayPoint, "can move to");
         // domain.addPredicate(canMove);
         //(been-at ?rover ?waypoint)
-        BinaryPredicate beenAt = new BinaryPredicate(rover, "BEEN_AT", wayPoint);
+        BinaryPredicate beenAt = new BinaryPredicate(rover, "BEEN_AT", wayPoint, "has been at");
         // domain.addPredicate(beenAt);
         //(at ?rover ?waypoint)
-        BinaryPredicate at = new BinaryPredicate(rover, "AT", wayPoint);
+        BinaryPredicate at = new BinaryPredicate(rover, "AT", wayPoint, "is at");
         // domain.addPredicate(at);
 	    //              MOVE ACTION
         // Parameters
@@ -192,7 +192,7 @@ public class DomainTest {
         BinaryRelation roverBeenAtToWP = new BinaryRelation(curiosity, beenAt, toWayPoint, RelationValue.TRUE);
         moveActionPostconditions.Add(roverBeenAtToWP);
 
-        Action moveAction = new Action(moveActionPreconditions, "MOVE", moveActionParameters, moveActionPostconditions);
+        Action moveAction = new Action(moveActionPreconditions, "MOVE", moveActionParameters, moveActionPostconditions, "x");
 
 		Assert.That(()=> domain.addAction(moveAction), Throws.ArgumentException);
 	}
@@ -220,7 +220,7 @@ public class DomainTest {
 		Domain domain = Utils.roverWorldDomainFullDetail();
 		Domain domain2 = Utils.roverWorldDomainFullDetail();
 		
-		UnaryPredicate predicateDifference = new UnaryPredicate(new EntityType("ROVER"), "DIFFERENT_PREDICATE");
+		UnaryPredicate predicateDifference = new UnaryPredicate(new EntityType("ROVER"), "DIFFERENT_PREDICATE", "different text");
 		domain2.addPredicate(predicateDifference);
 
 		Assert.AreNotEqual(domain, domain2);
@@ -242,7 +242,7 @@ public class DomainTest {
 		actionDifferencePostconditions.Add(domain2.generateRelationFromPredicateName("IS_EMPTY", entity1, RelationValue.FALSE));
 		
 		domain2.addAction(new Action(actionDifferencePreconditions, "DIFFERENT_ACTION", 
-			actionDifferenceParameters, actionDifferencePostconditions));
+			actionDifferenceParameters, actionDifferencePostconditions, "x"));
 
 		Assert.AreNotEqual(domain, domain2);
 	}
@@ -259,13 +259,13 @@ public class DomainTest {
         domain.addEntityType(wayPoint);
 
         //(can-move ?from-waypoint ?to-waypoint)
-        BinaryPredicate canMove = new BinaryPredicate(wayPoint, "CAN_MOVE", wayPoint);
+        BinaryPredicate canMove = new BinaryPredicate(wayPoint, "CAN_MOVE", wayPoint, "can move to");
         domain.addPredicate(canMove);
         //(been-at ?rover ?waypoint)
-        BinaryPredicate beenAt = new BinaryPredicate(rover, "BEEN_AT", wayPoint);
+        BinaryPredicate beenAt = new BinaryPredicate(rover, "BEEN_AT", wayPoint, "has been at");
         domain.addPredicate(beenAt);
         //(at ?rover ?waypoint)
-        BinaryPredicate at = new BinaryPredicate(rover, "AT", wayPoint);
+        BinaryPredicate at = new BinaryPredicate(rover, "AT", wayPoint, "is at");
         domain.addPredicate(at);
 	    //              MOVE ACTION
         // Parameters
@@ -294,7 +294,7 @@ public class DomainTest {
         BinaryRelation roverBeenAtToWP = new BinaryRelation(curiosity, beenAt, toWayPoint, RelationValue.TRUE);
         moveActionPostconditions.Add(roverBeenAtToWP);
 
-        Action moveAction = new Action(moveActionPreconditions, "MOVE", moveActionParameters, moveActionPostconditions);
+        Action moveAction = new Action(moveActionPreconditions, "MOVE", moveActionParameters, moveActionPostconditions, "x");
 		domain.addAction(moveAction);
 
 		Domain clonedDomain = domain.Clone();
