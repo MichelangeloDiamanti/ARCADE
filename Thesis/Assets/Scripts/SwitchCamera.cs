@@ -35,25 +35,25 @@ public class SwitchCamera : MonoBehaviour {
 		direction = transform.forward;
 		Debug.DrawLine(origin, origin + direction * 4f, Color.blue);
 
-		RaycastHit hit = new RaycastHit();
-		if(Physics.SphereCast(origin, 7.5f, direction, out hit, 4f, layerMask)){
-			print(hit.transform.gameObject.name);
-			Animator anim = hit.transform.GetComponent<Animator>();
-			anim.SetBool("InVision", true);
-			// if(hit.transform.GetComponent<Animator>())
-			// {
-			// 	print("ANIMATION");
-			// 	Animator anim = hit.transform.GetComponent<Animator>();
-			// 	anim.SetBool("InVision", true);
-			// }
+		//RaycastHit hit = new RaycastHit();
+		// if(Physics.SphereCast(origin, 7.5f, direction, out hit, 4f, layerMask)){
+		// 	print(hit.transform.gameObject.name);
+		// 	Animator anim = hit.transform.GetComponent<Animator>();
+		// 	anim.SetBool("InVision", true);
+		// 	// if(hit.transform.GetComponent<Animator>())
+		// 	// {
+		// 	// 	print("ANIMATION");
+		// 	// 	Animator anim = hit.transform.GetComponent<Animator>();
+		// 	// 	anim.SetBool("InVision", true);
+		// 	// }
 			
-		}
-		else{
-			foreach (Animator anim in Resources.FindObjectsOfTypeAll(typeof(Animator)) as Animator[])
-			{
-				anim.SetBool("InVision", false);
-			}				
-		}
+		// }
+		// else{
+		// 	foreach (Animator anim in Resources.FindObjectsOfTypeAll(typeof(Animator)) as Animator[])
+		// 	{
+		// 		anim.SetBool("InVision", false);
+		// 	}				
+		// }
 	}
 
 	void OnTriggerEnter(Collider collider){
@@ -98,7 +98,7 @@ public class SwitchCamera : MonoBehaviour {
 		PointAndClick.selectedObject = destination;		
 		PointAndClick.selectedObject.name = "road";
 		PointAndClick pnc = GameObject.Find("GameManager").GetComponent<PointAndClick>();
-		pnc.MoveCharacter();
+		//pnc.MoveCharacter();
 		// PointAndClick pnc = new PointAndClick();
 		// pnc.MoveCharacter();
 		foreach (ParticleSystem ps in Resources.FindObjectsOfTypeAll(typeof(ParticleSystem)) as ParticleSystem[])
