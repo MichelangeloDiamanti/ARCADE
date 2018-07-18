@@ -9,6 +9,9 @@ using ru.cadia.pddlFramework;
 public class Simulation : MonoBehaviour
 {
 
+    private string logFilePath = "Assets/Logs/";
+    private string logFileName;
+
     private class SimulationBoundarySorterAcending : IComparer<SimulationBoundary>
     {
         public int Compare(SimulationBoundary x, SimulationBoundary y)
@@ -97,6 +100,11 @@ public class Simulation : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        System.DateTime localDate = System.DateTime.Now;
+        // System.Globalization.CultureInfo culture = new System.Globalization.CultureInfo("it-IT");
+        logFileName = "algorithm_performances_" + localDate.Year + "-" + localDate.Month + "-" + localDate.Day + "_" +
+            localDate.Hour + "-" + localDate.Minute + "-" + localDate.Second + ".log";
+
         _lastObservedStates = new Dictionary<SimulationBoundary, TreeNode<WorldState>>();
         m_Point = player.transform.position;
 
@@ -182,18 +190,37 @@ public class Simulation : MonoBehaviour
                 // Refinement
                 if (_currentLevelOfDetail > lastLoD)
                 {
+                    StreamWriter writer = new StreamWriter(logFilePath + logFileName, true);
 
-                    var otherWatch = System.Diagnostics.Stopwatch.StartNew();
-                    
-                    TreeNode<WorldState> otherSolution = Utils.breadthFirstSearch(
-                        _lastObservedStates[currentSimulationBoundary].Data, _currentNode.Data);
-                    otherWatch.Stop();
+                    // // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                    // // this portion is to test normal BFS with no subgoals 
+                    // // from last detailed state straight to current abstract
 
-                    long otherElapsedMs = otherWatch.ElapsedMilliseconds;
+                    // var otherWatch = System.Diagnostics.Stopwatch.StartNew();
 
-                    Debug.Log("Normal BFS search time: " + otherElapsedMs + " ms");
-                    Debug.Log("Normal BFS search explored nodes: " + Utils.bfsExploredNodes);
+                    // TreeNode<WorldState> otherSolution = Utils.breadthFirstSearch(
+                    //     _lastObservedStates[currentSimulationBoundary].Data, _currentNode.Data);
+                    // otherWatch.Stop();
 
+                    // long otherElapsedMs = otherWatch.ElapsedMilliseconds;
+
+                    // writer.WriteLine("Normal BFS search time: " + otherElapsedMs + " ms\n");
+                    // writer.WriteLine("Normal BFS search explored nodes: " + Utils.bfsExploredNodes + "\n");
+
+                    // Stack<string> normalBFSSolution = new Stack<string>();
+                    // while (otherSolution.IsRoot == false)
+                    // {
+                    //     normalBFSSolution.Push(otherSolution.ParentAction.ShortToString());
+                    //     otherSolution = otherSolution.Parent;
+                    // }
+
+                    // string normalBFSSolutionInverse = "The solution found by the normal BFS is composed by the following actions:\n";
+                    // while (normalBFSSolution.Count > 0)
+                    //     normalBFSSolutionInverse += normalBFSSolution.Pop() + "\n";
+
+                    // writer.WriteLine(normalBFSSolutionInverse);
+
+                    // // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
                     // roll back the simulation until we reach the root of the current level of detail
                     while (_currentNode.IsRoot == false)
@@ -204,6 +231,8 @@ public class Simulation : MonoBehaviour
                     int expandedNodes = 0;
                     long elapsedTimeForSearch = 0;
 
+
+                    string s = "The solution found by the Subgoals BFS is composed by the following actions:\n";
                     // translate each action performed in the previous level of detail to an equivalent list of
                     // actions in the current level of detail. each translation is applied to the last observed
                     // state at current level of detail which in the end will be up to date.
@@ -228,9 +257,9 @@ public class Simulation : MonoBehaviour
                         // Debug.Log("BFS time: " + elapsedMs + " ms");
                         // Debug.Log("BFS explored nodes: " + Utils.bfsExploredNodes);
 
-                        Debug.Log("In the abstract simulation the following action was performed: " + _currentNode.ParentAction.ShortToString());
+                        s += "Abstract: " + _currentNode.ParentAction.ShortToString() + "\n";
 
-                        string s = "In the full detail simulation that was translated with these actions:\n";
+                        s += "Detailed:\n";
 
                         // solution is a leaf node we need to apply the actions in the reversed order (from root to leaf)
                         List<Action> sortedActions = new List<Action>();
@@ -242,17 +271,20 @@ public class Simulation : MonoBehaviour
                         sortedActions.Reverse();
                         foreach (Action a in sortedActions)
                         {
-                            s += a.ShortToString();
+                            s += a.ShortToString() + "\n";
                             lastNodeAtCurrentLevel = lastNodeAtCurrentLevel.AddChild(lastNodeAtCurrentLevel.Data.applyAction(a), a);
                         }
-
-                        Debug.Log(s);
+                        s += "\n";
                     }
+
+                    writer.WriteLine(s);
 
                     _currentNode = lastNodeAtCurrentLevel;
 
-                    Debug.Log("Translation time: " + elapsedTimeForSearch + " ms");
-                    Debug.Log("Translation explored nodes: " + expandedNodes);
+                    writer.WriteLine("Subgoals BFS search time: " + elapsedTimeForSearch + " ms");
+                    writer.WriteLine("Subgoals BFS search explored nodes: " + expandedNodes);
+
+                    writer.Close();
 
                 }
                 // Abstraction

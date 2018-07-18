@@ -1,0 +1,64 @@
+Normal BFS search time: 2044 ms
+
+Normal BFS search explored nodes: 659
+
+The solution found by the normal BFS is composed by the following actions:
+Action: MOVE(ROVER ,WAYPOINT6 ,WAYPOINT3 ,)
+Action: MOVE(ROVER ,WAYPOINT3 ,WAYPOINT4 ,)
+Action: MOVE(ROVER ,WAYPOINT4 ,WAYPOINT8 ,)
+Action: TAKE_IMAGE(ROVER ,OBJECTIVE3 ,WAYPOINT8 ,)
+Action: MOVE(ROVER ,WAYPOINT8 ,WAYPOINT6 ,)
+Action: MOVE(ROVER ,WAYPOINT6 ,WAYPOINT7 ,)
+Action: TAKE_IMAGE(ROVER ,OBJECTIVE2 ,WAYPOINT7 ,)
+Action: MOVE(ROVER ,WAYPOINT7 ,WAYPOINT6 ,)
+
+The solution found by the Subgoals BFS is composed by the following actions:
+Abstract: Action: MOVE(ROVER ,WAYPOINT6 ,WAYPOINT7 ,)
+Detailed:
+Action: MOVE(ROVER ,WAYPOINT6 ,WAYPOINT7 ,)
+
+Abstract: Action: MOVE(ROVER ,WAYPOINT7 ,WAYPOINT6 ,)
+Detailed:
+Action: MOVE(ROVER ,WAYPOINT7 ,WAYPOINT6 ,)
+
+Abstract: Action: MOVE(ROVER ,WAYPOINT6 ,WAYPOINT7 ,)
+Detailed:
+Action: MOVE(ROVER ,WAYPOINT6 ,WAYPOINT7 ,)
+
+Abstract: Action: TAKE_IMAGE(ROVER ,OBJECTIVE2 ,WAYPOINT7 ,)
+Detailed:
+Action: TAKE_IMAGE(ROVER ,OBJECTIVE2 ,WAYPOINT7 ,)
+
+Abstract: Action: TAKE_IMAGE(ROVER ,OBJECTIVE2 ,WAYPOINT7 ,)
+Detailed:
+
+Abstract: Action: TAKE_IMAGE(ROVER ,OBJECTIVE2 ,WAYPOINT7 ,)
+Detailed:
+
+Abstract: Action: TAKE_IMAGE(ROVER ,OBJECTIVE2 ,WAYPOINT7 ,)
+Detailed:
+
+Abstract: Action: TAKE_IMAGE(ROVER ,OBJECTIVE2 ,WAYPOINT7 ,)
+Detailed:
+
+Abstract: Action: MOVE(ROVER ,WAYPOINT7 ,WAYPOINT6 ,)
+Detailed:
+Action: MOVE(ROVER ,WAYPOINT7 ,WAYPOINT6 ,)
+
+Abstract: Action: MOVE(ROVER ,WAYPOINT6 ,WAYPOINT8 ,)
+Detailed:
+Action: MOVE(ROVER ,WAYPOINT6 ,WAYPOINT3 ,)
+Action: MOVE(ROVER ,WAYPOINT3 ,WAYPOINT4 ,)
+Action: MOVE(ROVER ,WAYPOINT4 ,WAYPOINT8 ,)
+
+Abstract: Action: TAKE_IMAGE(ROVER ,OBJECTIVE3 ,WAYPOINT8 ,)
+Detailed:
+Action: TAKE_IMAGE(ROVER ,OBJECTIVE3 ,WAYPOINT8 ,)
+
+Abstract: Action: MOVE(ROVER ,WAYPOINT8 ,WAYPOINT6 ,)
+Detailed:
+Action: MOVE(ROVER ,WAYPOINT8 ,WAYPOINT6 ,)
+
+
+Subgoals BFS search time: 102 ms
+Subgoals BFS search explored nodes: 20

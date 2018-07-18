@@ -1,0 +1,54 @@
+Normal BFS search time: 406 ms
+
+Normal BFS search explored nodes: 132
+
+The solution found by the normal BFS is composed by the following actions:
+Action: MOVE(ROVER ,WAYPOINT6 ,WAYPOINT3 ,)
+Action: MOVE(ROVER ,WAYPOINT3 ,WAYPOINT4 ,)
+Action: MOVE(ROVER ,WAYPOINT4 ,WAYPOINT8 ,)
+Action: MOVE(ROVER ,WAYPOINT8 ,WAYPOINT6 ,)
+Action: MOVE(ROVER ,WAYPOINT6 ,WAYPOINT3 ,)
+Action: MOVE(ROVER ,WAYPOINT3 ,WAYPOINT4 ,)
+
+The solution found by the Subgoals BFS is composed by the following actions:
+Abstract: Action: MOVE(ROVER ,WAYPOINT6 ,WAYPOINT8 ,)
+Detailed:
+Action: MOVE(ROVER ,WAYPOINT6 ,WAYPOINT3 ,)
+Action: MOVE(ROVER ,WAYPOINT3 ,WAYPOINT4 ,)
+Action: MOVE(ROVER ,WAYPOINT4 ,WAYPOINT8 ,)
+
+Abstract: Action: MOVE(ROVER ,WAYPOINT8 ,WAYPOINT4 ,)
+Detailed:
+Action: MOVE(ROVER ,WAYPOINT8 ,WAYPOINT6 ,)
+Action: MOVE(ROVER ,WAYPOINT6 ,WAYPOINT3 ,)
+Action: MOVE(ROVER ,WAYPOINT3 ,WAYPOINT4 ,)
+
+Abstract: Action: MOVE(ROVER ,WAYPOINT4 ,WAYPOINT8 ,)
+Detailed:
+Action: MOVE(ROVER ,WAYPOINT4 ,WAYPOINT8 ,)
+
+Abstract: Action: MOVE(ROVER ,WAYPOINT8 ,WAYPOINT6 ,)
+Detailed:
+Action: MOVE(ROVER ,WAYPOINT8 ,WAYPOINT6 ,)
+
+Abstract: Action: MOVE(ROVER ,WAYPOINT6 ,WAYPOINT8 ,)
+Detailed:
+Action: MOVE(ROVER ,WAYPOINT6 ,WAYPOINT3 ,)
+Action: MOVE(ROVER ,WAYPOINT3 ,WAYPOINT4 ,)
+Action: MOVE(ROVER ,WAYPOINT4 ,WAYPOINT8 ,)
+
+Abstract: Action: MOVE(ROVER ,WAYPOINT8 ,WAYPOINT6 ,)
+Detailed:
+Action: MOVE(ROVER ,WAYPOINT8 ,WAYPOINT6 ,)
+
+Abstract: Action: MOVE(ROVER ,WAYPOINT6 ,WAYPOINT3 ,)
+Detailed:
+Action: MOVE(ROVER ,WAYPOINT6 ,WAYPOINT3 ,)
+
+Abstract: Action: MOVE(ROVER ,WAYPOINT3 ,WAYPOINT4 ,)
+Detailed:
+Action: MOVE(ROVER ,WAYPOINT3 ,WAYPOINT4 ,)
+
+
+Subgoals BFS search time: 99 ms
+Subgoals BFS search explored nodes: 35
