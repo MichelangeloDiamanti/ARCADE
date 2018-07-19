@@ -9,9 +9,6 @@ using ru.cadia.pddlFramework;
 public class Simulation : MonoBehaviour
 {
 
-    private string logFilePath = "Assets/Logs/";
-    private string logFileName;
-
     private class SimulationBoundarySorterAcending : IComparer<SimulationBoundary>
     {
         public int Compare(SimulationBoundary x, SimulationBoundary y)
@@ -29,7 +26,11 @@ public class Simulation : MonoBehaviour
     }
 
     public GameObject player;
+    public Visualization visualizer;
     public List<SimulationBoundary> simulationBoundaries;
+
+    private string logFilePath = "Assets/Logs/";
+    private string logFileName;
     private Vector3 m_Point;
     private TreeNode<WorldState> _currentNode;
     private int _currentLevelOfDetail;
@@ -178,15 +179,8 @@ public class Simulation : MonoBehaviour
             if (_currentLevelOfDetail != lastLoD)
             {
                 // find in which boundary the player is at
-                SimulationBoundary currentSimulationBoundary = null;
-                foreach (SimulationBoundary sb in simulationBoundaries)
-                {
-                    if (sb.level == _currentLevelOfDetail)
-                    {
-                        currentSimulationBoundary = sb;
-                        break;
-                    }
-                }
+                SimulationBoundary currentSimulationBoundary = getSimulationBoundaryAtLevel(_currentLevelOfDetail);
+
                 // Refinement
                 if (_currentLevelOfDetail > lastLoD)
                 {
@@ -307,6 +301,35 @@ public class Simulation : MonoBehaviour
             TreeNode<WorldState> nextNode = getNextStateWithRandomAction(_currentNode);
             if (nextNode == null)
                 Debug.Log("There are no more available actions, shutting down the simulation");
+
+
+            bool simulationInteractive = getSimulationBoundaryAtLevel(_currentLevelOfDetail).interactive;
+            if (simulationInteractive)
+            {
+                bool result = false;
+                yield return StartCoroutine(visualizer.interact(nextNode.ParentAction, value => result = value));
+                if(result)
+                {
+                    // The action has been allowed, go next
+                }
+                else
+                {
+                    // The action has been denied, roll back
+                }
+            }
+            else
+            {
+                bool result = false;
+                yield return StartCoroutine(visualizer.visualize(nextNode.ParentAction, value => result = value));
+                if(result)
+                {
+                    // The action has been visualized, go next
+                }
+                else
+                {
+                    // The were some problems with the visualization, roll back
+                }
+            }
 
             _currentNode = nextNode;
             setLastObservedStateAtLevel(CurrentLevelOfDetail, _currentNode);
