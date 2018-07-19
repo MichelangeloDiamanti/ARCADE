@@ -6,7 +6,8 @@ using UnityEngine.UI;
 using System.Text;
 using System.IO;
 using ru.cadia.pddlFramework;
-using ru.cadia.visualization;
+using vis = ru.cadia.visualization;
+
 public class ActionDescription : MonoBehaviour {
 
 	public static HashSet<Action> actions = new HashSet<Action>();
@@ -30,12 +31,12 @@ public class ActionDescription : MonoBehaviour {
 		domain.addEntityType(location);
 
 
-		//(can-move ?from-l1 ?to-l2)
-        ru.cadia.visualization.BinaryPredicate canMove = new ru.cadia.visualization.BinaryPredicate(location, "CONNECTED", location, "is connected to");
-		//(at ?characther ?location)
-        ru.cadia.visualization.BinaryPredicate at = new ru.cadia.visualization.BinaryPredicate(character, "AT", location, "is at");
-		//(been-at ?characther ?location)
-		ru.cadia.visualization.BinaryPredicate beenAt = new ru.cadia.visualization.BinaryPredicate(character, "BEEN_AT", location, "has been at");
+        //(can-move ?from-l1 ?to-l2)
+        vis.BinaryPredicate canMove = new vis.BinaryPredicate(location, "CONNECTED", location, "is connected to");
+        //(at ?characther ?location)
+        vis.BinaryPredicate at = new vis.BinaryPredicate(character, "AT", location, "is at");
+        //(been-at ?characther ?location)
+        vis.BinaryPredicate beenAt = new vis.BinaryPredicate(character, "BEEN_AT", location, "has been at");
 		domain.addPredicate(canMove);
 		domain.addPredicate(at);
 		domain.addPredicate(beenAt);
@@ -46,58 +47,32 @@ public class ActionDescription : MonoBehaviour {
         Entity charac = new Entity(character, "CHARACTER");
         Entity start = new Entity(location, "START");
         Entity destination = new Entity(location, "DESTINATION");
-		
-
-		//Entity character2 = new Entity(character, "CHARACTER2");
-        //Entity location3 = new Entity(location, "LOCATION3");
-        //Entity location4 = new Entity(location, "LOCATION4");
 
         // Parameters
         HashSet<Entity> moveActionParameters = new HashSet<Entity>();
         moveActionParameters.Add(charac);
         moveActionParameters.Add(start);
         moveActionParameters.Add(destination);
-
-        //List<Entity> moveAction2Parameters = new List<Entity>();
-        //moveAction2Parameters.Add(character2);
-        //moveAction2Parameters.Add(location3);
-        //moveAction2Parameters.Add(location4);      
-
+  
         // Preconditions
         HashSet<IRelation> moveActionPreconditions = new HashSet<IRelation>();
-        ru.cadia.visualization.BinaryRelation characterAtL1 = new ru.cadia.visualization.BinaryRelation(charac, at, start, RelationValue.TRUE);
+        vis.BinaryRelation characterAtL1 = new vis.BinaryRelation(charac, at, start, RelationValue.TRUE);
         moveActionPreconditions.Add(characterAtL1);
-        ru.cadia.visualization.BinaryRelation canMoveFromL1ToL2 = new ru.cadia.visualization.BinaryRelation(start, canMove, destination, RelationValue.TRUE);
+        vis.BinaryRelation canMoveFromL1ToL2 = new vis.BinaryRelation(start, canMove, destination, RelationValue.TRUE);
         moveActionPreconditions.Add(canMoveFromL1ToL2);
-
-        //List<IRelation> moveAction2Preconditions = new List<IRelation>();
-        //ru.cadia.visualization.BinaryRelation character2AtL3 = new ru.cadia.visualization.BinaryRelation(character2, at, location3, RelationValue.TRUE);
-        //moveAction2Preconditions.Add(character2AtL3);
-        //ru.cadia.visualization.BinaryRelation canMoveFromL3ToL4 = new ru.cadia.visualization.BinaryRelation(location3, canMove, location4, RelationValue.TRUE);
-        //moveAction2Preconditions.Add(canMoveFromL3ToL4);
 
         // Postconditions
         HashSet<IRelation> moveActionPostconditions = new HashSet<IRelation>();
-        ru.cadia.visualization.BinaryRelation notCharacterAtL1 = new ru.cadia.visualization.BinaryRelation(charac, at, start, RelationValue.FALSE);
+        vis.BinaryRelation notCharacterAtL1 = new vis.BinaryRelation(charac, at, start, RelationValue.FALSE);
         moveActionPostconditions.Add(notCharacterAtL1);
-        ru.cadia.visualization.BinaryRelation characterAtL2 = new ru.cadia.visualization.BinaryRelation(charac, at, destination, RelationValue.TRUE);
+        vis.BinaryRelation characterAtL2 = new vis.BinaryRelation(charac, at, destination, RelationValue.TRUE);
         moveActionPostconditions.Add(characterAtL2);
-        ru.cadia.visualization.BinaryRelation characterBeenAtL1 = new ru.cadia.visualization.BinaryRelation(charac, beenAt, start, RelationValue.TRUE);
+        vis.BinaryRelation characterBeenAtL1 = new vis.BinaryRelation(charac, beenAt, start, RelationValue.TRUE);
         moveActionPostconditions.Add(characterBeenAtL1);
 
-        //List<IRelation> moveAction2Postconditions = new List<IRelation>();
-        //ru.cadia.visualization.BinaryRelation notCharacter2AtL3 = new ru.cadia.visualization.BinaryRelation(character2, at, location3, RelationValue.FALSE);
-        //moveAction2Postconditions.Add(notCharacter2AtL3);
-        //ru.cadia.visualization.BinaryRelation character2AtL4 = new ru.cadia.visualization.BinaryRelation(character2, at, location4, RelationValue.TRUE);
-        //moveAction2Postconditions.Add(character2AtL4);
-        //ru.cadia.visualization.BinaryRelation character2BeenAtL3 = new ru.cadia.visualization.BinaryRelation(character2, beenAt, location3, RelationValue.TRUE);
-        //moveAction2Postconditions.Add(character2BeenAtL3);
-
-        // TODO Action move = new Action(moveActionPreconditions, "MOVE", moveActionParameters, moveActionPostconditions, "moved to");
-        //Action moveAction2 = new Action(moveAction2Preconditions, "MOVE", moveAction2Parameters, moveAction2Postconditions);
-		// TODO domain.addAction(move);
-		// TODO actions.Add(move);
-		//actions.Add(moveAction2);
+        Action move = new Action(moveActionPreconditions, "MOVE", moveActionParameters, moveActionPostconditions/*, "moved to"*/);
+		//domain.addAction(move);
+		actions.Add(move);
 
 	}
 	
@@ -124,10 +99,10 @@ public class ActionDescription : MonoBehaviour {
 	public void DescribeAction(){
 
 		Text myText = GameObject.Find("Content").GetComponent<Text>();
-		// myText.font = myFont;
-		// myText.color = new Color(0f, 0f, 0f);
-		// myText.fontSize = 20;
-
+        // myText.font = myFont;
+        // myText.color = new Color(0f, 0f, 0f);
+        // myText.fontSize = 20;
+        print("message");
 		foreach(Action act in actions){
 			print(act.Name);
 
@@ -142,43 +117,52 @@ public class ActionDescription : MonoBehaviour {
 
 			//PREconditions
 			foreach(IRelation pre in preconditions){
-				if(pre.GetType() == typeof(ru.cadia.visualization.BinaryRelation)){
-					ru.cadia.visualization.BinaryRelation r = pre as ru.cadia.visualization.BinaryRelation;
-					if(r.Value == RelationValue.TRUE){
-						// TODO preText += "the " + r.Source.Name + " " + r.Predicate.Text + " " + r.Destination.Name + "\n";
-					}
-				}else{
-					ru.cadia.visualization.UnaryRelation r = pre as ru.cadia.visualization.UnaryRelation;
-					if(r.Value == RelationValue.TRUE){
-						// TODO preText += "the " + r.Source.Name + " " + r.Predicate.Text + "\n";	
-					}
-				}
-			}
+                if (pre.Value == RelationValue.TRUE)
+                {
+                    if (pre.GetType() == typeof(vis.BinaryRelation))
+                    {
+                        vis.BinaryRelation r = pre as vis.BinaryRelation;
+                        vis.BinaryPredicate p = pre.Predicate as vis.BinaryPredicate;
+                        preText += "the " + r.Source.Name + " " + p.Text + " " + r.Destination.Name + "\n";
+                    }
+                    else
+                    {
+                        vis.UnaryRelation r = pre as vis.UnaryRelation;
+                        vis.UnaryPredicate p = pre.Predicate as vis.UnaryPredicate;
+                        preText += "the " + r.Source.Name + " " + p.Text + "\n";
+                    }
+                }
+            }
 
 			//POSTconditions
 			foreach(IRelation post in postconditions){
-				if(post.GetType() == typeof(ru.cadia.visualization.BinaryRelation)){
-					ru.cadia.visualization.BinaryRelation r = post as ru.cadia.visualization.BinaryRelation;
-					if(r.Value == RelationValue.TRUE){
-						// TODO postText += "the " + r.Source.Name + " " + r.Predicate.Text + " " + r.Destination.Name + "\n";
-					}
-				}else{
-					ru.cadia.visualization.UnaryRelation r = post as ru.cadia.visualization.UnaryRelation;
-					if(r.Value == RelationValue.TRUE){
-						// TODO preText += "the " + r.Source.Name + " " + r.Predicate.Text + "\n";	
-					}
-				}				
+                if (post.Value == RelationValue.TRUE)
+                {
+                    if (post.GetType() == typeof(vis.BinaryRelation))
+                    {
+                        vis.BinaryRelation r = post as vis.BinaryRelation;
+                        vis.BinaryPredicate p = post.Predicate as vis.BinaryPredicate;
+                        postText += "the " + r.Source.Name + " " + p.Text + " " + r.Destination.Name + "\n";
+                    }
+                    else
+                    {
+                        vis.UnaryRelation r = post as vis.UnaryRelation;
+                        vis.BinaryPredicate p = post.Predicate as vis.BinaryPredicate;
+                        preText += "the " + r.Source.Name + " " + p.Text + "\n";
+                    }
+                }
 			}
+
 			foreach(Entity param in parameters){
 				if(param.Type.Equals(domain.getEntityType("CHARACTER"))){
-					// TODO actionText += "the " + param.Name + " " + act.Text + " " + destination + "\n";
+					actionText += "the " + param.Name + " decided to " + act.Name + " to " + destination + "\n";
 				}
 			}
 			
 			myText.text += "Initially " + preText + "\nThen " + actionText + "\nNow " + postText;
 
 			// switch(act.Name){
-
+            //
 			// 	case "MOVE":
 			// 		// string preText = null;
 			// 		// string postText = null;

@@ -39,7 +39,7 @@ namespace ru.cadia.pddlFramework
             if (destination == null)
                 throw new System.ArgumentNullException("Relation destination cannot be null", "destination");
 
-            if (predicate.GetType() != typeof(BinaryPredicate))
+            if (predicate.GetType() != typeof(BinaryPredicate) && predicate.GetType() != typeof(ru.cadia.visualization.BinaryPredicate))
                 throw new System.ArgumentNullException("Binary relation predicate must be a binary predicate", "predicate");
 
             BinaryPredicate binaryPredicate = predicate as BinaryPredicate;

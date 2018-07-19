@@ -5,6 +5,7 @@ using System;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using ru.cadia.pddlFramework;
+using vis = ru.cadia.visualization;
 
 public class StateDescription : MonoBehaviour {
 	private GameObject desc;
@@ -44,33 +45,30 @@ public class StateDescription : MonoBehaviour {
 			//btn.onClick.AddListener(MoveCharacter);
 			DescribeWorldState();
 		}
-
-		// print("inizio");
-		// Domain domainAbstract = Utils.roverWorldDomainAbstract();
-        // WorldState worldStateAbstract = Utils.roverWorldStateAbstract(domainAbstract);
-		// foreach(IRelation r in worldStateAbstract.Relations){
-		// 	print(r.Predicate.Text);
-		// }
 	}
 
 	private void DescribeWorldState(){
 		Text myText = GameObject.Find("Content").GetComponent<Text>();
 		print("inizio");
 		
-		// TODO 
-
-		// Domain domainAbstract = Utils.roverWorldDomainAbstract();
-        // WorldState worldStateAbstract = Utils.roverWorldStateAbstract(domainAbstract);
-		// foreach(IRelation r in worldStateAbstract.Relations){
-		// 	if(r.GetType() == typeof(BinaryRelation)){
-		// 		BinaryRelation rel = r as BinaryRelation;
-		// 		myText.text += "BinaryRelation: " + r.Predicate.Text + "\n";
-		// 	}else{
-		// 		UnaryRelation rel = r as UnaryRelation;
-		// 		myText.text += "UnaryRelation: " + r.Predicate.Text + "\n";
-		// 	}
-		// }
-	}
+		Domain domainFirstLevel = Utils.roverWorldDomainFirstLevel();
+        WorldState worldStateFirstLevel = Utils.roverWorldStateFirstLevel(domainFirstLevel);
+        foreach (IRelation r in worldStateFirstLevel.Relations)
+        {
+            if (r.GetType() == typeof(vis.BinaryRelation))
+            {
+                vis.BinaryRelation rel = r as vis.BinaryRelation;
+                vis.BinaryPredicate pred = r.Predicate as vis.BinaryPredicate;
+                myText.text += "BinaryRelation: " + pred.Text + "\n";
+            }
+            else
+            {
+                vis.UnaryRelation rel = r as vis.UnaryRelation;
+                vis.UnaryPredicate pred = r.Predicate as vis.UnaryPredicate;
+                myText.text += "UnaryRelation: " + pred.Text + "\n";
+            }
+        }
+    }
 
 	private void DestroyDescription()
 	{

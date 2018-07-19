@@ -30,7 +30,7 @@ namespace ru.cadia.pddlFramework
                 throw new System.ArgumentNullException("Relation source cannot be null", "source");
             if (predicate == null)
                 throw new System.ArgumentNullException("Relation predicate cannot be null", "predicate");
-            if (predicate.GetType() != typeof(UnaryPredicate))
+            if (predicate.GetType() != typeof(UnaryPredicate) && predicate.GetType() != typeof(ru.cadia.visualization.UnaryPredicate))
                 throw new System.ArgumentNullException("Unary relation predicate must be a unary predicate", "predicate");
 
             UnaryPredicate unaryPredicate = predicate as UnaryPredicate;
