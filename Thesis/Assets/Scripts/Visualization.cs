@@ -20,20 +20,22 @@ public class Visualization : MonoBehaviour
     public IEnumerator interact(Action a, System.Action<bool> result)
     {
         yield return new WaitForSeconds(3.0f);
-        
+
         float outcome = Random.Range(0.0f, 1.0f);
-        if(outcome > 0.2f)
+        if (outcome > 0.2f)
             result(true);
-        result(false);
+        else
+            result(false);
     }
 
     public IEnumerator visualize(Action a, System.Action<bool> result)
     {
         yield return new WaitForSeconds(3.0f);
-        
+
         float outcome = Random.Range(0.0f, 1.0f);
-        if(outcome > 0.2f)
+        if (outcome > 0.2f)
             result(true);
-        result(false);
+        else
+            result(false);
     }
 }

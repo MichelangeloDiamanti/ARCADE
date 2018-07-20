@@ -394,6 +394,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 1288661509}
+  - component: {fileID: 1288661510}
   m_Layer: 0
   m_Name: Visualizer
   m_TagString: Untagged
@@ -414,6 +415,17 @@ Transform:
   m_Father: {fileID: 1784169878}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1288661510
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1288661508}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24e3da944fddedc458a6fc446e840b32, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1398391140
 GameObject:
   m_ObjectHideFlags: 0
@@ -516,14 +528,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 1479664820}
+  visualizer: {fileID: 1288661510}
   simulationBoundaries:
   - level: 1
+    interactive: 0
     jsonDomain: domain_first_level
     boundary: {fileID: 1870122788}
   - level: 2
+    interactive: 0
     jsonDomain: domain_second_level
     boundary: {fileID: 21141896}
   - level: 3
+    interactive: 1
     jsonDomain: domain_third_level
     boundary: {fileID: 1872532968}
 --- !u!54 &1398391146
