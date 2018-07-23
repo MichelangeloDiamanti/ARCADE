@@ -222,7 +222,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   numberOfLevels: 3
-  liteGraph: 0
+  liteGraph: 1
   ComparationBetweenStates: 1
 --- !u!4 &248321232
 Transform:

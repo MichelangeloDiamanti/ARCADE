@@ -45,7 +45,7 @@ public class GraphGenerator
         graphml += navigateTreeRecoursive(_root, "root");
         graphml += "</graph>\n</graphml>";
 
-        new GraphFileWriter().SaveFile(graphml);
+        new FileWriter().SaveFile(graphml);
     }
 
     private string navigateTreeRecoursive(TreeNode<WorldState> node, string parentId)
@@ -144,7 +144,7 @@ public class GraphGenerator
         graphml += "</graph>\n</graphml>";
         Debug.Log("Graph Generation time: " + (Time.realtimeSinceStartup - time));
 
-        new GraphFileWriter().SaveFile(graphml);
+        new FileWriter().SaveFile(graphml);
     }
 
 

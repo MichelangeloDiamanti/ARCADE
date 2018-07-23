@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using System;
 
-public class GraphFileWriter : MonoBehaviour
+public class FileWriter : MonoBehaviour
 {
     public void SaveFile(string data)
     {
@@ -22,6 +23,13 @@ public class GraphFileWriter : MonoBehaviour
         // file.Close();
     }
 
+    public void SaveFile(string filename, string data)
+    {
+        string destination = Application.persistentDataPath + "/log/" + filename;
+        System.IO.File.WriteAllText (destination, data);
+        Debug.Log(Application.persistentDataPath);
+    }
+
     public void LoadFile()
     {
         string destination = Application.persistentDataPath + "/example1.graphml";
@@ -37,5 +45,13 @@ public class GraphFileWriter : MonoBehaviour
         BinaryFormatter bf = new BinaryFormatter();
         // GameData data = (GameData)bf.Deserialize(file);
         file.Close();
+    }
+
+    public static string GenerateLogName(){
+        string result = "log-" + DateTime.Now +".txt";
+        result = result.Replace("/", "");
+        result = result.Replace(":", "");
+        result = result.Replace(" ", "");
+        return result;
     }
 }

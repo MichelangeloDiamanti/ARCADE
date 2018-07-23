@@ -234,6 +234,7 @@ public class InitialWorld : MonoBehaviour
         if (ComparationBetweenStates)
         {
             HashSet<WorldStateComparated> wsc = gdg.CompareWorldState();
+            new WorldStateComparator(wsc).Compare();
         }
         new GraphGenerator(g).GenerateGraphML(liteGraph);
 

@@ -66,7 +66,7 @@ public class GraphDataGenerator
             WorldStateComparated wsc = new WorldStateComparated(_startingState, item);
             wsc.CompareStates();
             _worldStateComparated.Add(wsc);
-            Debug.Log(wsc);
+            // Debug.Log(wsc);
         }
 
         return _worldStateComparated;
