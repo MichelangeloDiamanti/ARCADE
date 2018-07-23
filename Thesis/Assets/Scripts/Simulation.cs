@@ -26,7 +26,11 @@ public class Simulation : MonoBehaviour
     }
 
     public GameObject player;
+    public Visualization visualizer;
     public List<SimulationBoundary> simulationBoundaries;
+
+    private string logFilePath = "Assets/Logs/";
+    private string logFileName;
     private Vector3 m_Point;
     private TreeNode<WorldState> _currentNode;
     private int _currentLevelOfDetail;
@@ -97,6 +101,11 @@ public class Simulation : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        System.DateTime localDate = System.DateTime.Now;
+        // System.Globalization.CultureInfo culture = new System.Globalization.CultureInfo("it-IT");
+        logFileName = "algorithm_performances_" + localDate.Year + "-" + localDate.Month + "-" + localDate.Day + "_" +
+            localDate.Hour + "-" + localDate.Minute + "-" + localDate.Second + ".log";
+
         _lastObservedStates = new Dictionary<SimulationBoundary, TreeNode<WorldState>>();
         m_Point = player.transform.position;
 
@@ -170,24 +179,54 @@ public class Simulation : MonoBehaviour
             if (_currentLevelOfDetail != lastLoD)
             {
                 // find in which boundary the player is at
-                SimulationBoundary currentSimulationBoundary = null;
-                foreach (SimulationBoundary sb in simulationBoundaries)
-                {
-                    if (sb.level == _currentLevelOfDetail)
-                    {
-                        currentSimulationBoundary = sb;
-                        break;
-                    }
-                }
+                SimulationBoundary currentSimulationBoundary = getSimulationBoundaryAtLevel(_currentLevelOfDetail);
+
                 // Refinement
                 if (_currentLevelOfDetail > lastLoD)
                 {
+                    StreamWriter writer = new StreamWriter(logFilePath + logFileName, true);
+
+                    // // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                    // // this portion is to test normal BFS with no subgoals 
+                    // // from last detailed state straight to current abstract
+
+                    // var otherWatch = System.Diagnostics.Stopwatch.StartNew();
+
+                    // TreeNode<WorldState> otherSolution = Utils.breadthFirstSearch(
+                    //     _lastObservedStates[currentSimulationBoundary].Data, _currentNode.Data);
+                    // otherWatch.Stop();
+
+                    // long otherElapsedMs = otherWatch.ElapsedMilliseconds;
+
+                    // writer.WriteLine("Normal BFS search time: " + otherElapsedMs + " ms\n");
+                    // writer.WriteLine("Normal BFS search explored nodes: " + Utils.bfsExploredNodes + "\n");
+
+                    // Stack<string> normalBFSSolution = new Stack<string>();
+                    // while (otherSolution.IsRoot == false)
+                    // {
+                    //     normalBFSSolution.Push(otherSolution.ParentAction.ShortToString());
+                    //     otherSolution = otherSolution.Parent;
+                    // }
+
+                    // string normalBFSSolutionInverse = "The solution found by the normal BFS is composed by the following actions:\n";
+                    // while (normalBFSSolution.Count > 0)
+                    //     normalBFSSolutionInverse += normalBFSSolution.Pop() + "\n";
+
+                    // writer.WriteLine(normalBFSSolutionInverse);
+
+                    // // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
                     // roll back the simulation until we reach the root of the current level of detail
                     while (_currentNode.IsRoot == false)
                         _currentNode = _currentNode.Parent;
 
                     TreeNode<WorldState> lastNodeAtCurrentLevel = _lastObservedStates[currentSimulationBoundary];
 
+                    int expandedNodes = 0;
+                    long elapsedTimeForSearch = 0;
+
+
+                    string s = "The solution found by the Subgoals BFS is composed by the following actions:\n";
                     // translate each action performed in the previous level of detail to an equivalent list of
                     // actions in the current level of detail. each translation is applied to the last observed
                     // state at current level of detail which in the end will be up to date.
@@ -199,11 +238,22 @@ public class Simulation : MonoBehaviour
 
                         _currentNode = _currentNode.Children.First();
 
+                        var watch = System.Diagnostics.Stopwatch.StartNew();
+
                         TreeNode<WorldState> solution = Utils.breadthFirstSearch(lastNodeAtCurrentLevel.Data, _currentNode.Data);
 
-                        Debug.Log("In the abstract simulation the following action was performed: " + _currentNode.ParentAction.ShortToString());
+                        watch.Stop();
+                        long elapsedMs = watch.ElapsedMilliseconds;
 
-                        string s = "In the full detail simulation that was translated with these actions:\n";
+                        expandedNodes += Utils.bfsExploredNodes;
+                        elapsedTimeForSearch += elapsedMs;
+
+                        // Debug.Log("BFS time: " + elapsedMs + " ms");
+                        // Debug.Log("BFS explored nodes: " + Utils.bfsExploredNodes);
+
+                        s += "Abstract: " + _currentNode.ParentAction.ShortToString() + "\n";
+
+                        s += "Detailed:\n";
 
                         // solution is a leaf node we need to apply the actions in the reversed order (from root to leaf)
                         List<Action> sortedActions = new List<Action>();
@@ -215,14 +265,20 @@ public class Simulation : MonoBehaviour
                         sortedActions.Reverse();
                         foreach (Action a in sortedActions)
                         {
-                            s += a.ShortToString();
+                            s += a.ShortToString() + "\n";
                             lastNodeAtCurrentLevel = lastNodeAtCurrentLevel.AddChild(lastNodeAtCurrentLevel.Data.applyAction(a), a);
                         }
-
-                        Debug.Log(s);
+                        s += "\n";
                     }
 
+                    writer.WriteLine(s);
+
                     _currentNode = lastNodeAtCurrentLevel;
+
+                    writer.WriteLine("Subgoals BFS search time: " + elapsedTimeForSearch + " ms");
+                    writer.WriteLine("Subgoals BFS search explored nodes: " + expandedNodes);
+
+                    writer.Close();
 
                 }
                 // Abstraction
@@ -242,18 +298,67 @@ public class Simulation : MonoBehaviour
             }
 
             // this is the actual simulation, for now we just pick a random action
-            TreeNode<WorldState> nextNode = getNextStateWithRandomAction(_currentNode);
-            if (nextNode == null)
+            // remember to use lastLoD while updating the lastObservedState because
+            // in the meantime it could have changed
+            Action randomAction = getRandomPossibleAction(_currentNode);
+
+            if (randomAction == null)
+            {
                 Debug.Log("There are no more available actions, shutting down the simulation");
+                break;
+            }
 
-            _currentNode = nextNode;
-            setLastObservedStateAtLevel(CurrentLevelOfDetail, _currentNode);
+            Debug.Log("The Simulator is requesting the following Action: " + randomAction.ShortToString());
 
-            yield return new WaitForSeconds(3);
+            bool simulationInteractive = getSimulationBoundaryAtLevel(lastLoD).interactive;
+            if (simulationInteractive)
+            {
+                // Debug.Log("Player is interacting");
+
+                bool result = false;
+                yield return StartCoroutine(visualizer.interact(randomAction, value => result = value));
+                if (result)
+                {
+                    // The action has been allowed, go next
+                    Debug.Log("Interactive Action Allowed");
+                    WorldState resultingState = _currentNode.Data.applyAction(randomAction);
+                    _currentNode = _currentNode.AddChild(resultingState, randomAction);
+
+                    setLastObservedStateAtLevel(lastLoD, _currentNode);
+                }
+                else
+                {
+                    // The action has been denied, roll back
+                    Debug.Log("Interactive Action Denied");
+                }
+            }
+            else
+            {
+                // Debug.Log("Player is visualizing");
+
+                bool result = false;
+                yield return StartCoroutine(visualizer.visualize(randomAction, value => result = value));
+                if (result)
+                {
+                    // The action has been visualized, go next
+                    Debug.Log("Non Interactive Action Visualized");
+                    WorldState resultingState = _currentNode.Data.applyAction(randomAction);
+                    _currentNode = _currentNode.AddChild(resultingState, randomAction);
+
+                    setLastObservedStateAtLevel(lastLoD, _currentNode);
+                }
+                else
+                {
+                    // The were some problems with the visualization, roll back
+                    Debug.Log("Non Interactive Action NOT Visualized");
+                }
+            }
+
+            yield return null;
         }
     }
 
-    private TreeNode<WorldState> getNextStateWithRandomAction(TreeNode<WorldState> node)
+    private Action getRandomPossibleAction(TreeNode<WorldState> node)
     {
         List<Action> possibleActions = node.Data.getPossibleActions();
 
@@ -263,11 +368,7 @@ public class Simulation : MonoBehaviour
         int randomActionIndex = Random.Range(0, possibleActions.Count);
         Action randomAction = possibleActions[randomActionIndex];
 
-        WorldState resultingState = node.Data.applyAction(randomAction);
-        Debug.Log("The Following Action was performed: " + randomAction.ShortToString());
-
-        return node.AddChild(resultingState, randomAction);
-
+        return randomAction;
     }
 
     private TreeNode<WorldState> getInitialWorldStateAtLevel(int level)

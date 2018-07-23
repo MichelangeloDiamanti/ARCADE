@@ -8,6 +8,7 @@ using ru.cadia.pddlFramework;
 public class SimulationBoundary
 {
     public int level;
+    public bool interactive;
     public string jsonDomain;
     public Collider boundary;
     public Domain domain;

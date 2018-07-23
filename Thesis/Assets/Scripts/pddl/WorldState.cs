@@ -144,6 +144,42 @@ namespace ru.cadia.pddlFramework
             }
             return resultingState;
         }
+
+        public WorldState requestAction(Action action)
+        {
+            if (canPerformAction(action) == false)
+                throw new System.ArgumentException("The action " + action.Name + " cannot be performed in the worldState: " + this.ToString());
+
+            WorldState resultingState = this.Clone();
+            foreach (IRelation actionEffect in action.PostConditions)
+            {
+                IRelation pendingActionEffect = actionEffect.Clone();
+                if(pendingActionEffect.Value == RelationValue.TRUE)
+                    pendingActionEffect.Value = RelationValue.PENDINGTRUE;
+                else
+                    pendingActionEffect.Value = RelationValue.PENDINGFALSE;
+
+                bool found = false;
+
+                foreach (IRelation newWorldRelation in resultingState.Relations)
+                {
+                    // check if the postcondition is already part of the state
+                    // maybe with a different value which must be updated
+                    if (newWorldRelation.EqualsWithoutValue(actionEffect))
+                    {
+                        resultingState.Relations.Remove(newWorldRelation);
+                        resultingState.Relations.Add(pendingActionEffect);
+                        // newWorldRelation.Value = actionEffect.Value;
+                        found = true;
+                        break;
+                    }
+                }
+                // if the realtion wasn't there in the first place we need to add it
+                if (found == false)
+                    resultingState.addRelation(pendingActionEffect);
+            }
+            return resultingState;
+        }
         public bool canPerformAction(Action action)
         {
             foreach (IRelation precondition in action.PreConditions)
