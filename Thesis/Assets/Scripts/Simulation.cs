@@ -9,9 +9,6 @@ using ru.cadia.pddlFramework;
 public class Simulation : MonoBehaviour
 {
 
-    private string logFilePath = "Assets/Logs/";
-    private string logFileName;
-
     private class SimulationBoundarySorterAcending : IComparer<SimulationBoundary>
     {
         public int Compare(SimulationBoundary x, SimulationBoundary y)
@@ -29,7 +26,11 @@ public class Simulation : MonoBehaviour
     }
 
     public GameObject player;
+    public Visualization visualizer;
     public List<SimulationBoundary> simulationBoundaries;
+
+    private string logFilePath = "Assets/Logs/";
+    private string logFileName;
     private Vector3 m_Point;
     private TreeNode<WorldState> _currentNode;
     private int _currentLevelOfDetail;
@@ -178,15 +179,8 @@ public class Simulation : MonoBehaviour
             if (_currentLevelOfDetail != lastLoD)
             {
                 // find in which boundary the player is at
-                SimulationBoundary currentSimulationBoundary = null;
-                foreach (SimulationBoundary sb in simulationBoundaries)
-                {
-                    if (sb.level == _currentLevelOfDetail)
-                    {
-                        currentSimulationBoundary = sb;
-                        break;
-                    }
-                }
+                SimulationBoundary currentSimulationBoundary = getSimulationBoundaryAtLevel(_currentLevelOfDetail);
+
                 // Refinement
                 if (_currentLevelOfDetail > lastLoD)
                 {
@@ -304,18 +298,67 @@ public class Simulation : MonoBehaviour
             }
 
             // this is the actual simulation, for now we just pick a random action
-            TreeNode<WorldState> nextNode = getNextStateWithRandomAction(_currentNode);
-            if (nextNode == null)
+            // remember to use lastLoD while updating the lastObservedState because
+            // in the meantime it could have changed
+            Action randomAction = getRandomPossibleAction(_currentNode);
+
+            if (randomAction == null)
+            {
                 Debug.Log("There are no more available actions, shutting down the simulation");
+                break;
+            }
 
-            _currentNode = nextNode;
-            setLastObservedStateAtLevel(CurrentLevelOfDetail, _currentNode);
+            Debug.Log("The Simulator is requesting the following Action: " + randomAction.ShortToString());
 
-            yield return new WaitForSeconds(3);
+            bool simulationInteractive = getSimulationBoundaryAtLevel(lastLoD).interactive;
+            if (simulationInteractive)
+            {
+                // Debug.Log("Player is interacting");
+
+                bool result = false;
+                yield return StartCoroutine(visualizer.interact(randomAction, value => result = value));
+                if (result)
+                {
+                    // The action has been allowed, go next
+                    Debug.Log("Interactive Action Allowed");
+                    WorldState resultingState = _currentNode.Data.applyAction(randomAction);
+                    _currentNode = _currentNode.AddChild(resultingState, randomAction);
+
+                    setLastObservedStateAtLevel(lastLoD, _currentNode);
+                }
+                else
+                {
+                    // The action has been denied, roll back
+                    Debug.Log("Interactive Action Denied");
+                }
+            }
+            else
+            {
+                // Debug.Log("Player is visualizing");
+
+                bool result = false;
+                yield return StartCoroutine(visualizer.visualize(randomAction, value => result = value));
+                if (result)
+                {
+                    // The action has been visualized, go next
+                    Debug.Log("Non Interactive Action Visualized");
+                    WorldState resultingState = _currentNode.Data.applyAction(randomAction);
+                    _currentNode = _currentNode.AddChild(resultingState, randomAction);
+
+                    setLastObservedStateAtLevel(lastLoD, _currentNode);
+                }
+                else
+                {
+                    // The were some problems with the visualization, roll back
+                    Debug.Log("Non Interactive Action NOT Visualized");
+                }
+            }
+
+            yield return null;
         }
     }
 
-    private TreeNode<WorldState> getNextStateWithRandomAction(TreeNode<WorldState> node)
+    private Action getRandomPossibleAction(TreeNode<WorldState> node)
     {
         List<Action> possibleActions = node.Data.getPossibleActions();
 
@@ -325,11 +368,7 @@ public class Simulation : MonoBehaviour
         int randomActionIndex = Random.Range(0, possibleActions.Count);
         Action randomAction = possibleActions[randomActionIndex];
 
-        WorldState resultingState = node.Data.applyAction(randomAction);
-        Debug.Log("The Following Action was performed: " + randomAction.ShortToString());
-
-        return node.AddChild(resultingState, randomAction);
-
+        return randomAction;
     }
 
     private TreeNode<WorldState> getInitialWorldStateAtLevel(int level)

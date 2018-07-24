@@ -28,6 +28,7 @@ namespace ru.cadia.pddlFramework
         public RelationValue Value
         {
             get { return _value; }
+            set { _value = value; }
         }
 
         public BinaryRelation(Entity source, IPredicate predicate, Entity destination, RelationValue value)

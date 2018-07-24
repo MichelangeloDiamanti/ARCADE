@@ -10,7 +10,7 @@ namespace ru.cadia.pddlFramework
     {
         Entity Source { get; }
         IPredicate Predicate { get; }
-        RelationValue Value { get; }
+        RelationValue Value { get; set; }
         bool EqualsThroughPredicate(IRelation other);
         bool EqualsWithoutValue(IRelation other);
         bool Equals(object obj);
