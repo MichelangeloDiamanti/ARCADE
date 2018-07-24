@@ -308,7 +308,7 @@ public class Simulation : MonoBehaviour
                 break;
             }
 
-            Debug.Log("The Simulator is requesting the following Action: " + randomAction.ShortToString());
+            // Debug.Log("The Simulator is requesting the following Action: " + randomAction.ShortToString());
 
             bool simulationInteractive = getSimulationBoundaryAtLevel(lastLoD).interactive;
             if (simulationInteractive)
@@ -320,7 +320,7 @@ public class Simulation : MonoBehaviour
                 if (result)
                 {
                     // The action has been allowed, go next
-                    Debug.Log("Interactive Action Allowed");
+                    // Debug.Log("Interactive Action Allowed");
                     WorldState resultingState = _currentNode.Data.applyAction(randomAction);
                     _currentNode = _currentNode.AddChild(resultingState, randomAction);
 
@@ -329,7 +329,7 @@ public class Simulation : MonoBehaviour
                 else
                 {
                     // The action has been denied, roll back
-                    Debug.Log("Interactive Action Denied");
+                    // Debug.Log("Interactive Action Denied");
                 }
             }
             else
@@ -341,7 +341,7 @@ public class Simulation : MonoBehaviour
                 if (result)
                 {
                     // The action has been visualized, go next
-                    Debug.Log("Non Interactive Action Visualized");
+                    // Debug.Log("Non Interactive Action Visualized");
                     WorldState resultingState = _currentNode.Data.applyAction(randomAction);
                     _currentNode = _currentNode.AddChild(resultingState, randomAction);
 
@@ -350,7 +350,7 @@ public class Simulation : MonoBehaviour
                 else
                 {
                     // The were some problems with the visualization, roll back
-                    Debug.Log("Non Interactive Action NOT Visualized");
+                    // Debug.Log("Non Interactive Action NOT Visualized");
                 }
             }
 
