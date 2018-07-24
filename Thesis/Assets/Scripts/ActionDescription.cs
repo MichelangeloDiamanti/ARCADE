@@ -10,61 +10,61 @@ using vis = ru.cadia.visualization;
 
 public class ActionDescription : MonoBehaviour {
 
-	private HashSet<Action> actions;
+	HashSet<Action> actions = new HashSet<Action>();
 	private double time;
-	//Domain domain;
+	Domain domain = new Domain();
 	
 	// Use this for initialization
 	void Start () {
-
-        //EntityType character = new EntityType("CHARACTER");
-        //EntityType location = new EntityType("LOCATION");
-        //domain.addEntityType(character);
-        //domain.addEntityType(location);
-
-
-        //      //(can-move ?from-l1 ?to-l2)
-        //      vis.BinaryPredicate canMove = new vis.BinaryPredicate(location, "CONNECTED", location, "is connected to");
-        //      //(at ?characther ?location)
-        //      vis.BinaryPredicate at = new vis.BinaryPredicate(character, "AT", location, "is at");
-        //      //(been-at ?characther ?location)
-        //      vis.BinaryPredicate beenAt = new vis.BinaryPredicate(character, "BEEN_AT", location, "has been at");
-        //domain.addPredicate(canMove);
-        //domain.addPredicate(at);
-        //domain.addPredicate(beenAt);
+        
+        EntityType character = new EntityType("CHARACTER");
+        EntityType location = new EntityType("LOCATION");
+        domain.addEntityType(character);
+        domain.addEntityType(location);
 
 
-        ////              MOVE ACTION
-        //      // Parameters
-        //      Entity charac = new Entity(character, "CHARACTER");
-        //      Entity start = new Entity(location, "START");
-        //      Entity destination = new Entity(location, "DESTINATION");
+        //(can-move ?from-l1 ?to-l2)
+        vis.BinaryPredicate canMove = new vis.BinaryPredicate(location, "CONNECTED", location, "is connected to");
+        //(at ?characther ?location)
+        vis.BinaryPredicate at = new vis.BinaryPredicate(character, "AT", location, "is at");
+        //(been-at ?characther ?location)
+        vis.BinaryPredicate beenAt = new vis.BinaryPredicate(character, "BEEN_AT", location, "has been at");
+        domain.addPredicate(canMove);
+        domain.addPredicate(at);
+        domain.addPredicate(beenAt);
 
-        //      // Parameters
-        //      HashSet<Entity> moveActionParameters = new HashSet<Entity>();
-        //      moveActionParameters.Add(charac);
-        //      moveActionParameters.Add(start);
-        //      moveActionParameters.Add(destination);
 
-        //      // Preconditions
-        //      HashSet<IRelation> moveActionPreconditions = new HashSet<IRelation>();
-        //      vis.BinaryRelation characterAtL1 = new vis.BinaryRelation(charac, at, start, RelationValue.TRUE);
-        //      moveActionPreconditions.Add(characterAtL1);
-        //      vis.BinaryRelation canMoveFromL1ToL2 = new vis.BinaryRelation(start, canMove, destination, RelationValue.TRUE);
-        //      moveActionPreconditions.Add(canMoveFromL1ToL2);
+        //              MOVE ACTION
+        // Parameters
+        Entity charac = new Entity(character, "CHARACTER");
+        Entity start = new Entity(location, "START");
+        Entity destination = new Entity(location, "DESTINATION");
 
-        //      // Postconditions
-        //      HashSet<IRelation> moveActionPostconditions = new HashSet<IRelation>();
-        //      vis.BinaryRelation notCharacterAtL1 = new vis.BinaryRelation(charac, at, start, RelationValue.FALSE);
-        //      moveActionPostconditions.Add(notCharacterAtL1);
-        //      vis.BinaryRelation characterAtL2 = new vis.BinaryRelation(charac, at, destination, RelationValue.TRUE);
-        //      moveActionPostconditions.Add(characterAtL2);
-        //      vis.BinaryRelation characterBeenAtL1 = new vis.BinaryRelation(charac, beenAt, start, RelationValue.TRUE);
-        //      moveActionPostconditions.Add(characterBeenAtL1);
+        // Parameters
+        HashSet<Entity> moveActionParameters = new HashSet<Entity>();
+        moveActionParameters.Add(charac);
+        moveActionParameters.Add(start);
+        moveActionParameters.Add(destination);
 
-        //      Action move = new Action(moveActionPreconditions, "MOVE", moveActionParameters, moveActionPostconditions/*, "moved to"*/);
-        ////domain.addAction(move);
-        //actions.Add(move);
+        // Preconditions
+        HashSet<IRelation> moveActionPreconditions = new HashSet<IRelation>();
+        vis.BinaryRelation characterAtL1 = new vis.BinaryRelation(charac, at, start, RelationValue.TRUE);
+        moveActionPreconditions.Add(characterAtL1);
+        vis.BinaryRelation canMoveFromL1ToL2 = new vis.BinaryRelation(start, canMove, destination, RelationValue.TRUE);
+        moveActionPreconditions.Add(canMoveFromL1ToL2);
+
+        // Postconditions
+        HashSet<IRelation> moveActionPostconditions = new HashSet<IRelation>();
+        vis.BinaryRelation notCharacterAtL1 = new vis.BinaryRelation(charac, at, start, RelationValue.FALSE);
+        moveActionPostconditions.Add(notCharacterAtL1);
+        vis.BinaryRelation characterAtL2 = new vis.BinaryRelation(charac, at, destination, RelationValue.TRUE);
+        moveActionPostconditions.Add(characterAtL2);
+        vis.BinaryRelation characterBeenAtL1 = new vis.BinaryRelation(charac, beenAt, start, RelationValue.TRUE);
+        moveActionPostconditions.Add(characterBeenAtL1);
+
+        Action move = new Action(moveActionPreconditions, "MOVE", moveActionParameters, moveActionPostconditions/*, "moved to"*/);
+        //domain.addAction(move);
+        actions.Add(move);
 
     }
 	
@@ -85,7 +85,9 @@ public class ActionDescription : MonoBehaviour {
 
         //}
 
-        foreach (Action act in domainFirstLevel.Actions)
+        print(actions.Count);
+
+        foreach (Action act in actions)
         {
 			print(act.Name);
 
