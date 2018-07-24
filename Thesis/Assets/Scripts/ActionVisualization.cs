@@ -14,13 +14,13 @@ public class ActionVisualization : MonoBehaviour {
 	void Update () {
 		if(flag == true){
 			//ActionDescription ad = new ActionDescription();
-			foreach(Action act in ActionDescription.actions){
-				HashSet<IRelation> preconditions = act.PreConditions;
-				string name = act.Name;
-				HashSet<Entity> parameters = act.Parameters;
-				HashSet<IRelation> postconditions = act.PostConditions;
-				ShowAction(name, postconditions);
-			}
+			//foreach(Action act in ActionDescription.actions){
+			//	HashSet<IRelation> preconditions = act.PreConditions;
+			//	string name = act.Name;
+			//	HashSet<Entity> parameters = act.Parameters;
+			//	HashSet<IRelation> postconditions = act.PostConditions;
+			//	ShowAction(name, postconditions);
+			//}
 			
 			flag = false;
 		}

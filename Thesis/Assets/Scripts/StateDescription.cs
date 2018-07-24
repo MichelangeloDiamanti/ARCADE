@@ -8,9 +8,6 @@ using ru.cadia.pddlFramework;
 using vis = ru.cadia.visualization;
 
 public class StateDescription : MonoBehaviour {
-	private GameObject desc;
-	public GameObject description;
-
 
 	// Use this for initialization
 	void Start () {
@@ -19,37 +16,11 @@ public class StateDescription : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if(Input.GetMouseButtonDown(0))
-        {
-			if (EventSystem.current.IsPointerOverGameObject())
-			{	
-                Debug.Log("left-click over a GUI element!");
-			} 
-            else
-			{
-				if(desc != null)
-				{
-					DestroyDescription();
-				}
-			}
-		}
+
 	}
 
-	public void ShowStateDescription(){
-		if(desc != null)
-		{
-			DestroyDescription();
-		}else{
-			desc = Instantiate(description, GameObject.Find("Canvas").transform, instantiateInWorldSpace:false) as GameObject;
-			//Button btn = GameObject.Find("Move").GetComponent<Button>();
-			//btn.onClick.AddListener(MoveCharacter);
-			DescribeWorldState();
-		}
-	}
-
-	private void DescribeWorldState(){
+	public void DescribeWorldState(){
 		Text myText = GameObject.Find("Content").GetComponent<Text>();
-		print("inizio");
 		
 		Domain domainFirstLevel = Utils.roverWorldDomainFirstLevel();
         WorldState worldStateFirstLevel = Utils.roverWorldStateFirstLevel(domainFirstLevel);
@@ -69,9 +40,5 @@ public class StateDescription : MonoBehaviour {
             }
         }
     }
-
-	private void DestroyDescription()
-	{
-		Destroy(desc);
-	}
+    
 }

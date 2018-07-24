@@ -10,100 +10,83 @@ using vis = ru.cadia.visualization;
 
 public class ActionDescription : MonoBehaviour {
 
-	public static HashSet<Action> actions = new HashSet<Action>();
-	public Font myFont;
-	public bool flag;
-	public GameObject description;
-	private GameObject desc;
+	private HashSet<Action> actions;
 	private double time;
-	Domain domain;
+	//Domain domain;
 	
 	// Use this for initialization
 	void Start () {
 
-        domain = new Domain();
-
-		flag = false;
-
-		EntityType character = new EntityType("CHARACTER");
-		EntityType location = new EntityType("LOCATION");
-		domain.addEntityType(character);
-		domain.addEntityType(location);
+        //EntityType character = new EntityType("CHARACTER");
+        //EntityType location = new EntityType("LOCATION");
+        //domain.addEntityType(character);
+        //domain.addEntityType(location);
 
 
-        //(can-move ?from-l1 ?to-l2)
-        vis.BinaryPredicate canMove = new vis.BinaryPredicate(location, "CONNECTED", location, "is connected to");
-        //(at ?characther ?location)
-        vis.BinaryPredicate at = new vis.BinaryPredicate(character, "AT", location, "is at");
-        //(been-at ?characther ?location)
-        vis.BinaryPredicate beenAt = new vis.BinaryPredicate(character, "BEEN_AT", location, "has been at");
-		domain.addPredicate(canMove);
-		domain.addPredicate(at);
-		domain.addPredicate(beenAt);
+        //      //(can-move ?from-l1 ?to-l2)
+        //      vis.BinaryPredicate canMove = new vis.BinaryPredicate(location, "CONNECTED", location, "is connected to");
+        //      //(at ?characther ?location)
+        //      vis.BinaryPredicate at = new vis.BinaryPredicate(character, "AT", location, "is at");
+        //      //(been-at ?characther ?location)
+        //      vis.BinaryPredicate beenAt = new vis.BinaryPredicate(character, "BEEN_AT", location, "has been at");
+        //domain.addPredicate(canMove);
+        //domain.addPredicate(at);
+        //domain.addPredicate(beenAt);
 
 
-		//              MOVE ACTION
-        // Parameters
-        Entity charac = new Entity(character, "CHARACTER");
-        Entity start = new Entity(location, "START");
-        Entity destination = new Entity(location, "DESTINATION");
+        ////              MOVE ACTION
+        //      // Parameters
+        //      Entity charac = new Entity(character, "CHARACTER");
+        //      Entity start = new Entity(location, "START");
+        //      Entity destination = new Entity(location, "DESTINATION");
 
-        // Parameters
-        HashSet<Entity> moveActionParameters = new HashSet<Entity>();
-        moveActionParameters.Add(charac);
-        moveActionParameters.Add(start);
-        moveActionParameters.Add(destination);
-  
-        // Preconditions
-        HashSet<IRelation> moveActionPreconditions = new HashSet<IRelation>();
-        vis.BinaryRelation characterAtL1 = new vis.BinaryRelation(charac, at, start, RelationValue.TRUE);
-        moveActionPreconditions.Add(characterAtL1);
-        vis.BinaryRelation canMoveFromL1ToL2 = new vis.BinaryRelation(start, canMove, destination, RelationValue.TRUE);
-        moveActionPreconditions.Add(canMoveFromL1ToL2);
+        //      // Parameters
+        //      HashSet<Entity> moveActionParameters = new HashSet<Entity>();
+        //      moveActionParameters.Add(charac);
+        //      moveActionParameters.Add(start);
+        //      moveActionParameters.Add(destination);
 
-        // Postconditions
-        HashSet<IRelation> moveActionPostconditions = new HashSet<IRelation>();
-        vis.BinaryRelation notCharacterAtL1 = new vis.BinaryRelation(charac, at, start, RelationValue.FALSE);
-        moveActionPostconditions.Add(notCharacterAtL1);
-        vis.BinaryRelation characterAtL2 = new vis.BinaryRelation(charac, at, destination, RelationValue.TRUE);
-        moveActionPostconditions.Add(characterAtL2);
-        vis.BinaryRelation characterBeenAtL1 = new vis.BinaryRelation(charac, beenAt, start, RelationValue.TRUE);
-        moveActionPostconditions.Add(characterBeenAtL1);
+        //      // Preconditions
+        //      HashSet<IRelation> moveActionPreconditions = new HashSet<IRelation>();
+        //      vis.BinaryRelation characterAtL1 = new vis.BinaryRelation(charac, at, start, RelationValue.TRUE);
+        //      moveActionPreconditions.Add(characterAtL1);
+        //      vis.BinaryRelation canMoveFromL1ToL2 = new vis.BinaryRelation(start, canMove, destination, RelationValue.TRUE);
+        //      moveActionPreconditions.Add(canMoveFromL1ToL2);
 
-        Action move = new Action(moveActionPreconditions, "MOVE", moveActionParameters, moveActionPostconditions/*, "moved to"*/);
-		//domain.addAction(move);
-		actions.Add(move);
+        //      // Postconditions
+        //      HashSet<IRelation> moveActionPostconditions = new HashSet<IRelation>();
+        //      vis.BinaryRelation notCharacterAtL1 = new vis.BinaryRelation(charac, at, start, RelationValue.FALSE);
+        //      moveActionPostconditions.Add(notCharacterAtL1);
+        //      vis.BinaryRelation characterAtL2 = new vis.BinaryRelation(charac, at, destination, RelationValue.TRUE);
+        //      moveActionPostconditions.Add(characterAtL2);
+        //      vis.BinaryRelation characterBeenAtL1 = new vis.BinaryRelation(charac, beenAt, start, RelationValue.TRUE);
+        //      moveActionPostconditions.Add(characterBeenAtL1);
 
-	}
+        //      Action move = new Action(moveActionPreconditions, "MOVE", moveActionParameters, moveActionPostconditions/*, "moved to"*/);
+        ////domain.addAction(move);
+        //actions.Add(move);
+
+    }
 	
 	// Update is called once per frame
 	void Update () {
 		time = System.Math.Round(Time.realtimeSinceStartup, 2); //System.Convert.ToDouble(Time.realtimeSinceStartup);
-
-		if(Input.GetMouseButtonDown(0))
-        {
-			if (EventSystem.current.IsPointerOverGameObject())
-			{	
-                Debug.Log("left-click over a GUI element!");
-			} 
-            else
-			{
-				if(desc != null)
-				{
-					DestroyDescription();
-				}
-			}
-		}
 	}
 
 	public void DescribeAction(){
 
-		Text myText = GameObject.Find("Content").GetComponent<Text>();
-        // myText.font = myFont;
-        // myText.color = new Color(0f, 0f, 0f);
-        // myText.fontSize = 20;
-        print("message");
-		foreach(Action act in actions){
+        Text myText = GameObject.Find("Content").GetComponent<Text>();
+
+        Domain domainFirstLevel = Utils.roverWorldDomainFirstLevel();
+        WorldState worldStateFirstLevel = Utils.roverWorldStateFirstLevel(domainFirstLevel);
+
+        //foreach (Action a in domainFirstLevel.Actions)
+        //{
+
+        //}
+
+        foreach (Action act in domainFirstLevel.Actions)
+        {
 			print(act.Name);
 
 			HashSet<IRelation> preconditions = act.PreConditions;
@@ -152,14 +135,19 @@ public class ActionDescription : MonoBehaviour {
                     }
                 }
 			}
+            // TO FIX
+            //
+            ////Action
+            //
+            //foreach (Entity param in parameters)
+            //{
+            //    if (param.Type.Equals(domain.getEntityType("CHARACTER")))
+            //    {
+            //        actionText += "the " + param.Name + " decided to " + act.Name + " to " + destination + "\n";
+            //    }
+            //}
 
-			foreach(Entity param in parameters){
-				if(param.Type.Equals(domain.getEntityType("CHARACTER"))){
-					actionText += "the " + param.Name + " decided to " + act.Name + " to " + destination + "\n";
-				}
-			}
-			
-			myText.text += "Initially " + preText + "\nThen " + actionText + "\nNow " + postText;
+            myText.text += "Initially " + preText + "\nThen " + actionText + "\nNow " + postText;
 
 			// switch(act.Name){
             //
@@ -210,10 +198,6 @@ public class ActionDescription : MonoBehaviour {
 					
 			// 		break;
 
-			// 	case "action4":
-					
-			// 		break;
-
 			// 	default:
 
 			// 		break;
@@ -223,23 +207,4 @@ public class ActionDescription : MonoBehaviour {
 
 	}
 
-	public void ShowDescription()
-	{	
-		if(desc != null)
-		{
-			DestroyDescription();
-		}else{
-			desc = Instantiate(description, GameObject.Find("Canvas").transform, instantiateInWorldSpace:false) as GameObject;
-			Button btn = GameObject.Find("Move").GetComponent<Button>();
-			//btn.onClick.AddListener(MoveCharacter);
-			Text date = GameObject.Find("Date").GetComponent<Text>();
-			date.text = time.ToString(); 
-			DescribeAction();
-		}
-	}
-
-	private void DestroyDescription()
-	{
-		Destroy(desc);
-	}
 }

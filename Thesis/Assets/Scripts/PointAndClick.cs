@@ -13,30 +13,35 @@ using ru.cadia.pddlFramework;
 
 public class PointAndClick : MonoBehaviour
 {
-
+    public GameObject buttonsPanel;
+    public Button actionButton, worldStateButton;
     public GameObject description;
     public static GameObject selectedObject;
-    private GameObject desc;
+    //public GameObject descriptionInstance;
     // private string currentLocation;
     private double time;
     private Text timeTxt;
     private GameObject player;
-    private float timer;
 
     // Use this for initialization
     void Start()
     {
-        timer = 0.5f;
-        player = GameObject.Find("player").gameObject;
+        Button aButton = actionButton.GetComponent<Button>();
+        Button wsButton = worldStateButton.GetComponent<Button>();
+
+        aButton.onClick.AddListener(delegate { ShowDescription("action"); });
+        wsButton.onClick.AddListener(delegate { ShowDescription("worldState"); });
+
+        player = GameObject.Find("Player").gameObject;
         timeTxt = GameObject.Find("Time").GetComponent<Text>();
         // currentLocation = "road";
         Cursor.visible = true;
 
-        foreach (ParticleSystem ps in Resources.FindObjectsOfTypeAll(typeof(ParticleSystem)) as ParticleSystem[])
-        {
-            ParticleSystem.EmissionModule emission = ps.emission;
-            emission.enabled = false;
-        }
+        //foreach (ParticleSystem ps in Resources.FindObjectsOfTypeAll(typeof(ParticleSystem)) as ParticleSystem[])
+        //{
+        //    ParticleSystem.EmissionModule emission = ps.emission;
+        //    emission.enabled = false;
+        //}
     }
 
     // Update is called once per frame
@@ -53,20 +58,27 @@ public class PointAndClick : MonoBehaviour
             }
             else
             {
-                RaycastHit hit = new RaycastHit();
-                if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit) && (hit.transform.tag == "Clickable" && desc == null))
+                if (description.activeSelf == true)
                 {
-                    selectedObject = hit.transform.gameObject;
-                    print(selectedObject.name);
-                    ShowDescription();
+                    description.SetActive(false);
+                }
+                else if (buttonsPanel.activeSelf == true)
+                {
+                    buttonsPanel.SetActive(false);
                 }
                 else
                 {
-                    DestroyDescription();
+                    RaycastHit hit = new RaycastHit();
+                    if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit) && (hit.transform.tag == "Clickable" /*&& descriptionInstance == null*/))
+                    {
+                        selectedObject = hit.transform.gameObject;
+                        print(selectedObject.name);
+                        ShowDescription("objectState");
+                    }
                 }
             }
-
         }
+
         if (Input.GetMouseButtonDown(0))
         {
             if (EventSystem.current.IsPointerOverGameObject())
@@ -75,32 +87,66 @@ public class PointAndClick : MonoBehaviour
             }
             else
             {
-                if (desc != null)
+                if (description.activeSelf == true)
                 {
-                    DestroyDescription();
+                    description.SetActive(false);
+                }
+                else if (buttonsPanel.activeSelf == true)
+                {
+                    buttonsPanel.SetActive(false);
+                }
+                else
+                {
+                    buttonsPanel.SetActive(true);
                 }
             }
         }
 
     }
 
-    public void ShowDescription()
+    public void ShowDescription(string s)
     {
-
-        if (desc != null)
+        if (buttonsPanel.activeSelf == true)
         {
-            DestroyDescription();
+            buttonsPanel.SetActive(false);
+        }
+        else if (description.activeSelf == true)
+        {
+            description.SetActive(false);
         }
         else
         {
-            desc = Instantiate(description, GameObject.Find("Canvas").transform, instantiateInWorldSpace: false) as GameObject;
-            Text title = GameObject.Find("Title").GetComponent<Text>();
-            title.text = selectedObject.name;
+            //descriptionInstance = Instantiate(description, GameObject.Find("Canvas").transform, instantiateInWorldSpace: false) as GameObject;
+            //--------------
+            //Text title = GameObject.Find("Title").GetComponent<Text>();
+            //title.text = selectedObject.name;
+            //--------------
             // Button btn = GameObject.Find("Move").GetComponent<Button>();
             // btn.onClick.AddListener(MoveCharacter);
+            description.SetActive(true);
             Text date = GameObject.Find("Date").GetComponent<Text>();
             date.text = time.ToString();
-            DescribeObjectState();
+
+            switch (s)
+            {
+                case ("action"):
+                    ActionDescription ad = new ActionDescription();
+                    ad.DescribeAction();
+                    break;
+
+                case ("worldState"):
+                    StateDescription sd = new StateDescription();
+                    sd.DescribeWorldState();
+                    break;
+
+                case ("objectState"):
+                    DescribeObjectState();
+                    break;
+
+                default:
+                    break;
+            }
+                
         }
 
     }
@@ -135,10 +181,11 @@ public class PointAndClick : MonoBehaviour
 
         myText.text += "ciaoooooo";
     }
-    private void DestroyDescription()
-    {
-        Destroy(desc);
-    }
+
+    //private void DestroyDescription()
+    //{
+    //    Destroy(descriptionInstance);
+    //}
 
     // public void MoveCharacter(){
     // 	if(currentLocation != selectedObject.name){
