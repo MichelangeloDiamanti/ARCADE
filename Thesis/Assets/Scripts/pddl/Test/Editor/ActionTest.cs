@@ -26,7 +26,7 @@ public class ActionTest {
 
 		BinaryRelation br1 = new BinaryRelation(sourceEntity1, bp1, destinationEntity1, RelationValue.TRUE);
 
-		HashSet<Entity> parametersAction1 = new HashSet<Entity>();
+		HashSet<ActionParameter> parametersAction1 = new HashSet<ActionParameter>();
 		// parametersAction1.Add(sourceEntity1);
 		// parametersAction1.Add(destinationEntity1);
 
@@ -60,9 +60,9 @@ public class ActionTest {
 		BinaryRelation br1 = new BinaryRelation(sourceEntity1, bp1, destinationEntity1, RelationValue.TRUE);
 		BinaryRelation br2 = new BinaryRelation(sourceEntity2, bp2, destinationEntity2, RelationValue.TRUE);
 
-		HashSet<Entity> parametersAction1 = new HashSet<Entity>();
-		parametersAction1.Add(sourceEntity1);
-		parametersAction1.Add(destinationEntity1);
+		HashSet<ActionParameter> parametersAction1 = new HashSet<ActionParameter>();
+		parametersAction1.Add(new ActionParameter(sourceEntity1, ActionParameterRole.ACTIVE));
+		parametersAction1.Add(new ActionParameter(destinationEntity1, ActionParameterRole.PASSIVE));
 		HashSet<IRelation> preconditionsAction1 = new HashSet<IRelation>();
 		preconditionsAction1.Add(br1);
 		HashSet<IRelation> postconditionsAction1 = new HashSet<IRelation>();
@@ -70,9 +70,9 @@ public class ActionTest {
 
 		Action a1 = new Action(preconditionsAction1, "PICK_UP", parametersAction1, postconditionsAction1);
 
-		HashSet<Entity> parametersAction2 = new HashSet<Entity>();
-		parametersAction2.Add(sourceEntity2);
-		parametersAction2.Add(destinationEntity2);
+		HashSet<ActionParameter> parametersAction2 = new HashSet<ActionParameter>();
+		parametersAction2.Add(new ActionParameter(sourceEntity2, ActionParameterRole.ACTIVE));
+		parametersAction2.Add(new ActionParameter(destinationEntity2, ActionParameterRole.PASSIVE));
 		HashSet<IRelation> preconditionsAction2 = new HashSet<IRelation>();
 		preconditionsAction2.Add(br2);
 		HashSet<IRelation> postconditionsAction2 = new HashSet<IRelation>();
@@ -103,9 +103,9 @@ public class ActionTest {
 		BinaryRelation br1 = new BinaryRelation(sourceEntity1, bp1, destinationEntity1, RelationValue.TRUE);
 		BinaryRelation br2 = new BinaryRelation(sourceEntity2, bp2, destinationEntity2, RelationValue.TRUE);
 
-		HashSet<Entity> parametersAction1 = new HashSet<Entity>();
-		parametersAction1.Add(sourceEntity1);
-		parametersAction1.Add(destinationEntity1);
+		HashSet<ActionParameter> parametersAction1 = new HashSet<ActionParameter>();
+		parametersAction1.Add(new ActionParameter(sourceEntity1, ActionParameterRole.ACTIVE));
+		parametersAction1.Add(new ActionParameter(destinationEntity1, ActionParameterRole.PASSIVE));
 		HashSet<IRelation> preconditionsAction1 = new HashSet<IRelation>();
 		preconditionsAction1.Add(br1);
 		HashSet<IRelation> postconditionsAction1 = new HashSet<IRelation>();
@@ -113,9 +113,9 @@ public class ActionTest {
 
 		Action a1 = new Action(preconditionsAction1, "PICK_UP", parametersAction1, postconditionsAction1);
 
-		HashSet<Entity> parametersAction2 = new HashSet<Entity>();
-		parametersAction2.Add(sourceEntity2);
-		parametersAction2.Add(destinationEntity2);
+		HashSet<ActionParameter> parametersAction2 = new HashSet<ActionParameter>();
+		parametersAction2.Add(new ActionParameter(sourceEntity2, ActionParameterRole.ACTIVE));
+		parametersAction2.Add(new ActionParameter(destinationEntity2, ActionParameterRole.PASSIVE));
 		HashSet<IRelation> preconditionsAction2 = new HashSet<IRelation>();
 		preconditionsAction2.Add(br2);
 		HashSet<IRelation> postconditionsAction2 = new HashSet<IRelation>();
@@ -139,10 +139,10 @@ public class ActionTest {
         BinaryPredicate at = new BinaryPredicate(rover, "AT", wayPoint);
         BinaryPredicate beenAt = new BinaryPredicate(rover, "BEEN_AT", wayPoint);
 
-        HashSet<Entity> moveActionParameters = new HashSet<Entity>();
-        moveActionParameters.Add(curiosity);
-        moveActionParameters.Add(fromWayPoint);
-        moveActionParameters.Add(toWayPoint);        
+        HashSet<ActionParameter> moveActionParameters = new HashSet<ActionParameter>();
+        moveActionParameters.Add(new ActionParameter(curiosity, ActionParameterRole.ACTIVE));
+        moveActionParameters.Add(new ActionParameter(fromWayPoint, ActionParameterRole.PASSIVE));
+        moveActionParameters.Add(new ActionParameter(toWayPoint, ActionParameterRole.PASSIVE));        
 
         // Preconditions
         HashSet<IRelation> moveActionPreconditions = new HashSet<IRelation>();
@@ -187,8 +187,8 @@ public class ActionTest {
 		expectedParameters.Add(entityBattery);
 		expectedParameters.Add(entityWheels);
 
-		moveAction.addParameter(entityBattery);
-		moveAction.addParameter(entityWheels);
+		moveAction.addParameter(new ActionParameter(entityBattery, ActionParameterRole.PASSIVE));
+		moveAction.addParameter(new ActionParameter(entityWheels, ActionParameterRole.PASSIVE));
 
 		Assert.AreEqual(moveAction.Parameters, expectedParameters);
 	}

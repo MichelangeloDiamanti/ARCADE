@@ -58,9 +58,9 @@ public class DomainTest {
 
 		BinaryRelation br1 = new BinaryRelation(sourceEntity1, bp1, destinationEntity1, RelationValue.TRUE);
 
-		HashSet<Entity> parametersAction1 = new HashSet<Entity>();
-		parametersAction1.Add(sourceEntity1);
-		parametersAction1.Add(destinationEntity1);
+		HashSet<ActionParameter> parametersAction1 = new HashSet<ActionParameter>();
+		parametersAction1.Add(new ActionParameter(sourceEntity1, ActionParameterRole.ACTIVE));
+		parametersAction1.Add(new ActionParameter(destinationEntity1, ActionParameterRole.PASSIVE));
 
 		HashSet<IRelation> preconditionsAction1 = new HashSet<IRelation>();
 		preconditionsAction1.Add(br1);
@@ -172,10 +172,10 @@ public class DomainTest {
         Entity fromWayPoint = new Entity(wayPoint, "WAYPOINT1");
         Entity toWayPoint = new Entity(wayPoint, "WAYPOINT2");        
 
-        HashSet<Entity> moveActionParameters = new HashSet<Entity>();
-        moveActionParameters.Add(curiosity);
-        moveActionParameters.Add(fromWayPoint);
-        moveActionParameters.Add(toWayPoint);        
+        HashSet<ActionParameter> moveActionParameters = new HashSet<ActionParameter>();
+        moveActionParameters.Add(new ActionParameter(curiosity,ActionParameterRole.ACTIVE));
+        moveActionParameters.Add(new ActionParameter(fromWayPoint, ActionParameterRole.PASSIVE));
+        moveActionParameters.Add(new ActionParameter(toWayPoint, ActionParameterRole.PASSIVE));        
 
         // Preconditions
         HashSet<IRelation> moveActionPreconditions = new HashSet<IRelation>();
@@ -232,9 +232,9 @@ public class DomainTest {
 		Domain domain = Utils.roverWorldDomainThirdLevel();
 		Domain domain2 = Utils.roverWorldDomainThirdLevel();
 
-		HashSet<Entity> actionDifferenceParameters = new HashSet<Entity>();
+		HashSet<ActionParameter> actionDifferenceParameters = new HashSet<ActionParameter>();
 		Entity entity1 = new Entity(new EntityType("ROVER"), "ROVER");
-		actionDifferenceParameters.Add(entity1);
+		actionDifferenceParameters.Add(new ActionParameter(entity1, ActionParameterRole.ACTIVE));
 
 		HashSet<IRelation> actionDifferencePreconditions = new HashSet<IRelation>();
 		actionDifferencePreconditions.Add(domain2.generateRelationFromPredicateName("IS_EMPTY", entity1, RelationValue.TRUE));
@@ -274,10 +274,10 @@ public class DomainTest {
         Entity fromWayPoint = new Entity(wayPoint, "WAYPOINT1");
         Entity toWayPoint = new Entity(wayPoint, "WAYPOINT2");        
 
-        HashSet<Entity> moveActionParameters = new HashSet<Entity>();
-        moveActionParameters.Add(curiosity);
-        moveActionParameters.Add(fromWayPoint);
-        moveActionParameters.Add(toWayPoint);        
+        HashSet<ActionParameter> moveActionParameters = new HashSet<ActionParameter>();
+        moveActionParameters.Add(new ActionParameter(curiosity, ActionParameterRole.ACTIVE));
+        moveActionParameters.Add(new ActionParameter(fromWayPoint, ActionParameterRole.PASSIVE));
+        moveActionParameters.Add(new ActionParameter(toWayPoint, ActionParameterRole.PASSIVE));        
 
         // Preconditions
         HashSet<IRelation> moveActionPreconditions = new HashSet<IRelation>();

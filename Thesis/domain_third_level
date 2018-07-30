@@ -252,30 +252,35 @@
       "Name": "MOVE",
       "Parameters": [
         {
+          "Role": 1,
           "Type": {
             "Type": "ROVER"
           },
           "Name": "ROVER"
         },
         {
+          "Role": 2,
           "Type": {
             "Type": "WAYPOINT"
           },
           "Name": "WAYPOINT1"
         },
         {
+          "Role": 2,
           "Type": {
             "Type": "WAYPOINT"
           },
           "Name": "WAYPOINT2"
         },
         {
+          "Role": 1,
           "Type": {
             "Type": "BATTERY"
           },
           "Name": "BATTERY"
         },
         {
+          "Role": 1,
           "Type": {
             "Type": "WHEEL"
           },
@@ -455,24 +460,28 @@
       "Name": "TAKE_SAMPLE",
       "Parameters": [
         {
+          "Role": 1,
           "Type": {
             "Type": "ROVER"
           },
           "Name": "ROVER"
         },
         {
+          "Role": 2,
           "Type": {
             "Type": "SAMPLE"
           },
           "Name": "SAMPLE"
         },
         {
+          "Role": 2,
           "Type": {
             "Type": "WAYPOINT"
           },
           "Name": "WAYPOINT"
         },
         {
+          "Role": 1,
           "Type": {
             "Type": "BATTERY"
           },
@@ -643,24 +652,28 @@
       "Name": "DROP_SAMPLE",
       "Parameters": [
         {
+          "Role": 1,
           "Type": {
             "Type": "ROVER"
           },
           "Name": "ROVER"
         },
         {
+          "Role": 2,
           "Type": {
             "Type": "SAMPLE"
           },
           "Name": "SAMPLE"
         },
         {
+          "Role": 2,
           "Type": {
             "Type": "WAYPOINT"
           },
           "Name": "WAYPOINT"
         },
         {
+          "Role": 1,
           "Type": {
             "Type": "BATTERY"
           },
@@ -814,24 +827,28 @@
       "Name": "TAKE_IMAGE",
       "Parameters": [
         {
+          "Role": 1,
           "Type": {
             "Type": "ROVER"
           },
           "Name": "ROVER"
         },
         {
+          "Role": 2,
           "Type": {
             "Type": "OBJECTIVE"
           },
           "Name": "OBJECTIVE"
         },
         {
+          "Role": 2,
           "Type": {
             "Type": "WAYPOINT"
           },
           "Name": "WAYPOINT"
         },
         {
+          "Role": 1,
           "Type": {
             "Type": "BATTERY"
           },
@@ -881,6 +898,7 @@
       "Name": "CHARGE_BATTERY",
       "Parameters": [
         {
+          "Role": 1,
           "Type": {
             "Type": "BATTERY"
           },
@@ -930,6 +948,7 @@
       "Name": "DISCHARGE_BATTERY",
       "Parameters": [
         {
+          "Role": 1,
           "Type": {
             "Type": "BATTERY"
           },
@@ -979,6 +998,7 @@
       "Name": "INFLATE_WHEELS",
       "Parameters": [
         {
+          "Role": 1,
           "Type": {
             "Type": "WHEEL"
           },
@@ -1028,6 +1048,7 @@
       "Name": "DEFLATE_WHEELS",
       "Parameters": [
         {
+          "Role": 1,
           "Type": {
             "Type": "WHEEL"
           },

@@ -58,8 +58,9 @@ namespace ru.cadia.pddlFramework
             BinaryRelation characterBeenAtL1 = new BinaryRelation(character1, beenAt, location1, RelationValue.TRUE);
             moveActionPostconditions.Add(characterBeenAtL1);
 
-            Action moveAction = new Action(moveActionPreconditions, "MOVE", moveActionParameters, moveActionPostconditions);
-            actions.Add(moveAction);
+            // TODO: fix this
+            // Action moveAction = new Action(moveActionPreconditions, "MOVE", moveActionParameters, moveActionPostconditions);
+            // actions.Add(moveAction);
         }
 
         // Update is called once per frame

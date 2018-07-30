@@ -365,6 +365,40 @@ public class Simulation : MonoBehaviour
         if (possibleActions.Count <= 0)
             return null;
 
+        // we want to get one possible action for each different entity that can perform an action
+        // so we need a way to group actions depending on the entity which is performing it
+        Dictionary<ActionParameter, List<Action>> actionsForEachActor = new Dictionary<ActionParameter, List<Action>>();
+
+        foreach (Action a in possibleActions)
+        {
+            foreach (ActionParameter ap in a.Parameters)
+            {
+                if (ap.Role == ActionParameterRole.ACTIVE)
+                {
+
+                    List<Action> actions;
+                    if (!actionsForEachActor.TryGetValue(ap, out actions))
+                    {
+                        actions = new List<Action>();
+                        actionsForEachActor.Add(ap, actions);
+                    }
+                    actions.Add(a);
+                }
+            }
+        }
+
+        // foreach(ActionParameter ap in actionsForEachActor.Keys)
+        //     Debug.Log(ap.Name);
+
+        foreach(KeyValuePair<ActionParameter, List<Action>> pair in actionsForEachActor)
+        {
+            Debug.Log("The Active actor " + pair.Key.Name + " can do:");
+            foreach(Action a in pair.Value)
+            {
+                Debug.Log(a.ShortToString());
+            }
+        }
+
         int randomActionIndex = Random.Range(0, possibleActions.Count);
         Action randomAction = possibleActions[randomActionIndex];
 

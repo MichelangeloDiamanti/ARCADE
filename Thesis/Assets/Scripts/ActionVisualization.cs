@@ -17,7 +17,7 @@ public class ActionVisualization : MonoBehaviour {
 			foreach(Action act in ActionDescription.actions){
 				HashSet<IRelation> preconditions = act.PreConditions;
 				string name = act.Name;
-				HashSet<Entity> parameters = act.Parameters;
+				HashSet<ActionParameter> parameters = act.Parameters;
 				HashSet<IRelation> postconditions = act.PostConditions;
 				ShowAction(name, postconditions);
 			}

@@ -61,10 +61,10 @@ public class Utils
         Entity fromWayPoint = new Entity(wayPoint, "WAYPOINT1");
         Entity toWayPoint = new Entity(wayPoint, "WAYPOINT2");
 
-        HashSet<Entity> moveActionParameters = new HashSet<Entity>();
-        moveActionParameters.Add(curiosity);
-        moveActionParameters.Add(fromWayPoint);
-        moveActionParameters.Add(toWayPoint);
+        HashSet<ActionParameter> moveActionParameters = new HashSet<ActionParameter>();
+        moveActionParameters.Add(new ActionParameter(curiosity, ActionParameterRole.ACTIVE));
+        moveActionParameters.Add(new ActionParameter(fromWayPoint, ActionParameterRole.PASSIVE));
+        moveActionParameters.Add(new ActionParameter(toWayPoint, ActionParameterRole.PASSIVE));
 
         // Preconditions
         HashSet<IRelation> moveActionPreconditions = new HashSet<IRelation>();
@@ -90,10 +90,10 @@ public class Utils
         Entity ESample = new Entity(sample, "SAMPLE");
         Entity EWayPoint = new Entity(wayPoint, "WAYPOINT");
 
-        HashSet<Entity> takeSampleActionParameters = new HashSet<Entity>();
-        takeSampleActionParameters.Add(curiosity);
-        takeSampleActionParameters.Add(ESample);
-        takeSampleActionParameters.Add(EWayPoint);
+        HashSet<ActionParameter> takeSampleActionParameters = new HashSet<ActionParameter>();
+        takeSampleActionParameters.Add(new ActionParameter(curiosity, ActionParameterRole.ACTIVE));
+        takeSampleActionParameters.Add(new ActionParameter(ESample, ActionParameterRole.PASSIVE));
+        takeSampleActionParameters.Add(new ActionParameter(EWayPoint, ActionParameterRole.PASSIVE));
 
         // Preconditions
         HashSet<IRelation> takeSampleActPreconditions = new HashSet<IRelation>();
@@ -118,10 +118,10 @@ public class Utils
 
         //              DROP SAMPLE ACTION        
         // Parameters
-        HashSet<Entity> dropSampleActionParameters = new HashSet<Entity>();
-        dropSampleActionParameters.Add(curiosity);
-        dropSampleActionParameters.Add(ESample);
-        dropSampleActionParameters.Add(EWayPoint);
+        HashSet<ActionParameter> dropSampleActionParameters = new HashSet<ActionParameter>();
+        dropSampleActionParameters.Add(new ActionParameter(curiosity, ActionParameterRole.ACTIVE));
+        dropSampleActionParameters.Add(new ActionParameter(ESample, ActionParameterRole.PASSIVE));
+        dropSampleActionParameters.Add(new ActionParameter(EWayPoint, ActionParameterRole.PASSIVE));
 
         // Preconditions
         HashSet<IRelation> dropSampleActPreconditions = new HashSet<IRelation>();
@@ -144,10 +144,10 @@ public class Utils
         // Parameters 
         Entity EObjective = new Entity(objective, "OBJECTIVE");
 
-        HashSet<Entity> takeImageActionParameters = new HashSet<Entity>();
-        takeImageActionParameters.Add(curiosity);
-        takeImageActionParameters.Add(EObjective);
-        takeImageActionParameters.Add(EWayPoint);
+        HashSet<ActionParameter> takeImageActionParameters = new HashSet<ActionParameter>();
+        takeImageActionParameters.Add(new ActionParameter(curiosity, ActionParameterRole.ACTIVE));
+        takeImageActionParameters.Add(new ActionParameter(EObjective, ActionParameterRole.PASSIVE));
+        takeImageActionParameters.Add(new ActionParameter(EWayPoint, ActionParameterRole.PASSIVE));
 
         // Preconditions
         HashSet<IRelation> takeImageActionPreconditions = new HashSet<IRelation>();
@@ -170,8 +170,11 @@ public class Utils
     {
         WorldState worldState = new WorldState(domain);
 
-        Entity rover = new Entity(new EntityType("ROVER"), "ROVER");
-        worldState.addEntity(rover);
+        Entity rover1 = new Entity(new EntityType("ROVER"), "ROVER1");
+        Entity rover2 = new Entity(new EntityType("ROVER"), "ROVER2");
+
+        worldState.addEntity(rover1);
+        worldState.addEntity(rover2);
 
         Entity wayPoint1 = new Entity(new EntityType("WAYPOINT"), "WAYPOINT1");
         Entity wayPoint2 = new Entity(new EntityType("WAYPOINT"), "WAYPOINT2");
@@ -292,11 +295,19 @@ public class Utils
         UnaryRelation isDroppingDock = domain.generateRelationFromPredicateName("IS_DROPPING_DOCK", wayPoint7, RelationValue.TRUE);
         worldState.addRelation(isDroppingDock);
 
-        UnaryRelation isEmpty = domain.generateRelationFromPredicateName("IS_EMPTY", rover, RelationValue.TRUE);
-        worldState.addRelation(isEmpty);
+        UnaryRelation rover1IsEmpty = domain.generateRelationFromPredicateName("IS_EMPTY", rover1, RelationValue.TRUE);
+        UnaryRelation rover2IsEmpty = domain.generateRelationFromPredicateName("IS_EMPTY", rover2, RelationValue.TRUE);
 
-        BinaryRelation isAt6 = domain.generateRelationFromPredicateName("AT", rover, wayPoint6, RelationValue.TRUE);
-        worldState.addRelation(isAt6);
+        worldState.addRelation(rover1IsEmpty);
+        worldState.addRelation(rover2IsEmpty);
+
+
+        BinaryRelation rover1IsAt6 = domain.generateRelationFromPredicateName("AT", rover1, wayPoint6, RelationValue.TRUE);
+        BinaryRelation rover2IsAt6 = domain.generateRelationFromPredicateName("AT", rover2, wayPoint6, RelationValue.TRUE);
+
+        worldState.addRelation(rover1IsAt6);
+        worldState.addRelation(rover2IsAt6);
+
 
         return worldState;
     }
@@ -391,9 +402,9 @@ public class Utils
         UnaryPredicate predicateWheelsInflated = new UnaryPredicate(entityTypeWheel, "WHEELS_INFLATED");
         domain.addPredicate(predicateWheelsInflated);
 
-        HashSet<Entity> actionChargeParameters = new HashSet<Entity>();
+        HashSet<ActionParameter> actionChargeParameters = new HashSet<ActionParameter>();
         Entity entityBattery = new Entity(entityTypeBattery, "BATTERY");
-        actionChargeParameters.Add(entityBattery);
+        actionChargeParameters.Add(new ActionParameter(entityBattery, ActionParameterRole.ACTIVE));
 
         HashSet<IRelation> actionChargePreconditions = new HashSet<IRelation>();
         UnaryRelation relationBatteryDischarged = new UnaryRelation(entityBattery, predicateBatteryCharged, RelationValue.FALSE);
@@ -409,9 +420,9 @@ public class Utils
         Action actionDischargeBattery = new Action(actionChargePostconditions, "DISCHARGE_BATTERY", actionChargeParameters, actionChargePreconditions);
         domain.addAction(actionDischargeBattery);
 
-        HashSet<Entity> actionInflateParameters = new HashSet<Entity>();
+        HashSet<ActionParameter> actionInflateParameters = new HashSet<ActionParameter>();
         Entity entityWheels = new Entity(entityTypeWheel, "WHEELS");
-        actionInflateParameters.Add(entityWheels);
+        actionInflateParameters.Add(new ActionParameter(entityWheels, ActionParameterRole.ACTIVE));
 
         HashSet<IRelation> actionInflatePreconditions = new HashSet<IRelation>();
         UnaryRelation relationWheelsDeflated = new UnaryRelation(entityWheels, predicateWheelsInflated, RelationValue.FALSE);
@@ -428,21 +439,24 @@ public class Utils
         domain.addAction(actionDeflate);
 
         Action moveAction = domain.getAction("MOVE");
-        moveAction.addParameter(entityBattery);
-        moveAction.addParameter(entityWheels);
+        ActionParameter actionParameterBattery = new ActionParameter(entityBattery, ActionParameterRole.ACTIVE);
+        ActionParameter actionParameterWheels = new ActionParameter(entityWheels, ActionParameterRole.ACTIVE);
+
+        moveAction.addParameter(actionParameterBattery);
+        moveAction.addParameter(actionParameterWheels);
         moveAction.PreConditions.Add(relationBatteryCharged);
         moveAction.PreConditions.Add(relationWheelsInflated);
 
         Action takeSampleAction = domain.getAction("TAKE_SAMPLE");
-        takeSampleAction.addParameter(entityBattery);
+        takeSampleAction.addParameter(actionParameterBattery);
         takeSampleAction.addPrecondition(relationBatteryCharged);
 
         Action dropSampleAction = domain.getAction("DROP_SAMPLE");
-        dropSampleAction.addParameter(entityBattery);
+        dropSampleAction.addParameter(actionParameterBattery);
         dropSampleAction.addPrecondition(relationBatteryCharged);
 
         Action takeImageAction = domain.getAction("TAKE_IMAGE");
-        takeImageAction.addParameter(entityBattery);
+        takeImageAction.addParameter(actionParameterBattery);
         takeImageAction.addPrecondition(relationBatteryCharged);
 
         return domain;
@@ -498,7 +512,7 @@ public class Utils
                 TreeNode<WorldState> child = node.AddChild(node.Data.applyAction(a), a);
                 if (explored.Contains(child.Data) == false && frontier.Contains(child) == false)
                 {
-                    
+
                     // TODO: remove this
                     Utils.bfsExploredNodes++;
 

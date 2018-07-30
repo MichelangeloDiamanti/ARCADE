@@ -132,7 +132,7 @@ public class ActionDescription : MonoBehaviour {
 			print(act.Name);
 
 			HashSet<IRelation> preconditions = act.PreConditions;
-			HashSet<Entity> parameters = act.Parameters;
+			HashSet<ActionParameter> parameters = act.Parameters;
 			HashSet<IRelation> postconditions = act.PostConditions;
 			
 			string preText = null;

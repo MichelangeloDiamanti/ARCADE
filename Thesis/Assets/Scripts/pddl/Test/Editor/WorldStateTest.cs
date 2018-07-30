@@ -169,10 +169,10 @@ public class WorldStateTest {
         Entity entityFromWayPoint = new Entity(entityTypewayPoint, "WAYPOINT1");
         Entity entityToWayPoint = new Entity(entityTypewayPoint, "WAYPOINT2");        
 
-        HashSet<Entity> actionMoveParameters = new HashSet<Entity>();
-        actionMoveParameters.Add(entityCuriosity);
-        actionMoveParameters.Add(entityFromWayPoint);
-        actionMoveParameters.Add(entityToWayPoint);        
+        HashSet<ActionParameter> actionMoveParameters = new HashSet<ActionParameter>();
+        actionMoveParameters.Add(new ActionParameter(entityCuriosity, ActionParameterRole.ACTIVE));
+        actionMoveParameters.Add(new ActionParameter(entityFromWayPoint, ActionParameterRole.PASSIVE));
+        actionMoveParameters.Add(new ActionParameter(entityToWayPoint, ActionParameterRole.PASSIVE));        
 
         // Preconditions
         HashSet<IRelation> actionMovePreconditions = new HashSet<IRelation>();
@@ -697,10 +697,10 @@ public class WorldStateTest {
         Entity entityFromWayPoint = new Entity(entityTypewayPoint, "WAYPOINT1");
         Entity entityToWayPoint = new Entity(entityTypewayPoint, "WAYPOINT2");        
 
-        HashSet<Entity> actionMoveParameters = new HashSet<Entity>();
-        actionMoveParameters.Add(entityCuriosity);
-        actionMoveParameters.Add(entityFromWayPoint);
-        actionMoveParameters.Add(entityToWayPoint);        
+        HashSet<ActionParameter> actionMoveParameters = new HashSet<ActionParameter>();
+        actionMoveParameters.Add(new ActionParameter(entityCuriosity, ActionParameterRole.ACTIVE));
+        actionMoveParameters.Add(new ActionParameter(entityFromWayPoint, ActionParameterRole.PASSIVE));
+        actionMoveParameters.Add(new ActionParameter(entityToWayPoint, ActionParameterRole.PASSIVE));        
 
         // Preconditions
         HashSet<IRelation> actionMovePreconditions = new HashSet<IRelation>();
