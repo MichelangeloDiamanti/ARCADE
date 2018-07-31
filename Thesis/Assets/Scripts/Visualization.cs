@@ -76,6 +76,49 @@ public class Visualization : MonoBehaviour
 
         // TODO: the logic to visualize the action should go here
         //
+        switch (a.Name)
+        {
+
+            case "MOVE":
+                GameObject character = null;
+                GameObject destination = null;
+
+                foreach (IRelation post in a.PostConditions)
+                {
+                    string postName = post.Predicate.Name;
+                    BinaryRelation rel = post as BinaryRelation;
+                    if (postName == "AT" && post.Value == RelationValue.TRUE)
+                    {
+                        character = GameObject.Find(rel.Source.Name);
+                        print("rover: " +rel.Source.Name);
+                        destination = GameObject.Find(rel.Destination.Name);
+                        print("destination: " + rel.Destination.Name);
+                        UnityEngine.AI.NavMeshAgent agent = character.GetComponent<UnityEngine.AI.NavMeshAgent>();
+                        agent.destination = destination.transform.position;
+                    }
+                    /*if(entity.Type.Equals()){
+						//character = GameObject.Find(entity.Name);
+						print("Character= " + entity.Name);
+					}
+					else if(entity.Type == "LOCATION"){
+						print("Location= " + entity.Name);
+					}*/
+                }
+
+                //if(character != null && destination != null){
+                //	UnityEngine.AI.NavMeshAgent agent = character.GetComponent<UnityEngine.AI.NavMeshAgent>();
+                //	agent.destination = destination.transform.position;				
+                //}
+
+                break;
+
+            case "Action2":
+                break;
+
+            case "Action3":
+                break;
+
+        }
 
         print(a.Name);
 
