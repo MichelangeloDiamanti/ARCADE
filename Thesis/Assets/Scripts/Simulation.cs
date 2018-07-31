@@ -38,6 +38,7 @@ public class Simulation : MonoBehaviour
     private Dictionary<SimulationBoundary, TreeNode<WorldState>> _lastObservedStates;
     // private Dictionary<int, Model> _lastObservedStatesTest;
 
+    public static Action lastActionPerformed; 
 
     public TreeNode<WorldState> CurrentNode
     {
@@ -338,6 +339,7 @@ public class Simulation : MonoBehaviour
 
                 bool result = false;
                 yield return StartCoroutine(visualizer.visualize(randomAction, value => result = value));
+                lastActionPerformed = randomAction;
                 if (result)
                 {
                     // The action has been visualized, go next

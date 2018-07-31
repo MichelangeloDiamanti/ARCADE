@@ -7,7 +7,6 @@ using UnityEngine.UI;
 using System.Text;
 using System.IO;
 using System;
-using vis = ru.cadia.visualization;
 using ru.cadia.pddlFramework;
 
 
@@ -47,8 +46,8 @@ public class PointAndClick : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        time = Math.Round(Time.realtimeSinceStartup, 2); //System.Convert.ToDouble(Time.realtimeSinceStartup);
-        timeTxt.text = time.ToString();
+        //time = Math.Round(Time.realtimeSinceStartup, 2); //System.Convert.ToDouble(Time.realtimeSinceStartup);
+        //timeTxt.text = time.ToString();
 
         if (Input.GetMouseButtonDown(1))
         {
@@ -58,11 +57,7 @@ public class PointAndClick : MonoBehaviour
             }
             else
             {
-                if (description.activeSelf == true)
-                {
-                    description.SetActive(false);
-                }
-                else if (buttonsPanel.activeSelf == true)
+                if (buttonsPanel.activeSelf == true)
                 {
                     buttonsPanel.SetActive(false);
                 }
@@ -87,11 +82,7 @@ public class PointAndClick : MonoBehaviour
             }
             else
             {
-                if (description.activeSelf == true)
-                {
-                    description.SetActive(false);
-                }
-                else if (buttonsPanel.activeSelf == true)
+                if (buttonsPanel.activeSelf == true)
                 {
                     buttonsPanel.SetActive(false);
                 }
@@ -101,7 +92,7 @@ public class PointAndClick : MonoBehaviour
                 }
             }
         }
-
+        
     }
 
     public void ShowDescription(string s)
@@ -113,6 +104,7 @@ public class PointAndClick : MonoBehaviour
         else if (description.activeSelf == true)
         {
             description.SetActive(false);
+            Time.timeScale = 1;
         }
         else
         {
@@ -131,7 +123,10 @@ public class PointAndClick : MonoBehaviour
             {
                 case ("action"):
                     ActionDescription ad = new ActionDescription();
-                    ad.DescribeAction();
+                    if (Simulation.lastActionPerformed != null)
+                    {
+                        ad.DescribeAction(Simulation.lastActionPerformed);
+                    }
                     break;
 
                 case ("worldState"):
@@ -146,7 +141,8 @@ public class PointAndClick : MonoBehaviour
                 default:
                     break;
             }
-                
+
+            Time.timeScale = 0;
         }
 
     }
@@ -159,34 +155,29 @@ public class PointAndClick : MonoBehaviour
         WorldState worldStateFirstLevel = Utils.roverWorldStateFirstLevel(domainFirstLevel);
         foreach (IRelation r in worldStateFirstLevel.Relations)
         {
-            if (r.GetType() == typeof(vis.BinaryRelation))
+            if (r.GetType() == typeof(BinaryRelation))
             {
-                vis.BinaryRelation rel = r as vis.BinaryRelation;
+                BinaryRelation rel = r as BinaryRelation;
                 if (rel.Source.ToString() == selectedObject.name || rel.Destination.ToString() == selectedObject.name)
                 {
-                    vis.BinaryPredicate pred = r as vis.BinaryPredicate;
-                    myText.text += pred.Text + "\n";
+                    BinaryPredicate pred = r as BinaryPredicate;
+                    myText.text += pred.Description + "\n";
                 }
             }
             else
             {
-                vis.UnaryRelation rel = r as vis.UnaryRelation;
+                UnaryRelation rel = r as UnaryRelation;
                 if (rel.Source.ToString() == selectedObject.name)
                 {
-                    vis.BinaryPredicate pred = r as vis.BinaryPredicate;
-                    myText.text += pred.Text + "\n";
+                    BinaryPredicate pred = r as BinaryPredicate;
+                    myText.text += pred.Description + "\n";
                 }
             }
         }
 
         myText.text += "ciaoooooo";
     }
-
-    //private void DestroyDescription()
-    //{
-    //    Destroy(descriptionInstance);
-    //}
-
+    
     // public void MoveCharacter(){
     // 	if(currentLocation != selectedObject.name){
     // 		print("Moving...");
@@ -300,4 +291,10 @@ public class PointAndClick : MonoBehaviour
     //     postTxt.Write(sbPost);
     //     postTxt.Close();
     // }
+
+    public void Resume()
+    {
+        Time.timeScale = 1;
+        description.SetActive(false);
+    }
 }
