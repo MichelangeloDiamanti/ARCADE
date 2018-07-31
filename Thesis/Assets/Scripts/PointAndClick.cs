@@ -16,7 +16,6 @@ public class PointAndClick : MonoBehaviour
     public Button actionButton, worldStateButton;
     public GameObject description;
     public static GameObject selectedObject;
-    //public GameObject descriptionInstance;
     // private string currentLocation;
     private double time;
     private Text timeTxt;
@@ -82,13 +81,13 @@ public class PointAndClick : MonoBehaviour
             }
             else
             {
-                if (buttonsPanel.activeSelf == true)
-                {
-                    buttonsPanel.SetActive(false);
-                }
-                else
+                if (buttonsPanel.activeSelf == false && description.activeSelf == false)
                 {
                     buttonsPanel.SetActive(true);
+                }
+                else if(buttonsPanel.activeSelf == true)
+                {
+                    buttonsPanel.SetActive(false);
                 }
             }
         }

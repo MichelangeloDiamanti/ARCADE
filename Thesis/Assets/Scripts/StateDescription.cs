@@ -5,7 +5,6 @@ using System;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using ru.cadia.pddlFramework;
-using vis = ru.cadia.visualization;
 
 public class StateDescription : MonoBehaviour {
 
@@ -26,17 +25,17 @@ public class StateDescription : MonoBehaviour {
         WorldState worldStateFirstLevel = Utils.roverWorldStateFirstLevel(domainFirstLevel);
         foreach (IRelation r in worldStateFirstLevel.Relations)
         {
-            if (r.GetType() == typeof(vis.BinaryRelation))
+            if (r.GetType() == typeof(BinaryRelation))
             {
-                vis.BinaryRelation rel = r as vis.BinaryRelation;
-                vis.BinaryPredicate pred = r.Predicate as vis.BinaryPredicate;
-                myText.text += "BinaryRelation: " + pred.Text + "\n";
+                BinaryRelation rel = r as BinaryRelation;
+                BinaryPredicate pred = r.Predicate as BinaryPredicate;
+                myText.text += "BinaryRelation: " + pred.Description + "\n";
             }
             else
             {
-                vis.UnaryRelation rel = r as vis.UnaryRelation;
-                vis.UnaryPredicate pred = r.Predicate as vis.UnaryPredicate;
-                myText.text += "UnaryRelation: " + pred.Text + "\n";
+                UnaryRelation rel = r as UnaryRelation;
+                UnaryPredicate pred = r.Predicate as UnaryPredicate;
+                myText.text += "UnaryRelation: " + pred.Description + "\n";
             }
         }
     }
