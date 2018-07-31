@@ -9,6 +9,7 @@ public class Visualization : MonoBehaviour
 {
 
     public Text displayText;
+    public GameObject chooseOnInteraction;
     
     private float interactionWaitTime;
     private float visualizationWaitTime;
@@ -37,8 +38,18 @@ public class Visualization : MonoBehaviour
     public IEnumerator interact(Action a, System.Action<bool> result)
     {
         displayText.text = "The Simulator is requesting the following Action: " + a.ShortToString();
+        print("INTERACTION");
+
+        Time.timeScale = 0.5f;
+        chooseOnInteraction.SetActive(true);
 
         yield return new WaitForSeconds(interactionWaitTime);
+
+        if (chooseOnInteraction.activeSelf == true)
+        {
+            Time.timeScale = 1.0f;
+            chooseOnInteraction.SetActive(false);
+        }
 
         // TODO: the logic to interact with the action should go here
 
