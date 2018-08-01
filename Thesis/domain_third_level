@@ -131,6 +131,26 @@
         "Type": "WHEEL"
       },
       "Name": "WHEELS_INFLATED"
+    },
+    {
+      "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
+      "Source": {
+        "Type": "ROVER"
+      },
+      "Name": "HAS",
+      "Destination": {
+        "Type": "BATTERY"
+      }
+    },
+    {
+      "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
+      "Source": {
+        "Type": "ROVER"
+      },
+      "Name": "HAS",
+      "Destination": {
+        "Type": "WHEEL"
+      }
     }
   ],
   "Actions": [
@@ -215,6 +235,58 @@
           "Value": 2
         },
         {
+          "$type": "ru.cadia.pddlFramework.BinaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "ROVER"
+            },
+            "Name": "ROVER"
+          },
+          "Predicate": {
+            "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "ROVER"
+            },
+            "Name": "HAS",
+            "Destination": {
+              "Type": "BATTERY"
+            }
+          },
+          "Destination": {
+            "Type": {
+              "Type": "BATTERY"
+            },
+            "Name": "BATTERY"
+          },
+          "Value": 1
+        },
+        {
+          "$type": "ru.cadia.pddlFramework.BinaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "ROVER"
+            },
+            "Name": "ROVER"
+          },
+          "Predicate": {
+            "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "ROVER"
+            },
+            "Name": "HAS",
+            "Destination": {
+              "Type": "WHEEL"
+            }
+          },
+          "Destination": {
+            "Type": {
+              "Type": "WHEEL"
+            },
+            "Name": "WHEELS"
+          },
+          "Value": 1
+        },
+        {
           "$type": "ru.cadia.pddlFramework.UnaryRelation, Assembly-CSharp",
           "Source": {
             "Type": {
@@ -273,14 +345,14 @@
           "Name": "WAYPOINT2"
         },
         {
-          "Role": 1,
+          "Role": 2,
           "Type": {
             "Type": "BATTERY"
           },
           "Name": "BATTERY"
         },
         {
-          "Role": 1,
+          "Role": 2,
           "Type": {
             "Type": "WHEEL"
           },
@@ -440,6 +512,32 @@
           "Value": 1
         },
         {
+          "$type": "ru.cadia.pddlFramework.BinaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "ROVER"
+            },
+            "Name": "ROVER"
+          },
+          "Predicate": {
+            "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "ROVER"
+            },
+            "Name": "HAS",
+            "Destination": {
+              "Type": "BATTERY"
+            }
+          },
+          "Destination": {
+            "Type": {
+              "Type": "BATTERY"
+            },
+            "Name": "BATTERY"
+          },
+          "Value": 1
+        },
+        {
           "$type": "ru.cadia.pddlFramework.UnaryRelation, Assembly-CSharp",
           "Source": {
             "Type": {
@@ -481,7 +579,7 @@
           "Name": "WAYPOINT"
         },
         {
-          "Role": 1,
+          "Role": 2,
           "Type": {
             "Type": "BATTERY"
           },
@@ -632,6 +730,32 @@
           "Value": 1
         },
         {
+          "$type": "ru.cadia.pddlFramework.BinaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "ROVER"
+            },
+            "Name": "ROVER"
+          },
+          "Predicate": {
+            "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "ROVER"
+            },
+            "Name": "HAS",
+            "Destination": {
+              "Type": "BATTERY"
+            }
+          },
+          "Destination": {
+            "Type": {
+              "Type": "BATTERY"
+            },
+            "Name": "BATTERY"
+          },
+          "Value": 1
+        },
+        {
           "$type": "ru.cadia.pddlFramework.UnaryRelation, Assembly-CSharp",
           "Source": {
             "Type": {
@@ -673,7 +797,7 @@
           "Name": "WAYPOINT"
         },
         {
-          "Role": 1,
+          "Role": 2,
           "Type": {
             "Type": "BATTERY"
           },
@@ -807,6 +931,32 @@
           "Value": 1
         },
         {
+          "$type": "ru.cadia.pddlFramework.BinaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "ROVER"
+            },
+            "Name": "ROVER"
+          },
+          "Predicate": {
+            "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "ROVER"
+            },
+            "Name": "HAS",
+            "Destination": {
+              "Type": "BATTERY"
+            }
+          },
+          "Destination": {
+            "Type": {
+              "Type": "BATTERY"
+            },
+            "Name": "BATTERY"
+          },
+          "Value": 1
+        },
+        {
           "$type": "ru.cadia.pddlFramework.UnaryRelation, Assembly-CSharp",
           "Source": {
             "Type": {
@@ -848,7 +998,7 @@
           "Name": "WAYPOINT"
         },
         {
-          "Role": 1,
+          "Role": 2,
           "Type": {
             "Type": "BATTERY"
           },
@@ -878,6 +1028,32 @@
     {
       "PreConditions": [
         {
+          "$type": "ru.cadia.pddlFramework.BinaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "ROVER"
+            },
+            "Name": "ROVER"
+          },
+          "Predicate": {
+            "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "ROVER"
+            },
+            "Name": "HAS",
+            "Destination": {
+              "Type": "BATTERY"
+            }
+          },
+          "Destination": {
+            "Type": {
+              "Type": "BATTERY"
+            },
+            "Name": "BATTERY"
+          },
+          "Value": 1
+        },
+        {
           "$type": "ru.cadia.pddlFramework.UnaryRelation, Assembly-CSharp",
           "Source": {
             "Type": {
@@ -899,6 +1075,13 @@
       "Parameters": [
         {
           "Role": 1,
+          "Type": {
+            "Type": "ROVER"
+          },
+          "Name": "ROVER"
+        },
+        {
+          "Role": 2,
           "Type": {
             "Type": "BATTERY"
           },
@@ -927,6 +1110,32 @@
     },
     {
       "PreConditions": [
+        {
+          "$type": "ru.cadia.pddlFramework.BinaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "ROVER"
+            },
+            "Name": "ROVER"
+          },
+          "Predicate": {
+            "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "ROVER"
+            },
+            "Name": "HAS",
+            "Destination": {
+              "Type": "BATTERY"
+            }
+          },
+          "Destination": {
+            "Type": {
+              "Type": "BATTERY"
+            },
+            "Name": "BATTERY"
+          },
+          "Value": 1
+        },
         {
           "$type": "ru.cadia.pddlFramework.UnaryRelation, Assembly-CSharp",
           "Source": {
@@ -950,6 +1159,13 @@
         {
           "Role": 1,
           "Type": {
+            "Type": "ROVER"
+          },
+          "Name": "ROVER"
+        },
+        {
+          "Role": 2,
+          "Type": {
             "Type": "BATTERY"
           },
           "Name": "BATTERY"
@@ -978,6 +1194,32 @@
     {
       "PreConditions": [
         {
+          "$type": "ru.cadia.pddlFramework.BinaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "ROVER"
+            },
+            "Name": "ROVER"
+          },
+          "Predicate": {
+            "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "ROVER"
+            },
+            "Name": "HAS",
+            "Destination": {
+              "Type": "WHEEL"
+            }
+          },
+          "Destination": {
+            "Type": {
+              "Type": "WHEEL"
+            },
+            "Name": "WHEELS"
+          },
+          "Value": 1
+        },
+        {
           "$type": "ru.cadia.pddlFramework.UnaryRelation, Assembly-CSharp",
           "Source": {
             "Type": {
@@ -999,6 +1241,13 @@
       "Parameters": [
         {
           "Role": 1,
+          "Type": {
+            "Type": "ROVER"
+          },
+          "Name": "ROVER"
+        },
+        {
+          "Role": 2,
           "Type": {
             "Type": "WHEEL"
           },
@@ -1028,6 +1277,32 @@
     {
       "PreConditions": [
         {
+          "$type": "ru.cadia.pddlFramework.BinaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "ROVER"
+            },
+            "Name": "ROVER"
+          },
+          "Predicate": {
+            "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "ROVER"
+            },
+            "Name": "HAS",
+            "Destination": {
+              "Type": "WHEEL"
+            }
+          },
+          "Destination": {
+            "Type": {
+              "Type": "WHEEL"
+            },
+            "Name": "WHEELS"
+          },
+          "Value": 1
+        },
+        {
           "$type": "ru.cadia.pddlFramework.UnaryRelation, Assembly-CSharp",
           "Source": {
             "Type": {
@@ -1049,6 +1324,13 @@
       "Parameters": [
         {
           "Role": 1,
+          "Type": {
+            "Type": "ROVER"
+          },
+          "Name": "ROVER"
+        },
+        {
+          "Role": 2,
           "Type": {
             "Type": "WHEEL"
           },

@@ -402,11 +402,22 @@ public class Utils
         UnaryPredicate predicateWheelsInflated = new UnaryPredicate(entityTypeWheel, "WHEELS_INFLATED");
         domain.addPredicate(predicateWheelsInflated);
 
+        EntityType entityTypeRover = domain.getEntityType("ROVER");
+
+        BinaryPredicate predicateHasBattery = new BinaryPredicate(entityTypeRover, "HAS", entityTypeBattery);
+        domain.addPredicate(predicateHasBattery);
+        BinaryPredicate predicateHasWheels = new BinaryPredicate(entityTypeRover, "HAS", entityTypeWheel);
+        domain.addPredicate(predicateHasWheels);
+
         HashSet<ActionParameter> actionChargeParameters = new HashSet<ActionParameter>();
+        Entity entityRover = new Entity(entityTypeRover, "ROVER");
         Entity entityBattery = new Entity(entityTypeBattery, "BATTERY");
-        actionChargeParameters.Add(new ActionParameter(entityBattery, ActionParameterRole.ACTIVE));
+        actionChargeParameters.Add(new ActionParameter(entityRover, ActionParameterRole.ACTIVE));
+        actionChargeParameters.Add(new ActionParameter(entityBattery, ActionParameterRole.PASSIVE));
 
         HashSet<IRelation> actionChargePreconditions = new HashSet<IRelation>();
+        BinaryRelation relationRoverHasBattery = new BinaryRelation(entityRover, predicateHasBattery, entityBattery, RelationValue.TRUE);
+        actionChargePreconditions.Add(relationRoverHasBattery);
         UnaryRelation relationBatteryDischarged = new UnaryRelation(entityBattery, predicateBatteryCharged, RelationValue.FALSE);
         actionChargePreconditions.Add(relationBatteryDischarged);
 
@@ -417,14 +428,24 @@ public class Utils
         Action actionChargeBattery = new Action(actionChargePreconditions, "CHARGE_BATTERY", actionChargeParameters, actionChargePostconditions);
         domain.addAction(actionChargeBattery);
 
-        Action actionDischargeBattery = new Action(actionChargePostconditions, "DISCHARGE_BATTERY", actionChargeParameters, actionChargePreconditions);
+        HashSet<IRelation> actionDischargePreconditions = new HashSet<IRelation>();
+        actionDischargePreconditions.Add(relationRoverHasBattery);
+        actionDischargePreconditions.Add(relationBatteryCharged);
+
+        HashSet<IRelation> actionDischargePostconditions = new HashSet<IRelation>();
+        actionDischargePostconditions.Add(relationBatteryDischarged);
+
+        Action actionDischargeBattery = new Action(actionDischargePreconditions, "DISCHARGE_BATTERY", actionChargeParameters, actionDischargePostconditions);
         domain.addAction(actionDischargeBattery);
 
         HashSet<ActionParameter> actionInflateParameters = new HashSet<ActionParameter>();
         Entity entityWheels = new Entity(entityTypeWheel, "WHEELS");
-        actionInflateParameters.Add(new ActionParameter(entityWheels, ActionParameterRole.ACTIVE));
+        actionInflateParameters.Add(new ActionParameter(entityRover, ActionParameterRole.ACTIVE));
+        actionInflateParameters.Add(new ActionParameter(entityWheels, ActionParameterRole.PASSIVE));
 
         HashSet<IRelation> actionInflatePreconditions = new HashSet<IRelation>();
+        BinaryRelation relationRoverHasWheels = new BinaryRelation(entityRover, predicateHasWheels, entityWheels, RelationValue.TRUE);
+        actionInflatePreconditions.Add(relationRoverHasWheels);
         UnaryRelation relationWheelsDeflated = new UnaryRelation(entityWheels, predicateWheelsInflated, RelationValue.FALSE);
         actionInflatePreconditions.Add(relationWheelsDeflated);
 
@@ -435,28 +456,40 @@ public class Utils
         Action actionInflate = new Action(actionInflatePreconditions, "INFLATE_WHEELS", actionInflateParameters, actionInflatePostconditions);
         domain.addAction(actionInflate);
 
-        Action actionDeflate = new Action(actionInflatePostconditions, "DEFLATE_WHEELS", actionInflateParameters, actionInflatePreconditions);
+        HashSet<IRelation> actionDeflatePreconditions = new HashSet<IRelation>();
+        actionDeflatePreconditions.Add(relationRoverHasWheels);
+        actionDeflatePreconditions.Add(relationWheelsInflated);
+
+        HashSet<IRelation> actionDeflatePostconditions = new HashSet<IRelation>();
+        actionDeflatePostconditions.Add(relationWheelsDeflated);
+
+        Action actionDeflate = new Action(actionDeflatePreconditions, "DEFLATE_WHEELS", actionInflateParameters, actionDeflatePostconditions);
         domain.addAction(actionDeflate);
 
         Action moveAction = domain.getAction("MOVE");
-        ActionParameter actionParameterBattery = new ActionParameter(entityBattery, ActionParameterRole.ACTIVE);
-        ActionParameter actionParameterWheels = new ActionParameter(entityWheels, ActionParameterRole.ACTIVE);
+        ActionParameter actionParameterBattery = new ActionParameter(entityBattery, ActionParameterRole.PASSIVE);
+        ActionParameter actionParameterWheels = new ActionParameter(entityWheels, ActionParameterRole.PASSIVE);
 
         moveAction.addParameter(actionParameterBattery);
         moveAction.addParameter(actionParameterWheels);
-        moveAction.PreConditions.Add(relationBatteryCharged);
-        moveAction.PreConditions.Add(relationWheelsInflated);
+        moveAction.addPrecondition(relationRoverHasBattery);
+        moveAction.addPrecondition(relationRoverHasWheels);
+        moveAction.addPrecondition(relationBatteryCharged);
+        moveAction.addPrecondition(relationWheelsInflated);
 
         Action takeSampleAction = domain.getAction("TAKE_SAMPLE");
         takeSampleAction.addParameter(actionParameterBattery);
+        takeSampleAction.addPrecondition(relationRoverHasBattery);
         takeSampleAction.addPrecondition(relationBatteryCharged);
 
         Action dropSampleAction = domain.getAction("DROP_SAMPLE");
         dropSampleAction.addParameter(actionParameterBattery);
+        dropSampleAction.addPrecondition(relationRoverHasBattery);
         dropSampleAction.addPrecondition(relationBatteryCharged);
 
         Action takeImageAction = domain.getAction("TAKE_IMAGE");
         takeImageAction.addParameter(actionParameterBattery);
+        takeImageAction.addPrecondition(relationRoverHasBattery);
         takeImageAction.addPrecondition(relationBatteryCharged);
 
         return domain;
@@ -466,18 +499,53 @@ public class Utils
     {
         WorldState detailedState = roverWorldStateSecondLevel(domain);
 
+        EntityType entityTypeRover = new EntityType("ROVER");
         EntityType entityTypeBattery = new EntityType("BATTERY");
         EntityType entityTypeWheel = new EntityType("WHEEL");
 
-        Entity entityBattery = new Entity(entityTypeBattery, "BATTERY");
-        Entity entityWheels = new Entity(entityTypeWheel, "WHEELS");
-        detailedState.addEntity(entityBattery);
-        detailedState.addEntity(entityWheels);
+        Entity entityBatteryRover1 = new Entity(entityTypeBattery, "BATTERY_ROVER1");
+        Entity entityBatteryRover2 = new Entity(entityTypeBattery, "BATTERY_ROVER2");
 
-        UnaryRelation relationBatteryIsCharged = detailedState.Domain.generateRelationFromPredicateName("BATTERY_CHARGED", entityBattery, RelationValue.TRUE);
-        detailedState.addRelation(relationBatteryIsCharged);
-        UnaryRelation relationWheelsInflated = detailedState.Domain.generateRelationFromPredicateName("WHEELS_INFLATED", entityWheels, RelationValue.TRUE);
-        detailedState.addRelation(relationWheelsInflated);
+        Entity entityWheelsRover1 = new Entity(entityTypeWheel, "WHEELS_ROVER1");
+        Entity entityWheelsRover2 = new Entity(entityTypeWheel, "WHEELS_ROVER2");
+
+        detailedState.addEntity(entityBatteryRover1);
+        detailedState.addEntity(entityBatteryRover2);
+
+        detailedState.addEntity(entityWheelsRover1);
+        detailedState.addEntity(entityWheelsRover2);
+
+        // Rovers have their respective batteries
+        BinaryPredicate predicateHasBattery = new BinaryPredicate(entityTypeRover, "HAS", entityTypeBattery);
+
+        BinaryRelation relationRover1HasBattery1 = new BinaryRelation(detailedState.getEntity("ROVER1"), predicateHasBattery, entityBatteryRover1, RelationValue.TRUE);
+        BinaryRelation relationRover2HasBattery2 = new BinaryRelation(detailedState.getEntity("ROVER2"), predicateHasBattery, entityBatteryRover2, RelationValue.TRUE);
+
+        detailedState.addRelation(relationRover1HasBattery1);
+        detailedState.addRelation(relationRover2HasBattery2);
+
+        // the batteries are charged
+        UnaryRelation relationBatteryRover1IsCharged = detailedState.Domain.generateRelationFromPredicateName("BATTERY_CHARGED", entityBatteryRover1, RelationValue.TRUE);
+        UnaryRelation relationBatteryRover2IsCharged = detailedState.Domain.generateRelationFromPredicateName("BATTERY_CHARGED", entityBatteryRover2, RelationValue.TRUE);
+
+        detailedState.addRelation(relationBatteryRover1IsCharged);
+        detailedState.addRelation(relationBatteryRover2IsCharged);
+
+        // Rovers have their respective wheels
+        BinaryPredicate predicateHasWheels = new BinaryPredicate(entityTypeRover, "HAS", entityTypeWheel);
+
+        BinaryRelation relationRover1HasWheels1 = new BinaryRelation(detailedState.getEntity("ROVER1"), predicateHasWheels, entityWheelsRover1, RelationValue.TRUE);
+        BinaryRelation relationRover2HasWheels2 = new BinaryRelation(detailedState.getEntity("ROVER2"), predicateHasWheels, entityWheelsRover2, RelationValue.TRUE);
+
+        detailedState.addRelation(relationRover1HasWheels1);
+        detailedState.addRelation(relationRover2HasWheels2);
+
+        // the wheels are inflated
+        UnaryRelation relationWheelsRover1Inflated = detailedState.Domain.generateRelationFromPredicateName("WHEELS_INFLATED", entityWheelsRover1, RelationValue.TRUE);
+        UnaryRelation relationWheelsRover2Inflated = detailedState.Domain.generateRelationFromPredicateName("WHEELS_INFLATED", entityWheelsRover2, RelationValue.TRUE);
+
+        detailedState.addRelation(relationWheelsRover1Inflated);
+        detailedState.addRelation(relationWheelsRover2Inflated);
 
         return detailedState;
     }
