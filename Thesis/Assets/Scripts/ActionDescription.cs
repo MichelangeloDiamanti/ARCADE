@@ -71,7 +71,7 @@ public class ActionDescription : MonoBehaviour {
                 else if (post.GetType() == typeof(UnaryRelation))
                 {
                     UnaryRelation r = post as UnaryRelation;
-                    BinaryPredicate p = post.Predicate as BinaryPredicate;
+                    UnaryPredicate p = post.Predicate as UnaryPredicate;
                     preText += "the " + r.Source.Name + " " + p.Description + "\n";
                 }
             }

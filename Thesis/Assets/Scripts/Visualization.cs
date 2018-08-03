@@ -10,7 +10,11 @@ public class Visualization : MonoBehaviour
 
     public Text displayText;
     public GameObject chooseOnInteraction;
-    
+    public Button yesButton, noButton;
+    public RenderTexture renderTexture;
+    public GameObject takeSample;
+    public GameObject dropSample;
+
     private float interactionWaitTime;
     private float visualizationWaitTime;
     private float interactionSuccessProbability;
@@ -27,6 +31,15 @@ public class Visualization : MonoBehaviour
         visualizationSuccessProbability = 0.8f;
 
         // displayText.transform.position = transform.position;
+
+        Button yButton = yesButton.GetComponent<Button>();
+        Button nButton = noButton.GetComponent<Button>();
+
+        yButton.onClick.AddListener(delegate { MakeChoice("yes"); });
+        nButton.onClick.AddListener(delegate { MakeChoice("no"); });
+
+        takeSample = GameObject.Find("Color");
+        dropSample = GameObject.Find("BW");
     }
 
     // Update is called once per frame
@@ -74,6 +87,8 @@ public class Visualization : MonoBehaviour
 
         yield return new WaitForSeconds(visualizationWaitTime);
 
+        print(a.Name);
+
         // TODO: the logic to visualize the action should go here
         //
         switch (a.Name)
@@ -90,19 +105,12 @@ public class Visualization : MonoBehaviour
                     if (postName == "AT" && post.Value == RelationValue.TRUE)
                     {
                         character = GameObject.Find(rel.Source.Name);
-                        print("rover: " +rel.Source.Name);
+                        //print("rover: " +rel.Source.Name);
                         destination = GameObject.Find(rel.Destination.Name);
-                        print("destination: " + rel.Destination.Name);
+                        //print("destination: " + rel.Destination.Name);
                         UnityEngine.AI.NavMeshAgent agent = character.GetComponent<UnityEngine.AI.NavMeshAgent>();
                         agent.destination = destination.transform.position;
                     }
-                    /*if(entity.Type.Equals()){
-						//character = GameObject.Find(entity.Name);
-						print("Character= " + entity.Name);
-					}
-					else if(entity.Type == "LOCATION"){
-						print("Location= " + entity.Name);
-					}*/
                 }
 
                 //if(character != null && destination != null){
@@ -112,15 +120,53 @@ public class Visualization : MonoBehaviour
 
                 break;
 
-            case "Action2":
+            case "TAKE_SAMPLE":
+
+                if (takeSample.activeSelf == false)
+                    takeSample.SetActive(true);
+                else if (dropSample.activeSelf == true)
+                    dropSample.SetActive(false);
+
                 break;
 
-            case "Action3":
+            case "DROP_SAMPLE":
+
+                if (dropSample.activeSelf == false)
+                    dropSample.SetActive(true);
+                else if (takeSample.activeSelf == true)
+                    takeSample.SetActive(false);
+
+                break;
+
+            case "TAKE_IMAGE":
+
+                //Camera cam = GameObject.Find("a").GetComponent<Camera>();
+                //ScreenCapture.CaptureScreenshot("screen.png");
+                TakeImage ti = new TakeImage();
+                ti.CaptureScreenshot(renderTexture);
+
+                break;
+
+            default:
                 break;
 
         }
 
-        print(a.Name);
+        //INTERACTIVE PART
+        //
+           
+        //if(a.Name == "TAKE_IMAGE")
+        //{
+        //    Time.timeScale = 0.3f;
+        //    chooseOnInteraction.SetActive(true);
+        //    Invoke("Restore", 3);
+        //    //yield return new WaitForSeconds(5.0f);
+        //}
+
+        //if(chooseOnInteraction.activeSelf == true) chooseOnInteraction.SetActive(false);
+        //Time.timeScale = 1.0f;
+
+        //
 
         float outcome = Random.Range(0.0f, 1.0f);
         if (outcome <= visualizationSuccessProbability)
@@ -134,6 +180,24 @@ public class Visualization : MonoBehaviour
             displayText.text = "Non Interactive NOT Action Visualized";
             yield return new WaitForSeconds(1.0f);
             result(false);
+        }
+    }
+
+    private void Restore()
+    {
+        if (chooseOnInteraction.activeSelf == true) chooseOnInteraction.SetActive(false);
+        Time.timeScale = 1.0f;
+    }
+
+    public bool MakeChoice(string s)
+    {
+        if(s == "yes")
+        {
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
     
