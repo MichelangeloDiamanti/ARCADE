@@ -111,6 +111,11 @@ public class Visualization : MonoBehaviour
                             if (waypoints.transform.GetChild(i).name == rel.Destination.Name)
                             {
                                 destination = waypoints.transform.GetChild(i).gameObject;
+                                destination.GetComponent<Renderer>().material.color = Color.yellow;
+                            }
+                            else
+                            {
+                                waypoints.transform.GetChild(i).gameObject.GetComponent<Renderer>().material.color = Color.grey;
                             }
                         }
 
