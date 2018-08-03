@@ -99,7 +99,7 @@ public class TakeImage : MonoBehaviour
             if (fileHeader != null) f.Write(fileHeader, 0, fileHeader.Length);
             f.Write(fileData, 0, fileData.Length);
             f.Close();
-            Debug.Log(string.Format("Wrote screenshot {0} of size {1}", filename, fileData.Length));
+            //Debug.Log(string.Format("Wrote screenshot {0} of size {1}", filename, fileData.Length));
         }).Start();
 
         // cleanup
