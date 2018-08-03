@@ -14,6 +14,8 @@ public class Visualization : MonoBehaviour
     public RenderTexture renderTexture;
     public GameObject takeSample;
     public GameObject dropSample;
+    public GameObject rover;
+    public GameObject waypoints;
 
     private float interactionWaitTime;
     private float visualizationWaitTime;
@@ -38,8 +40,8 @@ public class Visualization : MonoBehaviour
         yButton.onClick.AddListener(delegate { MakeChoice("yes"); });
         nButton.onClick.AddListener(delegate { MakeChoice("no"); });
 
-        takeSample = GameObject.Find("Color");
-        dropSample = GameObject.Find("BW");
+        //takeSample = GameObject.Find("Color");
+        //dropSample = GameObject.Find("BW");
     }
 
     // Update is called once per frame
@@ -95,7 +97,7 @@ public class Visualization : MonoBehaviour
         {
 
             case "MOVE":
-                GameObject character = null;
+                //GameObject character = null;
                 GameObject destination = null;
 
                 foreach (IRelation post in a.PostConditions)
@@ -104,19 +106,29 @@ public class Visualization : MonoBehaviour
                     BinaryRelation rel = post as BinaryRelation;
                     if (postName == "AT" && post.Value == RelationValue.TRUE)
                     {
-                        character = GameObject.Find(rel.Source.Name);
-                        //print("rover: " +rel.Source.Name);
-                        destination = GameObject.Find(rel.Destination.Name);
-                        //print("destination: " + rel.Destination.Name);
-                        UnityEngine.AI.NavMeshAgent agent = character.GetComponent<UnityEngine.AI.NavMeshAgent>();
+                        for(int i = 0; i < waypoints.transform.childCount; i++)
+                        {
+                            if (waypoints.transform.GetChild(i).name == rel.Destination.Name)
+                            {
+                                destination = waypoints.transform.GetChild(i).gameObject;
+                            }
+                        }
+
+                        //destination = GameObject.Find(rel.Destination.Name);
+                        UnityEngine.AI.NavMeshAgent agent = rover.GetComponent<UnityEngine.AI.NavMeshAgent>();
                         agent.destination = destination.transform.position;
+
+                        //For a more general version
+                        //instead of passing the rover game object
+                        //look for the source of the "AT" predicate in the scene
+                        //
+                        //character = GameObject.Find(rel.Source.Name);
+                        //destination = GameObject.Find(rel.Destination.Name);
+                        //UnityEngine.AI.NavMeshAgent agent = character.GetComponent<UnityEngine.AI.NavMeshAgent>();
+                        //agent.destination = destination.transform.position;
+                        //
                     }
                 }
-
-                //if(character != null && destination != null){
-                //	UnityEngine.AI.NavMeshAgent agent = character.GetComponent<UnityEngine.AI.NavMeshAgent>();
-                //	agent.destination = destination.transform.position;				
-                //}
 
                 break;
 
@@ -139,9 +151,7 @@ public class Visualization : MonoBehaviour
                 break;
 
             case "TAKE_IMAGE":
-
-                //Camera cam = GameObject.Find("a").GetComponent<Camera>();
-                //ScreenCapture.CaptureScreenshot("screen.png");
+                
                 TakeImage ti = new TakeImage();
                 ti.CaptureScreenshot(renderTexture);
 

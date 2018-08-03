@@ -47,13 +47,15 @@ public class ActionDescription : MonoBehaviour {
                 {
                     BinaryRelation r = pre as BinaryRelation;
                     BinaryPredicate p = pre.Predicate as BinaryPredicate;
-                    preText += "the " + r.Source.Name + " " + p.Description + " " + r.Destination.Name + "\n";
+                    //preText += "the " + r.Source.Name + " " + p.Description + " " + r.Destination.Name + "\n";
+                    preText += string.Format("the {0} {1} {2}\n", r.Source.Name, p.Description, r.Destination.Name);
                 }
                 else if (pre.GetType() == typeof(UnaryRelation))
-            {
+                {
                     UnaryRelation r = pre as UnaryRelation;
                     UnaryPredicate p = pre.Predicate as UnaryPredicate;
-                    preText += "the " + r.Source.Name + " " + p.Description + "\n";
+                    //preText += "the " + r.Source.Name + " " + p.Description + "\n";
+                    preText += string.Format("the {0} {1}\n", r.Source.Name, p.Description);
                 }
             }
         }
@@ -66,13 +68,15 @@ public class ActionDescription : MonoBehaviour {
                 {
                     BinaryRelation r = post as BinaryRelation;
                     BinaryPredicate p = post.Predicate as BinaryPredicate;
-                    postText += "the " + r.Source.Name + " " + p.Description + " " + r.Destination.Name + "\n";
+                    //postText += "the " + r.Source.Name + " " + p.Description + " " + r.Destination.Name + "\n";
+                    postText += string.Format("the {0} {1} {2}\n", r.Source.Name, p.Description, r.Destination.Name);
                 }
                 else if (post.GetType() == typeof(UnaryRelation))
                 {
                     UnaryRelation r = post as UnaryRelation;
                     UnaryPredicate p = post.Predicate as UnaryPredicate;
-                    preText += "the " + r.Source.Name + " " + p.Description + "\n";
+                    //postText += "the " + r.Source.Name + " " + p.Description + "\n";
+                    postText += string.Format("the {0} {1}\n", r.Source.Name, p.Description);
                 }
             }
 		}

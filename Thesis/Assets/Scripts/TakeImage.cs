@@ -7,9 +7,6 @@ public class TakeImage : MonoBehaviour
     //public int captureWidth = 1920;
     //public int captureHeight = 1080;
     
-    // optimize for many screenshots will not destroy any objects so future screenshots will be fast
-    public bool optimizeForManyScreenshots = true;
-
     // configure with raw, jpg, png, or ppm (simple raw format)
     public enum Format { RAW, JPG, PNG, PPM };
     public Format format = Format.PNG;
@@ -21,9 +18,6 @@ public class TakeImage : MonoBehaviour
     private Rect rect;
     private Texture2D screenShot;
     private int counter = 0; // image #
-
-    //// commands
-    //private bool captureScreenshot = false;
 
     // create a unique filename using a one-up variable
     private string uniqueFileName()
@@ -108,15 +102,10 @@ public class TakeImage : MonoBehaviour
             Debug.Log(string.Format("Wrote screenshot {0} of size {1}", filename, fileData.Length));
         }).Start();
 
-        // cleanup if needed
-        //if (optimizeForManyScreenshots == false)
-        //{
-        //    Destroy(renderTexture);
-        //    renderTexture = null;
-        //    screenShot = null;
-        //}
+        // cleanup
+        screenShot = null;
     }
-
+    
     void Update()
     {
 

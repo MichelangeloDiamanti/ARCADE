@@ -16,10 +16,11 @@ public class PointAndClick : MonoBehaviour
     public Button actionButton, worldStateButton;
     public GameObject description;
     public static GameObject selectedObject;
+    //public GameObject player;
+
     // private string currentLocation;
     private double time;
     private Text timeTxt;
-    private GameObject player;
 
     // Use this for initialization
     void Start()
@@ -30,9 +31,11 @@ public class PointAndClick : MonoBehaviour
         aButton.onClick.AddListener(delegate { ShowDescription("action"); });
         wsButton.onClick.AddListener(delegate { ShowDescription("worldState"); });
 
-        player = GameObject.Find("Player").gameObject;
-        timeTxt = GameObject.Find("Time").GetComponent<Text>();
+        //player = GameObject.Find("Player").gameObject;
+
+        //timeTxt = GameObject.Find("Time").GetComponent<Text>();
         // currentLocation = "road";
+
         Cursor.visible = true;
 
         //foreach (ParticleSystem ps in Resources.FindObjectsOfTypeAll(typeof(ParticleSystem)) as ParticleSystem[])
@@ -63,7 +66,7 @@ public class PointAndClick : MonoBehaviour
                 else
                 {
                     RaycastHit hit = new RaycastHit();
-                    if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit) && (hit.transform.tag == "Clickable" /*&& descriptionInstance == null*/))
+                    if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit) && (hit.transform.tag == "Clickable"))
                     {
                         selectedObject = hit.transform.gameObject;
                         print(selectedObject.name);
@@ -73,24 +76,24 @@ public class PointAndClick : MonoBehaviour
             }
         }
 
-        if (Input.GetMouseButtonDown(0))
-        {
-            if (EventSystem.current.IsPointerOverGameObject())
-            {
-                Debug.Log("left-click over a GUI element!");
-            }
-            else
-            {
-                if (buttonsPanel.activeSelf == false && description.activeSelf == false)
-                {
-                    buttonsPanel.SetActive(true);
-                }
-                else if(buttonsPanel.activeSelf == true)
-                {
-                    buttonsPanel.SetActive(false);
-                }
-            }
-        }
+        //if (Input.GetMouseButtonDown(0))
+        //{
+        //    if (EventSystem.current.IsPointerOverGameObject())
+        //    {
+        //        Debug.Log("left-click over a GUI element!");
+        //    }
+        //    else
+        //    {
+        //        if (buttonsPanel.activeSelf == false && description.activeSelf == false)
+        //        {
+        //            buttonsPanel.SetActive(true);
+        //        }
+        //        else if (buttonsPanel.activeSelf == true)
+        //        {
+        //            buttonsPanel.SetActive(false);
+        //        }
+        //    }
+        //}
         
     }
 
@@ -294,6 +297,9 @@ public class PointAndClick : MonoBehaviour
     public void Resume()
     {
         Time.timeScale = 1;
+        GameObject content = GameObject.Find("Content").gameObject;
+        Text contentText = content.GetComponent<Text>();
+        contentText.text = null;
         description.SetActive(false);
     }
 }
