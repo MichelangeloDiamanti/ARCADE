@@ -14,20 +14,21 @@ public class ActionVisualization : MonoBehaviour {
 	void Update () {
 		if(flag == true){
 			//ActionDescription ad = new ActionDescription();
-			foreach(Action act in ActionDescription.actions){
-				HashSet<IRelation> preconditions = act.PreConditions;
-				string name = act.Name;
-				HashSet<ActionParameter> parameters = act.Parameters;
-				HashSet<IRelation> postconditions = act.PostConditions;
-				ShowAction(name, postconditions);
-			}
+			//foreach(Action act in ActionDescription.actions){
+			//	HashSet<IRelation> preconditions = act.PreConditions;
+			//	string name = act.Name;
+			//	HashSet<Entity> parameters = act.Parameters;
+			//	HashSet<IRelation> postconditions = act.PostConditions;
+			//	ShowAction(name, postconditions);
+			//}
 			
 			flag = false;
 		}
 	}
 
 	public void ShowAction(string name, HashSet<IRelation> postconditions){
-		switch(name){
+
+        switch (name){
 
 			case "MOVE":
 				GameObject character = null;
@@ -39,7 +40,9 @@ public class ActionVisualization : MonoBehaviour {
 					if(postName == "AT" && post.Value == RelationValue.TRUE){
 						character = GameObject.Find(rel.Source.Name);
 						destination = GameObject.Find(rel.Destination.Name);
-					}
+                        UnityEngine.AI.NavMeshAgent agent = character.GetComponent<UnityEngine.AI.NavMeshAgent>();
+                        agent.destination = destination.transform.position;
+                    }
 					/*if(entity.Type.Equals()){
 						//character = GameObject.Find(entity.Name);
 						print("Character= " + entity.Name);
@@ -48,10 +51,11 @@ public class ActionVisualization : MonoBehaviour {
 						print("Location= " + entity.Name);
 					}*/
 				}
-				if(character != null && destination != null){
-					UnityEngine.AI.NavMeshAgent agent = character.GetComponent<UnityEngine.AI.NavMeshAgent>();
-					agent.destination = destination.transform.position;				
-				}
+
+				//if(character != null && destination != null){
+				//	UnityEngine.AI.NavMeshAgent agent = character.GetComponent<UnityEngine.AI.NavMeshAgent>();
+				//	agent.destination = destination.transform.position;				
+				//}
 
 				break;
 

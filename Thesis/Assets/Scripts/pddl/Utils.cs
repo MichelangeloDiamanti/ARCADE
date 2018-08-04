@@ -24,34 +24,34 @@ public class Utils
         domain.addEntityType(objective);
 
         //(can-move ?from-waypoint ?to-waypoint)
-        BinaryPredicate isConnectedTo = new BinaryPredicate(wayPoint, "IS_CONNECTED_TO", wayPoint);
+        BinaryPredicate isConnectedTo = new BinaryPredicate(wayPoint, "IS_CONNECTED_TO", wayPoint, "is connected to");
         domain.addPredicate(isConnectedTo);
         //(is-visible ?objective ?waypoint)
-        BinaryPredicate isVisible = new BinaryPredicate(objective, "IS_VISIBLE", wayPoint);
+        BinaryPredicate isVisible = new BinaryPredicate(objective, "IS_VISIBLE", wayPoint, "is visible");
         domain.addPredicate(isVisible);
         //(is-in ?sample ?waypoint)
-        BinaryPredicate isIn = new BinaryPredicate(sample, "IS_IN", wayPoint);
+        BinaryPredicate isIn = new BinaryPredicate(sample, "IS_IN", wayPoint, "is in");
         domain.addPredicate(isIn);
         //(been-at ?rover ?waypoint)
-        BinaryPredicate beenAt = new BinaryPredicate(rover, "BEEN_AT", wayPoint);
+        BinaryPredicate beenAt = new BinaryPredicate(rover, "BEEN_AT", wayPoint, "has been at");
         domain.addPredicate(beenAt);
         //(carry ?rover ?sample)  
-        BinaryPredicate carry = new BinaryPredicate(rover, "CARRY", sample);
+        BinaryPredicate carry = new BinaryPredicate(rover, "CARRY", sample, "is carrying");
         domain.addPredicate(carry);
         //(at ?rover ?waypoint)
-        BinaryPredicate at = new BinaryPredicate(rover, "AT", wayPoint);
+        BinaryPredicate at = new BinaryPredicate(rover, "AT", wayPoint, "is at");
         domain.addPredicate(at);
         //(is-dropping-dock ?waypoint)
-        UnaryPredicate isDroppingDock = new UnaryPredicate(wayPoint, "IS_DROPPING_DOCK");
+        UnaryPredicate isDroppingDock = new UnaryPredicate(wayPoint, "IS_DROPPING_DOCK", "is dropping the dock");
         domain.addPredicate(isDroppingDock);
         //(taken-image ?objective)
-        UnaryPredicate takenImage = new UnaryPredicate(objective, "TAKEN_IMAGE");
+        UnaryPredicate takenImage = new UnaryPredicate(objective, "TAKEN_IMAGE", "is taking an image");
         domain.addPredicate(takenImage);
         //(stored-sample ?sample)
-        UnaryPredicate storedSample = new UnaryPredicate(sample, "STORED_SAMPLE");
+        UnaryPredicate storedSample = new UnaryPredicate(sample, "STORED_SAMPLE", "has stored the sample");
         domain.addPredicate(storedSample);
         //(empty ?rover) 
-        UnaryPredicate isEmpty = new UnaryPredicate(rover, "IS_EMPTY");
+        UnaryPredicate isEmpty = new UnaryPredicate(rover, "IS_EMPTY", "is empty");
         domain.addPredicate(isEmpty);
 
 

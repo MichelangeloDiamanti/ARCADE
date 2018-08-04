@@ -9,6 +9,7 @@ namespace ru.cadia.pddlFramework
     public interface IPredicate
     {
         string Name { get; }
+        //string Description { get }
         EntityType Source { get; }
         IPredicate Clone();
         bool Equals(object obj);
