@@ -89,7 +89,7 @@ public class Visualization : MonoBehaviour
 
         yield return new WaitForSeconds(visualizationWaitTime);
 
-        print(a.Name);
+        //print(a.Name);
 
         // TODO: the logic to visualize the action should go here
         //
