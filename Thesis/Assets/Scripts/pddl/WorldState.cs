@@ -145,6 +145,7 @@ namespace ru.cadia.pddlFramework
             return resultingState;
         }
 
+        // Apply action with pending values
         public WorldState requestAction(Action action)
         {
             if (canPerformAction(action) == false)

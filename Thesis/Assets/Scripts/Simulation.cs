@@ -38,7 +38,7 @@ public class Simulation : MonoBehaviour
     private Dictionary<SimulationBoundary, TreeNode<WorldState>> _lastObservedStates;
     // private Dictionary<int, Model> _lastObservedStatesTest;
 
-    public static Action lastActionPerformed; 
+    public static Action lastActionPerformed;
 
     public TreeNode<WorldState> CurrentNode
     {
@@ -301,66 +301,76 @@ public class Simulation : MonoBehaviour
             // this is the actual simulation, for now we just pick a random action
             // remember to use lastLoD while updating the lastObservedState because
             // in the meantime it could have changed
-            Action randomAction = getRandomPossibleAction(_currentNode);
+            List<Action> parallelRandomActions = getRandomPossibleAction(_currentNode);
 
-            if (randomAction == null)
+            if (parallelRandomActions == null || parallelRandomActions.Count <= 0)
             {
                 Debug.Log("There are no more available actions, shutting down the simulation");
                 break;
             }
 
-            // Debug.Log("The Simulator is requesting the following Action: " + randomAction.ShortToString());
+            string chosenCombination = transform.parent.gameObject.name + "\n";
+            foreach(Action a in parallelRandomActions)
+                chosenCombination += a.ShortToString() + ",";
+            Debug.Log(chosenCombination);
 
-            bool simulationInteractive = getSimulationBoundaryAtLevel(lastLoD).interactive;
-            if (simulationInteractive)
+            // TODO: now we have many actions returned, we must apply all of them at once since, each one of them
+            // involves a different active actor, so they can be displayed in parallel
+
+            foreach (Action randomAction in parallelRandomActions)
             {
-                // Debug.Log("Player is interacting");
+                // Debug.Log("The Simulator is requesting the following Action: " + randomAction.ShortToString());
 
-                bool result = false;
-                yield return StartCoroutine(visualizer.interact(randomAction, value => result = value));
-                if (result)
+                bool simulationInteractive = getSimulationBoundaryAtLevel(lastLoD).interactive;
+                if (simulationInteractive)
                 {
-                    // The action has been allowed, go next
-                    // Debug.Log("Interactive Action Allowed");
-                    WorldState resultingState = _currentNode.Data.applyAction(randomAction);
-                    _currentNode = _currentNode.AddChild(resultingState, randomAction);
+                    // Debug.Log("Player is interacting");
 
-                    setLastObservedStateAtLevel(lastLoD, _currentNode);
+                    bool result = false;
+                    yield return StartCoroutine(visualizer.interact(randomAction, value => result = value));
+                    if (result)
+                    {
+                        // The action has been allowed, go next
+                        // Debug.Log("Interactive Action Allowed");
+                        WorldState resultingState = _currentNode.Data.applyAction(randomAction);
+                        _currentNode = _currentNode.AddChild(resultingState, randomAction);
+
+                        setLastObservedStateAtLevel(lastLoD, _currentNode);
+                    }
+                    else
+                    {
+                        // The action has been denied, roll back
+                        // Debug.Log("Interactive Action Denied");
+                    }
                 }
                 else
                 {
-                    // The action has been denied, roll back
-                    // Debug.Log("Interactive Action Denied");
+                    // Debug.Log("Player is visualizing");
+
+                    bool result = false;
+                    yield return StartCoroutine(visualizer.visualize(randomAction, value => result = value));
+                    lastActionPerformed = randomAction;
+                    if (result)
+                    {
+                        // The action has been visualized, go next
+                        // Debug.Log("Non Interactive Action Visualized");
+                        WorldState resultingState = _currentNode.Data.applyAction(randomAction);
+                        _currentNode = _currentNode.AddChild(resultingState, randomAction);
+
+                        setLastObservedStateAtLevel(lastLoD, _currentNode);
+                    }
+                    else
+                    {
+                        // The were some problems with the visualization, roll back
+                        // Debug.Log("Non Interactive Action NOT Visualized");
+                    }
                 }
             }
-            else
-            {
-                // Debug.Log("Player is visualizing");
-
-                bool result = false;
-                yield return StartCoroutine(visualizer.visualize(randomAction, value => result = value));
-                lastActionPerformed = randomAction;
-                if (result)
-                {
-                    // The action has been visualized, go next
-                    // Debug.Log("Non Interactive Action Visualized");
-                    WorldState resultingState = _currentNode.Data.applyAction(randomAction);
-                    _currentNode = _currentNode.AddChild(resultingState, randomAction);
-
-                    setLastObservedStateAtLevel(lastLoD, _currentNode);
-                }
-                else
-                {
-                    // The were some problems with the visualization, roll back
-                    // Debug.Log("Non Interactive Action NOT Visualized");
-                }
-            }
-
             yield return null;
         }
     }
 
-    private Action getRandomPossibleAction(TreeNode<WorldState> node)
+    private List<Action> getRandomPossibleAction(TreeNode<WorldState> node)
     {
         List<Action> possibleActions = node.Data.getPossibleActions();
 
@@ -389,22 +399,81 @@ public class Simulation : MonoBehaviour
             }
         }
 
-        // foreach(ActionParameter ap in actionsForEachActor.Keys)
-        //     Debug.Log(ap.Name);
+        // now that we have a list of possible actions for each active actor we want to build
+        // a n-tuple containing one for each of them. The tuple must be composed by actions
+        // which are applicable at the same time
+        List<List<Action>> parallelActions = actionsForEachActor.Values.ToList().CartesianProduct();
+        // foreach (List<Action> list in parallelActions)
+        // {
+        //     string s = "";
+        //     foreach (Action a in list)
+        //     {
+        //         s += a.ShortToString() + "\n";
+        //     }
+        //     Debug.Log(s);
+        // }
 
-        foreach(KeyValuePair<ActionParameter, List<Action>> pair in actionsForEachActor)
+        // for each combinations we must check if the actions can really be 
+        // carried out in parallel, meaning that we can perform them in 
+        // whichever order we prefer, and still reach a consistent worldstate    
+        List<Action> chosenRandomParallelActions = new List<Action>();
+        List<int> randomIndexes = new List<int>(Enumerable.Range(0, parallelActions.Count).ToArray());
+
+        // we choose a random order to explore the possible parallel actions
+        randomIndexes.Shuffle();
+
+        // we exit from this loop as soon as we find a set of parallel actions which is fully applicable
+        // or when we have checked all the possible parallel actions and we did not find any 
+        foreach (int i in randomIndexes)
         {
-            Debug.Log("The Active actor " + pair.Key.Name + " can do:");
-            foreach(Action a in pair.Value)
+            List<Action> randomParallelActions = parallelActions[i];
+            IEnumerable<IEnumerable<Action>> permutations = randomParallelActions.Permute();
+
+            bool canPerfomParallelActions = true;
+
+            // we exit from this loop when we check all the permutations
+            // or when one of the permutations cannot be performed
+            foreach (IEnumerable<Action> perm in permutations)
             {
-                Debug.Log(a.ShortToString());
+                WorldState currentWorldState = _currentNode.Data.Clone();
+
+                // we exit from this loop when we check all the actions in the
+                // current permutation or when one action cannot be applied
+                // because one of the previous actions modified the state, in a way
+                // that does not satisfy the preconditions of the followin action
+                foreach (Action a in perm)
+                {
+                    // we try to apply the action, if we get an exception
+                    // it means that the action was not applicable
+                    try
+                    {
+                        currentWorldState = currentWorldState.applyAction(a);
+                    }
+                    catch (System.ArgumentException)
+                    {
+                        canPerfomParallelActions = false;
+                        break;
+                    };
+                }
+                if (canPerfomParallelActions == false) break;
+            }
+
+            // if at this point this is still true, it means that the list
+            // of actions can be carried out in whichever order possible
+            // so we conclude that it can be carried out in parallel and we return it
+            if (canPerfomParallelActions == true)
+            {
+                chosenRandomParallelActions = randomParallelActions;
+                break;
             }
         }
 
-        int randomActionIndex = Random.Range(0, possibleActions.Count);
-        Action randomAction = possibleActions[randomActionIndex];
 
-        return randomAction;
+        // int randomActionIndex = Random.Range(0, possibleActions.Count);
+        // Action randomAction = possibleActions[randomActionIndex];
+
+        // return randomAction;
+        return chosenRandomParallelActions;
     }
 
     private TreeNode<WorldState> getInitialWorldStateAtLevel(int level)
