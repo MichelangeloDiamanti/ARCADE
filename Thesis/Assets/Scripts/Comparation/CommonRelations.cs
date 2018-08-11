@@ -3,13 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using ru.cadia.pddlFramework;
 
-public class CommonRelations
+public class CommonRelation
 {
     private WorldStateComparated _first;
     private WorldStateComparated _second;
     private HashSet<IRelation> _commonRelations;
 
-    public CommonRelations(WorldStateComparated first, WorldStateComparated second, HashSet<IRelation> commonRelations)
+    public HashSet<IRelation> CommonRelations
+    {
+        get { return _commonRelations; }
+    }
+
+    public CommonRelation(WorldStateComparated first, WorldStateComparated second, HashSet<IRelation> commonRelations)
     {
         _first = first;
         _second = second;

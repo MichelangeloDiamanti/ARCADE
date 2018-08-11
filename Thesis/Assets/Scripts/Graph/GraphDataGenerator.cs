@@ -23,9 +23,11 @@ public class GraphDataGenerator
     public Graph GenerateData(int level)
     {
         _graph.AddNode(_startingState);
-        double time = Time.realtimeSinceStartup;
+        System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+        sw.Start();
         GenerateDataRoutine(_startingState, level);
-        Debug.Log("Data Generation time:" + (Time.realtimeSinceStartup - time));
+        sw.Stop();
+        Debug.Log("Data Generation time:" + (sw.ElapsedMilliseconds/1000f));
         return _graph;
     }
 

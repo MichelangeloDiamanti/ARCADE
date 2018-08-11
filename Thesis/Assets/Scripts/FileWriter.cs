@@ -9,9 +9,9 @@ public class FileWriter : MonoBehaviour
 {
     public void SaveFile(string data)
     {
-        string destination = Application.persistentDataPath + "/example1.graphml";
+        string destination = InitialWorld.path + "/example1.graphml";
         System.IO.File.WriteAllText (destination, data);
-        Debug.Log(Application.persistentDataPath);
+        Debug.Log(InitialWorld.path);
         // FileStream file;
 
         // if (File.Exists(destination)) file = File.OpenWrite(destination);
@@ -25,14 +25,14 @@ public class FileWriter : MonoBehaviour
 
     public void SaveFile(string filename, string data)
     {
-        string destination = Application.persistentDataPath + "/log/" + filename;
+        string destination = InitialWorld.path + "/log/" + filename;
         System.IO.File.WriteAllText (destination, data);
-        Debug.Log(Application.persistentDataPath);
+        Debug.Log(InitialWorld.path);
     }
 
     public void LoadFile()
     {
-        string destination = Application.persistentDataPath + "/example1.graphml";
+        string destination = InitialWorld.path + "/example1.graphml";
         FileStream file;
 
         if (File.Exists(destination)) file = File.OpenRead(destination);
