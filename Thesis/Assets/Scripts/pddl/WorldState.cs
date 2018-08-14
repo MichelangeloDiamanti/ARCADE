@@ -145,6 +145,7 @@ namespace ru.cadia.pddlFramework
             return resultingState;
         }
 
+        // Apply action with pending values
         public WorldState requestAction(Action action)
         {
             if (canPerformAction(action) == false)
@@ -196,19 +197,19 @@ namespace ru.cadia.pddlFramework
                 // The idea behind this algorithm is to first generate a dictionary which maps each entity to a 
                 // list of possible entities suitable to be sobstituted in the action. 
                 // Then we compute all the possible combinations of substitutions in the form of a set of tuples
-                Dictionary<Entity, List<Entity>> dictSobstitution = new Dictionary<Entity, List<Entity>>();
-                HashSet<Dictionary<Entity, Entity>> sobstitutions = new HashSet<Dictionary<Entity, Entity>>();
+                Dictionary<ActionParameter, List<ActionParameter>> dictSobstitution = new Dictionary<ActionParameter, List<ActionParameter>>();
+                HashSet<Dictionary<ActionParameter, ActionParameter>> sobstitutions = new HashSet<Dictionary<ActionParameter, ActionParameter>>();
 
                 // For each parameter of the action we get all the possible entities in the
                 // current worldState which could be substituted, according to their type 
-                foreach (Entity item in a.Parameters)
+                foreach (ActionParameter item in a.Parameters)
                 {
-                    List<Entity> listapp = new List<Entity>();
+                    List<ActionParameter> listapp = new List<ActionParameter>();
                     foreach (Entity e in _entities)
                     {
                         if (item.Type.Equals(e.Type))
                         {
-                            listapp.Add(e);
+                            listapp.Add(new ActionParameter(e, item.Role));
                         }
                     }
                     dictSobstitution.Add(item, listapp);
@@ -220,11 +221,11 @@ namespace ru.cadia.pddlFramework
                 //     "ALPHA",                 ["WAYPOINT1": "BRAVO"]
                 //     "BRAVO"
                 //   ],
-                Entity firstKey = dictSobstitution.Keys.First();
-                List<Entity> sobList = dictSobstitution[firstKey];
-                foreach (Entity e in sobList)
+                ActionParameter firstKey = dictSobstitution.Keys.First();
+                List<ActionParameter> sobList = dictSobstitution[firstKey];
+                foreach (ActionParameter e in sobList)
                 {
-                    Dictionary<Entity, Entity> sobstitution = new Dictionary<Entity, Entity>();
+                    Dictionary<ActionParameter, ActionParameter> sobstitution = new Dictionary<ActionParameter, ActionParameter>();
                     sobstitution.Add(firstKey, e);
                     sobstitutions.Add(sobstitution);
                 }
@@ -232,16 +233,16 @@ namespace ru.cadia.pddlFramework
 
                 // We iterate over the remaining lists of entities and each time we combine them
                 // with every element of the set of partial combinations that we already computed
-                foreach (KeyValuePair<Entity, List<Entity>> entry in dictSobstitution)
+                foreach (KeyValuePair<ActionParameter, List<ActionParameter>> entry in dictSobstitution)
                 {
                     // entry.Key = name of the variable we are sobstituting
                     // entry.Value = list of possible entities we can make the sobstitution with
-                    HashSet<Dictionary<Entity, Entity>> tmpSobstitutions = new HashSet<Dictionary<Entity, Entity>>();
-                    foreach (Dictionary<Entity, Entity> sobstitution in sobstitutions)
+                    HashSet<Dictionary<ActionParameter, ActionParameter>> tmpSobstitutions = new HashSet<Dictionary<ActionParameter, ActionParameter>>();
+                    foreach (Dictionary<ActionParameter, ActionParameter> sobstitution in sobstitutions)
                     {
-                        foreach (Entity e in entry.Value)
+                        foreach (ActionParameter e in entry.Value)
                         {
-                            Dictionary<Entity, Entity> tmpSobstitution = new Dictionary<Entity, Entity>(sobstitution);
+                            Dictionary<ActionParameter, ActionParameter> tmpSobstitution = new Dictionary<ActionParameter, ActionParameter>(sobstitution);
                             tmpSobstitution.Add(entry.Key, e);
                             tmpSobstitutions.Add(tmpSobstitution);
                         }
@@ -252,9 +253,9 @@ namespace ru.cadia.pddlFramework
                 // Every sobstitution represents a possible action wich may or may not be
                 // performable in the current state, so we check if its preconditions
                 // are satisfied and, if so, we add it to the list of possible actions
-                foreach (Dictionary<Entity, Entity> sobstitution in sobstitutions)
+                foreach (Dictionary<ActionParameter, ActionParameter> sobstitution in sobstitutions)
                 {
-                    Action action = a.sobstituteEntityInAction(sobstitution);
+                    Action action = a.sobstituteParameterInAction(sobstitution);
                     if (canPerformAction(action))
                         listActions.Add(action);
                 }

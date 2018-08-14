@@ -162,18 +162,21 @@
       "Name": "MOVE",
       "Parameters": [
         {
+          "Role": 1,
           "Type": {
             "Type": "ROVER"
           },
           "Name": "ROVER"
         },
         {
+          "Role": 2,
           "Type": {
             "Type": "WAYPOINT"
           },
           "Name": "WAYPOINT1"
         },
         {
+          "Role": 2,
           "Type": {
             "Type": "WAYPOINT"
           },
@@ -336,18 +339,21 @@
       "Name": "TAKE_SAMPLE",
       "Parameters": [
         {
+          "Role": 1,
           "Type": {
             "Type": "ROVER"
           },
           "Name": "ROVER"
         },
         {
+          "Role": 2,
           "Type": {
             "Type": "SAMPLE"
           },
           "Name": "SAMPLE"
         },
         {
+          "Role": 2,
           "Type": {
             "Type": "WAYPOINT"
           },
@@ -501,18 +507,21 @@
       "Name": "DROP_SAMPLE",
       "Parameters": [
         {
+          "Role": 1,
           "Type": {
             "Type": "ROVER"
           },
           "Name": "ROVER"
         },
         {
+          "Role": 2,
           "Type": {
             "Type": "SAMPLE"
           },
           "Name": "SAMPLE"
         },
         {
+          "Role": 2,
           "Type": {
             "Type": "WAYPOINT"
           },
@@ -649,18 +658,21 @@
       "Name": "TAKE_IMAGE",
       "Parameters": [
         {
+          "Role": 1,
           "Type": {
             "Type": "ROVER"
           },
           "Name": "ROVER"
         },
         {
+          "Role": 2,
           "Type": {
             "Type": "OBJECTIVE"
           },
           "Name": "OBJECTIVE"
         },
         {
+          "Role": 2,
           "Type": {
             "Type": "WAYPOINT"
           },

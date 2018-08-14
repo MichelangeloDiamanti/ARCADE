@@ -169,10 +169,10 @@ public class WorldStateTest {
         Entity entityFromWayPoint = new Entity(entityTypewayPoint, "WAYPOINT1");
         Entity entityToWayPoint = new Entity(entityTypewayPoint, "WAYPOINT2");        
 
-        HashSet<Entity> actionMoveParameters = new HashSet<Entity>();
-        actionMoveParameters.Add(entityCuriosity);
-        actionMoveParameters.Add(entityFromWayPoint);
-        actionMoveParameters.Add(entityToWayPoint);        
+        HashSet<ActionParameter> actionMoveParameters = new HashSet<ActionParameter>();
+        actionMoveParameters.Add(new ActionParameter(entityCuriosity, ActionParameterRole.ACTIVE));
+        actionMoveParameters.Add(new ActionParameter(entityFromWayPoint, ActionParameterRole.PASSIVE));
+        actionMoveParameters.Add(new ActionParameter(entityToWayPoint, ActionParameterRole.PASSIVE));        
 
         // Preconditions
         HashSet<IRelation> actionMovePreconditions = new HashSet<IRelation>();
@@ -383,7 +383,7 @@ public class WorldStateTest {
 	}
 
 	[Test]
-	public void getPossibleActionsReturnsMoveActionIfisConnectedWithFullDetailedDomain() {
+	public void thirdLODRoverCanMoveIfAllPreconditionsAreSatisfied() {
         Domain domain = Utils.roverWorldDomainThirdLevel();
 
 		WorldState worldState = new WorldState(domain);
@@ -406,6 +406,14 @@ public class WorldStateTest {
 
         worldState.addEntity(wayPointAlpha);
         worldState.addEntity(wayPointBravo);
+
+        BinaryPredicate predicateHasBattery = new BinaryPredicate(entityTypeRover, "HAS", entityTypeBattery);
+        BinaryRelation relationRoverHasBattery = new BinaryRelation(entityRover, predicateHasBattery, entityBattery, RelationValue.TRUE);
+        worldState.addRelation(relationRoverHasBattery);
+
+        BinaryPredicate predicateHasWheels = new BinaryPredicate(entityTypeRover, "HAS", entityTypeWheel);
+        BinaryRelation relationRoverHasWheels = new BinaryRelation(entityRover, predicateHasWheels, entityWheels, RelationValue.TRUE);
+        worldState.addRelation(relationRoverHasWheels);
 
         UnaryRelation batteryCharged = domain.generateRelationFromPredicateName("BATTERY_CHARGED", entityBattery, RelationValue.TRUE);
         worldState.addRelation(batteryCharged);
@@ -430,6 +438,273 @@ public class WorldStateTest {
         performableActions.Add(domain.getAction("DEFLATE_WHEELS"));
 
         Assert.AreEqual(performableActions, worldState.getPossibleActions());
+	}
+
+    // If we give the rover the battery1 which is DISCHARGED and there is another battery
+    // battery2 in the worldstate which is CHARGED, but which the rover does NOT posses
+    // it should NOT be able to perform a move action
+	[Test]
+	public void thirdLODroverMustHaveBatteryChargedToMove() {
+        Domain domain = Utils.roverWorldDomainThirdLevel();
+
+		WorldState worldState = new WorldState(domain);
+
+        EntityType entityTypeRover = new EntityType("ROVER");
+        Entity entityRover = new Entity(entityTypeRover, "ROVER");
+        worldState.addEntity(entityRover);
+
+        EntityType entityTypeBattery = new EntityType("BATTERY");
+        Entity entityBattery1 = new Entity(entityTypeBattery, "BATTERY1");
+        worldState.addEntity(entityBattery1);
+        Entity entityBattery2 = new Entity(entityTypeBattery, "BATTERY2");
+        worldState.addEntity(entityBattery2);
+
+
+        EntityType entityTypeWheel = new EntityType("WHEEL");
+        Entity entityWheels = new Entity(entityTypeWheel, "WHEELS");
+        worldState.addEntity(entityWheels);
+
+
+        Entity wayPointAlpha = new Entity(new EntityType("WAYPOINT"), "ALPHA");
+        Entity wayPointBravo = new Entity(new EntityType("WAYPOINT"), "BRAVO");
+
+        worldState.addEntity(wayPointAlpha);
+        worldState.addEntity(wayPointBravo);
+
+        BinaryPredicate predicateHasBattery = new BinaryPredicate(entityTypeRover, "HAS", entityTypeBattery);
+        BinaryRelation relationRoverHasBattery1 = new BinaryRelation(entityRover, predicateHasBattery, entityBattery1, RelationValue.TRUE);
+        worldState.addRelation(relationRoverHasBattery1);
+
+        BinaryPredicate predicateHasWheels = new BinaryPredicate(entityTypeRover, "HAS", entityTypeWheel);
+        BinaryRelation relationRoverHasWheels = new BinaryRelation(entityRover, predicateHasWheels, entityWheels, RelationValue.TRUE);
+        worldState.addRelation(relationRoverHasWheels);
+
+        // here we charge battery2
+        UnaryRelation batteryCharged = domain.generateRelationFromPredicateName("BATTERY_CHARGED", entityBattery2, RelationValue.TRUE);
+        worldState.addRelation(batteryCharged);
+
+        UnaryRelation wheelsInflated = domain.generateRelationFromPredicateName("WHEELS_INFLATED", entityWheels, RelationValue.TRUE);
+        worldState.addRelation(wheelsInflated);
+
+        BinaryRelation isConnected1 = domain.generateRelationFromPredicateName("IS_CONNECTED_TO", wayPointAlpha, wayPointBravo, RelationValue.TRUE);
+        worldState.addRelation(isConnected1);
+
+        BinaryRelation relationNotObstacleBetweenAlphaandBravo = domain.generateRelationFromPredicateName("OBSTACLE_BETWEEN", wayPointAlpha, wayPointBravo, RelationValue.FALSE);
+        worldState.addRelation(relationNotObstacleBetweenAlphaandBravo);
+
+        BinaryRelation isAtAlpha = domain.generateRelationFromPredicateName("AT", entityRover, wayPointAlpha, RelationValue.TRUE);
+        worldState.addRelation(isAtAlpha);
+
+        Action actionMove = worldState.Domain.getAction("MOVE");
+
+        Assert.False(worldState.getPossibleActions().Contains(actionMove));
+	}
+
+    // If we give the rover the wheels1 which are DEFLATED and there is another wheels
+    // wheels2 in the worldstate which are INFLATED, but which the rover does NOT posses
+    // it should NOT be able to perform a move action
+	[Test]
+	public void roverMustHaveWheelsInflatedToMove() {
+        Domain domain = Utils.roverWorldDomainThirdLevel();
+
+		WorldState worldState = new WorldState(domain);
+
+        EntityType entityTypeRover = new EntityType("ROVER");
+        Entity entityRover = new Entity(entityTypeRover, "ROVER");
+        worldState.addEntity(entityRover);
+
+        EntityType entityTypeBattery = new EntityType("BATTERY");
+        Entity entityBattery = new Entity(entityTypeBattery, "BATTERY");
+        worldState.addEntity(entityBattery);
+
+        EntityType entityTypeWheel = new EntityType("WHEEL");
+        Entity entityWheels1 = new Entity(entityTypeWheel, "WHEELS1");
+        worldState.addEntity(entityWheels1);
+        Entity entityWheels2 = new Entity(entityTypeWheel, "WHEELS2");
+        worldState.addEntity(entityWheels2);
+
+        Entity wayPointAlpha = new Entity(new EntityType("WAYPOINT"), "ALPHA");
+        Entity wayPointBravo = new Entity(new EntityType("WAYPOINT"), "BRAVO");
+
+        worldState.addEntity(wayPointAlpha);
+        worldState.addEntity(wayPointBravo);
+
+        BinaryPredicate predicateHasBattery = new BinaryPredicate(entityTypeRover, "HAS", entityTypeBattery);
+        BinaryRelation relationRoverHasBattery1 = new BinaryRelation(entityRover, predicateHasBattery, entityBattery, RelationValue.TRUE);
+        worldState.addRelation(relationRoverHasBattery1);
+
+        BinaryPredicate predicateHasWheels = new BinaryPredicate(entityTypeRover, "HAS", entityTypeWheel);
+        BinaryRelation relationRoverHasWheels = new BinaryRelation(entityRover, predicateHasWheels, entityWheels1, RelationValue.TRUE);
+        worldState.addRelation(relationRoverHasWheels);
+
+        UnaryRelation batteryCharged = domain.generateRelationFromPredicateName("BATTERY_CHARGED", entityBattery, RelationValue.TRUE);
+        worldState.addRelation(batteryCharged);
+
+        // here we inflate wheels2
+        UnaryRelation wheelsInflated = domain.generateRelationFromPredicateName("WHEELS_INFLATED", entityWheels2, RelationValue.TRUE);
+        worldState.addRelation(wheelsInflated);
+
+        BinaryRelation isConnected1 = domain.generateRelationFromPredicateName("IS_CONNECTED_TO", wayPointAlpha, wayPointBravo, RelationValue.TRUE);
+        worldState.addRelation(isConnected1);
+
+        BinaryRelation relationNotObstacleBetweenAlphaandBravo = domain.generateRelationFromPredicateName("OBSTACLE_BETWEEN", wayPointAlpha, wayPointBravo, RelationValue.FALSE);
+        worldState.addRelation(relationNotObstacleBetweenAlphaandBravo);
+
+        BinaryRelation isAtAlpha = domain.generateRelationFromPredicateName("AT", entityRover, wayPointAlpha, RelationValue.TRUE);
+        worldState.addRelation(isAtAlpha);
+
+        Action actionMove = worldState.Domain.getAction("MOVE");
+
+        Assert.False(worldState.getPossibleActions().Contains(actionMove));
+	}
+
+
+	[Test]
+	public void thirdLODRoverCanTakeSampleIfPreconditionsAreSatisfied() {
+        Domain domain = Utils.roverWorldDomainThirdLevel();
+
+		WorldState worldState = new WorldState(domain);
+
+        EntityType entityTypeRover = new EntityType("ROVER");
+        Entity entityRover = new Entity(entityTypeRover, "ROVER");
+        worldState.addEntity(entityRover);
+
+        EntityType entityTypeBattery = new EntityType("BATTERY");
+        Entity entityBattery1 = new Entity(entityTypeBattery, "BATTERY");
+        worldState.addEntity(entityBattery1);
+
+        EntityType entityTypeWheel = new EntityType("WHEEL");
+        Entity entityWheels = new Entity(entityTypeWheel, "WHEELS");
+        worldState.addEntity(entityWheels);
+
+        Entity wayPointAlpha = new Entity(new EntityType("WAYPOINT"), "ALPHA");
+        worldState.addEntity(wayPointAlpha);
+
+        Entity entitySample = new Entity(new EntityType("SAMPLE"), "SAMPLE");
+        worldState.addEntity(entitySample);
+
+        BinaryRelation sampleIsInWaypoint = domain.generateRelationFromPredicateName("IS_IN", entitySample, wayPointAlpha, RelationValue.TRUE);
+        BinaryRelation roverIsAtWaypoint = domain.generateRelationFromPredicateName("AT", entityRover, wayPointAlpha, RelationValue.TRUE);
+        UnaryRelation roverIsEmpty = domain.generateRelationFromPredicateName("IS_EMPTY", entityRover, RelationValue.TRUE);
+        worldState.addRelation(sampleIsInWaypoint);
+        worldState.addRelation(roverIsAtWaypoint);
+        worldState.addRelation(roverIsEmpty);
+
+        BinaryPredicate predicateHasBattery = new BinaryPredicate(entityTypeRover, "HAS", entityTypeBattery);
+        BinaryRelation relationRoverHasBattery1 = new BinaryRelation(entityRover, predicateHasBattery, entityBattery1, RelationValue.TRUE);
+        worldState.addRelation(relationRoverHasBattery1);
+
+        BinaryPredicate predicateHasWheels = new BinaryPredicate(entityTypeRover, "HAS", entityTypeWheel);
+        BinaryRelation relationRoverHasWheels = new BinaryRelation(entityRover, predicateHasWheels, entityWheels, RelationValue.TRUE);
+        worldState.addRelation(relationRoverHasWheels);
+
+        UnaryRelation batteryCharged = domain.generateRelationFromPredicateName("BATTERY_CHARGED", entityBattery1, RelationValue.TRUE);
+        worldState.addRelation(batteryCharged);
+
+        UnaryRelation wheelsInflated = domain.generateRelationFromPredicateName("WHEELS_INFLATED", entityWheels, RelationValue.TRUE);
+        worldState.addRelation(wheelsInflated);
+
+        Action actionTakeSample = worldState.Domain.getAction("TAKE_SAMPLE");
+
+        Assert.True(worldState.getPossibleActions().Contains(actionTakeSample));
+	}
+
+	[Test]
+	public void thirdLODRoverCanTakeImageIfPreconditionsAreSatisfied() {
+        Domain domain = Utils.roverWorldDomainThirdLevel();
+
+		WorldState worldState = new WorldState(domain);
+
+        EntityType entityTypeRover = new EntityType("ROVER");
+        Entity entityRover = new Entity(entityTypeRover, "ROVER");
+        worldState.addEntity(entityRover);
+
+        EntityType entityTypeBattery = new EntityType("BATTERY");
+        Entity entityBattery1 = new Entity(entityTypeBattery, "BATTERY");
+        worldState.addEntity(entityBattery1);
+
+        EntityType entityTypeWheel = new EntityType("WHEEL");
+        Entity entityWheels = new Entity(entityTypeWheel, "WHEELS");
+        worldState.addEntity(entityWheels);
+
+        Entity wayPointAlpha = new Entity(new EntityType("WAYPOINT"), "ALPHA");
+        worldState.addEntity(wayPointAlpha);
+        
+        Entity entityObjective = new Entity(new EntityType("OBJECTIVE"), "OBJECTIVE");
+        worldState.addEntity(entityObjective);
+
+        BinaryRelation roverIsAtWaypoint = domain.generateRelationFromPredicateName("AT", entityRover, wayPointAlpha, RelationValue.TRUE);
+        BinaryRelation objectiveIsVisibleFromWaypoint = domain.generateRelationFromPredicateName("IS_VISIBLE", entityObjective, wayPointAlpha, RelationValue.TRUE);
+        worldState.addRelation(roverIsAtWaypoint);
+        worldState.addRelation(objectiveIsVisibleFromWaypoint);
+
+        BinaryPredicate predicateHasBattery = new BinaryPredicate(entityTypeRover, "HAS", entityTypeBattery);
+        BinaryRelation relationRoverHasBattery1 = new BinaryRelation(entityRover, predicateHasBattery, entityBattery1, RelationValue.TRUE);
+        worldState.addRelation(relationRoverHasBattery1);
+
+        BinaryPredicate predicateHasWheels = new BinaryPredicate(entityTypeRover, "HAS", entityTypeWheel);
+        BinaryRelation relationRoverHasWheels = new BinaryRelation(entityRover, predicateHasWheels, entityWheels, RelationValue.TRUE);
+        worldState.addRelation(relationRoverHasWheels);
+
+        UnaryRelation batteryCharged = domain.generateRelationFromPredicateName("BATTERY_CHARGED", entityBattery1, RelationValue.TRUE);
+        worldState.addRelation(batteryCharged);
+
+        UnaryRelation wheelsInflated = domain.generateRelationFromPredicateName("WHEELS_INFLATED", entityWheels, RelationValue.TRUE);
+        worldState.addRelation(wheelsInflated);
+
+        Action actionTakeImage = worldState.Domain.getAction("TAKE_IMAGE");
+
+        Assert.True(worldState.getPossibleActions().Contains(actionTakeImage));
+	}
+
+	[Test]
+	public void thirdLODRoverCanDropImageIfPreconditionsAreSatisfied() {
+        Domain domain = Utils.roverWorldDomainThirdLevel();
+
+		WorldState worldState = new WorldState(domain);
+
+        EntityType entityTypeRover = new EntityType("ROVER");
+        Entity entityRover = new Entity(entityTypeRover, "ROVER");
+        worldState.addEntity(entityRover);
+
+        EntityType entityTypeBattery = new EntityType("BATTERY");
+        Entity entityBattery1 = new Entity(entityTypeBattery, "BATTERY");
+        worldState.addEntity(entityBattery1);
+
+        EntityType entityTypeWheel = new EntityType("WHEEL");
+        Entity entityWheels = new Entity(entityTypeWheel, "WHEELS");
+        worldState.addEntity(entityWheels);
+
+        Entity wayPointAlpha = new Entity(new EntityType("WAYPOINT"), "ALPHA");
+        worldState.addEntity(wayPointAlpha);
+        
+        Entity entitySample = new Entity(new EntityType("SAMPLE"), "SAMPLE");
+        worldState.addEntity(entitySample);
+
+        UnaryRelation wayPointIsDroppingDock = domain.generateRelationFromPredicateName("IS_DROPPING_DOCK", wayPointAlpha, RelationValue.TRUE);
+        BinaryRelation roverIsAtWaypoint = domain.generateRelationFromPredicateName("AT", entityRover, wayPointAlpha, RelationValue.TRUE);
+        BinaryRelation roverCarriesSample = domain.generateRelationFromPredicateName("CARRY", entityRover, entitySample, RelationValue.TRUE);
+        worldState.addRelation(wayPointIsDroppingDock);
+        worldState.addRelation(roverIsAtWaypoint);
+        worldState.addRelation(roverCarriesSample);
+
+        BinaryPredicate predicateHasBattery = new BinaryPredicate(entityTypeRover, "HAS", entityTypeBattery);
+        BinaryRelation relationRoverHasBattery1 = new BinaryRelation(entityRover, predicateHasBattery, entityBattery1, RelationValue.TRUE);
+        worldState.addRelation(relationRoverHasBattery1);
+
+        BinaryPredicate predicateHasWheels = new BinaryPredicate(entityTypeRover, "HAS", entityTypeWheel);
+        BinaryRelation relationRoverHasWheels = new BinaryRelation(entityRover, predicateHasWheels, entityWheels, RelationValue.TRUE);
+        worldState.addRelation(relationRoverHasWheels);
+
+        UnaryRelation batteryCharged = domain.generateRelationFromPredicateName("BATTERY_CHARGED", entityBattery1, RelationValue.TRUE);
+        worldState.addRelation(batteryCharged);
+
+        UnaryRelation wheelsInflated = domain.generateRelationFromPredicateName("WHEELS_INFLATED", entityWheels, RelationValue.TRUE);
+        worldState.addRelation(wheelsInflated);
+
+        Action actionDropSample = worldState.Domain.getAction("DROP_SAMPLE");
+
+        Assert.True(worldState.getPossibleActions().Contains(actionDropSample));
 	}
 
 	[Test]
@@ -697,10 +972,10 @@ public class WorldStateTest {
         Entity entityFromWayPoint = new Entity(entityTypewayPoint, "WAYPOINT1");
         Entity entityToWayPoint = new Entity(entityTypewayPoint, "WAYPOINT2");        
 
-        HashSet<Entity> actionMoveParameters = new HashSet<Entity>();
-        actionMoveParameters.Add(entityCuriosity);
-        actionMoveParameters.Add(entityFromWayPoint);
-        actionMoveParameters.Add(entityToWayPoint);        
+        HashSet<ActionParameter> actionMoveParameters = new HashSet<ActionParameter>();
+        actionMoveParameters.Add(new ActionParameter(entityCuriosity, ActionParameterRole.ACTIVE));
+        actionMoveParameters.Add(new ActionParameter(entityFromWayPoint, ActionParameterRole.PASSIVE));
+        actionMoveParameters.Add(new ActionParameter(entityToWayPoint, ActionParameterRole.PASSIVE));        
 
         // Preconditions
         HashSet<IRelation> actionMovePreconditions = new HashSet<IRelation>();
