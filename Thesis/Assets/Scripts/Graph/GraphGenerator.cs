@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using ru.cadia.pddlFramework;
 
@@ -13,6 +14,7 @@ public class GraphGenerator
     private Dictionary<WorldState, string> _nodes;
     private UnityEngine.Random rnd = new UnityEngine.Random();
     private HashSet<string> _colors;
+    private System.Diagnostics.Stopwatch sw;
 
 
     public GraphGenerator(TreeNode<WorldState> rootNode)
@@ -22,6 +24,7 @@ public class GraphGenerator
         id = 0;
         _graph = null;
         _colors = null;
+        sw = new System.Diagnostics.Stopwatch();
     }
 
     public GraphGenerator(Graph graph)
@@ -32,6 +35,7 @@ public class GraphGenerator
         _root = null;
         ids = null;
         id = 0;
+        sw = new System.Diagnostics.Stopwatch();
     }
 
     public void GenerateTree()
@@ -72,7 +76,7 @@ public class GraphGenerator
 
     public void GenerateGraphML(bool lite = false)
     {
-        double time = Time.realtimeSinceStartup;
+        sw.Start();
         if (_graph == null) return;
         id = 0;
         string graphml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>";
@@ -142,7 +146,8 @@ public class GraphGenerator
             }
         }
         graphml += "</graph>\n</graphml>";
-        Debug.Log("Graph Generation time: " + (Time.realtimeSinceStartup - time));
+        sw.Stop();
+        Debug.Log("Graph Generation time: " + (sw.ElapsedMilliseconds/1000f));
 
         new FileWriter().SaveFile(graphml);
     }
@@ -153,9 +158,10 @@ public class GraphGenerator
         string result = "";
         do
         {
-            string rs = DecimalToHexadecimal(UnityEngine.Random.Range(0, 256));
-            string gs = DecimalToHexadecimal(UnityEngine.Random.Range(0, 256));
-            string bs = DecimalToHexadecimal(UnityEngine.Random.Range(0, 256));
+            System.Random random = new System.Random();
+            string rs = DecimalToHexadecimal(random.Next(0, 256));
+            string gs = DecimalToHexadecimal(random.Next(0, 256));
+            string bs = DecimalToHexadecimal(random.Next(0, 256));
             result = rs + gs + bs;
         } while (_colors.Contains(result));
         _colors.Add(result);

@@ -10,6 +10,7 @@ public class GraphDataGenerator
     private HashSet<WorldState> _visitedStates;
     private HashSet<WorldState> _finalStates;
     private HashSet<WorldStateComparated> _worldStateComparated;
+    private System.Diagnostics.Stopwatch sw;
 
     public GraphDataGenerator(WorldState ws)
     {
@@ -18,19 +19,19 @@ public class GraphDataGenerator
         _visitedStates = new HashSet<WorldState>();
         _finalStates = new HashSet<WorldState>();
         _worldStateComparated = new HashSet<WorldStateComparated>();
+        sw = new System.Diagnostics.Stopwatch();
     }
 
     public Graph GenerateData(int level)
     {
         _graph.AddNode(_startingState);
-        System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+        Debug.Log("Starting Generation");
         sw.Start();
         GenerateDataRoutine(_startingState, level);
         sw.Stop();
         Debug.Log("Data Generation time:" + (sw.ElapsedMilliseconds/1000f));
         return _graph;
     }
-
     private void GenerateDataRoutine(WorldState currentState, int level)
     {
         List<Action> possibleActions = currentState.getPossibleActions();

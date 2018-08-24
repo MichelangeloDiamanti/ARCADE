@@ -155,7 +155,7 @@ namespace ru.cadia.pddlFramework
             foreach (IRelation actionEffect in action.PostConditions)
             {
                 IRelation pendingActionEffect = actionEffect.Clone();
-                if(pendingActionEffect.Value == RelationValue.TRUE)
+                if (pendingActionEffect.Value == RelationValue.TRUE)
                     pendingActionEffect.Value = RelationValue.PENDINGTRUE;
                 else
                     pendingActionEffect.Value = RelationValue.PENDINGFALSE;
@@ -261,6 +261,20 @@ namespace ru.cadia.pddlFramework
                 }
             }
             return listActions;
+        }
+
+        public WorldState RemoveIPredicateFromWorldState(IPredicate predicateToRemove, Domain domainUpdated)
+        {
+            HashSet<IRelation> newRelations = new HashSet<IRelation>();
+            foreach (IRelation rel in _relations)
+            {
+                if (!rel.Predicate.Equals(predicateToRemove))
+                {
+                    newRelations.Add(rel);
+                }
+            }
+
+            return new WorldState(domainUpdated, _entities, newRelations);
         }
 
         public override bool Equals(object obj)

@@ -17,15 +17,18 @@ public class InitialWorld : MonoBehaviour
     public bool GraphGeneration = false;
     private Thread myThread;
     public static string path;
+    private System.Diagnostics.Stopwatch sw;
+    bool printed = false;
     // Use this for initialization
     void Start()
     {
+        sw = new System.Diagnostics.Stopwatch();
         Domain domainFullDetail = Utils.roverWorldDomainThirdLevel();
+        Debug.Log(domainFullDetail.Actions.Count);
         WorldState worldStateFullDetail = Utils.roverWorldStateThirdLevel(domainFullDetail);
         path = Application.persistentDataPath;
 
         currentState = worldStateFullDetail.Clone();
-
         myThread = new Thread(AutomaticGraphGenerator);
         myThread.Start();
     }
@@ -33,7 +36,20 @@ public class InitialWorld : MonoBehaviour
 
     void Update()
     {
-
+        int x = unchecked((int)(sw.ElapsedMilliseconds / 1000f));
+        // Debug.Log(x + " "+ (x%60 == 0));
+        if (x > 0 && x % 60 == 0)
+        {
+            if (!printed)
+            {
+                Debug.Log("Thread still running");
+                printed = true;
+            }
+        }
+        else
+        {
+            printed = false;
+        }
     }
 
     private bool isRoot(TreeNode<WorldState> node)
@@ -92,6 +108,7 @@ public class InitialWorld : MonoBehaviour
 
     private void AutomaticGraphGenerator()
     {
+        sw.Start();
         GraphDataGenerator gdg = new GraphDataGenerator(currentState);
         Graph g = gdg.GenerateData(numberOfLevels);
         if (ComparationBetweenStates)
@@ -112,6 +129,6 @@ public class InitialWorld : MonoBehaviour
             new GraphGenerator(g).GenerateGraphML(liteGraph);
         }
 
-
+        sw.Stop();
     }
 }

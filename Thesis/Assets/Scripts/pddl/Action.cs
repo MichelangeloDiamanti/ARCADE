@@ -227,6 +227,27 @@ namespace ru.cadia.pddlFramework
             return newConditions;
         }
 
+        public Action RemoveIPredicateFromAction(IPredicate predicateToRemove)
+        {
+            HashSet<IRelation> preconditions = new HashSet<IRelation>();
+            foreach (IRelation rel in _preConditions)
+            {
+                if(!rel.Predicate.Equals(predicateToRemove))
+                {
+                    preconditions.Add(rel);
+                }
+            }
+            HashSet<IRelation> postconditions = new HashSet<IRelation>();
+            foreach (IRelation rel in _postConditions)
+            {
+                if(!rel.Predicate.Equals(predicateToRemove))
+                {
+                    postconditions.Add(rel);
+                }
+            }
+            return new Action(preconditions, _name, _parameters, postconditions);
+        }
+
         public Action Clone()
         {
             HashSet<IRelation> newPreConditions = new HashSet<IRelation>();

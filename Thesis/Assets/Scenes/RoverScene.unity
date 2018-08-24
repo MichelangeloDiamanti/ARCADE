@@ -225,10 +225,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7bb09fd9332c5404fad0755d2fbeb08d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  numberOfLevels: 2
+  numberOfLevels: 5
   liteGraph: 1
   ComparationBetweenStates: 0
-  GraphGeneration: 0
+  GraphGeneration: 1
 --- !u!4 &248321232
 Transform:
   m_ObjectHideFlags: 0

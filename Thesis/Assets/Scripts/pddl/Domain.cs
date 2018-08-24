@@ -158,6 +158,24 @@ namespace ru.cadia.pddlFramework
             return relation;
         }
 
+        public Domain RemoveIPredicateFromDomain(IPredicate predicateToRemove)
+        {
+            HashSet<IPredicate> newPredicates = new HashSet<IPredicate>();
+            foreach (IPredicate item in _predicates)
+            {
+                if (!item.Equals(predicateToRemove))
+                {
+                    newPredicates.Add(item);
+                }
+            }
+            HashSet<Action> newActions = new HashSet<Action>();
+            foreach (Action item in _actions)
+            {
+                newActions.Add(item.RemoveIPredicateFromAction(predicateToRemove));
+            }
+            return new Domain(_entityTypes, newPredicates, newActions);
+        }
+
         public Domain Clone()
         {
             HashSet<EntityType> newEntityTypes = new HashSet<EntityType>();
