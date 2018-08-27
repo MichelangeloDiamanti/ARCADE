@@ -256,13 +256,15 @@ namespace ru.cadia.pddlFramework
 
         public string ShortToString()
         {
-            string value = "Action: " + _name + "(";
+            string value = _name + "(";
             foreach (ActionParameter item in _parameters)
             {
                 value += item.Name + " ,";
             }
+            value = value.Substring(0, value.Length - 2);            
             value += ")";
             return value;
         }
+
     }
 }

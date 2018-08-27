@@ -309,14 +309,30 @@ public class Simulation : MonoBehaviour
                 break;
             }
 
+            // get one action which represents all the chosen ones
+            Action randomSuperAction;
+            HashSet<IRelation> randomSuperActionPreconditions = new HashSet<IRelation>();
+            string randomSuperActionName = "";
+            HashSet<ActionParameter> randomSuperActionParameters = new HashSet<ActionParameter>();
+            HashSet<IRelation> randomSuperActionPostconditions = new HashSet<IRelation>();
+
+            foreach (Action randomAction in parallelRandomActions)
+            {
+                randomSuperActionPreconditions.UnionWith(randomAction.PreConditions);
+                randomSuperActionName += randomAction.ShortToString() + ", ";
+                randomSuperActionParameters.UnionWith(randomAction.Parameters);
+                randomSuperActionPostconditions.UnionWith(randomAction.PostConditions);
+            }
+            randomSuperActionName.Substring(0, randomSuperActionName.Length - 2);
+
+            randomSuperAction = new Action(randomSuperActionPreconditions, randomSuperActionName,
+                randomSuperActionParameters, randomSuperActionPostconditions);
+
             string chosenCombination = transform.parent.gameObject.name + "\n";
             foreach (Action a in parallelRandomActions)
-                chosenCombination += a.ShortToString() + ",";
+                chosenCombination += a.ShortToString() + ", ";
+            chosenCombination = chosenCombination.Substring(0, chosenCombination.Length - 2);
             Debug.Log(chosenCombination);
-
-            // TODO: now we have many actions returned, we must apply all of them at once since, each one of them
-            // involves a different active actor, so they can be displayed in parallel
-
 
             // Debug.Log("The Simulator is requesting the following Action: " + randomAction.ShortToString());
 
@@ -331,13 +347,12 @@ public class Simulation : MonoBehaviour
                 {
                     // The action has been allowed, go next
                     // Debug.Log("Interactive Action Allowed");
-                    foreach (Action randomAction in parallelRandomActions)
-                    {
-                        WorldState resultingState = _currentNode.Data.applyAction(randomAction);
-                        _currentNode = _currentNode.AddChild(resultingState, randomAction);
 
-                        setLastObservedStateAtLevel(lastLoD, _currentNode);
-                    }
+                    WorldState resultingState = _currentNode.Data.applyAction(randomSuperAction);
+                    _currentNode = _currentNode.AddChild(resultingState, randomSuperAction);
+
+                    setLastObservedStateAtLevel(lastLoD, _currentNode);
+
                 }
                 else
                 {
@@ -354,15 +369,13 @@ public class Simulation : MonoBehaviour
                 lastActionPerformed = parallelRandomActions.Last();
                 if (result)
                 {
-                    foreach (Action randomAction in parallelRandomActions)
-                    {
-                        // The action has been visualized, go next
-                        // Debug.Log("Non Interactive Action Visualized");
-                        WorldState resultingState = _currentNode.Data.applyAction(randomAction);
-                        _currentNode = _currentNode.AddChild(resultingState, randomAction);
+                    // The action has been visualized, go next
+                    // Debug.Log("Non Interactive Action Visualized");
+                    WorldState resultingState = _currentNode.Data.applyAction(randomSuperAction);
+                    _currentNode = _currentNode.AddChild(resultingState, randomSuperAction);
 
-                        setLastObservedStateAtLevel(lastLoD, _currentNode);
-                    }
+                    setLastObservedStateAtLevel(lastLoD, _currentNode);
+
                 }
                 else
                 {
