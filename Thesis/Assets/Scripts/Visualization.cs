@@ -50,22 +50,24 @@ public class Visualization : MonoBehaviour
 
     }
 
-    public IEnumerator interact(Action a, System.Action<bool> result)
+    public IEnumerator interact(List<Action> actions, System.Action<bool> result)
     {
-        displayText.text = "The Simulator is requesting the following Action: " + a.ShortToString();
-        print("INTERACTION");
-
-        Time.timeScale = 0.5f;
-        chooseOnInteraction.SetActive(true);
-
-        yield return new WaitForSeconds(interactionWaitTime);
-
-        if (chooseOnInteraction.activeSelf == true)
+        foreach (Action a in actions)
         {
-            Time.timeScale = 1.0f;
-            chooseOnInteraction.SetActive(false);
-        }
+            displayText.text = "The Simulator is requesting the following Action: " + a.ShortToString();
+            print("INTERACTION");
 
+            Time.timeScale = 0.5f;
+            chooseOnInteraction.SetActive(true);
+
+            yield return new WaitForSeconds(interactionWaitTime);
+
+            if (chooseOnInteraction.activeSelf == true)
+            {
+                Time.timeScale = 1.0f;
+                chooseOnInteraction.SetActive(false);
+            }
+        }
         // TODO: the logic to interact with the action should go here
 
         float outcome = Random.Range(0.0f, 1.0f);
@@ -83,93 +85,95 @@ public class Visualization : MonoBehaviour
         }
     }
 
-    public IEnumerator visualize(Action a, System.Action<bool> result)
+    public IEnumerator visualize(List<Action> actions, System.Action<bool> result)
     {
-        displayText.text = "The Simulator is requesting the following Action: " + a.ShortToString();
-
-        yield return new WaitForSeconds(visualizationWaitTime);
-
-        print(a.Name);
-
-        // TODO: the logic to visualize the action should go here
-        //
-        switch (a.Name)
+        foreach (Action a in actions)
         {
+            displayText.text = "The Simulator is requesting the following Action: " + a.ShortToString();
 
-            case "MOVE":
-                //GameObject character = null;
-                GameObject destination = null;
+            yield return new WaitForSeconds(visualizationWaitTime);
 
-                foreach (IRelation post in a.PostConditions)
-                {
-                    string postName = post.Predicate.Name;
-                    BinaryRelation rel = post as BinaryRelation;
-                    if (postName == "AT" && post.Value == RelationValue.TRUE)
+            print(a.Name);
+
+            // TODO: the logic to visualize the action should go here
+            //
+            switch (a.Name)
+            {
+
+                case "MOVE":
+                    //GameObject character = null;
+                    GameObject destination = null;
+
+                    foreach (IRelation post in a.PostConditions)
                     {
-                        for(int i = 0; i < waypoints.transform.childCount; i++)
+                        string postName = post.Predicate.Name;
+                        BinaryRelation rel = post as BinaryRelation;
+                        if (postName == "AT" && post.Value == RelationValue.TRUE)
                         {
-                            if (waypoints.transform.GetChild(i).name == rel.Destination.Name)
+                            for (int i = 0; i < waypoints.transform.childCount; i++)
                             {
-                                destination = waypoints.transform.GetChild(i).gameObject;
-                                destination.GetComponent<Renderer>().material.color = Color.yellow;
+                                if (waypoints.transform.GetChild(i).name == rel.Destination.Name)
+                                {
+                                    destination = waypoints.transform.GetChild(i).gameObject;
+                                    destination.GetComponent<Renderer>().material.color = Color.yellow;
+                                }
+                                else
+                                {
+                                    waypoints.transform.GetChild(i).gameObject.GetComponent<Renderer>().material.color = Color.grey;
+                                }
                             }
-                            else
-                            {
-                                waypoints.transform.GetChild(i).gameObject.GetComponent<Renderer>().material.color = Color.grey;
-                            }
+
+                            //destination = GameObject.Find(rel.Destination.Name);
+                            UnityEngine.AI.NavMeshAgent agent = rover.GetComponent<UnityEngine.AI.NavMeshAgent>();
+                            agent.destination = destination.transform.position;
+
+                            //For a more general version
+                            //instead of passing the rover game object
+                            //look for the source of the "AT" predicate in the scene
+                            //
+                            //character = GameObject.Find(rel.Source.Name);
+                            //destination = GameObject.Find(rel.Destination.Name);
+                            //UnityEngine.AI.NavMeshAgent agent = character.GetComponent<UnityEngine.AI.NavMeshAgent>();
+                            //agent.destination = destination.transform.position;
+                            //
                         }
-
-                        //destination = GameObject.Find(rel.Destination.Name);
-                        UnityEngine.AI.NavMeshAgent agent = rover.GetComponent<UnityEngine.AI.NavMeshAgent>();
-                        agent.destination = destination.transform.position;
-
-                        //For a more general version
-                        //instead of passing the rover game object
-                        //look for the source of the "AT" predicate in the scene
-                        //
-                        //character = GameObject.Find(rel.Source.Name);
-                        //destination = GameObject.Find(rel.Destination.Name);
-                        //UnityEngine.AI.NavMeshAgent agent = character.GetComponent<UnityEngine.AI.NavMeshAgent>();
-                        //agent.destination = destination.transform.position;
-                        //
                     }
-                }
 
-                break;
+                    break;
 
-            case "TAKE_SAMPLE":
+                case "TAKE_SAMPLE":
 
-                if (takeSample.activeSelf == false)
-                    takeSample.SetActive(true);
-                else if (dropSample.activeSelf == true)
-                    dropSample.SetActive(false);
+                    if (takeSample.activeSelf == false)
+                        takeSample.SetActive(true);
+                    else if (dropSample.activeSelf == true)
+                        dropSample.SetActive(false);
 
-                break;
+                    break;
 
-            case "DROP_SAMPLE":
+                case "DROP_SAMPLE":
 
-                if (dropSample.activeSelf == false)
-                    dropSample.SetActive(true);
-                else if (takeSample.activeSelf == true)
-                    takeSample.SetActive(false);
+                    if (dropSample.activeSelf == false)
+                        dropSample.SetActive(true);
+                    else if (takeSample.activeSelf == true)
+                        takeSample.SetActive(false);
 
-                break;
+                    break;
 
-            case "TAKE_IMAGE":
-                
-                TakeImage ti = new TakeImage();
-                ti.CaptureScreenshot(renderTexture);
+                case "TAKE_IMAGE":
 
-                break;
+                    TakeImage ti = new TakeImage();
+                    ti.CaptureScreenshot(renderTexture);
 
-            default:
-                break;
+                    break;
 
+                default:
+                    break;
+
+            }
         }
-
         //INTERACTIVE PART
         //
-           
+
         //if(a.Name == "TAKE_IMAGE")
         //{
         //    Time.timeScale = 0.3f;
@@ -206,7 +210,7 @@ public class Visualization : MonoBehaviour
 
     public bool MakeChoice(string s)
     {
-        if(s == "yes")
+        if (s == "yes")
         {
             return true;
         }
@@ -215,5 +219,5 @@ public class Visualization : MonoBehaviour
             return false;
         }
     }
-    
+
 }

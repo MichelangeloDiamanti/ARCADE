@@ -54,10 +54,15 @@ public class Utils
         UnaryPredicate isEmpty = new UnaryPredicate(rover, "IS_EMPTY", "is empty");
         domain.addPredicate(isEmpty);
 
+        Entity curiosity = new Entity(rover, "ROVER");
+
+        //              IDLE ACTION
+        Action actionIdle = new Action(new HashSet<IRelation>(), "IDLE", 
+            new HashSet<ActionParameter>() { new ActionParameter(curiosity, ActionParameterRole.ACTIVE) }, new HashSet<IRelation>());
+        domain.addAction(actionIdle);
 
         //              MOVE ACTION
         // Parameters
-        Entity curiosity = new Entity(rover, "ROVER");
         Entity fromWayPoint = new Entity(wayPoint, "WAYPOINT1");
         Entity toWayPoint = new Entity(wayPoint, "WAYPOINT2");
 

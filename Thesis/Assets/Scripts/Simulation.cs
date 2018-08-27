@@ -310,47 +310,51 @@ public class Simulation : MonoBehaviour
             }
 
             string chosenCombination = transform.parent.gameObject.name + "\n";
-            foreach(Action a in parallelRandomActions)
+            foreach (Action a in parallelRandomActions)
                 chosenCombination += a.ShortToString() + ",";
             Debug.Log(chosenCombination);
 
             // TODO: now we have many actions returned, we must apply all of them at once since, each one of them
             // involves a different active actor, so they can be displayed in parallel
 
-            foreach (Action randomAction in parallelRandomActions)
+
+            // Debug.Log("The Simulator is requesting the following Action: " + randomAction.ShortToString());
+
+            bool simulationInteractive = getSimulationBoundaryAtLevel(lastLoD).interactive;
+            if (simulationInteractive)
             {
-                // Debug.Log("The Simulator is requesting the following Action: " + randomAction.ShortToString());
+                // Debug.Log("Player is interacting");
 
-                bool simulationInteractive = getSimulationBoundaryAtLevel(lastLoD).interactive;
-                if (simulationInteractive)
+                bool result = false;
+                yield return StartCoroutine(visualizer.interact(parallelRandomActions, value => result = value));
+                if (result)
                 {
-                    // Debug.Log("Player is interacting");
-
-                    bool result = false;
-                    yield return StartCoroutine(visualizer.interact(randomAction, value => result = value));
-                    if (result)
+                    // The action has been allowed, go next
+                    // Debug.Log("Interactive Action Allowed");
+                    foreach (Action randomAction in parallelRandomActions)
                     {
-                        // The action has been allowed, go next
-                        // Debug.Log("Interactive Action Allowed");
                         WorldState resultingState = _currentNode.Data.applyAction(randomAction);
                         _currentNode = _currentNode.AddChild(resultingState, randomAction);
 
                         setLastObservedStateAtLevel(lastLoD, _currentNode);
                     }
-                    else
-                    {
-                        // The action has been denied, roll back
-                        // Debug.Log("Interactive Action Denied");
-                    }
                 }
                 else
                 {
-                    // Debug.Log("Player is visualizing");
+                    // The action has been denied, roll back
+                    // Debug.Log("Interactive Action Denied");
+                }
+            }
+            else
+            {
+                // Debug.Log("Player is visualizing");
 
-                    bool result = false;
-                    yield return StartCoroutine(visualizer.visualize(randomAction, value => result = value));
-                    lastActionPerformed = randomAction;
-                    if (result)
+                bool result = false;
+                yield return StartCoroutine(visualizer.visualize(parallelRandomActions, value => result = value));
+                lastActionPerformed = parallelRandomActions.Last();
+                if (result)
+                {
+                    foreach (Action randomAction in parallelRandomActions)
                     {
                         // The action has been visualized, go next
                         // Debug.Log("Non Interactive Action Visualized");
@@ -359,13 +363,14 @@ public class Simulation : MonoBehaviour
 
                         setLastObservedStateAtLevel(lastLoD, _currentNode);
                     }
-                    else
-                    {
-                        // The were some problems with the visualization, roll back
-                        // Debug.Log("Non Interactive Action NOT Visualized");
-                    }
+                }
+                else
+                {
+                    // The were some problems with the visualization, roll back
+                    // Debug.Log("Non Interactive Action NOT Visualized");
                 }
             }
+
             yield return null;
         }
     }
