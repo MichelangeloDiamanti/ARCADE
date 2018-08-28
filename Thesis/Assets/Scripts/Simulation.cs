@@ -175,6 +175,13 @@ public class Simulation : MonoBehaviour
         int lastLoD = _currentLevelOfDetail;
         while (true)
         {
+            string activeEntities = "";
+            foreach (Entity e in _currentNode.Data.getActiveEntities())
+            {
+                activeEntities += e.Name + " ";
+            }
+            Debug.Log("Active Entities: " + activeEntities);
+
             // switch the simulation the change of value is controlled
             // by the LevelOfDetailSwitcher script attached to each boundary
             if (_currentLevelOfDetail != lastLoD)
@@ -252,24 +259,75 @@ public class Simulation : MonoBehaviour
                         // Debug.Log("BFS time: " + elapsedMs + " ms");
                         // Debug.Log("BFS explored nodes: " + Utils.bfsExploredNodes);
 
-                        s += "Abstract: " + _currentNode.ParentAction.ShortToString() + "\n";
-
-                        s += "Detailed:\n";
+                        s += "Abstract: " + _currentNode.ParentAction.shortToString() + "\n";
 
                         // solution is a leaf node we need to apply the actions in the reversed order (from root to leaf)
-                        List<Action> sortedActions = new List<Action>();
+                        Queue<Action> sortedActions = new Queue<Action>();
                         while (solution.IsRoot == false)
                         {
-                            sortedActions.Add(solution.ParentAction);
+                            sortedActions.Enqueue(solution.ParentAction);
                             solution = solution.Parent;
                         }
-                        sortedActions.Reverse();
-                        foreach (Action a in sortedActions)
+
+                        // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                        // modify here
+
+                        s += "Detailed All Sequetial:\n";
+
+                        foreach (Action a in sortedActions.Reverse())
                         {
-                            s += a.ShortToString() + "\n";
+                            s += a.shortToString() + "\n";
                             lastNodeAtCurrentLevel = lastNodeAtCurrentLevel.AddChild(lastNodeAtCurrentLevel.Data.applyAction(a), a);
                         }
+
+                        // group actions depending on the entity which is performing it
+                        Dictionary<ActionParameter, Queue<Action>> actionsForEachActor = Utils.explodeActionQueue(sortedActions);
+                        HashSet<Entity> activeActors = _currentNode.Data.getActiveEntities();
+
+                        bool weStillHaveActionsToAssign = true;
+                        List<List<Action>> sequentialActions = new List<List<Action>>();
+                        while (weStillHaveActionsToAssign)
+                        {
+                            weStillHaveActionsToAssign = false;
+                            List<Action> parallelActions = new List<Action>();
+
+                            foreach (Entity e in activeActors)
+                            {
+                                Queue<Action> actorActions;
+                                ActionParameter activeActor = new ActionParameter(e, ActionParameterRole.ACTIVE);
+
+                                bool actorIsDefined = actionsForEachActor.TryGetValue(activeActor, out actorActions);
+                                if (actorIsDefined && actorActions.Count > 0)
+                                {
+                                    parallelActions.Add(actorActions.Dequeue());
+                                    weStillHaveActionsToAssign = true;
+                                }
+                                else
+                                {
+                                    Action actionIdle = new Action(new HashSet<IRelation>(), "IDLE",
+                                        new HashSet<ActionParameter>() { activeActor }, new HashSet<IRelation>());
+                                    parallelActions.Add(actionIdle);
+                                }
+                            }
+
+                            if (weStillHaveActionsToAssign)
+                                sequentialActions.Add(parallelActions);
+
+                        }
+
+                        s += "Detailed Sequetial Lists of Parallel Actions:\n";
+                        int i = 0;
+                        foreach (List<Action> listOfParallelActions in sequentialActions)
+                        {
+                            s += "Turn [" + i + "]:\n";
+                            i++;
+                            foreach (Action a in listOfParallelActions)
+                            {
+                                s += a.shortToString() + "\n";
+                            }
+                        }
                         s += "\n";
+
                     }
 
                     writer.WriteLine(s);
@@ -319,18 +377,17 @@ public class Simulation : MonoBehaviour
             foreach (Action randomAction in parallelRandomActions)
             {
                 randomSuperActionPreconditions.UnionWith(randomAction.PreConditions);
-                randomSuperActionName += randomAction.ShortToString() + ", ";
+                randomSuperActionName += randomAction.Name;
                 randomSuperActionParameters.UnionWith(randomAction.Parameters);
                 randomSuperActionPostconditions.UnionWith(randomAction.PostConditions);
             }
-            randomSuperActionName.Substring(0, randomSuperActionName.Length - 2);
 
             randomSuperAction = new Action(randomSuperActionPreconditions, randomSuperActionName,
                 randomSuperActionParameters, randomSuperActionPostconditions);
 
             string chosenCombination = transform.parent.gameObject.name + "\n";
             foreach (Action a in parallelRandomActions)
-                chosenCombination += a.ShortToString() + ", ";
+                chosenCombination += a.shortToString() + ", ";
             chosenCombination = chosenCombination.Substring(0, chosenCombination.Length - 2);
             Debug.Log(chosenCombination);
 
@@ -388,6 +445,8 @@ public class Simulation : MonoBehaviour
         }
     }
 
+
+
     private List<Action> getRandomPossibleAction(TreeNode<WorldState> node)
     {
         List<Action> possibleActions = node.Data.getPossibleActions();
@@ -397,25 +456,7 @@ public class Simulation : MonoBehaviour
 
         // we want to get one possible action for each different entity that can perform an action
         // so we need a way to group actions depending on the entity which is performing it
-        Dictionary<ActionParameter, List<Action>> actionsForEachActor = new Dictionary<ActionParameter, List<Action>>();
-
-        foreach (Action a in possibleActions)
-        {
-            foreach (ActionParameter ap in a.Parameters)
-            {
-                if (ap.Role == ActionParameterRole.ACTIVE)
-                {
-
-                    List<Action> actions;
-                    if (!actionsForEachActor.TryGetValue(ap, out actions))
-                    {
-                        actions = new List<Action>();
-                        actionsForEachActor.Add(ap, actions);
-                    }
-                    actions.Add(a);
-                }
-            }
-        }
+        Dictionary<ActionParameter, List<Action>> actionsForEachActor = Utils.explodeActionList(possibleActions);
 
         // now that we have a list of possible actions for each active actor we want to build
         // a n-tuple containing one for each of them. The tuple must be composed by actions

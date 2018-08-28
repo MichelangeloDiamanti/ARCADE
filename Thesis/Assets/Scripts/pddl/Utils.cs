@@ -610,4 +610,54 @@ public class Utils
                 equalRelations++;
         return (double)equalRelations / (double)a.Relations.Count;
     }
+
+    public static Dictionary<ActionParameter, List<Action>> explodeActionList(List<Action> actions)
+    {
+        Dictionary<ActionParameter, List<Action>> actionsForEachActor = new Dictionary<ActionParameter, List<Action>>();
+
+        foreach (Action a in actions)
+        {
+            foreach (ActionParameter ap in a.Parameters)
+            {
+                if (ap.Role == ActionParameterRole.ACTIVE)
+                {
+
+                    List<Action> actorActions;
+                    if (!actionsForEachActor.TryGetValue(ap, out actorActions))
+                    {
+                        actorActions = new List<Action>();
+                        actionsForEachActor.Add(ap, actorActions);
+                    }
+                    actorActions.Add(a);
+                }
+            }
+        }
+
+        return actionsForEachActor;
+    }
+
+    public static Dictionary<ActionParameter, Queue<Action>> explodeActionQueue(Queue<Action> actions)
+    {
+        Dictionary<ActionParameter, Queue<Action>> actionsForEachActor = new Dictionary<ActionParameter, Queue<Action>>();
+
+        foreach (Action a in actions)
+        {
+            foreach (ActionParameter ap in a.Parameters)
+            {
+                if (ap.Role == ActionParameterRole.ACTIVE)
+                {
+
+                    Queue<Action> actorActions;
+                    if (!actionsForEachActor.TryGetValue(ap, out actorActions))
+                    {
+                        actorActions = new Queue<Action>();
+                        actionsForEachActor.Add(ap, actorActions);
+                    }
+                    actorActions.Enqueue(a);
+                }
+            }
+        }
+
+        return actionsForEachActor;
+    }
 }

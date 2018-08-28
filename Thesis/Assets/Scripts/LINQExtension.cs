@@ -33,6 +33,17 @@ public static class LINQExtension
         return result;
     }
 
+    // public static IEnumerable<string> shortToString(this IEnumerable<Action> actions)
+    // {
+    //     List<string> strings = new List<string>();
+    //     foreach(Action a in actions)
+    //     {
+    //         strings.Add(a.shortToString());
+    //     }
+
+    //     return result;
+    // }
+
     public static IEnumerable<IEnumerable<T>> Permute<T>(this IEnumerable<T> sequence)
     {
         if (sequence == null)

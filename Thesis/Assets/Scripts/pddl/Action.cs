@@ -254,12 +254,12 @@ namespace ru.cadia.pddlFramework
             return true;
         }
 
-        public string ShortToString()
+        public string shortToString()
         {
             string value = _name + "(";
             foreach (ActionParameter item in _parameters)
             {
-                value += item.Name + " ,";
+                value += item.Name + ", ";
             }
             value = value.Substring(0, value.Length - 2);            
             value += ")";

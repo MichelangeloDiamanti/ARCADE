@@ -26,8 +26,8 @@ public class Visualization : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        interactionWaitTime = 3.0f;
-        visualizationWaitTime = 3.0f;
+        interactionWaitTime = 1.0f;
+        visualizationWaitTime = 1.0f;
 
         interactionSuccessProbability = 0.7f;
         visualizationSuccessProbability = 0.8f;
@@ -54,7 +54,7 @@ public class Visualization : MonoBehaviour
     {
         foreach (Action a in actions)
         {
-            displayText.text = "The Simulator is requesting the following Action: " + a.ShortToString();
+            displayText.text = "The Simulator is requesting the following Action: " + a.shortToString();
             print("INTERACTION");
 
             Time.timeScale = 0.5f;
@@ -89,7 +89,7 @@ public class Visualization : MonoBehaviour
     {
         foreach (Action a in actions)
         {
-            displayText.text = "The Simulator is requesting the following Action: " + a.ShortToString();
+            displayText.text = "The Simulator is requesting the following Action: " + a.shortToString();
 
             yield return new WaitForSeconds(visualizationWaitTime);
 
