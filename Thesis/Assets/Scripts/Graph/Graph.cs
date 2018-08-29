@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using ru.cadia.pddlFramework;
+
+[System.Serializable]
 public class Graph
 {
-    public HashSet<WorldState> Nodes;
+    //On each worldstate I added a int that represent a level
+    public Dictionary<WorldState, int> Nodes;
     //To represent a graph I'm using a adjacency list
     public Dictionary<WorldState, HashSet<WorldState>> Edges;
     public Dictionary<KeyValuePair<WorldState, WorldState>, Action> Actions;
@@ -12,34 +15,34 @@ public class Graph
 
     public Graph()
     {
-        this.Nodes = new HashSet<WorldState>();
+        this.Nodes = new Dictionary<WorldState, int>();
         this.Edges = new Dictionary<WorldState, HashSet<WorldState>>();
         this.Actions = new Dictionary<KeyValuePair<WorldState, WorldState>, Action>();
         this._startingState = null;
     }
 
-    public void AddNode(WorldState ws)
+    public void AddNode(WorldState ws, int level)
     {
-        if (!Nodes.Contains(ws))
+        if (!Nodes.ContainsKey(ws))
         {
             if (Nodes.Count == 0)
             {
                 _startingState = ws.Clone();
             }
-            Nodes.Add(ws);
+            Nodes.Add(ws, level);
             Edges.Add(ws, new HashSet<WorldState>());
         }
     }
 
-    public void addEdge(WorldState source, WorldState destination, Action ac)
+    public void addEdge(WorldState source, WorldState destination, Action ac, int destinationLevel)
     {
-        if (!Nodes.Contains(source))
+        if (!Nodes.ContainsKey(source))
         {
-            AddNode(source);
+            AddNode(source, destinationLevel - 1);
         }
-        if (!Nodes.Contains(destination))
+        if (!Nodes.ContainsKey(destination))
         {
-            AddNode(destination);
+            AddNode(destination, destinationLevel);
         }
         HashSet<WorldState> app;
         if (Edges.TryGetValue(source, out app))
@@ -106,6 +109,45 @@ public class Graph
 
     public double EvaluateNode(Graph graph, WorldState worldState)
     {
+        int level = graph.FindWorldStateLevel(worldState);
+        //Find the level of the worldstate in the graph
+        if (level > 0)
+        {
+            //Check if there is a level + 2
+            if (graph.Nodes.ContainsValue(level + 2))
+            {
+                //Find states of level + 1 connected to the worldstate that we are evaluating
+                HashSet<WorldState> connectedNodes;
+                if (graph.Edges.TryGetValue(worldState, out connectedNodes))
+                {
+                    foreach (WorldState ws in connectedNodes)
+                    {
+                        if (graph.FindWorldStateLevel(ws) != level + 1)
+                        {
+                            connectedNodes.Remove(ws);
+                        }
+                    }
+
+                    foreach (WorldState ws in connectedNodes)
+                    {
+                        HashSet<WorldState> connectedNodesLevel2;
+                        if (graph.Edges.TryGetValue(ws, out connectedNodesLevel2))
+                        { 
+
+                        }
+                    }
+                }
+            }
+        }
+
+        return 0;
+    }
+
+    public int FindWorldStateLevel(WorldState ws)
+    {
+        int level = 0;
+        if (Nodes.TryGetValue(ws, out level))
+            return level;
         return 0;
     }
 

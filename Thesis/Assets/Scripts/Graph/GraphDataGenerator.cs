@@ -11,6 +11,7 @@ public class GraphDataGenerator
     private HashSet<WorldState> _finalStates;
     private HashSet<WorldStateComparated> _worldStateComparated;
     private System.Diagnostics.Stopwatch sw;
+    private int numberOfLevels;
 
     public GraphDataGenerator(WorldState ws)
     {
@@ -24,12 +25,13 @@ public class GraphDataGenerator
 
     public Graph GenerateData(int level)
     {
-        _graph.AddNode(_startingState);
+        numberOfLevels = level;
+        _graph.AddNode(_startingState, 1);
         Debug.Log("Starting Generation");
         sw.Start();
-        GenerateDataRoutine(_startingState, level);
+        GenerateDataRoutine(_startingState, 2);
         sw.Stop();
-        Debug.Log("Data Generation time:" + (sw.ElapsedMilliseconds/1000f));
+        Debug.Log("Data Generation time:" + (sw.ElapsedMilliseconds / 1000f));
         return _graph;
     }
     private void GenerateDataRoutine(WorldState currentState, int level)
@@ -38,23 +40,22 @@ public class GraphDataGenerator
         foreach (Action item in possibleActions)
         {
             WorldState ws = currentState.applyAction(item);
+            _graph.addEdge(currentState, ws, item, level);
             if (!_visitedStates.Contains(ws))
             {
                 _visitedStates.Add(ws.Clone());
-                _graph.addEdge(currentState, ws, item);
-                if (level - 1 <= 0)
+                if (level + 1 > numberOfLevels)
                 {
                     _finalStates.Add(ws.Clone());
                 }
                 else
                 {
-                    GenerateDataRoutine(ws, level - 1);
+                    GenerateDataRoutine(ws, level + 1);
                 }
             }
             else
             {
-                _graph.addEdge(currentState, ws, item);
-                if (level - 1 <= 0)
+                if (level + 1 > numberOfLevels)
                 {
                     _finalStates.Add(ws.Clone());
                 }

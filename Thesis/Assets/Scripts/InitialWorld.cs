@@ -15,6 +15,7 @@ public class InitialWorld : MonoBehaviour
     public bool liteGraph = true;
     public bool ComparationBetweenStates = false;
     public bool GraphGeneration = false;
+    public bool SearchOnGraph = false;
     private Thread myThread;
     public static string path;
     private System.Diagnostics.Stopwatch sw;
@@ -24,7 +25,7 @@ public class InitialWorld : MonoBehaviour
     {
         sw = new System.Diagnostics.Stopwatch();
         Domain domainFullDetail = Utils.roverWorldDomainThirdLevel();
-        Debug.Log(domainFullDetail.Actions.Count);
+        // Debug.Log(domainFullDetail.Actions.Count);
         WorldState worldStateFullDetail = Utils.roverWorldStateThirdLevel(domainFullDetail);
         path = Application.persistentDataPath;
 
@@ -111,6 +112,8 @@ public class InitialWorld : MonoBehaviour
         sw.Start();
         GraphDataGenerator gdg = new GraphDataGenerator(currentState);
         Graph g = gdg.GenerateData(numberOfLevels);
+        FileWriter.SerializeObject<Graph>(g, "ciao");
+        // g.printNodeLevels();
         if (ComparationBetweenStates)
         {
             System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
@@ -123,6 +126,10 @@ public class InitialWorld : MonoBehaviour
             new WorldStateComparator(wsc).Compare();
             sw.Stop();
             Debug.Log("CompareWorldStateComparated time:" + (sw.ElapsedMilliseconds / 1000f));
+        }
+        if (SearchOnGraph)
+        {
+
         }
         if (GraphGeneration)
         {

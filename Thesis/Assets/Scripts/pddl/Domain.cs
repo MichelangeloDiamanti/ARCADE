@@ -6,6 +6,7 @@ namespace ru.cadia.pddlFramework
 {
     /// <summary>
     /// </summary>
+    [System.Serializable]
     public class Domain : System.IEquatable<Domain>
     {
         private HashSet<EntityType> _entityTypes;

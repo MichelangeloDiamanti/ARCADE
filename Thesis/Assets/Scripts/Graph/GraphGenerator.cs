@@ -88,7 +88,7 @@ public class GraphGenerator
         graphml += "<key attr.name=\"description\" attr.type=\"string\" for=\"edge\" id=\"d8\"/>\n";
         graphml += "<key for=\"edge\" id=\"d9\" yfiles.type=\"edgegraphics\"/>\n";
         graphml += " <graph id=\"G\" edgedefault=\"directed\">\n";
-        foreach (WorldState item in _graph.Nodes)
+        foreach (WorldState item in _graph.Nodes.Keys)
         {
             string nodeName = "n" + id;
             _nodes.Add(item, nodeName);

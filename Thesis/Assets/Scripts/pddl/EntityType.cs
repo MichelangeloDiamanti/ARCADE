@@ -5,6 +5,7 @@ namespace ru.cadia.pddlFramework
 {
     /// <summary>
     /// </summary>
+    [System.Serializable]
     public class EntityType : System.IEquatable<EntityType>
     {
 
