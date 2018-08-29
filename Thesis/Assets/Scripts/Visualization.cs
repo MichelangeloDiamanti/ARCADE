@@ -50,7 +50,7 @@ public class Visualization : MonoBehaviour
 
     }
 
-    public IEnumerator interact(List<Action> actions, System.Action<bool> result)
+    public IEnumerator interact(HashSet<Action> actions, System.Action<bool> result)
     {
         foreach (Action a in actions)
         {
@@ -85,7 +85,7 @@ public class Visualization : MonoBehaviour
         }
     }
 
-    public IEnumerator visualize(List<Action> actions, System.Action<bool> result)
+    public IEnumerator visualize(HashSet<Action> actions, System.Action<bool> result)
     {
         foreach (Action a in actions)
         {

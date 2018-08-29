@@ -291,8 +291,8 @@ public class WorldStateTest
         Entity entityRover = new Entity(entityTypeRover, "ROVER");
         worldState.addEntity(entityRover);
 
-        Entity wayPointAlpha = new Entity(new EntityType("WAYPOINT"), "ALPHA");
-        Entity wayPointBravo = new Entity(new EntityType("WAYPOINT"), "BRAVO");
+        Entity wayPointAlpha = new Entity(new EntityType("WAYPOINT"), "WAYPOINT1");
+        Entity wayPointBravo = new Entity(new EntityType("WAYPOINT"), "WAYPOINT2");
         worldState.addEntity(wayPointAlpha);
         worldState.addEntity(wayPointBravo);
 
@@ -429,8 +429,8 @@ public class WorldStateTest
         worldState.addEntity(entityWheels);
 
 
-        Entity wayPointAlpha = new Entity(new EntityType("WAYPOINT"), "ALPHA");
-        Entity wayPointBravo = new Entity(new EntityType("WAYPOINT"), "BRAVO");
+        Entity wayPointAlpha = new Entity(new EntityType("WAYPOINT"), "WAYPOINT1");
+        Entity wayPointBravo = new Entity(new EntityType("WAYPOINT"), "WAYPOINT2");
 
         worldState.addEntity(wayPointAlpha);
         worldState.addEntity(wayPointBravo);
@@ -610,7 +610,7 @@ public class WorldStateTest
         Entity entityWheels = new Entity(entityTypeWheel, "WHEELS");
         worldState.addEntity(entityWheels);
 
-        Entity wayPointAlpha = new Entity(new EntityType("WAYPOINT"), "ALPHA");
+        Entity wayPointAlpha = new Entity(new EntityType("WAYPOINT"), "WAYPOINT");
         worldState.addEntity(wayPointAlpha);
 
         Entity entitySample = new Entity(new EntityType("SAMPLE"), "SAMPLE");
@@ -661,7 +661,7 @@ public class WorldStateTest
         Entity entityWheels = new Entity(entityTypeWheel, "WHEELS");
         worldState.addEntity(entityWheels);
 
-        Entity wayPointAlpha = new Entity(new EntityType("WAYPOINT"), "ALPHA");
+        Entity wayPointAlpha = new Entity(new EntityType("WAYPOINT"), "WAYPOINT");
         worldState.addEntity(wayPointAlpha);
 
         Entity entityObjective = new Entity(new EntityType("OBJECTIVE"), "OBJECTIVE");
@@ -710,7 +710,7 @@ public class WorldStateTest
         Entity entityWheels = new Entity(entityTypeWheel, "WHEELS");
         worldState.addEntity(entityWheels);
 
-        Entity wayPointAlpha = new Entity(new EntityType("WAYPOINT"), "ALPHA");
+        Entity wayPointAlpha = new Entity(new EntityType("WAYPOINT"), "WAYPOINT");
         worldState.addEntity(wayPointAlpha);
 
         Entity entitySample = new Entity(new EntityType("SAMPLE"), "SAMPLE");

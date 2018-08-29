@@ -57,7 +57,7 @@ public class Utils
         Entity curiosity = new Entity(rover, "ROVER");
 
         //              IDLE ACTION
-        Action actionIdle = new Action(new HashSet<IRelation>(), "IDLE", 
+        Action actionIdle = new Action(new HashSet<IRelation>(), "IDLE",
             new HashSet<ActionParameter>() { new ActionParameter(curiosity, ActionParameterRole.ACTIVE) }, new HashSet<IRelation>());
         domain.addAction(actionIdle);
 
@@ -582,7 +582,7 @@ public class Utils
             explored.Add(node.Data);
             foreach (Action a in node.Data.getPossibleActions())
             {
-                TreeNode<WorldState> child = node.AddChild(node.Data.applyAction(a), a);
+                TreeNode<WorldState> child = node.AddChild(node.Data.applyAction(a), new HashSet<Action>() { a });
                 if (explored.Contains(child.Data) == false && frontier.Contains(child) == false)
                 {
 

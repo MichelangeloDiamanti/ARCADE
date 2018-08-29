@@ -251,6 +251,9 @@ namespace ru.cadia.pddlFramework
             if (_name.Equals(other.Name) == false)
                 return false;
 
+            if(_parameters.SetEquals(other.Parameters) == false)
+                return false;
+
             return true;
         }
 

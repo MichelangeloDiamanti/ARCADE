@@ -45,7 +45,8 @@ public class GameTreeGenerator
             {
                 // Debug.Log(item.ToString() + "\nDIO\n" + ws.ToString());
             }
-            currentNode.AddChild(ws, item);
+            // TODO: modify here for parallel actions
+            currentNode.AddChild(ws, new HashSet<Action>() { item });
         }
         if (level - 1 > 0)
         {

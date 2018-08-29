@@ -116,42 +116,65 @@ namespace ru.cadia.pddlFramework
         {
             HashSet<Entity> activeEntities = new HashSet<Entity>();
 
-        // Stopwatch stopWatch = new Stopwatch();
-        // stopWatch.Start();
+            // Stopwatch stopWatch = new Stopwatch();
+            // stopWatch.Start();
 
-            activeEntities.UnionWith( _entities.Where(e => 
-                _domain.Actions.SelectMany(ap => ap.Parameters)
-                .Where(active => active.Role == ActionParameterRole.ACTIVE)
-                .Select(et => et.Type).Contains(e.Type)
+            activeEntities.UnionWith(_entities.Where(e =>
+               _domain.Actions.SelectMany(ap => ap.Parameters)
+               .Where(active => active.Role == ActionParameterRole.ACTIVE)
+               .Select(et => et.Type).Contains(e.Type)
             ));
 
-        // stopWatch.Stop();
-        // UnityEngine.Debug.Log("RunTime " + stopWatch.ElapsedTicks);
+            // stopWatch.Stop();
+            // UnityEngine.Debug.Log("RunTime " + stopWatch.ElapsedTicks);
 
             return activeEntities;
-        
-        // Stopwatch stopWatch = new Stopwatch();
-        // stopWatch.Start();
-        
-        //     foreach (Action a in _domain.Actions)
-        //     {
-        //         foreach (ActionParameter ap in a.Parameters)
-        //         {
-        //             // we get all the entities which are of the same type as the ones which are
-        //             // active in some action of the domain, we avoid getting twice the same
-        //             // entity type by checking if it already contained in the activeEntities
-        //             if (ap.Role == ActionParameterRole.ACTIVE &&
-        //                 activeEntities.Select(et => et.Type).Contains(ap.Type) == false)
-        //             {
-        //                 activeEntities.UnionWith(_entities.Where(e => e.Type.Equals(ap.Type)));
-        //             }
-        //         }
-        //     }
 
-        // stopWatch.Stop();
-        // UnityEngine.Debug.Log("RunTime " + stopWatch.ElapsedTicks);
+            // Stopwatch stopWatch = new Stopwatch();
+            // stopWatch.Start();
 
-        //     return activeEntities;
+            //     foreach (Action a in _domain.Actions)
+            //     {
+            //         foreach (ActionParameter ap in a.Parameters)
+            //         {
+            //             // we get all the entities which are of the same type as the ones which are
+            //             // active in some action of the domain, we avoid getting twice the same
+            //             // entity type by checking if it already contained in the activeEntities
+            //             if (ap.Role == ActionParameterRole.ACTIVE &&
+            //                 activeEntities.Select(et => et.Type).Contains(ap.Type) == false)
+            //             {
+            //                 activeEntities.UnionWith(_entities.Where(e => e.Type.Equals(ap.Type)));
+            //             }
+            //         }
+            //     }
+
+            // stopWatch.Stop();
+            // UnityEngine.Debug.Log("RunTime " + stopWatch.ElapsedTicks);
+
+            //     return activeEntities;
+        }
+
+        public WorldState applyParallelActions(HashSet<Action> actions)
+        {
+            // get one action which represents all the chosen ones
+            Action superAction;
+            HashSet<IRelation> superActionPreconditions = new HashSet<IRelation>();
+            string superActionName = "";
+            HashSet<ActionParameter> superActionParameters = new HashSet<ActionParameter>();
+            HashSet<IRelation> superActionPostconditions = new HashSet<IRelation>();
+
+            foreach (Action randomAction in actions)
+            {
+                superActionPreconditions.UnionWith(randomAction.PreConditions);
+                superActionName += randomAction.Name;
+                superActionParameters.UnionWith(randomAction.Parameters);
+                superActionPostconditions.UnionWith(randomAction.PostConditions);
+            }
+
+            superAction = new Action(superActionPreconditions, superActionName,
+                superActionParameters, superActionPostconditions);
+        
+            return applyAction(superAction);
         }
 
         public WorldState applyAction(Action action)
