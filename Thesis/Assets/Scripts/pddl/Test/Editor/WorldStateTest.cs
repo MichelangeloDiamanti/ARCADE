@@ -5,150 +5,159 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using ru.cadia.pddlFramework;
 
-public class WorldStateTest {
+public class WorldStateTest
+{
 
-	[Test]
-	public void EntityCanOnlyBeOfExistingType() {
-		Domain domain = new Domain();
-		EntityType character = new EntityType("CHARACTER");
-		// domain.addEntityType(character);
+    [Test]
+    public void EntityCanOnlyBeOfExistingType()
+    {
+        Domain domain = new Domain();
+        EntityType character = new EntityType("CHARACTER");
+        // domain.addEntityType(character);
 
-		WorldState worldState = new WorldState(domain);
-		Entity john = new Entity(character, "JOHN");
+        WorldState worldState = new WorldState(domain);
+        Entity john = new Entity(character, "JOHN");
 
 
-		Assert.That(()=> worldState.addEntity(john), Throws.ArgumentException);
-	}
+        Assert.That(() => worldState.addEntity(john), Throws.ArgumentException);
+    }
 
-	[Test]
-	public void EntityMustBeUnique() {
-		Domain domain = new Domain();
-		EntityType character = new EntityType("CHARACTER");
-		domain.addEntityType(character);
+    [Test]
+    public void EntityMustBeUnique()
+    {
+        Domain domain = new Domain();
+        EntityType character = new EntityType("CHARACTER");
+        domain.addEntityType(character);
 
-		WorldState worldState = new WorldState(domain);
-		Entity john = new Entity(character, "JOHN");
-		worldState.addEntity(john);
+        WorldState worldState = new WorldState(domain);
+        Entity john = new Entity(character, "JOHN");
+        worldState.addEntity(john);
 
-		Entity john2 = new Entity(character, "JOHN");		
-		Assert.That(()=> worldState.addEntity(john2), Throws.ArgumentException);
-	}
+        Entity john2 = new Entity(character, "JOHN");
+        Assert.That(() => worldState.addEntity(john2), Throws.ArgumentException);
+    }
 
-	[Test]
-	public void UnaryRelationSourceMustBeAnExistingEntity() {
-		Domain domain = new Domain();
-		EntityType character = new EntityType("CHARACTER");
-		domain.addEntityType(character);
+    [Test]
+    public void UnaryRelationSourceMustBeAnExistingEntity()
+    {
+        Domain domain = new Domain();
+        EntityType character = new EntityType("CHARACTER");
+        domain.addEntityType(character);
 
-		UnaryPredicate rich = new UnaryPredicate(character, "RICH");
-		domain.addPredicate(rich);
+        UnaryPredicate rich = new UnaryPredicate(character, "RICH");
+        domain.addPredicate(rich);
 
-		WorldState worldState = new WorldState(domain);
-		Entity john = new Entity(character, "JOHN");
-		// WorldState.addEntity(john);
+        WorldState worldState = new WorldState(domain);
+        Entity john = new Entity(character, "JOHN");
+        // WorldState.addEntity(john);
 
-		UnaryRelation johnIsRich = new UnaryRelation(john, rich, RelationValue.TRUE);
-		
-		Assert.That(()=> worldState.addRelation(johnIsRich), Throws.ArgumentException);
-	}
+        UnaryRelation johnIsRich = new UnaryRelation(john, rich, RelationValue.TRUE);
 
-	[Test]
-	public void UnaryRelationPredicateMustBeAnExistingPredicate() {
-		Domain domain = new Domain();
-		EntityType character = new EntityType("CHARACTER");
-		domain.addEntityType(character);
+        Assert.That(() => worldState.addRelation(johnIsRich), Throws.ArgumentException);
+    }
 
-		UnaryPredicate rich = new UnaryPredicate(character, "RICH");
-		// domain.addPredicate(rich);
+    [Test]
+    public void UnaryRelationPredicateMustBeAnExistingPredicate()
+    {
+        Domain domain = new Domain();
+        EntityType character = new EntityType("CHARACTER");
+        domain.addEntityType(character);
 
-		WorldState worldState = new WorldState(domain);
-		Entity john = new Entity(character, "JOHN");
-		worldState.addEntity(john);
+        UnaryPredicate rich = new UnaryPredicate(character, "RICH");
+        // domain.addPredicate(rich);
 
-		UnaryRelation johnIsRich = new UnaryRelation(john, rich, RelationValue.TRUE);
-		
-		Assert.That(()=> worldState.addRelation(johnIsRich), Throws.ArgumentException);
-	}
+        WorldState worldState = new WorldState(domain);
+        Entity john = new Entity(character, "JOHN");
+        worldState.addEntity(john);
 
-	[Test]
-	public void BinaryRelationSourceMustBeAnExistingEntity() {
-		Domain domain = new Domain();
-		EntityType character = new EntityType("CHARACTER");
-		domain.addEntityType(character);
+        UnaryRelation johnIsRich = new UnaryRelation(john, rich, RelationValue.TRUE);
 
-		EntityType location = new EntityType("LOCATION");
-		domain.addEntityType(location);
+        Assert.That(() => worldState.addRelation(johnIsRich), Throws.ArgumentException);
+    }
 
-		BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location);
-		domain.addPredicate(isAt);
+    [Test]
+    public void BinaryRelationSourceMustBeAnExistingEntity()
+    {
+        Domain domain = new Domain();
+        EntityType character = new EntityType("CHARACTER");
+        domain.addEntityType(character);
 
-		WorldState worldState = new WorldState(domain);
-		Entity john = new Entity(character, "JOHN");
-		// worldState.addEntity(john);
+        EntityType location = new EntityType("LOCATION");
+        domain.addEntityType(location);
 
-		Entity school = new Entity(location, "SCHOOL");
-		worldState.addEntity(school);
+        BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location);
+        domain.addPredicate(isAt);
 
-		BinaryRelation johnIsAtSchool = new BinaryRelation(john, isAt, school, RelationValue.TRUE);
-		
-		Assert.That(()=> worldState.addRelation(johnIsAtSchool), Throws.ArgumentException);
-	}
+        WorldState worldState = new WorldState(domain);
+        Entity john = new Entity(character, "JOHN");
+        // worldState.addEntity(john);
 
-	[Test]
-	public void BinaryRelationDestinationMustBeAnExistingEntity() {
-		Domain domain = new Domain();
-		EntityType character = new EntityType("CHARACTER");
-		domain.addEntityType(character);
+        Entity school = new Entity(location, "SCHOOL");
+        worldState.addEntity(school);
 
-		EntityType location = new EntityType("LOCATION");
-		domain.addEntityType(location);
+        BinaryRelation johnIsAtSchool = new BinaryRelation(john, isAt, school, RelationValue.TRUE);
 
-		BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location);
-		domain.addPredicate(isAt);
+        Assert.That(() => worldState.addRelation(johnIsAtSchool), Throws.ArgumentException);
+    }
 
-		WorldState worldState = new WorldState(domain);
-		Entity john = new Entity(character, "JOHN");
-		worldState.addEntity(john);
+    [Test]
+    public void BinaryRelationDestinationMustBeAnExistingEntity()
+    {
+        Domain domain = new Domain();
+        EntityType character = new EntityType("CHARACTER");
+        domain.addEntityType(character);
 
-		Entity school = new Entity(location, "SCHOOL");
-		// worldState.addEntity(school);
+        EntityType location = new EntityType("LOCATION");
+        domain.addEntityType(location);
 
-		BinaryRelation johnIsAtSchool = new BinaryRelation(john, isAt, school, RelationValue.TRUE);
-		
-		Assert.That(()=> worldState.addRelation(johnIsAtSchool), Throws.ArgumentException);
-	}
+        BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location);
+        domain.addPredicate(isAt);
 
-	[Test]
-	public void BinaryRelationPredicateMustBeAnExistingPredicate() {
-		Domain domain = new Domain();
-		EntityType character = new EntityType("CHARACTER");
-		domain.addEntityType(character);
+        WorldState worldState = new WorldState(domain);
+        Entity john = new Entity(character, "JOHN");
+        worldState.addEntity(john);
 
-		EntityType location = new EntityType("LOCATION");
-		domain.addEntityType(location);
+        Entity school = new Entity(location, "SCHOOL");
+        // worldState.addEntity(school);
 
-		BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location);
-		// domain.addPredicate(isAt);
+        BinaryRelation johnIsAtSchool = new BinaryRelation(john, isAt, school, RelationValue.TRUE);
 
-		WorldState worldState = new WorldState(domain);
-		Entity john = new Entity(character, "JOHN");
-		worldState.addEntity(john);
+        Assert.That(() => worldState.addRelation(johnIsAtSchool), Throws.ArgumentException);
+    }
 
-		Entity school = new Entity(location, "SCHOOL");
-		worldState.addEntity(school);
+    [Test]
+    public void BinaryRelationPredicateMustBeAnExistingPredicate()
+    {
+        Domain domain = new Domain();
+        EntityType character = new EntityType("CHARACTER");
+        domain.addEntityType(character);
 
-		BinaryRelation johnIsAtSchool = new BinaryRelation(john, isAt, school, RelationValue.TRUE);
-		
-		Assert.That(()=> worldState.addRelation(johnIsAtSchool), Throws.ArgumentException);
-	}
+        EntityType location = new EntityType("LOCATION");
+        domain.addEntityType(location);
 
-	[Test]
-	public void ApplyActionReturnsTheCorrectWorldState() {
-		Domain domain = new Domain();
+        BinaryPredicate isAt = new BinaryPredicate(character, "IS_AT", location);
+        // domain.addPredicate(isAt);
+
+        WorldState worldState = new WorldState(domain);
+        Entity john = new Entity(character, "JOHN");
+        worldState.addEntity(john);
+
+        Entity school = new Entity(location, "SCHOOL");
+        worldState.addEntity(school);
+
+        BinaryRelation johnIsAtSchool = new BinaryRelation(john, isAt, school, RelationValue.TRUE);
+
+        Assert.That(() => worldState.addRelation(johnIsAtSchool), Throws.ArgumentException);
+    }
+
+    [Test]
+    public void ApplyActionReturnsTheCorrectWorldState()
+    {
+        Domain domain = new Domain();
 
         EntityType entityTypeRover = new EntityType("ROVER");
         domain.addEntityType(entityTypeRover);
-        
+
         EntityType entityTypewayPoint = new EntityType("WAYPOINT");
         domain.addEntityType(entityTypewayPoint);
 
@@ -167,12 +176,12 @@ public class WorldStateTest {
         // Parameters
         Entity entityCuriosity = new Entity(entityTypeRover, "ROVER");
         Entity entityFromWayPoint = new Entity(entityTypewayPoint, "WAYPOINT1");
-        Entity entityToWayPoint = new Entity(entityTypewayPoint, "WAYPOINT2");        
+        Entity entityToWayPoint = new Entity(entityTypewayPoint, "WAYPOINT2");
 
         HashSet<ActionParameter> actionMoveParameters = new HashSet<ActionParameter>();
         actionMoveParameters.Add(new ActionParameter(entityCuriosity, ActionParameterRole.ACTIVE));
         actionMoveParameters.Add(new ActionParameter(entityFromWayPoint, ActionParameterRole.PASSIVE));
-        actionMoveParameters.Add(new ActionParameter(entityToWayPoint, ActionParameterRole.PASSIVE));        
+        actionMoveParameters.Add(new ActionParameter(entityToWayPoint, ActionParameterRole.PASSIVE));
 
         // Preconditions
         HashSet<IRelation> actionMovePreconditions = new HashSet<IRelation>();
@@ -193,7 +202,7 @@ public class WorldStateTest {
         Action actionMove = new Action(actionMovePreconditions, "MOVE", actionMoveParameters, actionMovePostconditions);
         domain.addAction(actionMove);
 
-		WorldState worldState = new WorldState(domain);
+        WorldState worldState = new WorldState(domain);
         worldState.addEntity(entityCuriosity);
 
         Entity wayPoint1 = new Entity(new EntityType("WAYPOINT"), "WAYPOINT1");
@@ -207,21 +216,22 @@ public class WorldStateTest {
         BinaryRelation isAt1 = domain.generateRelationFromPredicateName("AT", entityCuriosity, wayPoint1, RelationValue.TRUE);
         worldState.addRelation(isAt1);
 
-		HashSet<IRelation> expectedWorldRelationsAfterAction = new HashSet<IRelation>();
-		expectedWorldRelationsAfterAction.Add(isConnected1);
-		expectedWorldRelationsAfterAction.Add(notRoverAtFromWP);
-		expectedWorldRelationsAfterAction.Add(roverAtToWP);
-		expectedWorldRelationsAfterAction.Add(roverBeenAtToWP);
+        HashSet<IRelation> expectedWorldRelationsAfterAction = new HashSet<IRelation>();
+        expectedWorldRelationsAfterAction.Add(isConnected1);
+        expectedWorldRelationsAfterAction.Add(notRoverAtFromWP);
+        expectedWorldRelationsAfterAction.Add(roverAtToWP);
+        expectedWorldRelationsAfterAction.Add(roverBeenAtToWP);
 
-		WorldState newWorldState = worldState.applyAction(actionMove);
-		Assert.AreEqual(expectedWorldRelationsAfterAction, newWorldState.Relations);
-	}
+        WorldState newWorldState = worldState.applyAction(actionMove);
+        Assert.AreEqual(expectedWorldRelationsAfterAction, newWorldState.Relations);
+    }
 
-	[Test]
-	public void canPerformActionReturnsFalseForUnappliableAction() {
+    [Test]
+    public void canPerformActionReturnsFalseForUnappliableAction()
+    {
         Domain domain = this.getSimpleMoveDomain();
 
-		WorldState worldState = new WorldState(domain);
+        WorldState worldState = new WorldState(domain);
 
         EntityType entityTypeRover = new EntityType("ROVER");
         Entity entityRover = new Entity(entityTypeRover, "ROVER");
@@ -240,14 +250,15 @@ public class WorldStateTest {
 
         Action actionMove = worldState.Domain.getAction("MOVE");
 
-		Assert.IsFalse(worldState.canPerformAction(actionMove));
-	}
+        Assert.IsFalse(worldState.canPerformAction(actionMove));
+    }
 
-	[Test]
-	public void canPerformActionReturnsTrueForAppliableAction() {
+    [Test]
+    public void canPerformActionReturnsTrueForAppliableAction()
+    {
         Domain domain = this.getSimpleMoveDomain();
 
-		WorldState worldState = new WorldState(domain);
+        WorldState worldState = new WorldState(domain);
 
         EntityType entityTypeRover = new EntityType("ROVER");
         Entity entityRover = new Entity(entityTypeRover, "ROVER");
@@ -266,21 +277,22 @@ public class WorldStateTest {
 
         Action actionMove = worldState.Domain.getAction("MOVE");
 
-		Assert.IsTrue(worldState.canPerformAction(actionMove));
-	}
+        Assert.IsTrue(worldState.canPerformAction(actionMove));
+    }
 
-	[Test]
-	public void getPossibleActionsReturnsMoveActionIfisConnected() {
+    [Test]
+    public void getPossibleActionsReturnsMoveActionIfisConnected()
+    {
         Domain domain = Utils.roverWorldDomainFirstLevel();
 
-		WorldState worldState = new WorldState(domain);
+        WorldState worldState = new WorldState(domain);
 
         EntityType entityTypeRover = new EntityType("ROVER");
         Entity entityRover = new Entity(entityTypeRover, "ROVER");
         worldState.addEntity(entityRover);
 
-        Entity wayPointAlpha = new Entity(new EntityType("WAYPOINT"), "ALPHA");
-        Entity wayPointBravo = new Entity(new EntityType("WAYPOINT"), "BRAVO");
+        Entity wayPointAlpha = new Entity(new EntityType("WAYPOINT"), "WAYPOINT1");
+        Entity wayPointBravo = new Entity(new EntityType("WAYPOINT"), "WAYPOINT2");
         worldState.addEntity(wayPointAlpha);
         worldState.addEntity(wayPointBravo);
 
@@ -291,24 +303,28 @@ public class WorldStateTest {
         worldState.addRelation(isAtAlpha);
 
         Action actionMove = worldState.Domain.getAction("MOVE");
+        Action actionIdle = worldState.Domain.getAction("IDLE");
+
         HashSet<Action> performableActions = new HashSet<Action>();
         performableActions.Add(actionMove);
+        performableActions.Add(actionIdle);
 
-        Assert.AreEqual(performableActions, worldState.getPossibleActions());
-	}
+        CollectionAssert.AreEquivalent(performableActions, worldState.getPossibleActions());
+    }
 
-	[Test]
-	public void getPossibleActionsReturnsTakeSampleActionIfCanTakeSample() {
+    [Test]
+    public void getPossibleActionsReturnsTakeSampleActionIfCanTakeSample()
+    {
         Domain domain = Utils.roverWorldDomainFirstLevel();
 
-		WorldState worldState = new WorldState(domain);
+        WorldState worldState = new WorldState(domain);
 
         Entity entityRover = new Entity(new EntityType("ROVER"), "ROVER");
         worldState.addEntity(entityRover);
 
         Entity entityWaypoint = new Entity(new EntityType("WAYPOINT"), "WAYPOINT");
         worldState.addEntity(entityWaypoint);
-        
+
         Entity entitySample = new Entity(new EntityType("SAMPLE"), "SAMPLE");
         worldState.addEntity(entitySample);
 
@@ -320,24 +336,28 @@ public class WorldStateTest {
         worldState.addRelation(roverIsEmpty);
 
         Action actionTakeSample = worldState.Domain.getAction("TAKE_SAMPLE");
+        Action actionIdle = worldState.Domain.getAction("IDLE");
+
         HashSet<Action> performableActions = new HashSet<Action>();
         performableActions.Add(actionTakeSample);
+        performableActions.Add(actionIdle);
 
-        Assert.AreEqual(performableActions, worldState.getPossibleActions());
-	}
+        CollectionAssert.AreEquivalent(performableActions, worldState.getPossibleActions());
+    }
 
-	[Test]
-	public void getPossibleActionsReturnsDropSampleActionIfCanDropSample() {
+    [Test]
+    public void getPossibleActionsReturnsDropSampleActionIfCanDropSample()
+    {
         Domain domain = Utils.roverWorldDomainFirstLevel();
 
-		WorldState worldState = new WorldState(domain);
+        WorldState worldState = new WorldState(domain);
 
         Entity entityRover = new Entity(new EntityType("ROVER"), "ROVER");
         worldState.addEntity(entityRover);
 
         Entity entityWaypoint = new Entity(new EntityType("WAYPOINT"), "WAYPOINT");
         worldState.addEntity(entityWaypoint);
-        
+
         Entity entitySample = new Entity(new EntityType("SAMPLE"), "SAMPLE");
         worldState.addEntity(entitySample);
 
@@ -349,24 +369,28 @@ public class WorldStateTest {
         worldState.addRelation(roverCarriesSample);
 
         Action actionDropSample = worldState.Domain.getAction("DROP_SAMPLE");
+        Action actionIdle = worldState.Domain.getAction("IDLE");
+
         HashSet<Action> performableActions = new HashSet<Action>();
         performableActions.Add(actionDropSample);
+        performableActions.Add(actionIdle);
 
-        Assert.AreEqual(performableActions, worldState.getPossibleActions());
-	}
+        CollectionAssert.AreEquivalent(performableActions, worldState.getPossibleActions());
+    }
 
-	[Test]
-	public void getPossibleActionsReturnsTakeImageActionIfCanTakeImage() {
+    [Test]
+    public void getPossibleActionsReturnsTakeImageActionIfCanTakeImage()
+    {
         Domain domain = Utils.roverWorldDomainFirstLevel();
 
-		WorldState worldState = new WorldState(domain);
+        WorldState worldState = new WorldState(domain);
 
         Entity entityRover = new Entity(new EntityType("ROVER"), "ROVER");
         worldState.addEntity(entityRover);
 
         Entity entityWaypoint = new Entity(new EntityType("WAYPOINT"), "WAYPOINT");
         worldState.addEntity(entityWaypoint);
-        
+
         Entity entityObjective = new Entity(new EntityType("OBJECTIVE"), "OBJECTIVE");
         worldState.addEntity(entityObjective);
 
@@ -376,17 +400,21 @@ public class WorldStateTest {
         worldState.addRelation(objectiveIsVisibleFromWaypoint);
 
         Action actionTakeImage = worldState.Domain.getAction("TAKE_IMAGE");
+        Action actionIdle = worldState.Domain.getAction("IDLE");
+
         HashSet<Action> performableActions = new HashSet<Action>();
         performableActions.Add(actionTakeImage);
+        performableActions.Add(actionIdle);
 
-        Assert.AreEqual(performableActions, worldState.getPossibleActions());
-	}
+        CollectionAssert.AreEquivalent(performableActions, worldState.getPossibleActions());
+    }
 
-	[Test]
-	public void thirdLODRoverCanMoveIfAllPreconditionsAreSatisfied() {
+    [Test]
+    public void thirdLODRoverCanMoveIfAllPreconditionsAreSatisfied()
+    {
         Domain domain = Utils.roverWorldDomainThirdLevel();
 
-		WorldState worldState = new WorldState(domain);
+        WorldState worldState = new WorldState(domain);
 
         EntityType entityTypeRover = new EntityType("ROVER");
         Entity entityRover = new Entity(entityTypeRover, "ROVER");
@@ -401,8 +429,8 @@ public class WorldStateTest {
         worldState.addEntity(entityWheels);
 
 
-        Entity wayPointAlpha = new Entity(new EntityType("WAYPOINT"), "ALPHA");
-        Entity wayPointBravo = new Entity(new EntityType("WAYPOINT"), "BRAVO");
+        Entity wayPointAlpha = new Entity(new EntityType("WAYPOINT"), "WAYPOINT1");
+        Entity wayPointBravo = new Entity(new EntityType("WAYPOINT"), "WAYPOINT2");
 
         worldState.addEntity(wayPointAlpha);
         worldState.addEntity(wayPointBravo);
@@ -431,23 +459,26 @@ public class WorldStateTest {
         worldState.addRelation(isAtAlpha);
 
         Action actionMove = worldState.Domain.getAction("MOVE");
+        Action actionIdle = worldState.Domain.getAction("IDLE");
 
         HashSet<Action> performableActions = new HashSet<Action>();
         performableActions.Add(actionMove);
         performableActions.Add(domain.getAction("DISCHARGE_BATTERY"));
         performableActions.Add(domain.getAction("DEFLATE_WHEELS"));
+        performableActions.Add(actionIdle);
 
-        Assert.AreEqual(performableActions, worldState.getPossibleActions());
-	}
+        CollectionAssert.AreEquivalent(performableActions, worldState.getPossibleActions());
+    }
 
     // If we give the rover the battery1 which is DISCHARGED and there is another battery
     // battery2 in the worldstate which is CHARGED, but which the rover does NOT posses
     // it should NOT be able to perform a move action
-	[Test]
-	public void thirdLODroverMustHaveBatteryChargedToMove() {
+    [Test]
+    public void thirdLODroverMustHaveBatteryChargedToMove()
+    {
         Domain domain = Utils.roverWorldDomainThirdLevel();
 
-		WorldState worldState = new WorldState(domain);
+        WorldState worldState = new WorldState(domain);
 
         EntityType entityTypeRover = new EntityType("ROVER");
         Entity entityRover = new Entity(entityTypeRover, "ROVER");
@@ -498,16 +529,17 @@ public class WorldStateTest {
         Action actionMove = worldState.Domain.getAction("MOVE");
 
         Assert.False(worldState.getPossibleActions().Contains(actionMove));
-	}
+    }
 
     // If we give the rover the wheels1 which are DEFLATED and there is another wheels
     // wheels2 in the worldstate which are INFLATED, but which the rover does NOT posses
     // it should NOT be able to perform a move action
-	[Test]
-	public void roverMustHaveWheelsInflatedToMove() {
+    [Test]
+    public void roverMustHaveWheelsInflatedToMove()
+    {
         Domain domain = Utils.roverWorldDomainThirdLevel();
 
-		WorldState worldState = new WorldState(domain);
+        WorldState worldState = new WorldState(domain);
 
         EntityType entityTypeRover = new EntityType("ROVER");
         Entity entityRover = new Entity(entityTypeRover, "ROVER");
@@ -556,14 +588,15 @@ public class WorldStateTest {
         Action actionMove = worldState.Domain.getAction("MOVE");
 
         Assert.False(worldState.getPossibleActions().Contains(actionMove));
-	}
+    }
 
 
-	[Test]
-	public void thirdLODRoverCanTakeSampleIfPreconditionsAreSatisfied() {
+    [Test]
+    public void thirdLODRoverCanTakeSampleIfPreconditionsAreSatisfied()
+    {
         Domain domain = Utils.roverWorldDomainThirdLevel();
 
-		WorldState worldState = new WorldState(domain);
+        WorldState worldState = new WorldState(domain);
 
         EntityType entityTypeRover = new EntityType("ROVER");
         Entity entityRover = new Entity(entityTypeRover, "ROVER");
@@ -577,7 +610,7 @@ public class WorldStateTest {
         Entity entityWheels = new Entity(entityTypeWheel, "WHEELS");
         worldState.addEntity(entityWheels);
 
-        Entity wayPointAlpha = new Entity(new EntityType("WAYPOINT"), "ALPHA");
+        Entity wayPointAlpha = new Entity(new EntityType("WAYPOINT"), "WAYPOINT");
         worldState.addEntity(wayPointAlpha);
 
         Entity entitySample = new Entity(new EntityType("SAMPLE"), "SAMPLE");
@@ -607,13 +640,14 @@ public class WorldStateTest {
         Action actionTakeSample = worldState.Domain.getAction("TAKE_SAMPLE");
 
         Assert.True(worldState.getPossibleActions().Contains(actionTakeSample));
-	}
+    }
 
-	[Test]
-	public void thirdLODRoverCanTakeImageIfPreconditionsAreSatisfied() {
+    [Test]
+    public void thirdLODRoverCanTakeImageIfPreconditionsAreSatisfied()
+    {
         Domain domain = Utils.roverWorldDomainThirdLevel();
 
-		WorldState worldState = new WorldState(domain);
+        WorldState worldState = new WorldState(domain);
 
         EntityType entityTypeRover = new EntityType("ROVER");
         Entity entityRover = new Entity(entityTypeRover, "ROVER");
@@ -627,9 +661,9 @@ public class WorldStateTest {
         Entity entityWheels = new Entity(entityTypeWheel, "WHEELS");
         worldState.addEntity(entityWheels);
 
-        Entity wayPointAlpha = new Entity(new EntityType("WAYPOINT"), "ALPHA");
+        Entity wayPointAlpha = new Entity(new EntityType("WAYPOINT"), "WAYPOINT");
         worldState.addEntity(wayPointAlpha);
-        
+
         Entity entityObjective = new Entity(new EntityType("OBJECTIVE"), "OBJECTIVE");
         worldState.addEntity(entityObjective);
 
@@ -655,13 +689,14 @@ public class WorldStateTest {
         Action actionTakeImage = worldState.Domain.getAction("TAKE_IMAGE");
 
         Assert.True(worldState.getPossibleActions().Contains(actionTakeImage));
-	}
+    }
 
-	[Test]
-	public void thirdLODRoverCanDropImageIfPreconditionsAreSatisfied() {
+    [Test]
+    public void thirdLODRoverCanDropImageIfPreconditionsAreSatisfied()
+    {
         Domain domain = Utils.roverWorldDomainThirdLevel();
 
-		WorldState worldState = new WorldState(domain);
+        WorldState worldState = new WorldState(domain);
 
         EntityType entityTypeRover = new EntityType("ROVER");
         Entity entityRover = new Entity(entityTypeRover, "ROVER");
@@ -675,9 +710,9 @@ public class WorldStateTest {
         Entity entityWheels = new Entity(entityTypeWheel, "WHEELS");
         worldState.addEntity(entityWheels);
 
-        Entity wayPointAlpha = new Entity(new EntityType("WAYPOINT"), "ALPHA");
+        Entity wayPointAlpha = new Entity(new EntityType("WAYPOINT"), "WAYPOINT");
         worldState.addEntity(wayPointAlpha);
-        
+
         Entity entitySample = new Entity(new EntityType("SAMPLE"), "SAMPLE");
         worldState.addEntity(entitySample);
 
@@ -705,20 +740,21 @@ public class WorldStateTest {
         Action actionDropSample = worldState.Domain.getAction("DROP_SAMPLE");
 
         Assert.True(worldState.getPossibleActions().Contains(actionDropSample));
-	}
+    }
 
-	[Test]
-	public void equalsReturnsTrueIfDomainEntitiesRelationsAreEqual() {
+    [Test]
+    public void equalsReturnsTrueIfDomainEntitiesRelationsAreEqual()
+    {
         Domain domain = Utils.roverWorldDomainThirdLevel();
 
-		WorldState worldState1 = new WorldState(domain);
+        WorldState worldState1 = new WorldState(domain);
 
         Entity entityRover1 = new Entity(new EntityType("ROVER"), "ROVER");
         worldState1.addEntity(entityRover1);
 
         Entity entityWaypoint1 = new Entity(new EntityType("WAYPOINT"), "WAYPOINT");
         worldState1.addEntity(entityWaypoint1);
-        
+
         Entity entityObjective1 = new Entity(new EntityType("OBJECTIVE"), "OBJECTIVE");
         worldState1.addEntity(entityObjective1);
 
@@ -728,14 +764,14 @@ public class WorldStateTest {
         worldState1.addRelation(objectiveIsVisibleFromWaypoint1);
 
         Domain domain2 = Utils.roverWorldDomainThirdLevel();
-		WorldState worldState2 = new WorldState(domain2);
+        WorldState worldState2 = new WorldState(domain2);
 
         Entity entityRover2 = new Entity(new EntityType("ROVER"), "ROVER");
         worldState2.addEntity(entityRover2);
 
         Entity entityWaypoint2 = new Entity(new EntityType("WAYPOINT"), "WAYPOINT");
         worldState2.addEntity(entityWaypoint2);
-        
+
         Entity entityObjective2 = new Entity(new EntityType("OBJECTIVE"), "OBJECTIVE");
         worldState2.addEntity(entityObjective2);
 
@@ -745,20 +781,21 @@ public class WorldStateTest {
         worldState2.addRelation(objectiveIsVisibleFromWaypoint2);
 
         Assert.AreEqual(worldState1, worldState2);
-	}
+    }
 
-	[Test]
-	public void equalsReturnsFalseIfDomainIsNotEqual() {
+    [Test]
+    public void equalsReturnsFalseIfDomainIsNotEqual()
+    {
         Domain domain = Utils.roverWorldDomainThirdLevel();
 
-		WorldState worldState1 = new WorldState(domain);
+        WorldState worldState1 = new WorldState(domain);
 
         Entity entityRover1 = new Entity(new EntityType("ROVER"), "ROVER");
         worldState1.addEntity(entityRover1);
 
         Entity entityWaypoint1 = new Entity(new EntityType("WAYPOINT"), "WAYPOINT");
         worldState1.addEntity(entityWaypoint1);
-        
+
         Entity entityObjective1 = new Entity(new EntityType("OBJECTIVE"), "OBJECTIVE");
         worldState1.addEntity(entityObjective1);
 
@@ -770,14 +807,14 @@ public class WorldStateTest {
         Domain domain2 = Utils.roverWorldDomainThirdLevel();
         domain2.addEntityType(new EntityType("DIFFERENT_ENTITY_TYPE"));
 
-		WorldState worldState2 = new WorldState(domain2);
+        WorldState worldState2 = new WorldState(domain2);
 
         Entity entityRover2 = new Entity(new EntityType("ROVER"), "ROVER");
         worldState2.addEntity(entityRover2);
 
         Entity entityWaypoint2 = new Entity(new EntityType("WAYPOINT"), "WAYPOINT");
         worldState2.addEntity(entityWaypoint2);
-        
+
         Entity entityObjective2 = new Entity(new EntityType("OBJECTIVE"), "OBJECTIVE");
         worldState2.addEntity(entityObjective2);
 
@@ -787,20 +824,21 @@ public class WorldStateTest {
         worldState2.addRelation(objectiveIsVisibleFromWaypoint2);
 
         Assert.AreNotEqual(worldState1, worldState2);
-	}
+    }
 
-	[Test]
-	public void equalsReturnsFalseIfEntitiesAreNotEqual() {
+    [Test]
+    public void equalsReturnsFalseIfEntitiesAreNotEqual()
+    {
         Domain domain = Utils.roverWorldDomainThirdLevel();
 
-		WorldState worldState1 = new WorldState(domain);
+        WorldState worldState1 = new WorldState(domain);
 
         Entity entityRover1 = new Entity(new EntityType("ROVER"), "ROVER");
         worldState1.addEntity(entityRover1);
 
         Entity entityWaypoint1 = new Entity(new EntityType("WAYPOINT"), "WAYPOINT");
         worldState1.addEntity(entityWaypoint1);
-        
+
         Entity entityObjective1 = new Entity(new EntityType("OBJECTIVE"), "OBJECTIVE");
         worldState1.addEntity(entityObjective1);
 
@@ -811,14 +849,14 @@ public class WorldStateTest {
 
         Domain domain2 = Utils.roverWorldDomainThirdLevel();
 
-		WorldState worldState2 = new WorldState(domain2);
+        WorldState worldState2 = new WorldState(domain2);
 
         Entity entityRover2 = new Entity(new EntityType("ROVER"), "ROVER");
         worldState2.addEntity(entityRover2);
 
         Entity entityWaypoint2 = new Entity(new EntityType("WAYPOINT"), "WAYPOINT");
         worldState2.addEntity(entityWaypoint2);
-        
+
         Entity entityObjective2 = new Entity(new EntityType("OBJECTIVE"), "OBJECTIVE");
         worldState2.addEntity(entityObjective2);
 
@@ -831,20 +869,21 @@ public class WorldStateTest {
         worldState2.addRelation(objectiveIsVisibleFromWaypoint2);
 
         Assert.AreNotEqual(worldState1, worldState2);
-	}
+    }
 
-	[Test]
-	public void equalsReturnsFalseIfRelationsAreNotEqual() {
+    [Test]
+    public void equalsReturnsFalseIfRelationsAreNotEqual()
+    {
         Domain domain = Utils.roverWorldDomainThirdLevel();
 
-		WorldState worldState1 = new WorldState(domain);
+        WorldState worldState1 = new WorldState(domain);
 
         Entity entityRover1 = new Entity(new EntityType("ROVER"), "ROVER");
         worldState1.addEntity(entityRover1);
 
         Entity entityWaypoint1 = new Entity(new EntityType("WAYPOINT"), "WAYPOINT");
         worldState1.addEntity(entityWaypoint1);
-        
+
         Entity entityObjective1 = new Entity(new EntityType("OBJECTIVE"), "OBJECTIVE");
         worldState1.addEntity(entityObjective1);
 
@@ -855,14 +894,14 @@ public class WorldStateTest {
 
         Domain domain2 = Utils.roverWorldDomainThirdLevel();
 
-		WorldState worldState2 = new WorldState(domain2);
+        WorldState worldState2 = new WorldState(domain2);
 
         Entity entityRover2 = new Entity(new EntityType("ROVER"), "ROVER");
         worldState2.addEntity(entityRover2);
 
         Entity entityWaypoint2 = new Entity(new EntityType("WAYPOINT"), "WAYPOINT");
         worldState2.addEntity(entityWaypoint2);
-        
+
         Entity entityObjective2 = new Entity(new EntityType("OBJECTIVE"), "OBJECTIVE");
         worldState2.addEntity(entityObjective2);
 
@@ -872,21 +911,22 @@ public class WorldStateTest {
         worldState2.addRelation(objectiveIsVisibleFromWaypoint2);
 
         Assert.AreNotEqual(worldState1, worldState2);
-	}
+    }
 
     [Test]
 
-    public void CloneReturnsEqualWorldState(){
+    public void CloneReturnsEqualWorldState()
+    {
         Domain domain = Utils.roverWorldDomainThirdLevel();
 
-		WorldState worldState = new WorldState(domain);
+        WorldState worldState = new WorldState(domain);
 
         Entity entityRover = new Entity(new EntityType("ROVER"), "ROVER");
         worldState.addEntity(entityRover);
 
         Entity entityWaypoint = new Entity(new EntityType("WAYPOINT"), "WAYPOINT");
         worldState.addEntity(entityWaypoint);
-        
+
         Entity entityObjective = new Entity(new EntityType("OBJECTIVE"), "OBJECTIVE");
         worldState.addEntity(entityObjective);
 
@@ -897,14 +937,15 @@ public class WorldStateTest {
 
         WorldState clonedWorldState = worldState.Clone();
 
-        Assert.AreEqual(worldState, clonedWorldState); 
+        Assert.AreEqual(worldState, clonedWorldState);
     }
 
-	[Test]
-	public void GenericSetContainsRelationIfEquals() {
+    [Test]
+    public void GenericSetContainsRelationIfEquals()
+    {
         Domain domain = Utils.roverWorldDomainFirstLevel();
 
-		WorldState worldState = new WorldState(domain);
+        WorldState worldState = new WorldState(domain);
 
         EntityType entityTypeRover = new EntityType("ROVER");
         Entity entityRover = new Entity(entityTypeRover, "ROVER");
@@ -922,36 +963,37 @@ public class WorldStateTest {
         worldState.addRelation(isAtAlpha);
 
         Action actionMove = worldState.Domain.getAction("MOVE");
-        
-        foreach(IRelation precondition in actionMove.PreConditions)
-            Assert.IsTrue(worldState.Relations.Contains(precondition));
-	}
 
-	[Test]
-	public void RelationsHashCodesAreTheSame() {
+        foreach (IRelation precondition in actionMove.PreConditions)
+            Assert.IsTrue(worldState.Relations.Contains(precondition));
+    }
+
+    [Test]
+    public void RelationsHashCodesAreTheSame()
+    {
         Domain domain = Utils.roverWorldDomainThirdLevel();
         WorldState worldState = Utils.roverWorldStateThirdLevel(domain);
 
         List<IRelation> worldStateRelations = new List<IRelation>();
         List<IRelation> clonedWorldStateRelations = new List<IRelation>();
 
-        foreach(IRelation r in worldState.Relations)
+        foreach (IRelation r in worldState.Relations)
         {
             worldStateRelations.Add(r);
             clonedWorldStateRelations.Add(r);
         }
 
-        for(int i = 0; i<worldStateRelations.Count; i++)
+        for (int i = 0; i < worldStateRelations.Count; i++)
             Assert.IsTrue(worldStateRelations[i].GetHashCode().Equals(clonedWorldStateRelations[i].GetHashCode()));
     }
 
     private Domain getSimpleMoveDomain()
     {
-		Domain domain = new Domain();
+        Domain domain = new Domain();
 
         EntityType entityTypeRover = new EntityType("ROVER");
         domain.addEntityType(entityTypeRover);
-        
+
         EntityType entityTypewayPoint = new EntityType("WAYPOINT");
         domain.addEntityType(entityTypewayPoint);
 
@@ -970,12 +1012,12 @@ public class WorldStateTest {
         // Parameters
         Entity entityCuriosity = new Entity(entityTypeRover, "ROVER");
         Entity entityFromWayPoint = new Entity(entityTypewayPoint, "WAYPOINT1");
-        Entity entityToWayPoint = new Entity(entityTypewayPoint, "WAYPOINT2");        
+        Entity entityToWayPoint = new Entity(entityTypewayPoint, "WAYPOINT2");
 
         HashSet<ActionParameter> actionMoveParameters = new HashSet<ActionParameter>();
         actionMoveParameters.Add(new ActionParameter(entityCuriosity, ActionParameterRole.ACTIVE));
         actionMoveParameters.Add(new ActionParameter(entityFromWayPoint, ActionParameterRole.PASSIVE));
-        actionMoveParameters.Add(new ActionParameter(entityToWayPoint, ActionParameterRole.PASSIVE));        
+        actionMoveParameters.Add(new ActionParameter(entityToWayPoint, ActionParameterRole.PASSIVE));
 
         // Preconditions
         HashSet<IRelation> actionMovePreconditions = new HashSet<IRelation>();

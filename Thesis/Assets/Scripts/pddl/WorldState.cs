@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Diagnostics;
+using System;
 using UnityEngine;
 using Newtonsoft.Json;
 
@@ -102,17 +104,83 @@ namespace ru.cadia.pddlFramework
             _relations.Add(r);
         }
 
-        // private bool test(IRelation x)
-        // {
-        //     RelationWithoutValueEqualityComparer comparer = new RelationWithoutValueEqualityComparer();
-        //     if(comparer.Equals(x,x) == true)
-        //         return true;
-        //     return false;
-        // }
+        /// <summary>
+        /// Returns all the entities which maybe involved in at least one action of the domain
+        /// </summary>
+        /* 
+            The actions are not assured to be performable because we don't check preconditions to
+            speed up the process, but with NOOP actions we ensure that each proactive entity has
+            at least one performable actions at all times
+        */
+        public HashSet<Entity> getActiveEntities()
+        {
+            HashSet<Entity> activeEntities = new HashSet<Entity>();
+
+            // Stopwatch stopWatch = new Stopwatch();
+            // stopWatch.Start();
+
+            activeEntities.UnionWith(_entities.Where(e =>
+               _domain.Actions.SelectMany(ap => ap.Parameters)
+               .Where(active => active.Role == ActionParameterRole.ACTIVE)
+               .Select(et => et.Type).Contains(e.Type)
+            ));
+
+            // stopWatch.Stop();
+            // UnityEngine.Debug.Log("RunTime " + stopWatch.ElapsedTicks);
+
+            return activeEntities;
+
+            // Stopwatch stopWatch = new Stopwatch();
+            // stopWatch.Start();
+
+            //     foreach (Action a in _domain.Actions)
+            //     {
+            //         foreach (ActionParameter ap in a.Parameters)
+            //         {
+            //             // we get all the entities which are of the same type as the ones which are
+            //             // active in some action of the domain, we avoid getting twice the same
+            //             // entity type by checking if it already contained in the activeEntities
+            //             if (ap.Role == ActionParameterRole.ACTIVE &&
+            //                 activeEntities.Select(et => et.Type).Contains(ap.Type) == false)
+            //             {
+            //                 activeEntities.UnionWith(_entities.Where(e => e.Type.Equals(ap.Type)));
+            //             }
+            //         }
+            //     }
+
+            // stopWatch.Stop();
+            // UnityEngine.Debug.Log("RunTime " + stopWatch.ElapsedTicks);
+
+            //     return activeEntities;
+        }
+
+        public WorldState applyParallelActions(HashSet<Action> actions)
+        {
+            // get one action which represents all the chosen ones
+            Action superAction;
+            HashSet<IRelation> superActionPreconditions = new HashSet<IRelation>();
+            string superActionName = "";
+            HashSet<ActionParameter> superActionParameters = new HashSet<ActionParameter>();
+            HashSet<IRelation> superActionPostconditions = new HashSet<IRelation>();
+
+            foreach (Action randomAction in actions)
+            {
+                superActionPreconditions.UnionWith(randomAction.PreConditions);
+                superActionName += randomAction.Name;
+                superActionParameters.UnionWith(randomAction.Parameters);
+                superActionPostconditions.UnionWith(randomAction.PostConditions);
+            }
+
+            superAction = new Action(superActionPreconditions, superActionName,
+                superActionParameters, superActionPostconditions);
+        
+            return applyAction(superAction);
+        }
+
         public WorldState applyAction(Action action)
         {
             if (canPerformAction(action) == false)
-                throw new System.ArgumentException("The action " + action.Name + " cannot be performed in the worldState: " + this.ToString());
+                throw new System.ArgumentException("The action " + action.shortToString() + " cannot be performed in the worldState: " + this.ToString());
 
             WorldState resultingState = this.Clone();
             foreach (IRelation actionEffect in action.PostConditions)

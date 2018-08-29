@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using pddl = ru.cadia.pddlFramework;
 
 public static class LINQExtension
 {
@@ -31,6 +32,17 @@ public static class LINQExtension
             result.Add(seq.ToList());
 
         return result;
+    }
+
+    public static IEnumerable<string> shortToString(this IEnumerable<pddl.Action> actions)
+    {
+        List<string> strings = new List<string>();
+        foreach (pddl.Action a in actions)
+        {
+            strings.Add(a.shortToString());
+        }
+
+        return strings;
     }
 
     public static IEnumerable<IEnumerable<T>> Permute<T>(this IEnumerable<T> sequence)
