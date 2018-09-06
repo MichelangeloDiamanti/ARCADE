@@ -7,6 +7,8 @@ TagManager:
   - Building
   - Text
   - Clickable
+  - Waypoint
+  - CameraOn
   layers:
   - Default
   - TransparentFX

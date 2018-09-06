@@ -17,7 +17,12 @@ public class TakeImage : MonoBehaviour
     // private vars for screenshot
     private Rect rect;
     private Texture2D screenShot;
-    private int counter = 0; // image #
+    private int counter; // image #
+
+    private void Start()
+    {
+        counter = 0;
+    }
 
     // create a unique filename using a one-up variable
     private string uniqueFileName()
@@ -52,7 +57,7 @@ public class TakeImage : MonoBehaviour
         return filename;
     }
 
-    public void CaptureScreenshot(RenderTexture r)
+    public bool CaptureScreenshot(RenderTexture r)
     {
         rect = new Rect(0, 0, r.width, r.height);
         screenShot = new Texture2D(r.width, r.height, TextureFormat.RGB24, false);
@@ -104,10 +109,8 @@ public class TakeImage : MonoBehaviour
 
         // cleanup
         screenShot = null;
+
+        return true;
     }
     
-    void Update()
-    {
-
-    }
 }

@@ -318,6 +318,7 @@ public class Simulation : MonoBehaviour
 
                 bool result = false;
                 yield return StartCoroutine(visualizer.interact(randomAction, value => result = value));
+                lastActionPerformed = randomAction;
                 if (result)
                 {
                     // The action has been allowed, go next
@@ -336,7 +337,7 @@ public class Simulation : MonoBehaviour
             else
             {
                 // Debug.Log("Player is visualizing");
-
+                //print("Visualization is requested by: " + transform.parent.name);
                 bool result = false;
                 yield return StartCoroutine(visualizer.visualize(randomAction, value => result = value));
                 lastActionPerformed = randomAction;
@@ -394,11 +395,11 @@ public class Simulation : MonoBehaviour
 
         foreach(KeyValuePair<ActionParameter, List<Action>> pair in actionsForEachActor)
         {
-            Debug.Log("The Active actor " + pair.Key.Name + " can do:");
-            foreach(Action a in pair.Value)
-            {
-                Debug.Log(a.ShortToString());
-            }
+            //Debug.Log("The Active actor " + pair.Key.Name + " can do:");
+            //foreach(Action a in pair.Value)
+            //{
+            //    Debug.Log(a.ShortToString());
+            //}
         }
 
         int randomActionIndex = Random.Range(0, possibleActions.Count);
