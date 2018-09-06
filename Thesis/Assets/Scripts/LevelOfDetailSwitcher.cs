@@ -34,7 +34,8 @@ public class LevelOfDetailSwitcher : MonoBehaviour
     {
         if (other.transform.gameObject == player)
         {
-            Debug.Log(other.transform.name + " is entering" + transform.name);
+            float distance = Vector3.Distance(transform.position, other.transform.position);
+            Debug.Log(other.transform.name + " is entering" + transform.name + " at a distance of " + distance);
             simulation.CurrentLevelOfDetail = detailLevel;
         }
     }

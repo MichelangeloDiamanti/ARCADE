@@ -145,7 +145,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &21141895
 Transform:
   m_ObjectHideFlags: 0
@@ -2665,15 +2665,18 @@ MonoBehaviour:
   - level: 1
     interactive: 0
     jsonDomain: domain_first_level
-    boundary: {fileID: 268625498}
+    minDistance: 0
+    maxDistance: 0
   - level: 2
     interactive: 0
     jsonDomain: domain_second_level
-    boundary: {fileID: 2128153792}
+    minDistance: 0
+    maxDistance: 0
   - level: 3
     interactive: 1
     jsonDomain: domain_third_level
-    boundary: {fileID: 945656347}
+    minDistance: 0
+    maxDistance: 0
 --- !u!54 &371721276
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -7975,15 +7978,18 @@ MonoBehaviour:
   - level: 1
     interactive: 0
     jsonDomain: domain_first_level
-    boundary: {fileID: 1870122788}
+    minDistance: 30
+    maxDistance: 40
   - level: 2
     interactive: 0
     jsonDomain: domain_second_level
-    boundary: {fileID: 21141896}
+    minDistance: 20
+    maxDistance: 30
   - level: 3
     interactive: 1
     jsonDomain: domain_third_level
-    boundary: {fileID: 1872532968}
+    minDistance: 0
+    maxDistance: 20
 --- !u!54 &1398391146
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -10459,7 +10465,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1870122786
 Transform:
   m_ObjectHideFlags: 0
@@ -10515,7 +10521,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!135 &1872532968
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -11536,7 +11542,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2079504622
 Transform:
   m_ObjectHideFlags: 0

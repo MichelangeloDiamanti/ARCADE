@@ -143,31 +143,43 @@ public class Simulation : MonoBehaviour
             );
         }
 
+        SimulationBoundary currentSimulationBoundary = getCurrentSimulationBoundary();
+        if (currentSimulationBoundary != null)
+        {
+            _currentNode = getInitialWorldStateAtLevel(currentSimulationBoundary.level);
+            _currentLevelOfDetail = currentSimulationBoundary.level;
+        }
+        else
+        {
+            SimulationBoundary shallowestLevel = simulationBoundaries.Last();
+            _currentNode = getInitialWorldStateAtLevel(shallowestLevel.level);
+            _currentLevelOfDetail = shallowestLevel.level;
+        }
+
+        StartCoroutine(randomSimulation());
+    }
+
+    private SimulationBoundary getCurrentSimulationBoundary()
+    {
+        SimulationBoundary result = null;
         // iterate over the boundaries and start the simulation on the
         // highest level according to them
-        bool playerInBoundaries = false;
+        float distance = Vector3.Distance(transform.position, player.transform.position);
+        Debug.Log("Distance " + distance);
+
         foreach (SimulationBoundary sb in simulationBoundaries)
         {
-            if (sb.boundary.bounds.Contains(m_Point))
+            if (distance >= sb.minDistance && distance < sb.maxDistance)
             {
-                Debug.Log("The simulation is starting at level: " + sb.boundary.transform.name);
-                _currentNode = getInitialWorldStateAtLevel(sb.level);
-                _currentLevelOfDetail = sb.level;
-                playerInBoundaries = true;
+                Debug.Log("The simulation is at level: " + sb.level);
+                result = sb;
                 break;
             }
         }
         // if the player is outside every boundary start the simulation
         // at the shallowest LoD possible
-        if (playerInBoundaries == false)
-        {
-            SimulationBoundary shallowestLevel = simulationBoundaries.Last();
-            _currentNode = getInitialWorldStateAtLevel(shallowestLevel.level);
-            _currentLevelOfDetail = shallowestLevel.level;
-            Debug.Log("Player was not found inside any boundary, starting simulation at level: " + shallowestLevel.boundary.transform.name);
-        }
 
-        StartCoroutine(randomSimulation());
+        return result;
     }
 
     private IEnumerator randomSimulation()
@@ -182,12 +194,21 @@ public class Simulation : MonoBehaviour
             // }
             // Debug.Log("Active Entities: " + activeEntities);
 
+            SimulationBoundary currentSimulationBoundary = getCurrentSimulationBoundary();
+            if (currentSimulationBoundary != null)
+            {
+                _currentLevelOfDetail = currentSimulationBoundary.level;
+            }
+            else
+            {
+                currentSimulationBoundary = simulationBoundaries.Last();
+                _currentLevelOfDetail = currentSimulationBoundary.level;
+            }
+
             // switch the simulation the change of value is controlled
             // by the LevelOfDetailSwitcher script attached to each boundary
             if (_currentLevelOfDetail != lastLoD)
             {
-                // find in which boundary the player is at
-                SimulationBoundary currentSimulationBoundary = getSimulationBoundaryAtLevel(_currentLevelOfDetail);
 
                 // Refinement
                 if (_currentLevelOfDetail > lastLoD)
