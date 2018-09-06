@@ -443,7 +443,7 @@ public class Simulation : MonoBehaviour
             else
             {
                 // Debug.Log("Player is visualizing");
-
+                //print("Visualization is requested by: " + transform.parent.name);
                 bool result = false;
                 yield return StartCoroutine(visualizer.visualize(parallelRandomActions, value => result = value));
                 lastActionPerformed = parallelRandomActions.Last();
