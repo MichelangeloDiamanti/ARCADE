@@ -54,10 +54,15 @@ public class Utils
         UnaryPredicate isEmpty = new UnaryPredicate(rover, "IS_EMPTY", "is empty");
         domain.addPredicate(isEmpty);
 
+        Entity curiosity = new Entity(rover, "ROVER");
+
+        //              IDLE ACTION
+        Action actionIdle = new Action(new HashSet<IRelation>(), "IDLE",
+            new HashSet<ActionParameter>() { new ActionParameter(curiosity, ActionParameterRole.ACTIVE) }, new HashSet<IRelation>());
+        domain.addAction(actionIdle);
 
         //              MOVE ACTION
         // Parameters
-        Entity curiosity = new Entity(rover, "ROVER");
         Entity fromWayPoint = new Entity(wayPoint, "WAYPOINT1");
         Entity toWayPoint = new Entity(wayPoint, "WAYPOINT2");
 
@@ -577,7 +582,7 @@ public class Utils
             explored.Add(node.Data);
             foreach (Action a in node.Data.getPossibleActions())
             {
-                TreeNode<WorldState> child = node.AddChild(node.Data.applyAction(a), a);
+                TreeNode<WorldState> child = node.AddChild(node.Data.applyAction(a), new HashSet<Action>() { a });
                 if (explored.Contains(child.Data) == false && frontier.Contains(child) == false)
                 {
 
@@ -604,5 +609,55 @@ public class Utils
             if (b.Relations.Contains(r))
                 equalRelations++;
         return (double)equalRelations / (double)a.Relations.Count;
+    }
+
+    public static Dictionary<ActionParameter, List<Action>> explodeActionList(List<Action> actions)
+    {
+        Dictionary<ActionParameter, List<Action>> actionsForEachActor = new Dictionary<ActionParameter, List<Action>>();
+
+        foreach (Action a in actions)
+        {
+            foreach (ActionParameter ap in a.Parameters)
+            {
+                if (ap.Role == ActionParameterRole.ACTIVE)
+                {
+
+                    List<Action> actorActions;
+                    if (!actionsForEachActor.TryGetValue(ap, out actorActions))
+                    {
+                        actorActions = new List<Action>();
+                        actionsForEachActor.Add(ap, actorActions);
+                    }
+                    actorActions.Add(a);
+                }
+            }
+        }
+
+        return actionsForEachActor;
+    }
+
+    public static Dictionary<ActionParameter, Queue<Action>> explodeActionQueue(Queue<Action> actions)
+    {
+        Dictionary<ActionParameter, Queue<Action>> actionsForEachActor = new Dictionary<ActionParameter, Queue<Action>>();
+
+        foreach (Action a in actions)
+        {
+            foreach (ActionParameter ap in a.Parameters)
+            {
+                if (ap.Role == ActionParameterRole.ACTIVE)
+                {
+
+                    Queue<Action> actorActions;
+                    if (!actionsForEachActor.TryGetValue(ap, out actorActions))
+                    {
+                        actorActions = new Queue<Action>();
+                        actionsForEachActor.Add(ap, actorActions);
+                    }
+                    actorActions.Enqueue(a);
+                }
+            }
+        }
+
+        return actionsForEachActor;
     }
 }

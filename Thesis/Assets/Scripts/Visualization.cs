@@ -6,6 +6,8 @@ using ru.cadia.pddlFramework;
 using UnityEngine.EventSystems;
 using TMPro;
 using UnityEngine.AI;
+using System.Linq;
+
 
 public class Visualization : MonoBehaviour
 {
@@ -25,8 +27,8 @@ public class Visualization : MonoBehaviour
     public GameObject rover1;
     public GameObject rover2;
 
-    //private float interactionWaitTime;
-    //private float visualizationWaitTime;
+    private float interactionWaitTime = 3.0f;
+    private float visualizationWaitTime = 3.0f;
     private float interactionSuccessProbability;
     private float visualizationSuccessProbability;
     private GameObject destination = null;
@@ -72,9 +74,35 @@ public class Visualization : MonoBehaviour
         }
     }
 
+    public IEnumerator interact(HashSet<Action> actions, System.Action<bool> result)
+    {
+        displayText.text = string.Join("\n", actions.shortToString().ToArray());
+        yield return new WaitForSeconds(interactionWaitTime);
+
+        float outcome = Random.Range(0.0f, 1.0f);
+        if (outcome <= interactionSuccessProbability)
+        {
+            displayText.text = "Actions Allowed";
+            yield return new WaitForSeconds(1.0f);
+            result(true);
+        }
+        else
+        {
+            displayText.text = "Actions NOT Allowed";
+            yield return new WaitForSeconds(1.0f);
+            result(false);
+        }
+        // TODO: interact each parallel action
+        // foreach (Action a in actions)
+        // {
+        //     bool res;
+        //     yield return StartCoroutine(interact(a, value => res = value));
+        // }
+    }
+
     public IEnumerator interact(Action a, System.Action<bool> result)
     {
-        displayText.text = "The Simulator is requesting the following Action: " + a.ShortToString();
+        displayText.text = "The Simulator is requesting the following Action: " + a.shortToString();
 
         timer = waitTime;
         Time.timeScale = 0.3f;
@@ -111,19 +139,45 @@ public class Visualization : MonoBehaviour
         //}
     }
 
+    public IEnumerator visualize(HashSet<Action> actions, System.Action<bool> result)
+    {
+        displayText.text = string.Join(" ", actions.shortToString().ToArray());
+        yield return new WaitForSeconds(visualizationWaitTime);
+
+        float outcome = Random.Range(0.0f, 1.0f);
+        if (outcome <= visualizationSuccessProbability)
+        {
+            displayText.text = "Actions Visualized";
+            yield return new WaitForSeconds(1.0f);
+            result(true);
+        }
+        else
+        {
+            displayText.text = "Actions NOT Visualized";
+            yield return new WaitForSeconds(1.0f);
+            result(false);
+        }
+        // TODO: visualize each parallel action
+        // foreach (Action a in actions)
+        // {
+        //     bool res;
+        //     yield return StartCoroutine(visualize(a, value => res = value));
+        // }
+    }
+
     public IEnumerator visualize(Action a, System.Action<bool> result)
     {
-        displayText.text = "The Simulator is requesting the following Action: " + a.ShortToString();
+        displayText.text = "The Simulator is requesting the following Action: " + a.shortToString();
 
         //yield return new WaitForSeconds(visualizationWaitTime);
-        print(a.ShortToString());
+        print(a.shortToString());
 
         // TODO: the logic to visualize the action should go here
         //
         switch (a.Name)
         {
             case "MOVE":
-                                
+
                 GameObject rover;
                 string destinationName = null;
                 foreach (ActionParameter ap in a.Parameters)
@@ -363,7 +417,7 @@ public class Visualization : MonoBehaviour
                     takeSample.SetActive(true);
                 else
                     takeSample.SetActive(false);
-                
+
                 break;
 
             case "DROP_SAMPLE":

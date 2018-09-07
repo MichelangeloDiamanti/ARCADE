@@ -251,18 +251,23 @@ namespace ru.cadia.pddlFramework
             if (_name.Equals(other.Name) == false)
                 return false;
 
+            if(_parameters.SetEquals(other.Parameters) == false)
+                return false;
+
             return true;
         }
 
-        public string ShortToString()
+        public string shortToString()
         {
-            string value = "Action: " + _name + "(";
+            string value = _name + "(";
             foreach (ActionParameter item in _parameters)
             {
-                value += item.Name + " ,";
+                value += item.Name + ", ";
             }
+            value = value.Substring(0, value.Length - 2);            
             value += ")";
             return value;
         }
+
     }
 }

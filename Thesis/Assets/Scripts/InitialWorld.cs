@@ -199,7 +199,7 @@ public class InitialWorld : MonoBehaviour
         WorldState resultingState = node.Data.applyAction(randomAction);
         // Debug.Log("The Following Action was performed: " + randomAction.ShortToString());
 
-        return node.AddChild(resultingState, randomAction);
+        return null; //node.AddChild(resultingState, randomAction);
 
     }
 

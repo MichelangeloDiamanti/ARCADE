@@ -38,7 +38,7 @@ public class Simulation : MonoBehaviour
     private Dictionary<SimulationBoundary, TreeNode<WorldState>> _lastObservedStates;
     // private Dictionary<int, Model> _lastObservedStatesTest;
 
-    public static Action lastActionPerformed; 
+    public static Action lastActionPerformed;
 
     public TreeNode<WorldState> CurrentNode
     {
@@ -143,31 +143,43 @@ public class Simulation : MonoBehaviour
             );
         }
 
+        SimulationBoundary currentSimulationBoundary = getCurrentSimulationBoundary();
+        if (currentSimulationBoundary != null)
+        {
+            _currentNode = getInitialWorldStateAtLevel(currentSimulationBoundary.level);
+            _currentLevelOfDetail = currentSimulationBoundary.level;
+        }
+        else
+        {
+            SimulationBoundary shallowestLevel = simulationBoundaries.Last();
+            _currentNode = getInitialWorldStateAtLevel(shallowestLevel.level);
+            _currentLevelOfDetail = shallowestLevel.level;
+        }
+
+        StartCoroutine(randomSimulation());
+    }
+
+    private SimulationBoundary getCurrentSimulationBoundary()
+    {
+        SimulationBoundary result = null;
         // iterate over the boundaries and start the simulation on the
         // highest level according to them
-        bool playerInBoundaries = false;
+        float distance = Vector3.Distance(transform.position, player.transform.position);
+        Debug.Log("Distance " + distance);
+
         foreach (SimulationBoundary sb in simulationBoundaries)
         {
-            if (sb.boundary.bounds.Contains(m_Point))
+            if (distance >= sb.minDistance && distance < sb.maxDistance)
             {
-                Debug.Log("The simulation is starting at level: " + sb.boundary.transform.name);
-                _currentNode = getInitialWorldStateAtLevel(sb.level);
-                _currentLevelOfDetail = sb.level;
-                playerInBoundaries = true;
+                Debug.Log("The simulation is at level: " + sb.level);
+                result = sb;
                 break;
             }
         }
         // if the player is outside every boundary start the simulation
         // at the shallowest LoD possible
-        if (playerInBoundaries == false)
-        {
-            SimulationBoundary shallowestLevel = simulationBoundaries.Last();
-            _currentNode = getInitialWorldStateAtLevel(shallowestLevel.level);
-            _currentLevelOfDetail = shallowestLevel.level;
-            Debug.Log("Player was not found inside any boundary, starting simulation at level: " + shallowestLevel.boundary.transform.name);
-        }
 
-        StartCoroutine(randomSimulation());
+        return result;
     }
 
     private IEnumerator randomSimulation()
@@ -175,12 +187,28 @@ public class Simulation : MonoBehaviour
         int lastLoD = _currentLevelOfDetail;
         while (true)
         {
+            // string activeEntities = "";
+            // foreach (Entity e in _currentNode.Data.getActiveEntities())
+            // {
+            //     activeEntities += e.Name + " ";
+            // }
+            // Debug.Log("Active Entities: " + activeEntities);
+
+            SimulationBoundary currentSimulationBoundary = getCurrentSimulationBoundary();
+            if (currentSimulationBoundary != null)
+            {
+                _currentLevelOfDetail = currentSimulationBoundary.level;
+            }
+            else
+            {
+                currentSimulationBoundary = simulationBoundaries.Last();
+                _currentLevelOfDetail = currentSimulationBoundary.level;
+            }
+
             // switch the simulation the change of value is controlled
             // by the LevelOfDetailSwitcher script attached to each boundary
             if (_currentLevelOfDetail != lastLoD)
             {
-                // find in which boundary the player is at
-                SimulationBoundary currentSimulationBoundary = getSimulationBoundaryAtLevel(_currentLevelOfDetail);
 
                 // Refinement
                 if (_currentLevelOfDetail > lastLoD)
@@ -252,24 +280,95 @@ public class Simulation : MonoBehaviour
                         // Debug.Log("BFS time: " + elapsedMs + " ms");
                         // Debug.Log("BFS explored nodes: " + Utils.bfsExploredNodes);
 
-                        s += "Abstract: " + _currentNode.ParentAction.ShortToString() + "\n";
-
-                        s += "Detailed:\n";
+                        s += "Abstract: ";
+                        s += string.Join(", ", _currentNode.ParentAction.shortToString().ToArray());
+                        s += "\n";
 
                         // solution is a leaf node we need to apply the actions in the reversed order (from root to leaf)
-                        List<Action> sortedActions = new List<Action>();
+                        Queue<Action> sortedActions = new Queue<Action>();
                         while (solution.IsRoot == false)
                         {
-                            sortedActions.Add(solution.ParentAction);
+                            // the bfs returns a game tree branch with ParentActions that contain only
+                            // one Action since they're took from the domain and so are atomic.
+                            // thus we can just enqueue the first action of the set
+                            sortedActions.Enqueue(solution.ParentAction.First());
                             solution = solution.Parent;
                         }
-                        sortedActions.Reverse();
-                        foreach (Action a in sortedActions)
+
+                        // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                        // modify here
+
+                        s += "Detailed All Sequetial:\n";
+
+                        foreach (Action a in sortedActions.Reverse())
                         {
-                            s += a.ShortToString() + "\n";
-                            lastNodeAtCurrentLevel = lastNodeAtCurrentLevel.AddChild(lastNodeAtCurrentLevel.Data.applyAction(a), a);
+                            s += a.shortToString() + "\n";
+                            lastNodeAtCurrentLevel = lastNodeAtCurrentLevel.AddChild(
+                                lastNodeAtCurrentLevel.Data.applyAction(a), new HashSet<Action>() { a }
+                            );
+                        }
+
+                        // group actions depending on the entity which is performing it
+                        Dictionary<ActionParameter, Queue<Action>> actionsForEachActor = Utils.explodeActionQueue(sortedActions);
+                        // get a shallow list of entities which could be perform some actions
+                        HashSet<Entity> activeActors = _currentNode.Data.getActiveEntities();
+
+                        bool weStillHaveActionsToAssign = true;
+                        Queue<List<Action>> sequentialActions = new Queue<List<Action>>();
+
+                        // we have to assign at least all the actions contained in the longest queue
+                        // so, instead of iterating the dictionary to find out the longest one, we go on
+                        // assigning actions until we get only NOOPS from all active entities
+                        while (weStillHaveActionsToAssign)
+                        {
+                            weStillHaveActionsToAssign = false;
+                            List<Action> parallelActions = new List<Action>();
+
+                            // assign one action to each active entity
+                            foreach (Entity e in activeActors)
+                            {
+                                Queue<Action> actorActions;
+                                ActionParameter activeActor = new ActionParameter(e, ActionParameterRole.ACTIVE);
+
+                                // check if the current actor still has some action in the dictionary
+                                bool actorIsDefined = actionsForEachActor.TryGetValue(activeActor, out actorActions);
+                                // if it has some action then we put it in the parallel list for the current "turn"
+                                // this resets the "weStillHaveActionsToAssign" check since some non trivial action was
+                                // assigned
+                                if (actorIsDefined && actorActions.Count > 0)
+                                {
+                                    parallelActions.Add(actorActions.Dequeue());
+                                    weStillHaveActionsToAssign = true;
+                                }
+                                // if the actor has no action left in the dictionary then we assign a NOOP
+                                else
+                                {
+                                    Action actionIdle = new Action(new HashSet<IRelation>(), "IDLE",
+                                        new HashSet<ActionParameter>() { activeActor }, new HashSet<IRelation>());
+                                    parallelActions.Add(actionIdle);
+                                }
+                            }
+
+                            // if some non-trivial action was assigned then we enqueue 
+                            // the parallel actions in the current turn
+                            if (weStillHaveActionsToAssign)
+                                sequentialActions.Enqueue(parallelActions);
+
+                        }
+
+                        s += "Detailed Sequetial Lists of Parallel Actions:\n";
+                        int i = 0;
+                        foreach (List<Action> listOfParallelActions in sequentialActions)
+                        {
+                            s += "Turn [" + i + "]:\n";
+                            i++;
+                            foreach (Action a in listOfParallelActions)
+                            {
+                                s += a.shortToString() + "\n";
+                            }
                         }
                         s += "\n";
+
                     }
 
                     writer.WriteLine(s);
@@ -301,13 +400,19 @@ public class Simulation : MonoBehaviour
             // this is the actual simulation, for now we just pick a random action
             // remember to use lastLoD while updating the lastObservedState because
             // in the meantime it could have changed
-            Action randomAction = getRandomPossibleAction(_currentNode);
+            HashSet<Action> parallelRandomActions = getRandomPossibleAction(_currentNode);
 
-            if (randomAction == null)
+            if (parallelRandomActions == null || parallelRandomActions.Count <= 0)
             {
                 Debug.Log("There are no more available actions, shutting down the simulation");
                 break;
             }
+
+            string chosenCombination = transform.parent.gameObject.name + "\n";
+            foreach (Action a in parallelRandomActions)
+                chosenCombination += a.shortToString() + ", ";
+            chosenCombination = chosenCombination.Substring(0, chosenCombination.Length - 2);
+            Debug.Log(chosenCombination);
 
             // Debug.Log("The Simulator is requesting the following Action: " + randomAction.ShortToString());
 
@@ -317,16 +422,17 @@ public class Simulation : MonoBehaviour
                 // Debug.Log("Player is interacting");
 
                 bool result = false;
-                yield return StartCoroutine(visualizer.interact(randomAction, value => result = value));
-                lastActionPerformed = randomAction;
+                yield return StartCoroutine(visualizer.interact(parallelRandomActions, value => result = value));
                 if (result)
                 {
                     // The action has been allowed, go next
                     // Debug.Log("Interactive Action Allowed");
-                    WorldState resultingState = _currentNode.Data.applyAction(randomAction);
-                    _currentNode = _currentNode.AddChild(resultingState, randomAction);
+
+                    WorldState resultingState = _currentNode.Data.applyParallelActions(parallelRandomActions);
+                    _currentNode = _currentNode.AddChild(resultingState, parallelRandomActions);
 
                     setLastObservedStateAtLevel(lastLoD, _currentNode);
+
                 }
                 else
                 {
@@ -339,16 +445,17 @@ public class Simulation : MonoBehaviour
                 // Debug.Log("Player is visualizing");
                 //print("Visualization is requested by: " + transform.parent.name);
                 bool result = false;
-                yield return StartCoroutine(visualizer.visualize(randomAction, value => result = value));
-                lastActionPerformed = randomAction;
+                yield return StartCoroutine(visualizer.visualize(parallelRandomActions, value => result = value));
+                lastActionPerformed = parallelRandomActions.Last();
                 if (result)
                 {
                     // The action has been visualized, go next
                     // Debug.Log("Non Interactive Action Visualized");
-                    WorldState resultingState = _currentNode.Data.applyAction(randomAction);
-                    _currentNode = _currentNode.AddChild(resultingState, randomAction);
+                    WorldState resultingState = _currentNode.Data.applyParallelActions(parallelRandomActions);
+                    _currentNode = _currentNode.AddChild(resultingState, parallelRandomActions);
 
                     setLastObservedStateAtLevel(lastLoD, _currentNode);
+
                 }
                 else
                 {
@@ -361,7 +468,9 @@ public class Simulation : MonoBehaviour
         }
     }
 
-    private Action getRandomPossibleAction(TreeNode<WorldState> node)
+
+
+    private HashSet<Action> getRandomPossibleAction(TreeNode<WorldState> node)
     {
         List<Action> possibleActions = node.Data.getPossibleActions();
 
@@ -370,42 +479,83 @@ public class Simulation : MonoBehaviour
 
         // we want to get one possible action for each different entity that can perform an action
         // so we need a way to group actions depending on the entity which is performing it
-        Dictionary<ActionParameter, List<Action>> actionsForEachActor = new Dictionary<ActionParameter, List<Action>>();
+        Dictionary<ActionParameter, List<Action>> actionsForEachActor = Utils.explodeActionList(possibleActions);
 
-        foreach (Action a in possibleActions)
+        // now that we have a list of possible actions for each active actor we want to build
+        // a n-tuple containing one for each of them. The tuple must be composed by actions
+        // which are applicable at the same time
+        List<List<Action>> parallelActions = actionsForEachActor.Values.ToList().CartesianProduct();
+        // foreach (List<Action> list in parallelActions)
+        // {
+        //     string s = "";
+        //     foreach (Action a in list)
+        //     {
+        //         s += a.ShortToString() + "\n";
+        //     }
+        //     Debug.Log(s);
+        // }
+
+        // for each combinations we must check if the actions can really be 
+        // carried out in parallel, meaning that we can perform them in 
+        // whichever order we prefer, and still reach a consistent worldstate    
+        HashSet<Action> chosenRandomParallelActions = new HashSet<Action>();
+        List<int> randomIndexes = new List<int>(Enumerable.Range(0, parallelActions.Count).ToArray());
+
+        // we choose a random order to explore the possible parallel actions
+        randomIndexes.Shuffle();
+
+        // we exit from this loop as soon as we find a set of parallel actions which is fully applicable
+        // or when we have checked all the possible parallel actions and we did not find any 
+        foreach (int i in randomIndexes)
         {
-            foreach (ActionParameter ap in a.Parameters)
-            {
-                if (ap.Role == ActionParameterRole.ACTIVE)
-                {
+            List<Action> randomParallelActions = parallelActions[i];
+            IEnumerable<IEnumerable<Action>> permutations = randomParallelActions.Permute();
 
-                    List<Action> actions;
-                    if (!actionsForEachActor.TryGetValue(ap, out actions))
+            bool canPerfomParallelActions = true;
+
+            // we exit from this loop when we check all the permutations
+            // or when one of the permutations cannot be performed
+            foreach (IEnumerable<Action> perm in permutations)
+            {
+                WorldState currentWorldState = _currentNode.Data.Clone();
+
+                // we exit from this loop when we check all the actions in the
+                // current permutation or when one action cannot be applied
+                // because one of the previous actions modified the state, in a way
+                // that does not satisfy the preconditions of the followin action
+                foreach (Action a in perm)
+                {
+                    // we try to apply the action, if we get an exception
+                    // it means that the action was not applicable
+                    try
                     {
-                        actions = new List<Action>();
-                        actionsForEachActor.Add(ap, actions);
+                        currentWorldState = currentWorldState.applyAction(a);
                     }
-                    actions.Add(a);
+                    catch (System.ArgumentException)
+                    {
+                        canPerfomParallelActions = false;
+                        break;
+                    };
                 }
+                if (canPerfomParallelActions == false) break;
+            }
+
+            // if at this point this is still true, it means that the list
+            // of actions can be carried out in whichever order possible
+            // so we conclude that it can be carried out in parallel and we return it
+            if (canPerfomParallelActions == true)
+            {
+                chosenRandomParallelActions.UnionWith(randomParallelActions);
+                break;
             }
         }
 
-        // foreach(ActionParameter ap in actionsForEachActor.Keys)
-        //     Debug.Log(ap.Name);
 
-        foreach(KeyValuePair<ActionParameter, List<Action>> pair in actionsForEachActor)
-        {
-            //Debug.Log("The Active actor " + pair.Key.Name + " can do:");
-            //foreach(Action a in pair.Value)
-            //{
-            //    Debug.Log(a.ShortToString());
-            //}
-        }
+        // int randomActionIndex = Random.Range(0, possibleActions.Count);
+        // Action randomAction = possibleActions[randomActionIndex];
 
-        int randomActionIndex = Random.Range(0, possibleActions.Count);
-        Action randomAction = possibleActions[randomActionIndex];
-
-        return randomAction;
+        // return randomAction;
+        return chosenRandomParallelActions;
     }
 
     private TreeNode<WorldState> getInitialWorldStateAtLevel(int level)
