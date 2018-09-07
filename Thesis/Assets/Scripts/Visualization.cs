@@ -20,6 +20,7 @@ public class Visualization : MonoBehaviour
     public Image timerBar;
     public RenderTexture renderTextureRover1;
     public RenderTexture renderTextureRover2;
+    public Material red, yellow;
 
     public GameObject rover1;
     public GameObject rover2;
@@ -36,6 +37,7 @@ public class Visualization : MonoBehaviour
     private int buttonClicked;
     private Coroutine actionTimerRoutine, lastRoutine;
     private GameObject initialStatus;
+    private bool rotation;
 
     // Use this for initialization
     void Start()
@@ -58,12 +60,16 @@ public class Visualization : MonoBehaviour
         actionTimerRoutine = null;
         lastRoutine = null;
         initialStatus = null;
+        rotation = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        if (destination != null)
+        {
+            destination.transform.Rotate(Vector3.forward * Time.deltaTime * 200);
+        }
     }
 
     public IEnumerator interact(Action a, System.Action<bool> result)
@@ -146,11 +152,11 @@ public class Visualization : MonoBehaviour
                     if (waypoint.name == destinationName)
                     {
                         destination = waypoint.transform.gameObject;
-                        destination.GetComponent<Renderer>().material.color = Color.yellow;
+                        destination.GetComponent<Renderer>().material = yellow;
                     }
                     else
                     {
-                        waypoint.transform.gameObject.GetComponent<Renderer>().material.color = Color.grey;
+                        waypoint.transform.gameObject.GetComponent<Renderer>().material = red;
                     }
                 }
                 initialStatus = new GameObject("empty");
@@ -313,8 +319,8 @@ public class Visualization : MonoBehaviour
             {
                 //print("REMAINING DISTANCE: " + agent.remainingDistance);
                 //print("TIME: " + time);
-                time -= 1.0f;
                 yield return new WaitForSeconds(1.0f);
+                time -= 1.0f;
             }
             else
             {
