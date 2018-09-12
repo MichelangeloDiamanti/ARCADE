@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 
 namespace ru.cadia.pddlFramework
 {
+    [System.Serializable]
     public class ActionParameter : Entity, System.IEquatable<ActionParameter>
     {
         private ActionParameterRole _role;

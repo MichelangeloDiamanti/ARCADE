@@ -58,7 +58,7 @@ public class Utils
 
         //              IDLE ACTION
         Action actionIdle = new Action(new HashSet<IRelation>(), "IDLE",
-            new HashSet<ActionParameter>() { new ActionParameter(curiosity, ActionParameterRole.ACTIVE) }, new HashSet<IRelation>());
+            new HashSet<ActionParameter>() { new ActionParameter(curiosity, ActionParameterRole.ACTIVE) }, new HashSet<IRelation>(), true);
         domain.addAction(actionIdle);
 
         //              MOVE ACTION

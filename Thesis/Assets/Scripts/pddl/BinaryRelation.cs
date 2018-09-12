@@ -6,6 +6,7 @@ namespace ru.cadia.pddlFramework
 {
     /// <summary>
     /// </summary>
+    [System.Serializable]
     public class BinaryRelation : IRelation, System.IEquatable<IRelation>
     {
         private Entity _source;
@@ -30,7 +31,6 @@ namespace ru.cadia.pddlFramework
             get { return _value; }
             set { _value = value; }
         }
-
         public BinaryRelation(Entity source, IPredicate predicate, Entity destination, RelationValue value)
         {
             if (source == null)
@@ -155,6 +155,8 @@ namespace ru.cadia.pddlFramework
         {
             return _source.Name + " " + _predicate.Name + " " + _destination.Name + ": " + _value;
         }
+
+
 
     }
 }

@@ -6,6 +6,7 @@ namespace ru.cadia.pddlFramework
 {
     /// <summary>
     /// </summary>
+    [System.Serializable]
     public class UnaryRelation : IRelation, System.IEquatable<IRelation>
     {
 
@@ -25,6 +26,7 @@ namespace ru.cadia.pddlFramework
             get { return _value; }
             set { _value = value; }
         }
+
         public UnaryRelation(Entity source, IPredicate predicate, RelationValue value)
         {
             if (source == null)
@@ -131,5 +133,7 @@ namespace ru.cadia.pddlFramework
 
             return true;
         }
+        
+
     }
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Diagnostics;
-using System;
 using UnityEngine;
 using Newtonsoft.Json;
 
@@ -11,9 +10,11 @@ namespace ru.cadia.pddlFramework
 {
     /// <summary>
     /// </summary>
+    [System.Serializable]
     public class WorldState : System.IEquatable<WorldState>
     {
         private Domain _domain;
+        
         private HashSet<IRelation> _relations;
         private HashSet<Entity> _entities;
 
@@ -37,6 +38,14 @@ namespace ru.cadia.pddlFramework
         {
             get { return _domain; }
         }
+
+        public WorldState()
+        {
+            _domain = new Domain();
+            _entities = new HashSet<Entity>();
+            _relations = new HashSet<IRelation>();
+        }
+
         public WorldState(Domain domain)
         {
             if (domain == null)

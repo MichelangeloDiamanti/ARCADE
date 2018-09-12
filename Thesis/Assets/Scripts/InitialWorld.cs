@@ -13,25 +13,54 @@ public class InitialWorld : MonoBehaviour
     WorldState currentState;
     public int numberOfLevels = 2;
     public bool liteGraph = true;
+    public bool SaveGraphData = false;
+    public bool RestoreGraphData = false;
     public bool ComparationBetweenStates = false;
     public bool GraphGeneration = false;
     public bool SearchOnGraph = false;
+    public bool ExecuteOnThread = false;
     private Thread myThread;
     public static string path;
-    private System.Diagnostics.Stopwatch sw;
+    private System.Diagnostics.Stopwatch sw, sw1;
     bool printed = false;
     // Use this for initialization
     void Start()
     {
         sw = new System.Diagnostics.Stopwatch();
+        sw1 = new System.Diagnostics.Stopwatch();
         Domain domainFullDetail = Utils.roverWorldDomainThirdLevel();
         // Debug.Log(domainFullDetail.Actions.Count);
         WorldState worldStateFullDetail = Utils.roverWorldStateThirdLevel(domainFullDetail);
         path = Application.persistentDataPath;
 
+        if (SaveGraphData == false && RestoreGraphData == false)
+        {
+            throw new System.Exception("One of SaveGraphData or RestoreGraphData should be selected");
+        }
+        if (SaveGraphData == true && RestoreGraphData == true)
+        {
+            throw new System.Exception("Only one of SaveGraphData or RestoreGraphData should be selected");
+        }
+        if (RestoreGraphData)
+        {
+            string filePath = path + "/graph/graph" + numberOfLevels + ".json";
+            if (!UnityEngine.Windows.File.Exists(filePath))
+            {
+                SaveGraphData = true;
+            }
+        }
+
         currentState = worldStateFullDetail.Clone();
-        myThread = new Thread(AutomaticGraphGenerator);
-        myThread.Start();
+        if (ExecuteOnThread)
+        {
+            myThread = new Thread(AutomaticGraphGenerator);
+            myThread.Start();
+        }
+        else
+        {
+            AutomaticGraphGenerator();
+        }
+        // 
     }
 
 
@@ -111,28 +140,45 @@ public class InitialWorld : MonoBehaviour
     {
         sw.Start();
         GraphDataGenerator gdg = new GraphDataGenerator(currentState);
-        Graph g = gdg.GenerateData(numberOfLevels);
-        FileWriter.SerializeObject<Graph>(g, "ciao");
+        Graph g = new Graph();
+        if (RestoreGraphData)
+        {
+            Debug.Log("Restoring graph from JSON...");
+            string filePath = path + "/graph/graph" + numberOfLevels + ".json";
+            sw1.Start();
+            g = FileWriter.ReadFromJsonFile<Graph>(filePath);
+            sw1.Stop();
+            Debug.Log("Restore graph from JSON done. Elaboration time:" + (sw1.ElapsedMilliseconds / 1000f));
+        }
+
+        if (SaveGraphData)
+        {
+            g = gdg.GenerateData(numberOfLevels);
+            FileWriter.WriteToJsonFile<Graph>(path + "/graph/graph" + numberOfLevels + ".json", g);
+        }
+        // Graph g1 = FileWriter.ReadFromJsonFile<Graph>(path+"/graph/graph"+numberOfLevels+".json");
+        // Debug.Log(g1.Nodes.Count);
         // g.printNodeLevels();
         if (ComparationBetweenStates)
         {
             System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
-            sw.Start();
+            sw1.Start();
             HashSet<WorldStateComparated> wsc = gdg.CompareWorldState();
-            sw.Stop();
-            Debug.Log("CompareWorldState time:" + (sw.ElapsedMilliseconds / 1000f));
+            sw1.Stop();
+            Debug.Log("CompareWorldState time:" + (sw1.ElapsedMilliseconds / 1000f));
 
-            sw.Start();
+            sw1.Start();
             new WorldStateComparator(wsc).Compare();
-            sw.Stop();
-            Debug.Log("CompareWorldStateComparated time:" + (sw.ElapsedMilliseconds / 1000f));
+            sw1.Stop();
+            Debug.Log("CompareWorldStateComparated time:" + (sw1.ElapsedMilliseconds / 1000f));
         }
         if (SearchOnGraph)
         {
-
+            g.StartSearch();
         }
         if (GraphGeneration)
         {
+            Debug.Log("Starting Graph Generation...");
             new GraphGenerator(g).GenerateGraphML(liteGraph);
         }
 

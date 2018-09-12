@@ -37,27 +37,44 @@ public class GraphDataGenerator
     private void GenerateDataRoutine(WorldState currentState, int level)
     {
         List<Action> possibleActions = currentState.getPossibleActions();
-        foreach (Action item in possibleActions)
+        // we want to get one possible action for each different entity that can perform an action
+        // so we need a way to group actions depending on the entity which is performing it
+        Dictionary<ActionParameter, List<Action>> actionsForEachActor = Utils.explodeActionList(possibleActions);
+        //we want evaluate only one type of action parameter since each type behave in the same way
+        List<Action> allPossibleActions = new List<Action>();
+        List<EntityType> actionParameterDone = new List<EntityType>();
+        foreach (var item in actionsForEachActor)
         {
-            WorldState ws = currentState.applyAction(item);
-            _graph.addEdge(currentState, ws, item, level);
-            if (!_visitedStates.Contains(ws))
+            if (!(actionParameterDone.Contains(item.Key.Type)))
             {
-                _visitedStates.Add(ws.Clone());
-                if (level + 1 > numberOfLevels)
+                allPossibleActions.AddRange(item.Value);
+                actionParameterDone.Add(item.Key.Type);
+            }
+        }
+        foreach (Action item in allPossibleActions)
+        {
+            if (!item.IgnoreOnAbtraction)
+            {
+                WorldState ws = currentState.applyAction(item);
+                _graph.addEdge(currentState, ws, item, level);
+                if (!_visitedStates.Contains(ws))
                 {
-                    _finalStates.Add(ws.Clone());
+                    _visitedStates.Add(ws.Clone());
+                    if (level > numberOfLevels)
+                    {
+                        _finalStates.Add(ws.Clone());
+                    }
+                    else
+                    {
+                        GenerateDataRoutine(ws, level + 1);
+                    }
                 }
                 else
                 {
-                    GenerateDataRoutine(ws, level + 1);
-                }
-            }
-            else
-            {
-                if (level + 1 > numberOfLevels)
-                {
-                    _finalStates.Add(ws.Clone());
+                    if (level > numberOfLevels)
+                    {
+                        _finalStates.Add(ws.Clone());
+                    }
                 }
             }
         }

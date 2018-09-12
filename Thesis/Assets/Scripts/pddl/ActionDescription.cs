@@ -7,6 +7,7 @@ namespace ru.cadia.pddlFramework
 {
     /// <summary>
     /// </summary>
+    [System.Obsolete]
     public class ActionDescription : MonoBehaviour
     {
 

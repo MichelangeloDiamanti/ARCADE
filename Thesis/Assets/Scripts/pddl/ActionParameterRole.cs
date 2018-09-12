@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace ru.cadia.pddlFramework
 {
+    [System.Serializable]
     public enum ActionParameterRole
     {
         ACTIVE = 1,

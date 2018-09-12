@@ -74,7 +74,7 @@ public class GraphGenerator
         return value;
     }
 
-    public void GenerateGraphML(bool lite = false)
+    public void GenerateGraphML(bool lite = false, string fileName = "")
     {
         sw.Start();
         if (_graph == null) return;
@@ -88,7 +88,7 @@ public class GraphGenerator
         graphml += "<key attr.name=\"description\" attr.type=\"string\" for=\"edge\" id=\"d8\"/>\n";
         graphml += "<key for=\"edge\" id=\"d9\" yfiles.type=\"edgegraphics\"/>\n";
         graphml += " <graph id=\"G\" edgedefault=\"directed\">\n";
-        foreach (WorldState item in _graph.Nodes.Keys)
+        foreach (WorldState item in _graph.getAllNodeData())
         {
             string nodeName = "n" + id;
             _nodes.Add(item, nodeName);
@@ -101,14 +101,14 @@ public class GraphGenerator
             graphml += "<y:ShapeNode>\n";
             graphml += "<y:Fill color=\"#" + RandomColor() + "\" transparent=\"false\"/>";
             graphml += "<y:NodeLabel>" + nodeName + "</y:NodeLabel>\n";
-            
+
             graphml += "</y:ShapeNode>\n";
             graphml += "</data>\n";
             graphml += "</node>\n";
             id++;
         }
         id = 0;
-        foreach (KeyValuePair<WorldState, HashSet<WorldState>> item in _graph.Edges)
+        foreach (KeyValuePair<WorldState, HashSet<WorldState>> item in _graph.getAllEdges())
         {
             string source;
             if (_nodes.TryGetValue(item.Key, out source))
@@ -116,13 +116,14 @@ public class GraphGenerator
                 foreach (WorldState ws in item.Value)
                 {
                     string destination;
-                    ru.cadia.pddlFramework.Action ac;
+
                     if (_nodes.TryGetValue(ws, out destination))
                     {
                         graphml += "<edge source=\"" + source + "\" target=\"" + destination + "\">\n";
                         if (!lite)
                         {
-                            if (_graph.Actions.TryGetValue(new KeyValuePair<WorldState, WorldState>(item.Key, ws), out ac))
+                            ru.cadia.pddlFramework.Action ac = _graph.getActionFromSourceAndDestination(item.Key, ws);
+                            if (ac != null)
                             {
                                 graphml += "<data key=\"d8\" xml:space=\"preserve\"><![CDATA[" + ac.ToString() + "]]></data>\n";
                                 graphml += "<data key=\"d9\">\n";
@@ -147,9 +148,11 @@ public class GraphGenerator
         }
         graphml += "</graph>\n</graphml>";
         sw.Stop();
-        Debug.Log("Graph Generation time: " + (sw.ElapsedMilliseconds/1000f));
-
-        new FileWriter().SaveFile(graphml);
+        Debug.Log("Graph Generation time: " + (sw.ElapsedMilliseconds / 1000f));
+        if (fileName != "")
+            new FileWriter().SaveFile(fileName, graphml);
+        else
+            new FileWriter().SaveFile(graphml);
     }
 
 

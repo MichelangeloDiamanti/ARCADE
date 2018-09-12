@@ -6,6 +6,7 @@ namespace ru.cadia.pddlFramework
 {
     /// <summary>
     /// </summary>
+    [System.Serializable]
     public class BinaryPredicate : IPredicate, System.IEquatable<IPredicate>
     {
         private EntityType _source;

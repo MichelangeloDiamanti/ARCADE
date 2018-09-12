@@ -6,6 +6,7 @@ namespace ru.cadia.pddlFramework
 {
     /// <summary>
     /// </summary>
+    [System.Serializable]
     public class Action : System.IEquatable<Action>
     {
 
@@ -13,6 +14,7 @@ namespace ru.cadia.pddlFramework
         private string _name;
         private HashSet<ActionParameter> _parameters;
         private HashSet<IRelation> _postConditions;
+        private bool _ignoreOnAbtraction;
 
         public HashSet<IRelation> PreConditions
         {
@@ -29,6 +31,11 @@ namespace ru.cadia.pddlFramework
         public HashSet<IRelation> PostConditions
         {
             get { return _postConditions; }
+        }
+
+        public bool IgnoreOnAbtraction
+        {
+            get { return _ignoreOnAbtraction; }
         }
 
         public Action(HashSet<IRelation> preconditions, string name, HashSet<ActionParameter> parameters, HashSet<IRelation> postconditions)
@@ -54,6 +61,33 @@ namespace ru.cadia.pddlFramework
             _name = name;
             _parameters = parameters;
             _postConditions = postconditions;
+            _ignoreOnAbtraction = false;
+        }
+
+         public Action(HashSet<IRelation> preconditions, string name, HashSet<ActionParameter> parameters, HashSet<IRelation> postconditions, bool ignoreOnAbtraction)
+        {
+            if (preconditions == null)
+                throw new System.ArgumentNullException("ActionDefinition: The set of precondiction cannot be null or empty", "HashSet<IPredicate> precondition");
+            if (name == null)
+                throw new System.ArgumentNullException("ActionDefinition: name cannot be null", "name");
+            if (postconditions == null)
+                throw new System.ArgumentNullException("ActionDefinition: The set of postcondition cannot be null or empty", "HashSet<IPredicate> postcondition");
+            if (parameters == null)
+                throw new System.ArgumentNullException("ActionDefinition: The set of parameter cannot be null or empty", "HashSet<ActionParameterType> parameter");
+
+            HashSet<Entity> entityParameters = new HashSet<Entity>();
+            foreach (ActionParameter ap in parameters)
+                entityParameters.Add(new Entity(ap.Type, ap.Name));
+
+            checkVariableInRelation(preconditions, entityParameters);
+            checkVariableInRelation(postconditions, entityParameters);
+
+
+            _preConditions = preconditions;
+            _name = name;
+            _parameters = parameters;
+            _postConditions = postconditions;
+            _ignoreOnAbtraction = ignoreOnAbtraction;
         }
 
         public void addParameter(ActionParameter parameter)

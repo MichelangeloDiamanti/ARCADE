@@ -6,6 +6,7 @@ namespace ru.cadia.pddlFramework
 {
     /// <summary>
     /// </summary>
+    [System.Serializable]
     public class UnaryPredicate : IPredicate, System.IEquatable<IPredicate>
     {
 
