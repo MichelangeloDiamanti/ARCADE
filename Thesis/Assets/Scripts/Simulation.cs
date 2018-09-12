@@ -28,6 +28,7 @@ public class Simulation : MonoBehaviour
     public GameObject player;
     public Visualization visualizer;
     public List<SimulationBoundary> simulationBoundaries;
+    public RenderTexture occlusionMap;
 
     private string logFilePath = "Assets/Logs/";
     private string logFileName;
@@ -187,12 +188,24 @@ public class Simulation : MonoBehaviour
         int lastLoD = _currentLevelOfDetail;
         while (true)
         {
-            // string activeEntities = "";
-            // foreach (Entity e in _currentNode.Data.getActiveEntities())
-            // {
-            //     activeEntities += e.Name + " ";
-            // }
-            // Debug.Log("Active Entities: " + activeEntities);
+            // DumpRenderTextureToFile(occlusionMap, "Screenshots/occlusion_" + transform.parent.parent.name + ".png");
+            // Debug.Log("Image Dumped");
+
+            Texture2D occlusionMapTexture = DumpRenderTextureTo2DTexture(occlusionMap);
+
+            Color[] pixels = occlusionMapTexture.GetPixels();
+
+            int blackPixels = 0;
+
+            foreach (Color c in pixels)
+            {
+                // all the black pixels are the ones on the occlusion layer 
+                if (c == Color.black)
+                    blackPixels++;
+            }
+            int whitePixels = pixels.Length - blackPixels;
+            float visualizationRatio = (float)whitePixels / pixels.Length;
+            Debug.Log(transform.parent.parent.name + ":\nVisualization Ratio: " + visualizationRatio);
 
             SimulationBoundary currentSimulationBoundary = getCurrentSimulationBoundary();
             if (currentSimulationBoundary != null)
@@ -583,5 +596,31 @@ public class Simulation : MonoBehaviour
     void Update()
     {
 
+    }
+
+    private void DumpRenderTextureToFile(RenderTexture rt, string pngOutPath)
+    {
+        var oldRT = RenderTexture.active;
+
+        var tex = new Texture2D(rt.width, rt.height);
+        RenderTexture.active = rt;
+        tex.ReadPixels(new Rect(0, 0, rt.width, rt.height), 0, 0);
+        tex.Apply();
+
+        File.WriteAllBytes(pngOutPath, tex.EncodeToPNG());
+        RenderTexture.active = oldRT;
+    }
+    private Texture2D DumpRenderTextureTo2DTexture(RenderTexture rt)
+    {
+        var oldRT = RenderTexture.active;
+
+        var tex = new Texture2D(rt.width, rt.height);
+        RenderTexture.active = rt;
+        tex.ReadPixels(new Rect(0, 0, rt.width, rt.height), 0, 0);
+        tex.Apply();
+
+        RenderTexture.active = oldRT;
+
+        return tex;
     }
 }
