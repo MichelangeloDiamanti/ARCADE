@@ -19,6 +19,8 @@ public class LevelOfDetailSwitcher : MonoBehaviour
     //public GameObject noSignal2;
     public GameObject planetCamera;
     public GameObject planetCameraHolder;
+    public GameObject sampleIcon1;
+    public GameObject sampleIcon2;
 
     private Domain _domain;
     private Texture texture1;
@@ -101,12 +103,22 @@ public class LevelOfDetailSwitcher : MonoBehaviour
         {
             roverCameraHolder1.GetComponent<RawImage>().texture = texture2;
             roverCameraHolder2.GetComponent<RawImage>().texture = texture1;
+            sampleIcon1.transform.SetParent(roverCameraHolder2.transform.parent, worldPositionStays: false);
+            sampleIcon2.transform.SetParent(roverCameraHolder1.transform.parent, worldPositionStays: false);
+            sampleIcon1.transform.localScale = new Vector3(0.75F, 0.75F, 0.75F);
+            sampleIcon2.transform.localScale = new Vector3(1.0F, 1.0F, 1.0F);
+
             flag = false;
         }
         else
         {
             roverCameraHolder1.GetComponent<RawImage>().texture = texture1;
             roverCameraHolder2.GetComponent<RawImage>().texture = texture2;
+            sampleIcon1.transform.SetParent(roverCameraHolder1.transform.parent, worldPositionStays: false);
+            sampleIcon2.transform.SetParent(roverCameraHolder2.transform.parent, worldPositionStays: false);
+            sampleIcon1.transform.localScale = new Vector3(1.0F, 1.0F, 1.0F);
+            sampleIcon2.transform.localScale = new Vector3(0.75F, 0.75F, 0.75F);
+
             flag = true;
         }
         

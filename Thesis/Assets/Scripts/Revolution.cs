@@ -11,6 +11,6 @@ public class Revolution : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		transform.RotateAround(transform.position, transform.forward, Time.deltaTime * 20f);
+		transform.RotateAround(transform.position, transform.forward, Time.deltaTime * 10f);
 	}
 }

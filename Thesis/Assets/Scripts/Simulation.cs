@@ -165,7 +165,7 @@ public class Simulation : MonoBehaviour
         // iterate over the boundaries and start the simulation on the
         // highest level according to them
         float distance = Vector3.Distance(transform.position, player.transform.position);
-        Debug.Log("Distance " + distance);
+        //Debug.Log("Distance " + distance);
 
         foreach (SimulationBoundary sb in simulationBoundaries)
         {
@@ -419,7 +419,7 @@ public class Simulation : MonoBehaviour
             bool simulationInteractive = getSimulationBoundaryAtLevel(lastLoD).interactive;
             if (simulationInteractive)
             {
-                // Debug.Log("Player is interacting");
+                 //Debug.Log("Player is interacting");
 
                 bool result = false;
                 yield return StartCoroutine(visualizer.interact(parallelRandomActions, value => result = value));
@@ -442,7 +442,7 @@ public class Simulation : MonoBehaviour
             }
             else
             {
-                // Debug.Log("Player is visualizing");
+                 //Debug.Log("Player is visualizing");
                 //print("Visualization is requested by: " + transform.parent.name);
                 bool result = false;
                 yield return StartCoroutine(visualizer.visualize(parallelRandomActions, value => result = value));
