@@ -3224,26 +3224,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 1479664820}
-  visualizer: {fileID: 1338588350}
-  maxDistance: 0
-  proximityWeight: 0
-  visibilityWeight: 0
+  visualizer: {fileID: 1288661510}
+  maxDistance: 40
+  proximityWeight: 1.7
+  visibilityWeight: 1
   simulationBoundaries:
   - level: 1
     interactive: 0
     jsonDomain: domain_first_level
-    minDistance: 30
-    maxDistance: 40
+    minObservability: 0
+    maxObservability: 0.4
   - level: 2
     interactive: 0
     jsonDomain: domain_second_level
-    minDistance: 20
-    maxDistance: 30
+    minObservability: 0.4
+    maxObservability: 0.7
   - level: 3
     interactive: 1
     jsonDomain: domain_third_level
-    minDistance: 0
-    maxDistance: 20
+    minObservability: 0.7
+    maxObservability: 1
   occludedRenderTexture: {fileID: 8400000, guid: c98ba5dbcc5dd314db2a721476d5f912,
     type: 2}
   notOccludedRenderTexture: {fileID: 8400000, guid: 65bd33992cd0fee499593eb2a3234353,
@@ -10730,25 +10730,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 1479664820}
   visualizer: {fileID: 1288661510}
-  maxDistance: 50
+  maxDistance: 40
   proximityWeight: 1.7
   visibilityWeight: 1
   simulationBoundaries:
   - level: 1
     interactive: 0
     jsonDomain: domain_first_level
-    minDistance: 30
-    maxDistance: 40
+    minObservability: 0
+    maxObservability: 0.4
   - level: 2
     interactive: 0
     jsonDomain: domain_second_level
-    minDistance: 20
-    maxDistance: 30
+    minObservability: 0.4
+    maxObservability: 0.7
   - level: 3
     interactive: 1
     jsonDomain: domain_third_level
-    minDistance: 0
-    maxDistance: 20
+    minObservability: 0.7
+    maxObservability: 1
   occludedRenderTexture: {fileID: 8400000, guid: e2ff7a5c8ee8cb540b050ce479358754,
     type: 2}
   notOccludedRenderTexture: {fileID: 8400000, guid: c5c68a7ebf8b78249b56bc09c4e71436,
@@ -20950,7 +20950,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2079504622
 Transform:
   m_ObjectHideFlags: 0

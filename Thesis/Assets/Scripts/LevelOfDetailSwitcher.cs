@@ -53,7 +53,7 @@ public class LevelOfDetailSwitcher : MonoBehaviour
         if (other.transform.gameObject == player)
         {
             float distance = Vector3.Distance(transform.position, other.transform.position);
-            Debug.Log(other.transform.name + " is entering" + transform.name + " at a distance of " + distance);
+            // Debug.Log(other.transform.name + " is entering" + transform.name + " at a distance of " + distance);
             simulation.CurrentLevelOfDetail = detailLevel;
 
             //turn ON rover's camera
@@ -76,7 +76,7 @@ public class LevelOfDetailSwitcher : MonoBehaviour
     {
         if (other.transform.gameObject == player)
         {
-            Debug.Log(other.transform.name + " is leaving" + transform.name);
+            // Debug.Log(other.transform.name + " is leaving" + transform.name);
             simulation.setLastObservedStateAtLevel(detailLevel, simulation.CurrentNode);
             simulation.CurrentLevelOfDetail = (detailLevel > 1) ? detailLevel - 1 : 1;
 

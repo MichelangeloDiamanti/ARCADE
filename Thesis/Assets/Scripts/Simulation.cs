@@ -119,11 +119,6 @@ public class Simulation : MonoBehaviour
         _lastObservedStates = new Dictionary<SimulationBoundary, TreeNode<WorldState>>();
         m_Point = player.transform.position;
 
-        // sort the boundaries according to their priority
-        simulationBoundaries.Sort(
-            new SimulationBoundarySorterDescending()
-        );
-
         // parse the JSON domain for each simulation boundary and assign the corresponding domain
         foreach (SimulationBoundary sb in simulationBoundaries)
         {
@@ -153,30 +148,20 @@ public class Simulation : MonoBehaviour
         }
 
         SimulationBoundary currentSimulationBoundary = getCurrentSimulationBoundary();
-        if (currentSimulationBoundary != null)
-        {
-            _currentNode = getInitialWorldStateAtLevel(currentSimulationBoundary.level);
-            _currentLevelOfDetail = currentSimulationBoundary.level;
-        }
-        else
-        {
-            SimulationBoundary shallowestLevel = simulationBoundaries.Last();
-            _currentNode = getInitialWorldStateAtLevel(shallowestLevel.level);
-            _currentLevelOfDetail = shallowestLevel.level;
-        }
-
+        _currentNode = getInitialWorldStateAtLevel(currentSimulationBoundary.level);
+        _currentLevelOfDetail = currentSimulationBoundary.level;
 
         StartCoroutine(randomSimulation());
     }
 
-    public float observability()
+    public float getObservability()
     {
-        return (proximity() * proximityWeight + visibility() * visibilityWeight) / (proximityWeight + visibilityWeight);
+        return (getProximity() * proximityWeight + getVisibility() * visibilityWeight) / (proximityWeight + visibilityWeight);
     }
 
     // this function returns the inverse of the distance over maxDistance
     // the value is limited between 0 and 1
-    private float proximity()
+    private float getProximity()
     {
         float distance = Vector3.Distance(transform.position, player.transform.position);
         if (distance <= 0) return 1;
@@ -189,7 +174,7 @@ public class Simulation : MonoBehaviour
     // both show in white the relevant part and in black the obstacles
     // we count the white pixels and return the ratio between the occluded image over the non occluded
     // which is the visibility ratio limited between [0 , 1]
-    private float visibility()
+    private float getVisibility()
     {
         int blackPixels = count2DTextureBlackPixelsWithComputeShader(occludedRenderTexture, countBlackPixelsComputeShader);
         int whitePixelsOccludedTexture = occludedRenderTexture.width * occludedRenderTexture.height - blackPixels;
@@ -207,20 +192,25 @@ public class Simulation : MonoBehaviour
         SimulationBoundary result = null;
         // iterate over the boundaries and start the simulation on the
         // highest level according to them
-        float distance = Vector3.Distance(transform.position, player.transform.position);
+        float observability = getObservability();
 
         foreach (SimulationBoundary sb in simulationBoundaries)
         {
-            if (distance >= sb.minDistance && distance < sb.maxDistance)
+            if (observability >= sb.minObservability && observability < sb.maxObservability)
             {
-                Debug.Log("The simulation is at level: " + sb.level);
                 result = sb;
                 break;
             }
         }
+
         // if the player is outside every boundary start the simulation
         // at the shallowest LoD possible
+        if (result == null)
+        {
+            result = simulationBoundaries.Aggregate((i, j) => i.level < j.level ? i : j);
+        }
 
+        Debug.Log(transform.parent.gameObject.name + "\n" + "Observability: " + observability + " Current LoD: " + result.level);
         return result;
     }
 
@@ -229,17 +219,9 @@ public class Simulation : MonoBehaviour
         int lastLoD = _currentLevelOfDetail;
         while (true)
         {
-            Debug.Log("Observability: " + observability());
             SimulationBoundary currentSimulationBoundary = getCurrentSimulationBoundary();
-            if (currentSimulationBoundary != null)
-            {
-                _currentLevelOfDetail = currentSimulationBoundary.level;
-            }
-            else
-            {
-                currentSimulationBoundary = simulationBoundaries.Last();
-                _currentLevelOfDetail = currentSimulationBoundary.level;
-            }
+            _currentLevelOfDetail = currentSimulationBoundary.level;
+
 
             // switch the simulation the change of value is controlled
             // by the LevelOfDetailSwitcher script attached to each boundary
