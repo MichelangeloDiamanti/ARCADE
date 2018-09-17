@@ -3225,6 +3225,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 1479664820}
   visualizer: {fileID: 1338588350}
+  maxDistance: 0
+  proximityWeight: 0
+  visibilityWeight: 0
   simulationBoundaries:
   - level: 1
     interactive: 0
@@ -10727,6 +10730,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 1479664820}
   visualizer: {fileID: 1288661510}
+  maxDistance: 50
+  proximityWeight: 1.7
+  visibilityWeight: 1
   simulationBoundaries:
   - level: 1
     interactive: 0
@@ -20944,7 +20950,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2079504622
 Transform:
   m_ObjectHideFlags: 0

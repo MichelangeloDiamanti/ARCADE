@@ -27,6 +27,11 @@ public class Simulation : MonoBehaviour
 
     public GameObject player;
     public Visualization visualizer;
+    public float maxDistance;
+
+    public float proximityWeight;
+    public float visibilityWeight;
+
     public List<SimulationBoundary> simulationBoundaries;
     public RenderTexture occludedRenderTexture;
     public RenderTexture notOccludedRenderTexture;
@@ -164,13 +169,45 @@ public class Simulation : MonoBehaviour
         StartCoroutine(randomSimulation());
     }
 
+    public float observability()
+    {
+        return (proximity() * proximityWeight + visibility() * visibilityWeight) / (proximityWeight + visibilityWeight);
+    }
+
+    // this function returns the inverse of the distance over maxDistance
+    // the value is limited between 0 and 1
+    private float proximity()
+    {
+        float distance = Vector3.Distance(transform.position, player.transform.position);
+        if (distance <= 0) return 1;
+        if (distance >= maxDistance) return 0;
+        return 1 - (distance / maxDistance);
+    }
+
+    // occluded image: rendered with obstacles
+    // non occluded image: rendered without obstacles
+    // both show in white the relevant part and in black the obstacles
+    // we count the white pixels and return the ratio between the occluded image over the non occluded
+    // which is the visibility ratio limited between [0 , 1]
+    private float visibility()
+    {
+        int blackPixels = count2DTextureBlackPixelsWithComputeShader(occludedRenderTexture, countBlackPixelsComputeShader);
+        int whitePixelsOccludedTexture = occludedRenderTexture.width * occludedRenderTexture.height - blackPixels;
+
+        blackPixels = count2DTextureBlackPixelsWithComputeShader(notOccludedRenderTexture, countBlackPixelsComputeShader);
+        int whitePixelsNotOccludedTexture = occludedRenderTexture.width * occludedRenderTexture.height - blackPixels;
+        whitePixelsNotOccludedTexture = (whitePixelsNotOccludedTexture == 0) ? 1 : whitePixelsNotOccludedTexture;
+
+        float visibility = (float)(whitePixelsOccludedTexture) / (float)(whitePixelsNotOccludedTexture);
+        return visibility;
+    }
+
     private SimulationBoundary getCurrentSimulationBoundary()
     {
         SimulationBoundary result = null;
         // iterate over the boundaries and start the simulation on the
         // highest level according to them
         float distance = Vector3.Distance(transform.position, player.transform.position);
-        Debug.Log("Distance " + distance);
 
         foreach (SimulationBoundary sb in simulationBoundaries)
         {
@@ -192,39 +229,7 @@ public class Simulation : MonoBehaviour
         int lastLoD = _currentLevelOfDetail;
         while (true)
         {
-            // DumpRenderTextureToFile(occlusionMap, "Screenshots/occlusion_" + transform.parent.parent.name + ".png");
-            // Debug.Log("Image Dumped");
-
-            Texture2D occludedVisTexture = DumpRenderTextureTo2DTexture(occludedRenderTexture);
-            // Texture2D notOccludedVisTexture = DumpRenderTextureTo2DTexture(notOccludedRenderTexture);
-
-            Color[] pixels = occludedVisTexture.GetPixels();
-
-            int blackPixels = count2DTextureBlackPixelsWithComputeShader(occludedRenderTexture, countBlackPixelsComputeShader);
-            int whitePixelsOccludedTexture = occludedRenderTexture.width * occludedRenderTexture.height - blackPixels;
-
-            blackPixels = count2DTextureBlackPixelsWithComputeShader(notOccludedRenderTexture, countBlackPixelsComputeShader);
-            int whitePixelsNotOccludedTexture = occludedRenderTexture.width * occludedRenderTexture.height - blackPixels;
-            whitePixelsNotOccludedTexture = (whitePixelsNotOccludedTexture == 0) ? 1 : whitePixelsNotOccludedTexture;
-
-            float visualizationRatio = (float)(whitePixelsOccludedTexture) / (float)(whitePixelsNotOccludedTexture);
-            Debug.Log(transform.parent.parent.name + ":\nVisualization Ratio: " + visualizationRatio);
-
-            // int cpuBP = 0;
-            // foreach (Color c in pixels)
-            // {
-            //     // all the black pixels are the ones on the occlusion layer 
-            //     if (c == Color.black)
-            //         cpuBP++;
-            // }
-            // // int whitePixels = pixels.Length - blackPixels;
-            // Debug.Log(transform.parent.parent.name + ":\nBlack Pixels (CPU): " + cpuBP);
-
-            // float visualizationRatio = (float)whitePixels / pixels.Length;
-            // Debug.Log(transform.parent.parent.name + ":\nVisualization Ratio: " + visualizationRatio);
-
-
-
+            Debug.Log("Observability: " + observability());
             SimulationBoundary currentSimulationBoundary = getCurrentSimulationBoundary();
             if (currentSimulationBoundary != null)
             {
