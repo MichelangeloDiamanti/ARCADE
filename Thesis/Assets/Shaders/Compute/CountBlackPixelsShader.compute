@@ -1,0 +1,54 @@
+﻿#pragma kernel CountBlackPixelsMain
+
+Texture2D<float4> InputTexture;
+int InputTextureWidth;
+int InputTextureHeight;
+
+
+RWStructuredBuffer<int> GroupSumBuffer;
+
+groupshared int rowSumData[64];
+
+[numthreads(64, 1, 1)]
+void CountBlackPixelsMain(uint3 groupID : SV_GroupID,
+   // 3D ID of thread group; range depends on Dispatch call
+   uint3 groupThreadID : SV_GroupThreadID,
+   // 3D ID of thread in a thread group; range depends on numthreads
+   uint groupIndex : SV_GroupIndex,
+   // flattened/linearized SV_GroupThreadID. 
+   // groupIndex specifies the index within the group (0 to 63)
+   uint3 id : SV_DispatchThreadID)
+// = SV_GroupID * numthreads + SV_GroupThreadID
+// id.x specifies the row in the input texture image
+{
+
+    int column;
+
+    rowSumData[groupIndex] = 0;
+
+    if(id.x < InputTextureHeight)
+    {
+      for (column = 0; column < InputTextureWidth; column++)
+      {
+            float4 color = InputTexture[uint2(column, id.x)];
+
+            if (0 == color.r && 0 == color.g && 0 == color.b)
+            {
+                  rowSumData[groupIndex] += 1;
+            }
+      }
+    }
+    // find the maximum of this group 
+    // and store its data in GroupSumBuffer[groupID.x]
+    GroupMemoryBarrierWithGroupSync();
+    if (0 == groupIndex)
+    {
+        int row;
+        int sum = 0;
+        for (row = 0; row < 64; row++)
+        {
+            sum += rowSumData[row];
+        }
+        GroupSumBuffer[groupID.x] = sum;
+    }
+}

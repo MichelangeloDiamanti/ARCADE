@@ -28,7 +28,10 @@ public class Simulation : MonoBehaviour
     public GameObject player;
     public Visualization visualizer;
     public List<SimulationBoundary> simulationBoundaries;
-    public RenderTexture occlusionMap;
+    public RenderTexture occludedRenderTexture;
+    public RenderTexture notOccludedRenderTexture;
+    public ComputeShader countBlackPixelsComputeShader;
+
 
     private string logFilePath = "Assets/Logs/";
     private string logFileName;
@@ -157,6 +160,7 @@ public class Simulation : MonoBehaviour
             _currentLevelOfDetail = shallowestLevel.level;
         }
 
+
         StartCoroutine(randomSimulation());
     }
 
@@ -191,21 +195,35 @@ public class Simulation : MonoBehaviour
             // DumpRenderTextureToFile(occlusionMap, "Screenshots/occlusion_" + transform.parent.parent.name + ".png");
             // Debug.Log("Image Dumped");
 
-            Texture2D occlusionMapTexture = DumpRenderTextureTo2DTexture(occlusionMap);
+            Texture2D occludedVisTexture = DumpRenderTextureTo2DTexture(occludedRenderTexture);
+            // Texture2D notOccludedVisTexture = DumpRenderTextureTo2DTexture(notOccludedRenderTexture);
 
-            Color[] pixels = occlusionMapTexture.GetPixels();
+            Color[] pixels = occludedVisTexture.GetPixels();
 
-            int blackPixels = 0;
+            int blackPixels = count2DTextureBlackPixelsWithComputeShader(occludedRenderTexture, countBlackPixelsComputeShader);
+            int whitePixelsOccludedTexture = occludedRenderTexture.width * occludedRenderTexture.height - blackPixels;
 
-            foreach (Color c in pixels)
-            {
-                // all the black pixels are the ones on the occlusion layer 
-                if (c == Color.black)
-                    blackPixels++;
-            }
-            int whitePixels = pixels.Length - blackPixels;
-            float visualizationRatio = (float)whitePixels / pixels.Length;
+            blackPixels = count2DTextureBlackPixelsWithComputeShader(notOccludedRenderTexture, countBlackPixelsComputeShader);
+            int whitePixelsNotOccludedTexture = occludedRenderTexture.width * occludedRenderTexture.height - blackPixels;
+            whitePixelsNotOccludedTexture = (whitePixelsNotOccludedTexture == 0) ? 1 : whitePixelsNotOccludedTexture;
+
+            float visualizationRatio = (float)(whitePixelsOccludedTexture) / (float)(whitePixelsNotOccludedTexture);
             Debug.Log(transform.parent.parent.name + ":\nVisualization Ratio: " + visualizationRatio);
+
+            // int cpuBP = 0;
+            // foreach (Color c in pixels)
+            // {
+            //     // all the black pixels are the ones on the occlusion layer 
+            //     if (c == Color.black)
+            //         cpuBP++;
+            // }
+            // // int whitePixels = pixels.Length - blackPixels;
+            // Debug.Log(transform.parent.parent.name + ":\nBlack Pixels (CPU): " + cpuBP);
+
+            // float visualizationRatio = (float)whitePixels / pixels.Length;
+            // Debug.Log(transform.parent.parent.name + ":\nVisualization Ratio: " + visualizationRatio);
+
+
 
             SimulationBoundary currentSimulationBoundary = getCurrentSimulationBoundary();
             if (currentSimulationBoundary != null)
@@ -622,5 +640,47 @@ public class Simulation : MonoBehaviour
         RenderTexture.active = oldRT;
 
         return tex;
+    }
+
+    int count2DTextureBlackPixelsWithComputeShader(Texture texture, ComputeShader shader)
+    {
+        if (null == shader || null == texture)
+        {
+            Debug.Log("Shader or input texture missing.");
+            return -1;
+        }
+
+        int offset = 63;
+        int handleSumMain = shader.FindKernel("CountBlackPixelsMain");
+        ComputeBuffer groupSumBuffer = new ComputeBuffer((texture.height + offset) / 64, sizeof(int));
+        int[] groupSumData = new int[((texture.height + offset) / 64)];
+
+        if (handleSumMain < 0 || null == groupSumBuffer || null == groupSumData)
+        {
+            Debug.Log("Initialization failed.");
+            return -1;
+        }
+
+        shader.SetTexture(handleSumMain, "InputTexture", texture);
+        shader.SetInt("InputTextureWidth", texture.width);
+        shader.SetInt("InputTextureHeight", texture.height);
+
+        shader.SetBuffer(handleSumMain, "GroupSumBuffer", groupSumBuffer);
+
+        shader.Dispatch(handleSumMain, (texture.height + offset) / 64, 1, 1);
+        // divided by 64 in x because of [numthreads(64,1,1)] in the compute shader code
+        // added 63 to make sure that there is a group for all rows
+
+        // get maxima of groups
+        groupSumBuffer.GetData(groupSumData);
+        groupSumBuffer.Dispose();
+
+        // find maximum of all groups
+        int groupSum = 0;
+        for (int group = 0; group < groupSumData.Length; group++)
+        {
+            groupSum += groupSumData[group];
+        }
+        return groupSum;
     }
 }
