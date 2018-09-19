@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using ru.cadia.pddlFramework;
-using UnityEngine.EventSystems;
 using TMPro;
 using UnityEngine.AI;
 using System.Linq;
@@ -14,185 +13,193 @@ public class Visualization : MonoBehaviour
     public Text displayText;
     public GameObject chooseOnInteraction;
     public Button yesButton, noButton;
-    public GameObject takeSample;
-    public GameObject dropSample;
-    public GameObject sampleNumber;
+    public GameObject takeSampleRover1;
+    public GameObject takeSampleRover2;
+    public GameObject dropSampleRover1;
+    public GameObject dropSampleRover2;
+    public GameObject sampleNumberRover1;
+    public GameObject sampleNumberRover2;
     public List<GameObject> waypoints;
     public float waitTime = 1.0f;
     public Image timerBar;
     public RenderTexture renderTextureRover1;
     public RenderTexture renderTextureRover2;
-
+    public Material red, yellow;
+    public GameObject samplePanel;
+    
     public GameObject rover1;
     public GameObject rover2;
 
-    private float interactionWaitTime = 3.0f;
-    private float visualizationWaitTime = 3.0f;
-    private float interactionSuccessProbability;
-    private float visualizationSuccessProbability;
-    private GameObject destination = null;
-    private float timer;
-    private TextMeshProUGUI sampleNumberText;
-    private NavMeshAgent agent;
-    private NavMeshPath navMeshPath;
+    private List<GameObject> destinationList;
     private int buttonClicked;
-    private Coroutine actionTimerRoutine, lastRoutine;
-    private GameObject initialStatus;
+    private bool rotation;
+    private float maximumWaitingTime;
+    private ArrayList estimatedTimeList = new ArrayList();
+    private ArrayList actionResultList = new ArrayList();
+    private GameObject backUpStatus;
+    private Dictionary<Action, GameObject> backUpStatusList;
+    private TextMeshProUGUI sampleNumberText;
 
     // Use this for initialization
     void Start()
     {
-        sampleNumberText = sampleNumber.GetComponent<TextMeshProUGUI>();
-        //interactionWaitTime = 2.0f;
-        //visualizationWaitTime = 3.0f;
-
-        interactionSuccessProbability = 0.7f;
-        visualizationSuccessProbability = 0.8f;
-
         Button yButton = yesButton.GetComponent<Button>();
         Button nButton = noButton.GetComponent<Button>();
 
         yButton.onClick.AddListener(delegate { MakeChoice("yes"); });
         nButton.onClick.AddListener(delegate { MakeChoice("no"); });
 
-        navMeshPath = new NavMeshPath();
         buttonClicked = 0;
-        actionTimerRoutine = null;
-        lastRoutine = null;
-        initialStatus = null;
+        rotation = false;
+        destinationList = new List<GameObject>();
+        backUpStatusList = new Dictionary<Action, GameObject>();
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        if (destinationList != null)
+        {
+            foreach(GameObject x in waypoints)
+            {
+                if (destinationList.Contains(x))
+                    x.transform.Rotate(Vector3.forward * Time.deltaTime * 200);
+                else
+                    x.transform.Rotate(0,0,0);
+            }
+        }
     }
 
     public IEnumerator interact(HashSet<Action> actions, System.Action<bool> result)
     {
         displayText.text = string.Join("\n", actions.shortToString().ToArray());
-        yield return new WaitForSeconds(interactionWaitTime);
+        
+        //float outcome = Random.Range(0.0f, 1.0f);
+        //if (outcome <= interactionSuccessProbability)
+        //{
+        //    displayText.text = "Actions Allowed";
+        //    yield return new WaitForSeconds(1.0f);
+        //    result(true);
+        //}
+        //else
+        //{
+        //    displayText.text = "Actions NOT Allowed";
+        //    yield return new WaitForSeconds(1.0f);
+        //    result(false);
+        //}
 
-        float outcome = Random.Range(0.0f, 1.0f);
-        if (outcome <= interactionSuccessProbability)
-        {
-            displayText.text = "Actions Allowed";
-            yield return new WaitForSeconds(1.0f);
-            result(true);
-        }
-        else
-        {
-            displayText.text = "Actions NOT Allowed";
-            yield return new WaitForSeconds(1.0f);
-            result(false);
-        }
-        // TODO: interact each parallel action
-        // foreach (Action a in actions)
-        // {
-        //     bool res;
-        //     yield return StartCoroutine(interact(a, value => res = value));
-        // }
-    }
-
-    public IEnumerator interact(Action a, System.Action<bool> result)
-    {
-        displayText.text = "The Simulator is requesting the following Action: " + a.shortToString();
-
-        timer = waitTime;
+        float timer = waitTime;
         Time.timeScale = 0.3f;
         chooseOnInteraction.SetActive(true);
 
         bool res = false;
-        yield return StartCoroutine(Timer(value => res = value));
+        yield return StartCoroutine(Timer(timer, value => res = value));
         print("RES = " + res);
         if (res == true)
         {
             bool r = false;
-            yield return StartCoroutine(visualize(a, value => r = value));
+            yield return StartCoroutine(visualize(actions, value => r = value));
             result(r);
         }
         else
         {
             result(false);
         }
-
-        // TODO: the logic to interact with the action should go here
-
-        //float outcome = Random.Range(0.0f, 1.0f);
-        //if (outcome <= interactionSuccessProbability)
-        //{
-        //    displayText.text = "Interactive Action Allowed";
-        //    yield return new WaitForSeconds(1.0f);
-        //    result(true);
-        //}
-        //else
-        //{
-        //    displayText.text = "Interactive Action Denied";
-        //    yield return new WaitForSeconds(1.0f);
-        //    result(false);
-        //}
     }
 
     public IEnumerator visualize(HashSet<Action> actions, System.Action<bool> result)
     {
-        displayText.text = string.Join(" ", actions.shortToString().ToArray());
-        yield return new WaitForSeconds(visualizationWaitTime);
+        maximumWaitingTime = 0;
+        estimatedTimeList.Clear();
+        actionResultList.Clear();
+        if (backUpStatusList != null)
+        {
+            backUpStatusList.Clear();
+        }
+        backUpStatus = new GameObject();
+        bool resultOfAllActions = true;
 
-        float outcome = Random.Range(0.0f, 1.0f);
-        if (outcome <= visualizationSuccessProbability)
+        displayText.text = string.Join(" ", actions.shortToString().ToArray());
+
+        //visualize each parallel action
+        foreach (Action a in actions)
         {
-            displayText.text = "Actions Visualized";
-            yield return new WaitForSeconds(1.0f);
-            result(true);
+            StartCoroutine(visualizeSingleAction(a/*, value => res = value*/));
+            yield return null;
         }
-        else
+        while (estimatedTimeList.Count != actions.Count)
         {
-            displayText.text = "Actions NOT Visualized";
-            yield return new WaitForSeconds(1.0f);
-            result(false);
+            print("Waiting for the maximum waiting time to be calculated");
+            yield return null;
         }
-        // TODO: visualize each parallel action
-        // foreach (Action a in actions)
-        // {
-        //     bool res;
-        //     yield return StartCoroutine(visualize(a, value => res = value));
-        // }
+
+        print("Waiting " + maximumWaitingTime + " seconds for all actions to be completed");
+        yield return new WaitForSeconds(maximumWaitingTime);
+
+        //print("action result count= " + actionResultList.Count + " | " + "action count= " + actions.Count);
+        if (actionResultList.Contains(false) || actionResultList.Count < actions.Count)
+            resultOfAllActions = false;
+
+        foreach (var item in actionResultList)
+        {
+            print(item);
+        }
+        print("RESULT= " + resultOfAllActions);
+
+        if (resultOfAllActions == false)
+        {
+            RollBack(backUpStatusList);
+            yield return new WaitForSeconds(2.0f);
+        }
+        Destroy(backUpStatus);
+        result(resultOfAllActions);
+        //if (actionResultList.Count < actions.Count)
+        //{
+        //    print("STOP ALL COROUTINES");
+        //    StopAllCoroutines();
+        //}
+
     }
 
-    public IEnumerator visualize(Action a, System.Action<bool> result)
+    public IEnumerator visualizeSingleAction(Action a/*, System.Action<bool> result*/)
     {
-        displayText.text = "The Simulator is requesting the following Action: " + a.shortToString();
-
-        //yield return new WaitForSeconds(visualizationWaitTime);
-        print(a.shortToString());
-
-        // TODO: the logic to visualize the action should go here
-        //
+        //displayText.text = "The Simulator is requesting the following Action: " + a.shortToString();
+        //print(a.shortToString());
+        
         switch (a.Name)
         {
             case "MOVE":
 
+                NavMeshAgent agent = null;
                 GameObject rover;
+                GameObject destination = null;
                 string destinationName = null;
                 foreach (ActionParameter ap in a.Parameters)
                 {
                     if (ap.Role == ActionParameterRole.ACTIVE)
                     {
+                        //rover = GameObject.Find(ap.Name);
+                        //agent = rover.GetComponent<NavMeshAgent>();
                         if (ap.Name == "ROVER1")
                         {
                             rover = rover1;
-                            agent = rover.GetComponent<NavMeshAgent>();
                         }
                         else
                         {
                             rover = rover2;
-                            agent = rover.GetComponent<NavMeshAgent>();
                         }
+                        agent = rover.GetComponent<NavMeshAgent>();
                     }
-                    else
+                    
+                    //destinationName = a.Dest.Destination.Name;
+                    
+                }
+                foreach (IRelation r in a.PostConditions)
+                {
+                    if(r.Predicate.Name == "AT" && r.Value == RelationValue.TRUE)
                     {
-                        destinationName = ap.Name;
-                        //print(destinationName);
+                        BinaryRelation br = r as BinaryRelation;
+                        destinationName = br.Destination.Name;
                     }
                 }
                 foreach (GameObject waypoint in waypoints)
@@ -200,45 +207,80 @@ public class Visualization : MonoBehaviour
                     if (waypoint.name == destinationName)
                     {
                         destination = waypoint.transform.gameObject;
-                        destination.GetComponent<Renderer>().material.color = Color.yellow;
-                    }
-                    else
-                    {
-                        waypoint.transform.gameObject.GetComponent<Renderer>().material.color = Color.grey;
+                        destination.GetComponent<Renderer>().material = yellow;
+                        if(destinationList != null)
+                        {
+                            destinationList.Add(destination);
+                        }
                     }
                 }
-                initialStatus = new GameObject("empty");
-                initialStatus.transform.position = agent.gameObject.transform.position;
-
+                backUpStatus.name = agent.gameObject.name;
+                backUpStatus.transform.position = agent.gameObject.transform.position;
+                if (backUpStatusList != null)
+                {
+                    backUpStatusList.Add(a, backUpStatus);
+                }
+                
                 //print("PARENT NAME: " + rover.transform.parent.gameObject.transform.parent.gameObject);
                 agent.SetDestination(destination.transform.position);
                 if (agent.pathPending)
                     yield return null;
                 float estimatedTime = 2.0f + agent.remainingDistance / agent.speed;
-                //print("1 + " + agent.remainingDistance + "/" + agent.speed + " = " + estimatedTime);
-
-                //actionTimerRoutine = StartCoroutine(ActionTimer(estimatedTime));
-                bool res = false;
-                yield return StartCoroutine(CheckResult(estimatedTime, value => res = value));
-                yield return new WaitForSeconds(1.0f);
-                print("RES= " + res);
-                if (res == false)
+                if (estimatedTime > maximumWaitingTime)
                 {
-                    RollBack(a.Name, initialStatus);
+                    maximumWaitingTime = estimatedTime;
                 }
-                Destroy(initialStatus);
-                yield return new WaitForSeconds(2.0f);
-                result(res);
+                estimatedTimeList.Add(estimatedTime);
+
+                bool res = false;
+                yield return StartCoroutine(CheckMoveResult(agent, destination, estimatedTime, value => res = value));
+                actionResultList.Add(res);
 
                 break;
 
             case "TAKE_SAMPLE":
 
-                initialStatus = takeSample;
+                estimatedTime = 6f;
+                if (estimatedTime > maximumWaitingTime)
+                    maximumWaitingTime = estimatedTime;
+                estimatedTimeList.Add(estimatedTime);
 
-                if (takeSample.activeSelf == false)
+                string activeRover = "";
+                GameObject takeSample = null;
+                GameObject dropSample = null;
+                GameObject sampleNumber = null;
+                foreach (ActionParameter ap in a.Parameters)
                 {
-                    takeSample.SetActive(true);
+                    if (ap.Role == ActionParameterRole.ACTIVE)
+                    {
+                        activeRover = ap.Name;
+                        if (ap.Name == "ROVER1")
+                        {
+                            takeSample = takeSampleRover1;
+                            dropSample = dropSampleRover1;
+                            sampleNumber = sampleNumberRover1;
+                        }
+                        else
+                        {
+                            takeSample = takeSampleRover2;
+                            dropSample = dropSampleRover2;
+                            sampleNumber = sampleNumberRover2;
+                        }
+                        sampleNumberText = sampleNumber.GetComponent<TextMeshProUGUI>();
+                    }
+                }
+                backUpStatus.name = activeRover + " - take sample";
+                backUpStatus.SetActive(takeSample.activeSelf);
+                backUpStatusList.Add(a, backUpStatus);
+
+                res = false;
+                yield return StartCoroutine(TakeSampleAnimation(activeRover, value => res = value));
+                if(res == true)
+                {
+                    if (takeSample.activeSelf == false)
+                        takeSample.SetActive(true);
+                    if (dropSample.activeSelf == true)
+                        dropSample.SetActive(false);
                     foreach (ActionParameter e in a.Parameters)
                     {
                         if (e.Name.Substring(0, 6) == "SAMPLE")
@@ -246,30 +288,93 @@ public class Visualization : MonoBehaviour
                             sampleNumberText.text = e.Name.Substring(6, 1);
                         }
                     }
-                    yield return new WaitForSeconds(2.0f);
-                    result(true);
+                    actionResultList.Add(true);
                 }
-                if (dropSample.activeSelf == true)
-                    dropSample.SetActive(false);
-
+                else
+                {
+                    actionResultList.Add(false);
+                }
+                
                 break;
 
             case "DROP_SAMPLE":
-                initialStatus = dropSample;
+                
+                estimatedTime = 2f;
+                if (estimatedTime > maximumWaitingTime)
+                    maximumWaitingTime = estimatedTime;
+                estimatedTimeList.Add(estimatedTime);
 
-                if (dropSample.activeSelf == false)
+                activeRover = "";
+                takeSample = null;
+                dropSample = null;
+                sampleNumber = null;
+
+                foreach (ActionParameter ap in a.Parameters)
                 {
-                    dropSample.SetActive(true);
-                    sampleNumberText.text = null;
-                    yield return new WaitForSeconds(2.0f);
-                    result(true);
+                    if (ap.Role == ActionParameterRole.ACTIVE)
+                    {
+                        activeRover = ap.Name;
+                        if (ap.Name == "ROVER1")
+                        {
+                            takeSample = takeSampleRover1;
+                            dropSample = dropSampleRover1;
+                            sampleNumber = sampleNumberRover1;
+                        }
+                        else
+                        {
+                            takeSample = takeSampleRover2;
+                            dropSample = dropSampleRover2;
+                            sampleNumber = sampleNumberRover2;
+                        }
+                        sampleNumberText = sampleNumber.GetComponent<TextMeshProUGUI>();
+                    }
                 }
-                if (takeSample.activeSelf == true)
-                    takeSample.SetActive(false);
+                backUpStatus.name = activeRover + " - drop sample";
+                backUpStatus.SetActive(dropSample.activeSelf);
+                backUpStatusList.Add(a, backUpStatus);
+
+                res = false;
+                yield return StartCoroutine(DropSampleAnimation(activeRover, value => res = value));
+                if (res == true)
+                {
+                    if (takeSample.activeSelf == true)
+                        takeSample.SetActive(false);
+                    if (dropSample.activeSelf == false)
+                        dropSample.SetActive(true);
+
+                    sampleNumberText.text = "";
+                    actionResultList.Add(true);
+                }
+                else
+                {
+                    actionResultList.Add(false);
+                }
+                
+                //int outcome = Random.Range(0, 100);
+                //if (outcome <= 70)
+                //{
+                //    if (dropSample.activeSelf == false)
+                //    {
+                //        dropSample.SetActive(true);
+                //        sampleNumberText.text = null;
+                //        actionResultList.Add(true);
+                //    }
+                //    if (takeSample.activeSelf == true)
+                //        takeSample.SetActive(false);
+                //}
+                //else
+                //{
+                //    actionResultList.Add(false);
+                //}
 
                 break;
 
             case "TAKE_IMAGE":
+
+                estimatedTime = 2f;
+                if (estimatedTime > maximumWaitingTime)
+                    maximumWaitingTime = estimatedTime;
+                estimatedTimeList.Add(estimatedTime);
 
                 TakeImage ti = new TakeImage();
                 foreach (ActionParameter ap in a.Parameters)
@@ -278,37 +383,73 @@ public class Visualization : MonoBehaviour
                     {
                         if (ap.Name == "ROVER1")
                         {
-                            yield return new WaitForSeconds(2.0f);
-                            result(ti.CaptureScreenshot(renderTextureRover1));
+                            actionResultList.Add(ti.CaptureScreenshot(renderTextureRover1));
                         }
                         else
                         {
-                            yield return new WaitForSeconds(2.0f);
-                            result(ti.CaptureScreenshot(renderTextureRover2));
+                            actionResultList.Add(ti.CaptureScreenshot(renderTextureRover2));
                         }
                     }
                 }
 
                 break;
 
-            default:
+            case "IDLE":
+
+                estimatedTime = 2f;
+                if (estimatedTime > maximumWaitingTime)
+                    maximumWaitingTime = estimatedTime;
+                estimatedTimeList.Add(estimatedTime);
+
+                actionResultList.Add(true);
+
                 break;
 
+            case "CHARGE_BATTERY":
+
+                estimatedTime = 2f;
+                if (estimatedTime > maximumWaitingTime)
+                    maximumWaitingTime = estimatedTime;
+                estimatedTimeList.Add(estimatedTime);
+
+                actionResultList.Add(true);
+
+                break;
+
+            case "DISCHARGE_BATTERY":
+
+                estimatedTime = 2f;
+                if (estimatedTime > maximumWaitingTime)
+                    maximumWaitingTime = estimatedTime;
+                estimatedTimeList.Add(estimatedTime);
+
+                actionResultList.Add(true);
+
+                break;
+
+            case "INFLATE_WHEELS":
+
+                estimatedTime = 2f;
+                if (estimatedTime > maximumWaitingTime)
+                    maximumWaitingTime = estimatedTime;
+                estimatedTimeList.Add(estimatedTime);
+
+                actionResultList.Add(true);
+
+                break;
+
+            case "DEFLATE_WHEELS":
+
+                estimatedTime = 2f;
+                if (estimatedTime > maximumWaitingTime)
+                    maximumWaitingTime = estimatedTime;
+                estimatedTimeList.Add(estimatedTime);
+
+                actionResultList.Add(true);
+
+                break;
         }
 
-        //float outcome = Random.Range(0.0f, 1.0f);
-        //if (outcome <= visualizationSuccessProbability)
-        //{
-        //    displayText.text = "Non Interactive Action Visualized";
-        //    yield return new WaitForSeconds(1.0f);
-        //    result(true);
-        //}
-        //else
-        //{
-        //    displayText.text = "Non Interactive NOT Action Visualized";
-        //    yield return new WaitForSeconds(1.0f);
-        //    result(false);
-        //}
     }
 
     public void MakeChoice(string s)
@@ -325,7 +466,7 @@ public class Visualization : MonoBehaviour
         }
     }
 
-    private IEnumerator Timer(System.Action<bool> result)
+    private IEnumerator Timer(float timer, System.Action<bool> result)
     {
         while (timer >= 0.0f)
         {
@@ -353,72 +494,202 @@ public class Visualization : MonoBehaviour
     {
         if (chooseOnInteraction.activeSelf == true)
         {
-            timer = waitTime;
             Time.timeScale = 1.0f;
             chooseOnInteraction.SetActive(false);
         }
     }
 
-    private IEnumerator CheckResult(float time, System.Action<bool> result)
+    private IEnumerator CheckMoveResult(NavMeshAgent agent, GameObject destination, float time, System.Action<bool> result)
     {
+        print(agent.gameObject.name + " -> " + agent.remainingDistance + " : " + time);
         while (agent.remainingDistance >= 0.5f)
         {
-            if (time > 0.0f)
+            //yield return null;
+            if (time >= 1.0f)
             {
                 //print("REMAINING DISTANCE: " + agent.remainingDistance);
                 //print("TIME: " + time);
-                time -= 1.0f;
                 yield return new WaitForSeconds(1.0f);
+                time -= 1.0f;
             }
             else
             {
+                time -= 1.0f;
                 print("TIME OVER");
-                //yield return new WaitForSeconds(1.0f);
                 result(false);
                 break;
             }
         }
         agent.ResetPath();
-        if (time > 0.0f)
+        destinationList.Remove(destination);
+        destination.GetComponent<Renderer>().material = red;
+        if (time >= 0.0f)
         {
-            //yield return new WaitForSeconds(3.0f);
             result(true);
         }
     }
 
-    //private IEnumerator ActionTimer(float time)
-    //{
-    //    //print("TIME: " + time);
-    //    while (time >= 0.0f)
-    //    {
-    //        print("remaining time: " + time);
-    //        time -= Time.deltaTime;
-    //        yield return null;
-    //    }
-    //}
-
-    private void RollBack(string s, GameObject status)
+    private void RollBack(Dictionary<Action, GameObject> backUpStatusList)
     {
-        switch (s)
+        print("ROLLING BACK");
+        foreach (KeyValuePair<Action, GameObject> item in backUpStatusList)
         {
-            case "MOVE":
-                agent.ResetPath();
-                agent.gameObject.transform.position = status.transform.position;
-                break;
+            switch (item.Key.Name)
+            {
+                case "MOVE":
+                    NavMeshAgent agent = null;
+                    if(item.Value.name == "ROVER1" )
+                        agent = rover1.GetComponent<NavMeshAgent>();
+                    else
+                        agent = rover2.GetComponent<NavMeshAgent>();
 
-            case "TAKE_SAMPLE":
-                if (status.activeSelf == true)
-                    takeSample.SetActive(true);
-                else
-                    takeSample.SetActive(false);
+                    agent.ResetPath();
+                    agent.gameObject.transform.position = item.Value.transform.position;
+                    break;
 
-                break;
+                case "TAKE_SAMPLE":
+                    //if (item.Value.activeSelf == true)
+                    //    takeSample.SetActive(true);
+                    //else
+                    //    takeSample.SetActive(false);
 
-            case "DROP_SAMPLE":
-                break;
+                    break;
 
-            case "TAKE_IMAGE":
-                break;
+                case "DROP_SAMPLE":
+                    break;
+
+                case "TAKE_IMAGE":
+                    break;
+            }
         }
     }
+
+    private IEnumerator TakeSampleAnimation(string activeRover, System.Action<bool> result)
+    {
+        //changing the takeSamplePanel's parent according to the rover that is requesting the action
+        GameObject taken = null;
+        GameObject notTaken = null;
+        GameObject tsPanel = null;
+        TextMeshProUGUI takeSampleText;
+        string planetName = transform.parent.parent.gameObject.name;
+        
+        tsPanel = Instantiate(samplePanel);
+        tsPanel.transform.SetParent(GameObject.Find(transform.parent.parent.name + activeRover + "CameraTag").transform, worldPositionStays: false);
+        tsPanel.SetActive(true);
+
+        takeSampleText = tsPanel.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+        taken = takeSampleText.transform.GetChild(0).gameObject;
+        notTaken = takeSampleText.transform.GetChild(1).gameObject;
+        taken.SetActive(false);
+        notTaken.SetActive(false);
+
+        takeSampleText.text = "Taking Sample.";
+        yield return new WaitForSeconds(1.0f);
+        takeSampleText.text = "Taking Sample..";
+        yield return new WaitForSeconds(1.0f);
+        takeSampleText.text += ".";
+        yield return new WaitForSeconds(1.0f);
+        takeSampleText.text = "";
+
+        int outcome = Random.Range(0, 100);
+        print("random outcome=  " + outcome);
+        if (outcome <= 50)
+        {
+            if(taken != null)
+                taken.SetActive(true);
+            yield return new WaitForSeconds(1.0f);
+            result(true);
+        }
+        else
+        {
+            if (notTaken != null)
+                notTaken.SetActive(true);
+            yield return new WaitForSeconds(1.0f);
+            result(false);
+        }
+        Destroy(tsPanel);
+        yield return null;
+    }
+
+    private IEnumerator DropSampleAnimation(string activeRover, System.Action<bool> result)
+    {
+        GameObject dropped = null;
+        GameObject notDropped = null;
+        GameObject tsPanel = null;
+        TextMeshProUGUI dropSampleText;
+        string planetName = transform.parent.parent.gameObject.name;
+        
+        tsPanel = Instantiate(samplePanel);
+        tsPanel.transform.SetParent(GameObject.Find(planetName + activeRover + "CameraTag").transform, worldPositionStays: false);
+        tsPanel.SetActive(true);
+
+        dropSampleText = tsPanel.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+        dropped = dropSampleText.transform.GetChild(2).gameObject;
+        notDropped = dropSampleText.transform.GetChild(3).gameObject;
+        dropped.SetActive(false);
+        notDropped.SetActive(false);
+
+        dropSampleText.text = "Dropping Sample\n.";
+        yield return new WaitForSeconds(1.0f);
+        dropSampleText.text += ".";
+        yield return new WaitForSeconds(1.0f);
+        dropSampleText.text += ".";
+        yield return new WaitForSeconds(1.0f);
+        dropSampleText.text = "";
+
+        int outcome = Random.Range(0, 100);
+        print("random outcome=  " + outcome);
+        if (outcome <= 50)
+        {
+            if (dropped != null)
+                dropped.SetActive(true);
+            yield return new WaitForSeconds(1.0f);
+            result(true);
+        }
+        else
+        {
+            if (notDropped != null)
+                notDropped.SetActive(true);
+            yield return new WaitForSeconds(1.0f);
+            result(false);
+        }
+        Destroy(tsPanel);
+        yield return null;
+    }
+
 }
+
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//SAVE AND LOAD SYSTEM FOR ROLLING BACK (not complete)
+//
+//public void Save()
+//{
+//    BinaryFormatter bf = new BinaryFormatter();
+//    FileStream file = File.Create(Application.persistentDataPath + "/status.dat");
+//    StatusData data = new StatusData();
+
+//    data.initialPosition = rover.transform;
+
+//    bf.Serialize(file, data);
+//    file.Close();
+//}
+
+//public void Load()
+//{
+//    if (File.Exists(Application.persistentDataPath + "/status.dat"))
+//    {
+//        BinaryFormatter bf = new BinaryFormatter();
+//        FileStream file = File.Open(Application.persistentDataPath + "/status.dat", FileMode.Open);
+//        StatusData data = (StatusData)bf.Deserialize(file);
+//        file.Close();
+
+//        rover.transform.position = data.initialPosition.position;
+//    }
+//}
+
+//[System.Serializable]
+//class StatusData
+//{
+//    public Transform initialPosition;
+//}
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<
