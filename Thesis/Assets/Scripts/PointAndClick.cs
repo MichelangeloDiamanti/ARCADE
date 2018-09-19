@@ -76,6 +76,11 @@ public class PointAndClick : MonoBehaviour
             }
         }
 
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
+
         //if (Input.GetMouseButtonDown(0))
         //{
         //    if (EventSystem.current.IsPointerOverGameObject())
@@ -94,7 +99,7 @@ public class PointAndClick : MonoBehaviour
         //        }
         //    }
         //}
-        
+
     }
 
     public void ShowDescription(string s)

@@ -25,11 +25,8 @@ public class Visualization : MonoBehaviour
     public RenderTexture renderTextureRover1;
     public RenderTexture renderTextureRover2;
     public Material red, yellow;
-    public GameObject takeSamplePanel;
-    public TextMeshProUGUI takeSampleText;
-    public GameObject taken;
-    public GameObject notTaken;
-
+    public GameObject samplePanel;
+    
     public GameObject rover1;
     public GameObject rover2;
 
@@ -115,7 +112,10 @@ public class Visualization : MonoBehaviour
         maximumWaitingTime = 0;
         estimatedTimeList.Clear();
         actionResultList.Clear();
-        backUpStatusList.Clear();
+        if (backUpStatusList != null)
+        {
+            backUpStatusList.Clear();
+        }
         backUpStatus = new GameObject();
         bool resultOfAllActions = true;
 
@@ -153,11 +153,11 @@ public class Visualization : MonoBehaviour
         }
         Destroy(backUpStatus);
         result(resultOfAllActions);
-        if (actionResultList.Count < actions.Count)
-        {
-            print("STOP ALL COROUTINES");
-            StopAllCoroutines();
-        }
+        //if (actionResultList.Count < actions.Count)
+        //{
+        //    print("STOP ALL COROUTINES");
+        //    StopAllCoroutines();
+        //}
 
     }
 
@@ -190,9 +190,16 @@ public class Visualization : MonoBehaviour
                         }
                         agent = rover.GetComponent<NavMeshAgent>();
                     }
-                    else
+                    
+                    //destinationName = a.Dest.Destination.Name;
+                    
+                }
+                foreach (IRelation r in a.PostConditions)
+                {
+                    if(r.Predicate.Name == "AT" && r.Value == RelationValue.TRUE)
                     {
-                        destinationName = ap.Name;
+                        BinaryRelation br = r as BinaryRelation;
+                        destinationName = br.Destination.Name;
                     }
                 }
                 foreach (GameObject waypoint in waypoints)
@@ -201,13 +208,19 @@ public class Visualization : MonoBehaviour
                     {
                         destination = waypoint.transform.gameObject;
                         destination.GetComponent<Renderer>().material = yellow;
-                        destinationList.Add(destination);
+                        if(destinationList != null)
+                        {
+                            destinationList.Add(destination);
+                        }
                     }
                 }
                 backUpStatus.name = agent.gameObject.name;
                 backUpStatus.transform.position = agent.gameObject.transform.position;
-                backUpStatusList.Add(a, backUpStatus);
-
+                if (backUpStatusList != null)
+                {
+                    backUpStatusList.Add(a, backUpStatus);
+                }
+                
                 //print("PARENT NAME: " + rover.transform.parent.gameObject.transform.parent.gameObject);
                 agent.SetDestination(destination.transform.position);
                 if (agent.pathPending)
@@ -257,7 +270,7 @@ public class Visualization : MonoBehaviour
                     }
                 }
                 backUpStatus.name = activeRover + " - take sample";
-                backUpStatus.SetActive(takeSampleRover1.activeSelf);
+                backUpStatus.SetActive(takeSample.activeSelf);
                 backUpStatusList.Add(a, backUpStatus);
 
                 res = false;
@@ -281,13 +294,7 @@ public class Visualization : MonoBehaviour
                 {
                     actionResultList.Add(false);
                 }
-                takeSamplePanel.SetActive(false);
-
-                if (taken.activeSelf == true)
-                    taken.SetActive(false);
-                else if (notTaken.activeSelf == true)
-                    notTaken.SetActive(false);
-
+                
                 break;
 
             case "DROP_SAMPLE":
@@ -326,22 +333,39 @@ public class Visualization : MonoBehaviour
                 backUpStatus.SetActive(dropSample.activeSelf);
                 backUpStatusList.Add(a, backUpStatus);
 
-                int outcome = Random.Range(0, 100);
-                if (outcome <= 70)
+                res = false;
+                yield return StartCoroutine(DropSampleAnimation(activeRover, value => res = value));
+                if (res == true)
                 {
-                    if (dropSample.activeSelf == false)
-                    {
-                        dropSample.SetActive(true);
-                        sampleNumberText.text = null;
-                        actionResultList.Add(true);
-                    }
                     if (takeSample.activeSelf == true)
                         takeSample.SetActive(false);
+                    if (dropSample.activeSelf == false)
+                        dropSample.SetActive(true);
+
+                    sampleNumberText.text = "";
+                    actionResultList.Add(true);
                 }
                 else
                 {
                     actionResultList.Add(false);
                 }
+                
+                //int outcome = Random.Range(0, 100);
+                //if (outcome <= 70)
+                //{
+                //    if (dropSample.activeSelf == false)
+                //    {
+                //        dropSample.SetActive(true);
+                //        sampleNumberText.text = null;
+                //        actionResultList.Add(true);
+                //    }
+                //    if (takeSample.activeSelf == true)
+                //        takeSample.SetActive(false);
+                //}
+                //else
+                //{
+                //    actionResultList.Add(false);
+                //}
 
                 break;
 
@@ -371,6 +395,50 @@ public class Visualization : MonoBehaviour
                 break;
 
             case "IDLE":
+
+                estimatedTime = 2f;
+                if (estimatedTime > maximumWaitingTime)
+                    maximumWaitingTime = estimatedTime;
+                estimatedTimeList.Add(estimatedTime);
+
+                actionResultList.Add(true);
+
+                break;
+
+            case "CHARGE_BATTERY":
+
+                estimatedTime = 2f;
+                if (estimatedTime > maximumWaitingTime)
+                    maximumWaitingTime = estimatedTime;
+                estimatedTimeList.Add(estimatedTime);
+
+                actionResultList.Add(true);
+
+                break;
+
+            case "DISCHARGE_BATTERY":
+
+                estimatedTime = 2f;
+                if (estimatedTime > maximumWaitingTime)
+                    maximumWaitingTime = estimatedTime;
+                estimatedTimeList.Add(estimatedTime);
+
+                actionResultList.Add(true);
+
+                break;
+
+            case "INFLATE_WHEELS":
+
+                estimatedTime = 2f;
+                if (estimatedTime > maximumWaitingTime)
+                    maximumWaitingTime = estimatedTime;
+                estimatedTimeList.Add(estimatedTime);
+
+                actionResultList.Add(true);
+
+                break;
+
+            case "DEFLATE_WHEELS":
 
                 estimatedTime = 2f;
                 if (estimatedTime > maximumWaitingTime)
@@ -499,14 +567,27 @@ public class Visualization : MonoBehaviour
     private IEnumerator TakeSampleAnimation(string activeRover, System.Action<bool> result)
     {
         //changing the takeSamplePanel's parent according to the rover that is requesting the action
-        takeSamplePanel.transform.SetParent(GameObject.Find(transform.parent.parent.name + activeRover + "CameraTag").transform, worldPositionStays: false);
-        takeSamplePanel.SetActive(true);
+        GameObject taken = null;
+        GameObject notTaken = null;
+        GameObject tsPanel = null;
+        TextMeshProUGUI takeSampleText;
+        string planetName = transform.parent.parent.gameObject.name;
+        
+        tsPanel = Instantiate(samplePanel);
+        tsPanel.transform.SetParent(GameObject.Find(transform.parent.parent.name + activeRover + "CameraTag").transform, worldPositionStays: false);
+        tsPanel.SetActive(true);
+
+        takeSampleText = tsPanel.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+        taken = takeSampleText.transform.GetChild(0).gameObject;
+        notTaken = takeSampleText.transform.GetChild(1).gameObject;
+        taken.SetActive(false);
+        notTaken.SetActive(false);
 
         takeSampleText.text = "Taking Sample.";
         yield return new WaitForSeconds(1.0f);
         takeSampleText.text = "Taking Sample..";
         yield return new WaitForSeconds(1.0f);
-        takeSampleText.text = "Taking Sample...";
+        takeSampleText.text += ".";
         yield return new WaitForSeconds(1.0f);
         takeSampleText.text = "";
 
@@ -514,16 +595,65 @@ public class Visualization : MonoBehaviour
         print("random outcome=  " + outcome);
         if (outcome <= 50)
         {
-            taken.SetActive(true);
+            if(taken != null)
+                taken.SetActive(true);
             yield return new WaitForSeconds(1.0f);
             result(true);
         }
         else
         {
-            notTaken.SetActive(true);
+            if (notTaken != null)
+                notTaken.SetActive(true);
             yield return new WaitForSeconds(1.0f);
             result(false);
         }
+        Destroy(tsPanel);
+        yield return null;
+    }
+
+    private IEnumerator DropSampleAnimation(string activeRover, System.Action<bool> result)
+    {
+        GameObject dropped = null;
+        GameObject notDropped = null;
+        GameObject tsPanel = null;
+        TextMeshProUGUI dropSampleText;
+        string planetName = transform.parent.parent.gameObject.name;
+        
+        tsPanel = Instantiate(samplePanel);
+        tsPanel.transform.SetParent(GameObject.Find(planetName + activeRover + "CameraTag").transform, worldPositionStays: false);
+        tsPanel.SetActive(true);
+
+        dropSampleText = tsPanel.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+        dropped = dropSampleText.transform.GetChild(2).gameObject;
+        notDropped = dropSampleText.transform.GetChild(3).gameObject;
+        dropped.SetActive(false);
+        notDropped.SetActive(false);
+
+        dropSampleText.text = "Dropping Sample\n.";
+        yield return new WaitForSeconds(1.0f);
+        dropSampleText.text += ".";
+        yield return new WaitForSeconds(1.0f);
+        dropSampleText.text += ".";
+        yield return new WaitForSeconds(1.0f);
+        dropSampleText.text = "";
+
+        int outcome = Random.Range(0, 100);
+        print("random outcome=  " + outcome);
+        if (outcome <= 50)
+        {
+            if (dropped != null)
+                dropped.SetActive(true);
+            yield return new WaitForSeconds(1.0f);
+            result(true);
+        }
+        else
+        {
+            if (notDropped != null)
+                notDropped.SetActive(true);
+            yield return new WaitForSeconds(1.0f);
+            result(false);
+        }
+        Destroy(tsPanel);
         yield return null;
     }
 
