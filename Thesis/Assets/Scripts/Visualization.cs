@@ -26,7 +26,7 @@ public class Visualization : MonoBehaviour
     public RenderTexture renderTextureRover2;
     public Material red, yellow;
     public GameObject samplePanel;
-    
+
     public GameObject rover1;
     public GameObject rover2;
 
@@ -60,12 +60,12 @@ public class Visualization : MonoBehaviour
     {
         if (destinationList != null)
         {
-            foreach(GameObject x in waypoints)
+            foreach (GameObject x in waypoints)
             {
                 if (destinationList.Contains(x))
                     x.transform.Rotate(Vector3.forward * Time.deltaTime * 200);
                 else
-                    x.transform.Rotate(0,0,0);
+                    x.transform.Rotate(0, 0, 0);
             }
         }
     }
@@ -73,7 +73,7 @@ public class Visualization : MonoBehaviour
     public IEnumerator interact(HashSet<Action> actions, System.Action<bool> result)
     {
         displayText.text = string.Join("\n", actions.shortToString().ToArray());
-        
+
         //float outcome = Random.Range(0.0f, 1.0f);
         //if (outcome <= interactionSuccessProbability)
         //{
@@ -94,7 +94,7 @@ public class Visualization : MonoBehaviour
 
         bool res = false;
         yield return StartCoroutine(Timer(timer, value => res = value));
-        print("RES = " + res);
+        //print("RES = " + res);
         if (res == true)
         {
             bool r = false;
@@ -129,28 +129,35 @@ public class Visualization : MonoBehaviour
         }
         while (estimatedTimeList.Count != actions.Count)
         {
-            print("Waiting for the maximum waiting time to be calculated");
+            //print("Waiting for the maximum waiting time to be calculated");
             yield return null;
         }
 
-        print("Waiting " + maximumWaitingTime + " seconds for all actions to be completed");
+        //print("Waiting " + maximumWaitingTime + " seconds for all actions to be completed");
         yield return new WaitForSeconds(maximumWaitingTime);
 
         //print("action result count= " + actionResultList.Count + " | " + "action count= " + actions.Count);
         if (actionResultList.Contains(false) || actionResultList.Count < actions.Count)
             resultOfAllActions = false;
 
-        foreach (var item in actionResultList)
-        {
-            print(item);
-        }
-        print("RESULT= " + resultOfAllActions);
+        // foreach (var item in actionResultList)
+        // {
+        //     //print(item);
+        // }
+        //print("RESULT= " + resultOfAllActions);
 
         if (resultOfAllActions == false)
         {
+            displayText.text = "Parallel Actions NOT Visualized, rolling back...";
+            yield return new WaitForSeconds(2.0f);
             RollBack(backUpStatusList);
+        }
+        else
+        {
+            displayText.text = "Parallel Actions Visualized";
             yield return new WaitForSeconds(2.0f);
         }
+
         Destroy(backUpStatus);
         result(resultOfAllActions);
         //if (actionResultList.Count < actions.Count)
@@ -165,7 +172,7 @@ public class Visualization : MonoBehaviour
     {
         //displayText.text = "The Simulator is requesting the following Action: " + a.shortToString();
         //print(a.shortToString());
-        
+
         switch (a.Name)
         {
             case "MOVE":
@@ -190,13 +197,13 @@ public class Visualization : MonoBehaviour
                         }
                         agent = rover.GetComponent<NavMeshAgent>();
                     }
-                    
+
                     //destinationName = a.Dest.Destination.Name;
-                    
+
                 }
                 foreach (IRelation r in a.PostConditions)
                 {
-                    if(r.Predicate.Name == "AT" && r.Value == RelationValue.TRUE)
+                    if (r.Predicate.Name == "AT" && r.Value == RelationValue.TRUE)
                     {
                         BinaryRelation br = r as BinaryRelation;
                         destinationName = br.Destination.Name;
@@ -208,7 +215,7 @@ public class Visualization : MonoBehaviour
                     {
                         destination = waypoint.transform.gameObject;
                         destination.GetComponent<Renderer>().material = yellow;
-                        if(destinationList != null)
+                        if (destinationList != null)
                         {
                             destinationList.Add(destination);
                         }
@@ -220,7 +227,7 @@ public class Visualization : MonoBehaviour
                 {
                     backUpStatusList.Add(a, backUpStatus);
                 }
-                
+
                 //print("PARENT NAME: " + rover.transform.parent.gameObject.transform.parent.gameObject);
                 agent.SetDestination(destination.transform.position);
                 if (agent.pathPending)
@@ -275,7 +282,7 @@ public class Visualization : MonoBehaviour
 
                 res = false;
                 yield return StartCoroutine(TakeSampleAnimation(activeRover, value => res = value));
-                if(res == true)
+                if (res == true)
                 {
                     if (takeSample.activeSelf == false)
                         takeSample.SetActive(true);
@@ -294,11 +301,11 @@ public class Visualization : MonoBehaviour
                 {
                     actionResultList.Add(false);
                 }
-                
+
                 break;
 
             case "DROP_SAMPLE":
-                
+
                 estimatedTime = 2f;
                 if (estimatedTime > maximumWaitingTime)
                     maximumWaitingTime = estimatedTime;
@@ -349,7 +356,7 @@ public class Visualization : MonoBehaviour
                 {
                     actionResultList.Add(false);
                 }
-                
+
                 //int outcome = Random.Range(0, 100);
                 //if (outcome <= 70)
                 //{
@@ -456,12 +463,12 @@ public class Visualization : MonoBehaviour
     {
         if (s == "yes")
         {
-            print("yes");
+            //print("yes");
             buttonClicked = 1;
         }
         else
         {
-            print("no");
+            //print("no");
             buttonClicked = 2;
         }
     }
@@ -501,7 +508,7 @@ public class Visualization : MonoBehaviour
 
     private IEnumerator CheckMoveResult(NavMeshAgent agent, GameObject destination, float time, System.Action<bool> result)
     {
-        print(agent.gameObject.name + " -> " + agent.remainingDistance + " : " + time);
+        //print(agent.gameObject.name + " -> " + agent.remainingDistance + " : " + time);
         while (agent.remainingDistance >= 0.5f)
         {
             //yield return null;
@@ -515,7 +522,7 @@ public class Visualization : MonoBehaviour
             else
             {
                 time -= 1.0f;
-                print("TIME OVER");
+                //print("TIME OVER");
                 result(false);
                 break;
             }
@@ -531,14 +538,14 @@ public class Visualization : MonoBehaviour
 
     private void RollBack(Dictionary<Action, GameObject> backUpStatusList)
     {
-        print("ROLLING BACK");
+        //print("ROLLING BACK");
         foreach (KeyValuePair<Action, GameObject> item in backUpStatusList)
         {
             switch (item.Key.Name)
             {
                 case "MOVE":
                     NavMeshAgent agent = null;
-                    if(item.Value.name == "ROVER1" )
+                    if (item.Value.name == "ROVER1")
                         agent = rover1.GetComponent<NavMeshAgent>();
                     else
                         agent = rover2.GetComponent<NavMeshAgent>();
@@ -572,7 +579,7 @@ public class Visualization : MonoBehaviour
         GameObject tsPanel = null;
         TextMeshProUGUI takeSampleText;
         string planetName = transform.parent.parent.gameObject.name;
-        
+
         tsPanel = Instantiate(samplePanel);
         tsPanel.transform.SetParent(GameObject.Find(transform.parent.parent.name + activeRover + "CameraTag").transform, worldPositionStays: false);
         tsPanel.SetActive(true);
@@ -592,10 +599,10 @@ public class Visualization : MonoBehaviour
         takeSampleText.text = "";
 
         int outcome = Random.Range(0, 100);
-        print("random outcome=  " + outcome);
+        //print("random outcome=  " + outcome);
         if (outcome <= 50)
         {
-            if(taken != null)
+            if (taken != null)
                 taken.SetActive(true);
             yield return new WaitForSeconds(1.0f);
             result(true);
@@ -618,7 +625,7 @@ public class Visualization : MonoBehaviour
         GameObject tsPanel = null;
         TextMeshProUGUI dropSampleText;
         string planetName = transform.parent.parent.gameObject.name;
-        
+
         tsPanel = Instantiate(samplePanel);
         tsPanel.transform.SetParent(GameObject.Find(planetName + activeRover + "CameraTag").transform, worldPositionStays: false);
         tsPanel.SetActive(true);
@@ -638,7 +645,7 @@ public class Visualization : MonoBehaviour
         dropSampleText.text = "";
 
         int outcome = Random.Range(0, 100);
-        print("random outcome=  " + outcome);
+        //print("random outcome=  " + outcome);
         if (outcome <= 50)
         {
             if (dropped != null)

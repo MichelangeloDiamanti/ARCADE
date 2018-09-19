@@ -254,7 +254,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cbe9782150f1de7449d75f2524ffab13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
+  player: {fileID: 746447207}
   roverCamera1: {fileID: 1883792963}
   roverCamera2: {fileID: 2056742361}
   roverCameraHolder1: {fileID: 1384573416}
@@ -2030,7 +2030,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cbe9782150f1de7449d75f2524ffab13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
+  player: {fileID: 746447207}
   roverCamera1: {fileID: 1823158604}
   roverCamera2: {fileID: 1178152605}
   roverCameraHolder1: {fileID: 1160212382}
@@ -5950,7 +5950,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cbe9782150f1de7449d75f2524ffab13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
+  player: {fileID: 746447207}
   roverCamera1: {fileID: 1823158604}
   roverCamera2: {fileID: 1178152605}
   roverCameraHolder1: {fileID: 1160212382}
@@ -13201,7 +13201,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cbe9782150f1de7449d75f2524ffab13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
+  player: {fileID: 746447207}
   roverCamera1: {fileID: 1883792963}
   roverCamera2: {fileID: 2056742361}
   roverCameraHolder1: {fileID: 1384573416}
@@ -13251,7 +13251,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cbe9782150f1de7449d75f2524ffab13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
+  player: {fileID: 746447207}
   roverCamera1: {fileID: 1883792963}
   roverCamera2: {fileID: 2056742361}
   roverCameraHolder1: {fileID: 1384573416}
@@ -16023,7 +16023,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cbe9782150f1de7449d75f2524ffab13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
+  player: {fileID: 746447207}
   roverCamera1: {fileID: 1823158604}
   roverCamera2: {fileID: 1178152605}
   roverCameraHolder1: {fileID: 1160212382}

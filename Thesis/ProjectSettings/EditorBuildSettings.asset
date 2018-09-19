@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/PlanetSceneMatteo2.unity
-    guid: a39c0b89cc317e64a93db5816750e2f8
+    path: Assets/Scenes/PlanetSceneMichelangelo.unity
+    guid: 6e8cad1de1acbbc4ca243286d91ca324
   m_configObjects: {}

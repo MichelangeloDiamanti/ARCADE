@@ -38,7 +38,7 @@ public class Simulation : MonoBehaviour
     public ComputeShader countBlackPixelsComputeShader;
 
 
-    private string logFilePath = "Assets/Logs/";
+    private string logFilePath = "Logs/";
     private string logFileName;
     private Vector3 m_Point;
     private TreeNode<WorldState> _currentNode;
