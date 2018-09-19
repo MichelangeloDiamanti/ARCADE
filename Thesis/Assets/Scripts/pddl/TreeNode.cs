@@ -13,7 +13,7 @@ namespace ru.cadia.pddlFramework
 
         public T Data { get; set; }
         public TreeNode<T> Parent { get; set; }
-        public Action ParentAction { get; set; }
+        public HashSet<Action> ParentAction { get; set; }
         public ICollection<TreeNode<T>> Children { get; set; }
 
         public Boolean IsRoot
@@ -46,7 +46,7 @@ namespace ru.cadia.pddlFramework
             this.ElementsIndex.Add(this);
         }
 
-        public TreeNode<T> AddChild(T child, Action parentAction)
+        public TreeNode<T> AddChild(T child, HashSet<Action> parentAction)
         {
             TreeNode<T> childNode = new TreeNode<T>(child) { Parent = this };
             this.Children.Add(childNode);

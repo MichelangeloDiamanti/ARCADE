@@ -11,6 +11,7 @@ namespace ru.cadia.pddlFramework
         private EntityType _source;
         private EntityType _destination;
         private string _name;
+        private string _description;
 
         public EntityType Source
         {
@@ -24,8 +25,12 @@ namespace ru.cadia.pddlFramework
         {
             get { return _destination; }
         }
+        public string Description
+        {
+            get { return _description; }
+        }
 
-        public BinaryPredicate(EntityType source, string name, EntityType destination)
+        public BinaryPredicate(EntityType source, string name, EntityType destination, string description = null)
         {
             if (source == null)
                 throw new System.ArgumentNullException("Predicate source type cannot be null", "source type");
@@ -37,6 +42,7 @@ namespace ru.cadia.pddlFramework
             _source = source;
             _name = name;
             _destination = destination;
+            _description = description;
         }
         public override int GetHashCode()
         {

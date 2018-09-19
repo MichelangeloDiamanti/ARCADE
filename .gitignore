@@ -6,7 +6,9 @@ Obj/
 UnityGenerated/
 Library/
 Assets/AssetStoreTools*
-Thesis/Assets/Logs/
+Thesis/Build/
+Thesis/Logs/
+Thesis/Screenshots/
 
 # ===================================== #
 # Visual Studio / MonoDevelop generated #

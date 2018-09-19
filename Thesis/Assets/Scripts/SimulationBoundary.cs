@@ -10,7 +10,8 @@ public class SimulationBoundary
     public int level;
     public bool interactive;
     public string jsonDomain;
-    public Collider boundary;
+    public float minObservability;
+    public float maxObservability;
     public Domain domain;
 
 }

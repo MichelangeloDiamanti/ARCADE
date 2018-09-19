@@ -22,7 +22,8 @@
       "Name": "IS_CONNECTED_TO",
       "Destination": {
         "Type": "WAYPOINT"
-      }
+      },
+      "Description": "is connected to"
     },
     {
       "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
@@ -32,7 +33,8 @@
       "Name": "IS_VISIBLE",
       "Destination": {
         "Type": "WAYPOINT"
-      }
+      },
+      "Description": "is visible"
     },
     {
       "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
@@ -42,7 +44,8 @@
       "Name": "IS_IN",
       "Destination": {
         "Type": "WAYPOINT"
-      }
+      },
+      "Description": "is in"
     },
     {
       "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
@@ -52,7 +55,8 @@
       "Name": "BEEN_AT",
       "Destination": {
         "Type": "WAYPOINT"
-      }
+      },
+      "Description": "has been at"
     },
     {
       "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
@@ -62,7 +66,8 @@
       "Name": "CARRY",
       "Destination": {
         "Type": "SAMPLE"
-      }
+      },
+      "Description": "is carrying"
     },
     {
       "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
@@ -72,38 +77,57 @@
       "Name": "AT",
       "Destination": {
         "Type": "WAYPOINT"
-      }
+      },
+      "Description": "is at"
     },
     {
       "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
       "Source": {
         "Type": "WAYPOINT"
       },
-      "Name": "IS_DROPPING_DOCK"
+      "Name": "IS_DROPPING_DOCK",
+      "Description": "is dropping the dock"
     },
     {
       "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
       "Source": {
         "Type": "OBJECTIVE"
       },
-      "Name": "TAKEN_IMAGE"
+      "Name": "TAKEN_IMAGE",
+      "Description": "is taking an image"
     },
     {
       "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
       "Source": {
         "Type": "SAMPLE"
       },
-      "Name": "STORED_SAMPLE"
+      "Name": "STORED_SAMPLE",
+      "Description": "has stored the sample"
     },
     {
       "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
       "Source": {
         "Type": "ROVER"
       },
-      "Name": "IS_EMPTY"
+      "Name": "IS_EMPTY",
+      "Description": "is empty"
     }
   ],
   "Actions": [
+    {
+      "PreConditions": [],
+      "Name": "IDLE",
+      "Parameters": [
+        {
+          "Role": 1,
+          "Type": {
+            "Type": "ROVER"
+          },
+          "Name": "ROVER"
+        }
+      ],
+      "PostConditions": []
+    },
     {
       "PreConditions": [
         {
@@ -122,7 +146,8 @@
             "Name": "AT",
             "Destination": {
               "Type": "WAYPOINT"
-            }
+            },
+            "Description": "is at"
           },
           "Destination": {
             "Type": {
@@ -148,7 +173,8 @@
             "Name": "IS_CONNECTED_TO",
             "Destination": {
               "Type": "WAYPOINT"
-            }
+            },
+            "Description": "is connected to"
           },
           "Destination": {
             "Type": {
@@ -162,18 +188,21 @@
       "Name": "MOVE",
       "Parameters": [
         {
+          "Role": 1,
           "Type": {
             "Type": "ROVER"
           },
           "Name": "ROVER"
         },
         {
+          "Role": 2,
           "Type": {
             "Type": "WAYPOINT"
           },
           "Name": "WAYPOINT1"
         },
         {
+          "Role": 2,
           "Type": {
             "Type": "WAYPOINT"
           },
@@ -197,7 +226,8 @@
             "Name": "AT",
             "Destination": {
               "Type": "WAYPOINT"
-            }
+            },
+            "Description": "is at"
           },
           "Destination": {
             "Type": {
@@ -223,7 +253,8 @@
             "Name": "AT",
             "Destination": {
               "Type": "WAYPOINT"
-            }
+            },
+            "Description": "is at"
           },
           "Destination": {
             "Type": {
@@ -249,7 +280,8 @@
             "Name": "BEEN_AT",
             "Destination": {
               "Type": "WAYPOINT"
-            }
+            },
+            "Description": "has been at"
           },
           "Destination": {
             "Type": {
@@ -279,7 +311,8 @@
             "Name": "IS_IN",
             "Destination": {
               "Type": "WAYPOINT"
-            }
+            },
+            "Description": "is in"
           },
           "Destination": {
             "Type": {
@@ -305,7 +338,8 @@
             "Name": "AT",
             "Destination": {
               "Type": "WAYPOINT"
-            }
+            },
+            "Description": "is at"
           },
           "Destination": {
             "Type": {
@@ -328,7 +362,8 @@
             "Source": {
               "Type": "ROVER"
             },
-            "Name": "IS_EMPTY"
+            "Name": "IS_EMPTY",
+            "Description": "is empty"
           },
           "Value": 1
         }
@@ -336,18 +371,21 @@
       "Name": "TAKE_SAMPLE",
       "Parameters": [
         {
+          "Role": 1,
           "Type": {
             "Type": "ROVER"
           },
           "Name": "ROVER"
         },
         {
+          "Role": 2,
           "Type": {
             "Type": "SAMPLE"
           },
           "Name": "SAMPLE"
         },
         {
+          "Role": 2,
           "Type": {
             "Type": "WAYPOINT"
           },
@@ -371,7 +409,8 @@
             "Name": "IS_IN",
             "Destination": {
               "Type": "WAYPOINT"
-            }
+            },
+            "Description": "is in"
           },
           "Destination": {
             "Type": {
@@ -394,7 +433,8 @@
             "Source": {
               "Type": "ROVER"
             },
-            "Name": "IS_EMPTY"
+            "Name": "IS_EMPTY",
+            "Description": "is empty"
           },
           "Value": 2
         },
@@ -414,7 +454,8 @@
             "Name": "CARRY",
             "Destination": {
               "Type": "SAMPLE"
-            }
+            },
+            "Description": "is carrying"
           },
           "Destination": {
             "Type": {
@@ -441,7 +482,8 @@
             "Source": {
               "Type": "WAYPOINT"
             },
-            "Name": "IS_DROPPING_DOCK"
+            "Name": "IS_DROPPING_DOCK",
+            "Description": "is dropping the dock"
           },
           "Value": 1
         },
@@ -461,7 +503,8 @@
             "Name": "AT",
             "Destination": {
               "Type": "WAYPOINT"
-            }
+            },
+            "Description": "is at"
           },
           "Destination": {
             "Type": {
@@ -487,7 +530,8 @@
             "Name": "CARRY",
             "Destination": {
               "Type": "SAMPLE"
-            }
+            },
+            "Description": "is carrying"
           },
           "Destination": {
             "Type": {
@@ -501,18 +545,21 @@
       "Name": "DROP_SAMPLE",
       "Parameters": [
         {
+          "Role": 1,
           "Type": {
             "Type": "ROVER"
           },
           "Name": "ROVER"
         },
         {
+          "Role": 2,
           "Type": {
             "Type": "SAMPLE"
           },
           "Name": "SAMPLE"
         },
         {
+          "Role": 2,
           "Type": {
             "Type": "WAYPOINT"
           },
@@ -536,7 +583,8 @@
             "Name": "IS_IN",
             "Destination": {
               "Type": "WAYPOINT"
-            }
+            },
+            "Description": "is in"
           },
           "Destination": {
             "Type": {
@@ -559,7 +607,8 @@
             "Source": {
               "Type": "ROVER"
             },
-            "Name": "IS_EMPTY"
+            "Name": "IS_EMPTY",
+            "Description": "is empty"
           },
           "Value": 1
         },
@@ -579,7 +628,8 @@
             "Name": "CARRY",
             "Destination": {
               "Type": "SAMPLE"
-            }
+            },
+            "Description": "is carrying"
           },
           "Destination": {
             "Type": {
@@ -609,7 +659,8 @@
             "Name": "AT",
             "Destination": {
               "Type": "WAYPOINT"
-            }
+            },
+            "Description": "is at"
           },
           "Destination": {
             "Type": {
@@ -635,7 +686,8 @@
             "Name": "IS_VISIBLE",
             "Destination": {
               "Type": "WAYPOINT"
-            }
+            },
+            "Description": "is visible"
           },
           "Destination": {
             "Type": {
@@ -649,18 +701,21 @@
       "Name": "TAKE_IMAGE",
       "Parameters": [
         {
+          "Role": 1,
           "Type": {
             "Type": "ROVER"
           },
           "Name": "ROVER"
         },
         {
+          "Role": 2,
           "Type": {
             "Type": "OBJECTIVE"
           },
           "Name": "OBJECTIVE"
         },
         {
+          "Role": 2,
           "Type": {
             "Type": "WAYPOINT"
           },
@@ -681,7 +736,8 @@
             "Source": {
               "Type": "OBJECTIVE"
             },
-            "Name": "TAKEN_IMAGE"
+            "Name": "TAKEN_IMAGE",
+            "Description": "is taking an image"
           },
           "Value": 1
         }
