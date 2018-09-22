@@ -1,0 +1,8 @@
+The solution found by the Subgoals BFS is composed by the following actions:
+Abstract: Action: MOVE(ROVER2 ,WAYPOINT6 ,WAYPOINT3 ,)
+Detailed:
+Action: MOVE(ROVER2 ,WAYPOINT6 ,WAYPOINT3 ,BATTERY_ROVER2 ,WHEELS_ROVER2 ,)
+
+
+Subgoals BFS search time: 50 ms
+Subgoals BFS search explored nodes: 3

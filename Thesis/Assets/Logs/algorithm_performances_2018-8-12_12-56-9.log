@@ -1,0 +1,10 @@
+The solution found by the Subgoals BFS is composed by the following actions:
+Abstract: Action: MOVE(ROVER1 ,WAYPOINT6 ,WAYPOINT8 ,)
+Detailed:
+Action: MOVE(ROVER1 ,WAYPOINT6 ,WAYPOINT3 ,)
+Action: MOVE(ROVER1 ,WAYPOINT3 ,WAYPOINT4 ,)
+Action: MOVE(ROVER1 ,WAYPOINT4 ,WAYPOINT8 ,)
+
+
+Subgoals BFS search time: 164 ms
+Subgoals BFS search explored nodes: 27

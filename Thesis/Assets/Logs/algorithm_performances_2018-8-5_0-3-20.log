@@ -1,0 +1,38 @@
+The solution found by the Subgoals BFS is composed by the following actions:
+Abstract: Action: MOVE(ROVER2 ,WAYPOINT6 ,WAYPOINT8 ,)
+Detailed:
+Action: MOVE(ROVER2 ,WAYPOINT6 ,WAYPOINT3 ,)
+Action: MOVE(ROVER2 ,WAYPOINT3 ,WAYPOINT4 ,)
+Action: MOVE(ROVER2 ,WAYPOINT4 ,WAYPOINT8 ,)
+
+Abstract: Action: TAKE_IMAGE(ROVER2 ,OBJECTIVE3 ,WAYPOINT8 ,)
+Detailed:
+Action: TAKE_IMAGE(ROVER2 ,OBJECTIVE3 ,WAYPOINT8 ,)
+
+
+Subgoals BFS search time: 305 ms
+Subgoals BFS search explored nodes: 109
+The solution found by the Subgoals BFS is composed by the following actions:
+Abstract: Action: MOVE(ROVER2 ,WAYPOINT6 ,WAYPOINT3 ,)
+Detailed:
+Action: MOVE(ROVER2 ,WAYPOINT6 ,WAYPOINT3 ,BATTERY_ROVER2 ,WHEELS_ROVER2 ,)
+
+Abstract: Action: MOVE(ROVER2 ,WAYPOINT3 ,WAYPOINT4 ,)
+Detailed:
+Action: MOVE(ROVER2 ,WAYPOINT3 ,WAYPOINT4 ,BATTERY_ROVER2 ,WHEELS_ROVER2 ,)
+
+Abstract: Action: MOVE(ROVER2 ,WAYPOINT4 ,WAYPOINT8 ,)
+Detailed:
+Action: MOVE(ROVER2 ,WAYPOINT4 ,WAYPOINT8 ,BATTERY_ROVER2 ,WHEELS_ROVER2 ,)
+
+Abstract: Action: TAKE_IMAGE(ROVER2 ,OBJECTIVE3 ,WAYPOINT8 ,)
+Detailed:
+Action: TAKE_IMAGE(ROVER2 ,OBJECTIVE3 ,WAYPOINT8 ,BATTERY_ROVER2 ,)
+
+Abstract: Action: TAKE_SAMPLE(ROVER2 ,SAMPLE4 ,WAYPOINT8 ,)
+Detailed:
+Action: TAKE_SAMPLE(ROVER2 ,SAMPLE4 ,WAYPOINT8 ,BATTERY_ROVER2 ,)
+
+
+Subgoals BFS search time: 231 ms
+Subgoals BFS search explored nodes: 18

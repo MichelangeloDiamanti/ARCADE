@@ -26,21 +26,34 @@ public class Visualization : MonoBehaviour
     public RenderTexture renderTextureRover2;
     public Material red, yellow;
     public GameObject samplePanel;
+    public GameObject batteryLevelFullRover1;
+    public GameObject batteryLevelMediumRover1;
+    public GameObject batteryLevelLowRover1;
+    public GameObject batteryLevelFullRover2;
+    public GameObject batteryLevelMediumRover2;
+    public GameObject batteryLevelLowRover2;
 
     public GameObject rover1;
     public GameObject rover2;
 
-    private List<GameObject> destinationList;
+    public int batteryLevelRover1 = 100;
+    public int batteryLevelRover2 = 100;
+
+    private List<GameObject> destinationList = new List<GameObject>();
     private int buttonClicked;
     private bool rotation;
     private float maximumWaitingTime;
     private ArrayList estimatedTimeList = new ArrayList();
     private ArrayList actionResultList = new ArrayList();
     private GameObject backUpStatus;
-    private Dictionary<Action, GameObject> backUpStatusList;
-    private TextMeshProUGUI sampleNumberText;
+    private Dictionary<Action, GameObject> backUpStatusList = new Dictionary<Action, GameObject>();
+    private Dictionary<string, int> backUpBatteryLevelList = new Dictionary<string, int>();
+    private List<Coroutine> listOfStartedActions = new List<Coroutine>();
+    //private bool containFalse;
+    private List<GameObject> samplePanelList = new List<GameObject>();
+    private List<NavMeshAgent> listOfAgents = new List<NavMeshAgent>();
+    
 
-    // Use this for initialization
     void Start()
     {
         Button yButton = yesButton.GetComponent<Button>();
@@ -51,14 +64,15 @@ public class Visualization : MonoBehaviour
 
         buttonClicked = 0;
         rotation = false;
-        destinationList = new List<GameObject>();
-        backUpStatusList = new Dictionary<Action, GameObject>();
+        //containFalse = false;
+        UpdateBatteryLevel("rover1", 0);
+        UpdateBatteryLevel("rover2", 0);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (destinationList != null)
+        if (destinationList.Count > 0)
         {
             foreach (GameObject x in waypoints)
             {
@@ -109,36 +123,76 @@ public class Visualization : MonoBehaviour
 
     public IEnumerator visualize(HashSet<Action> actions, System.Action<bool> result)
     {
+        print("BATTERY ROVER1= " + batteryLevelRover1);
+        print("BATTERY ROVER2= " + batteryLevelRover2);
         maximumWaitingTime = 0;
         estimatedTimeList.Clear();
         actionResultList.Clear();
+        listOfStartedActions.Clear();
+        backUpBatteryLevelList.Clear();
+        //containFalse = false;
         if (backUpStatusList != null)
         {
             backUpStatusList.Clear();
         }
-        backUpStatus = new GameObject();
-        bool resultOfAllActions = true;
+        bool resultOfAllActions = false;
 
         displayText.text = string.Join(" ", actions.shortToString().ToArray());
 
         //visualize each parallel action
         foreach (Action a in actions)
         {
-            StartCoroutine(visualizeSingleAction(a/*, value => res = value*/));
+            Coroutine x = StartCoroutine(visualizeSingleAction(a));
+            listOfStartedActions.Add(x);
             yield return null;
         }
         while (estimatedTimeList.Count != actions.Count)
         {
-            //print("Waiting for the maximum waiting time to be calculated");
             yield return null;
         }
 
-        //print("Waiting " + maximumWaitingTime + " seconds for all actions to be completed");
-        yield return new WaitForSeconds(maximumWaitingTime);
-
+        //yield return new WaitForSeconds(maximumWaitingTime);
+        
+        while (actionResultList.Count < actions.Count && actionResultList.Contains(false) == false)
+        {
+            yield return null;
+        }
         //print("action result count= " + actionResultList.Count + " | " + "action count= " + actions.Count);
         if (actionResultList.Contains(false) || actionResultList.Count < actions.Count)
+        {
+            displayText.text = "Parallel Actions NOT Visualized, rolling back...";
+            //containFalse = true;
             resultOfAllActions = false;
+
+            foreach(Coroutine c in listOfStartedActions)
+            {
+                if(c != null)
+                    StopCoroutine(c);
+            }
+            foreach (GameObject x in samplePanelList)
+            {
+                Destroy(x);
+            }
+            foreach (NavMeshAgent a in listOfAgents)
+            {
+                a.ResetPath();
+            }
+            foreach (GameObject x in destinationList)
+            {
+                x.GetComponent<Renderer>().material = red;
+            }
+            destinationList.Clear();
+            
+            yield return new WaitForSeconds(1.0f);
+            RollBack();
+            yield return new WaitForSeconds(1.0f);
+        }
+        else
+        {
+            displayText.text = "Parallel Actions Visualized";
+            resultOfAllActions = true;
+            yield return new WaitForSeconds(2.0f);
+        }
 
         // foreach (var item in actionResultList)
         // {
@@ -146,41 +200,28 @@ public class Visualization : MonoBehaviour
         // }
         //print("RESULT= " + resultOfAllActions);
 
-        if (resultOfAllActions == false)
+        foreach (KeyValuePair<Action, GameObject> item in backUpStatusList)
         {
-            displayText.text = "Parallel Actions NOT Visualized, rolling back...";
-            yield return new WaitForSeconds(2.0f);
-            RollBack(backUpStatusList);
+            Destroy(item.Value);
         }
-        else
-        {
-            displayText.text = "Parallel Actions Visualized";
-            yield return new WaitForSeconds(2.0f);
-        }
-
-        Destroy(backUpStatus);
         result(resultOfAllActions);
-        //if (actionResultList.Count < actions.Count)
-        //{
-        //    print("STOP ALL COROUTINES");
-        //    StopAllCoroutines();
-        //}
-
+        
     }
 
-    public IEnumerator visualizeSingleAction(Action a/*, System.Action<bool> result*/)
+    public IEnumerator visualizeSingleAction(Action a)
     {
-        //displayText.text = "The Simulator is requesting the following Action: " + a.shortToString();
         //print(a.shortToString());
+        backUpStatus = new GameObject();
 
         switch (a.Name)
         {
             case "MOVE":
 
                 NavMeshAgent agent = null;
-                GameObject rover;
+                GameObject rover = null;
                 GameObject destination = null;
                 string destinationName = null;
+                int batteryLevelBackUp = 0;
                 foreach (ActionParameter ap in a.Parameters)
                 {
                     if (ap.Role == ActionParameterRole.ACTIVE)
@@ -190,16 +231,16 @@ public class Visualization : MonoBehaviour
                         if (ap.Name == "ROVER1")
                         {
                             rover = rover1;
+                            batteryLevelBackUp = batteryLevelRover1;
                         }
                         else
                         {
                             rover = rover2;
+                            batteryLevelBackUp = batteryLevelRover2;
                         }
                         agent = rover.GetComponent<NavMeshAgent>();
+                        listOfAgents.Add(agent);
                     }
-
-                    //destinationName = a.Dest.Destination.Name;
-
                 }
                 foreach (IRelation r in a.PostConditions)
                 {
@@ -223,10 +264,8 @@ public class Visualization : MonoBehaviour
                 }
                 backUpStatus.name = agent.gameObject.name;
                 backUpStatus.transform.position = agent.gameObject.transform.position;
-                if (backUpStatusList != null)
-                {
-                    backUpStatusList.Add(a, backUpStatus);
-                }
+                backUpStatusList.Add(a, backUpStatus);
+                backUpBatteryLevelList.Add(rover.name,  batteryLevelBackUp);
 
                 //print("PARENT NAME: " + rover.transform.parent.gameObject.transform.parent.gameObject);
                 agent.SetDestination(destination.transform.position);
@@ -240,7 +279,32 @@ public class Visualization : MonoBehaviour
                 estimatedTimeList.Add(estimatedTime);
 
                 bool res = false;
-                yield return StartCoroutine(CheckMoveResult(agent, destination, estimatedTime, value => res = value));
+                //print(agent.gameObject.name + " -> " + agent.remainingDistance + " : " + time);
+                while (agent.remainingDistance >= 0.5f)
+                {
+                    if (estimatedTime >= 1.0f /*&& containFalse == false*/)
+                    {
+                        //print("REMAINING DISTANCE: " + agent.remainingDistance);
+                        yield return new WaitForSeconds(0.5f); 
+                        estimatedTime -= 0.5f;
+                        UpdateBatteryLevel(rover.name, -3);
+                    }
+                    else
+                    {
+                        estimatedTime = -1f;
+                        print("TIME OVER");
+                        res = false;
+                        break;
+                    }
+                    yield return null;
+                }
+                agent.ResetPath();
+                destinationList.Remove(destination);
+                destination.GetComponent<Renderer>().material = red;
+                if (estimatedTime >= 0.0f)
+                {
+                    res = true;
+                }
                 actionResultList.Add(res);
 
                 break;
@@ -256,6 +320,7 @@ public class Visualization : MonoBehaviour
                 GameObject takeSample = null;
                 GameObject dropSample = null;
                 GameObject sampleNumber = null;
+                TextMeshProUGUI sampleNumberText = null;
                 foreach (ActionParameter ap in a.Parameters)
                 {
                     if (ap.Role == ActionParameterRole.ACTIVE)
@@ -281,7 +346,49 @@ public class Visualization : MonoBehaviour
                 backUpStatusList.Add(a, backUpStatus);
 
                 res = false;
-                yield return StartCoroutine(TakeSampleAnimation(activeRover, value => res = value));
+                GameObject taken = null;
+                GameObject notTaken = null;
+                GameObject tsPanel = null;
+                TextMeshProUGUI takeSampleText;
+                string planetName = transform.parent.parent.gameObject.name;
+
+                tsPanel = Instantiate(samplePanel);
+                tsPanel.transform.SetParent(GameObject.Find(transform.parent.parent.name + activeRover + "CameraTag").transform, worldPositionStays: false);
+                tsPanel.SetActive(true);
+                samplePanelList.Add(tsPanel);
+
+                takeSampleText = tsPanel.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+                taken = takeSampleText.transform.GetChild(0).gameObject;
+                notTaken = takeSampleText.transform.GetChild(1).gameObject;
+                taken.SetActive(false);
+                notTaken.SetActive(false);
+
+                takeSampleText.text = "Taking Sample.";
+                yield return new WaitForSeconds(1.0f);
+                takeSampleText.text = "Taking Sample..";
+                yield return new WaitForSeconds(1.0f);
+                takeSampleText.text += ".";
+                yield return new WaitForSeconds(1.0f);
+                takeSampleText.text = "";
+
+                int outcome = Random.Range(0, 100);
+                //print("random outcome=  " + outcome);
+                if (outcome <= 50)
+                {
+                    if (taken != null)
+                        taken.SetActive(true);
+                    yield return new WaitForSeconds(1.0f);
+                    res = true;
+                }
+                else
+                {
+                    if (notTaken != null)
+                        notTaken.SetActive(true);
+                    yield return new WaitForSeconds(1.0f);
+                    res = false;
+                }
+                Destroy(tsPanel);
+
                 if (res == true)
                 {
                     if (takeSample.activeSelf == false)
@@ -301,6 +408,7 @@ public class Visualization : MonoBehaviour
                 {
                     actionResultList.Add(false);
                 }
+                UpdateBatteryLevel(activeRover, -10);
 
                 break;
 
@@ -315,6 +423,7 @@ public class Visualization : MonoBehaviour
                 takeSample = null;
                 dropSample = null;
                 sampleNumber = null;
+                sampleNumberText = null;
 
                 foreach (ActionParameter ap in a.Parameters)
                 {
@@ -341,7 +450,48 @@ public class Visualization : MonoBehaviour
                 backUpStatusList.Add(a, backUpStatus);
 
                 res = false;
-                yield return StartCoroutine(DropSampleAnimation(activeRover, value => res = value));
+                GameObject dropped = null;
+                GameObject notDropped = null;
+                tsPanel = null;
+                TextMeshProUGUI dropSampleText;
+                planetName = transform.parent.parent.gameObject.name;
+
+                tsPanel = Instantiate(samplePanel);
+                tsPanel.transform.SetParent(GameObject.Find(planetName + activeRover + "CameraTag").transform, worldPositionStays: false);
+                tsPanel.SetActive(true);
+                samplePanelList.Add(tsPanel);
+
+                dropSampleText = tsPanel.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+                dropped = dropSampleText.transform.GetChild(2).gameObject;
+                notDropped = dropSampleText.transform.GetChild(3).gameObject;
+                dropped.SetActive(false);
+                notDropped.SetActive(false);
+
+                dropSampleText.text = "Dropping Sample\n.";
+                yield return new WaitForSeconds(1.0f);
+                dropSampleText.text += ".";
+                yield return new WaitForSeconds(1.0f);
+                dropSampleText.text += ".";
+                yield return new WaitForSeconds(1.0f);
+                dropSampleText.text = "";
+
+                outcome = Random.Range(0, 100);
+                //print("random outcome=  " + outcome);
+                if (outcome <= 50)
+                {
+                    if (dropped != null)
+                        dropped.SetActive(true);
+                    yield return new WaitForSeconds(1.0f);
+                    res = true;
+                }
+                else
+                {
+                    if (notDropped != null)
+                        notDropped.SetActive(true);
+                    yield return new WaitForSeconds(1.0f);
+                    res = false;
+                }
+                Destroy(tsPanel);
                 if (res == true)
                 {
                     if (takeSample.activeSelf == true)
@@ -356,23 +506,7 @@ public class Visualization : MonoBehaviour
                 {
                     actionResultList.Add(false);
                 }
-
-                //int outcome = Random.Range(0, 100);
-                //if (outcome <= 70)
-                //{
-                //    if (dropSample.activeSelf == false)
-                //    {
-                //        dropSample.SetActive(true);
-                //        sampleNumberText.text = null;
-                //        actionResultList.Add(true);
-                //    }
-                //    if (takeSample.activeSelf == true)
-                //        takeSample.SetActive(false);
-                //}
-                //else
-                //{
-                //    actionResultList.Add(false);
-                //}
+                UpdateBatteryLevel(activeRover, -10);
 
                 break;
 
@@ -383,6 +517,7 @@ public class Visualization : MonoBehaviour
                     maximumWaitingTime = estimatedTime;
                 estimatedTimeList.Add(estimatedTime);
 
+                activeRover = "";
                 TakeImage ti = new TakeImage();
                 foreach (ActionParameter ap in a.Parameters)
                 {
@@ -396,8 +531,11 @@ public class Visualization : MonoBehaviour
                         {
                             actionResultList.Add(ti.CaptureScreenshot(renderTextureRover2));
                         }
+                        activeRover = ap.Name;
                     }
                 }
+                backUpStatusList.Add(a, backUpStatus);
+                UpdateBatteryLevel(activeRover, -10);
 
                 break;
 
@@ -408,6 +546,7 @@ public class Visualization : MonoBehaviour
                     maximumWaitingTime = estimatedTime;
                 estimatedTimeList.Add(estimatedTime);
 
+                backUpStatusList.Add(a, backUpStatus);
                 actionResultList.Add(true);
 
                 break;
@@ -419,7 +558,18 @@ public class Visualization : MonoBehaviour
                     maximumWaitingTime = estimatedTime;
                 estimatedTimeList.Add(estimatedTime);
 
+                backUpStatusList.Add(a, backUpStatus);
                 actionResultList.Add(true);
+
+                activeRover = "";
+                foreach (ActionParameter ap in a.Parameters)
+                {
+                    if (ap.Role == ActionParameterRole.ACTIVE)
+                    {
+                        activeRover = ap.Name;
+                    }
+                }
+                UpdateBatteryLevel(activeRover, +100);
 
                 break;
 
@@ -430,7 +580,18 @@ public class Visualization : MonoBehaviour
                     maximumWaitingTime = estimatedTime;
                 estimatedTimeList.Add(estimatedTime);
 
+                backUpStatusList.Add(a, backUpStatus);
                 actionResultList.Add(true);
+
+                activeRover = "";
+                foreach (ActionParameter ap in a.Parameters)
+                {
+                    if (ap.Role == ActionParameterRole.ACTIVE)
+                    {
+                        activeRover = ap.Name;
+                    }
+                }
+                UpdateBatteryLevel(activeRover, -25);
 
                 break;
 
@@ -441,7 +602,18 @@ public class Visualization : MonoBehaviour
                     maximumWaitingTime = estimatedTime;
                 estimatedTimeList.Add(estimatedTime);
 
+                backUpStatusList.Add(a, backUpStatus);
                 actionResultList.Add(true);
+
+                activeRover = "";
+                foreach (ActionParameter ap in a.Parameters)
+                {
+                    if (ap.Role == ActionParameterRole.ACTIVE)
+                    {
+                        activeRover = ap.Name;
+                    }
+                }
+                UpdateBatteryLevel(activeRover, -10);
 
                 break;
 
@@ -452,7 +624,18 @@ public class Visualization : MonoBehaviour
                     maximumWaitingTime = estimatedTime;
                 estimatedTimeList.Add(estimatedTime);
 
+                backUpStatusList.Add(a, backUpStatus);
                 actionResultList.Add(true);
+
+                activeRover = "";
+                foreach (ActionParameter ap in a.Parameters)
+                {
+                    if (ap.Role == ActionParameterRole.ACTIVE)
+                    {
+                        activeRover = ap.Name;
+                    }
+                }
+                UpdateBatteryLevel(activeRover, -10);
 
                 break;
         }
@@ -463,12 +646,10 @@ public class Visualization : MonoBehaviour
     {
         if (s == "yes")
         {
-            //print("yes");
             buttonClicked = 1;
         }
         else
         {
-            //print("no");
             buttonClicked = 2;
         }
     }
@@ -489,12 +670,12 @@ public class Visualization : MonoBehaviour
             {
                 buttonClicked = 0;
                 Resume();
-                yield return new WaitForSeconds(2.0f);
                 result(false);
             }
             yield return null;
         }
         Resume();
+        yield return new WaitForSeconds(1.0f);
     }
 
     void Resume()
@@ -506,39 +687,9 @@ public class Visualization : MonoBehaviour
         }
     }
 
-    private IEnumerator CheckMoveResult(NavMeshAgent agent, GameObject destination, float time, System.Action<bool> result)
+    private void RollBack()
     {
-        //print(agent.gameObject.name + " -> " + agent.remainingDistance + " : " + time);
-        while (agent.remainingDistance >= 0.5f)
-        {
-            //yield return null;
-            if (time >= 1.0f)
-            {
-                //print("REMAINING DISTANCE: " + agent.remainingDistance);
-                //print("TIME: " + time);
-                yield return new WaitForSeconds(1.0f);
-                time -= 1.0f;
-            }
-            else
-            {
-                time -= 1.0f;
-                //print("TIME OVER");
-                result(false);
-                break;
-            }
-        }
-        agent.ResetPath();
-        destinationList.Remove(destination);
-        destination.GetComponent<Renderer>().material = red;
-        if (time >= 0.0f)
-        {
-            result(true);
-        }
-    }
-
-    private void RollBack(Dictionary<Action, GameObject> backUpStatusList)
-    {
-        //print("ROLLING BACK");
+        print("ROLLING BACK");
         foreach (KeyValuePair<Action, GameObject> item in backUpStatusList)
         {
             switch (item.Key.Name)
@@ -546,9 +697,13 @@ public class Visualization : MonoBehaviour
                 case "MOVE":
                     NavMeshAgent agent = null;
                     if (item.Value.name == "ROVER1")
+                    {
                         agent = rover1.GetComponent<NavMeshAgent>();
+                    }
                     else
+                    {
                         agent = rover2.GetComponent<NavMeshAgent>();
+                    }
 
                     agent.ResetPath();
                     agent.gameObject.transform.position = item.Value.transform.position;
@@ -567,7 +722,35 @@ public class Visualization : MonoBehaviour
 
                 case "TAKE_IMAGE":
                     break;
+
+                case "IDLE":
+                    break;
+
+                case "CHARGE_BATTERY":
+                    break;
+
+                case "DISCHARGE_BATTERY":
+                    break;
+
+                case "INFLATE_WHEELS":
+                    break;
+
+                case "DEFLATE_WHEELS":
+                    break;
             }
+        }
+
+        foreach (KeyValuePair<string, int> item in backUpBatteryLevelList)
+        {
+            if (item.Key == "ROVER1")
+            {
+                batteryLevelRover1 = item.Value;
+            }
+            else
+            {
+                batteryLevelRover2 = item.Value;
+            }
+            UpdateBatteryLevel(item.Key, 0);
         }
     }
 
@@ -662,6 +845,54 @@ public class Visualization : MonoBehaviour
         }
         Destroy(tsPanel);
         yield return null;
+    }
+
+    private void UpdateBatteryLevel(string s, int i)
+    {
+        if(s == "ROVER1")
+        {
+            batteryLevelRover1 += i;
+            if (batteryLevelRover1 > 50)
+            {
+                batteryLevelFullRover1.SetActive(true);
+                batteryLevelMediumRover1.SetActive(false);
+                batteryLevelLowRover1.SetActive(false);
+            }
+            else if (batteryLevelRover1 > 25 && batteryLevelRover1 <= 50)
+            {
+                batteryLevelFullRover1.SetActive(false);
+                batteryLevelMediumRover1.SetActive(true);
+                batteryLevelLowRover1.SetActive(false);
+            }
+            else if (batteryLevelRover1 < 25)
+            {
+                batteryLevelFullRover1.SetActive(false);
+                batteryLevelMediumRover1.SetActive(false);
+                batteryLevelLowRover1.SetActive(true);
+            }
+        }
+        else
+        {
+            batteryLevelRover2 += i;
+            if (batteryLevelRover2 > 50)
+            {
+                batteryLevelFullRover2.SetActive(true);
+                batteryLevelMediumRover2.SetActive(false);
+                batteryLevelLowRover2.SetActive(false);
+            }
+            else if (batteryLevelRover2 > 25 && batteryLevelRover2 <= 50)
+            {
+                batteryLevelFullRover2.SetActive(false);
+                batteryLevelMediumRover2.SetActive(true);
+                batteryLevelLowRover2.SetActive(false);
+            }
+            else if (batteryLevelRover2 < 25)
+            {
+                batteryLevelFullRover2.SetActive(false);
+                batteryLevelMediumRover2.SetActive(false);
+                batteryLevelLowRover2.SetActive(true);
+            }
+        }
     }
 
 }

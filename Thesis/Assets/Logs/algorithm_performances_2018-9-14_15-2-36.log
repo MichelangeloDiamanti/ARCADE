@@ -1,0 +1,12 @@
+The solution found by the Subgoals BFS is composed by the following actions:
+Abstract: MOVE(ROVER1, WAYPOINT6, WAYPOINT3), IDLE(ROVER2)
+Detailed All Sequetial:
+MOVE(ROVER1, WAYPOINT6, WAYPOINT3, BATTERY_ROVER1, WHEELS_ROVER1)
+Detailed Sequetial Lists of Parallel Actions:
+Turn [0]:
+MOVE(ROVER1, WAYPOINT6, WAYPOINT3, BATTERY_ROVER1, WHEELS_ROVER1)
+IDLE(ROVER2)
+
+
+Subgoals BFS search time: 57 ms
+Subgoals BFS search explored nodes: 1

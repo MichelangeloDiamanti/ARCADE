@@ -1,0 +1,28 @@
+The solution found by the Subgoals BFS is composed by the following actions:
+Abstract: Action: MOVE(ROVER2 ,WAYPOINT6 ,WAYPOINT7 ,)
+Detailed:
+Action: MOVE(ROVER2 ,WAYPOINT6 ,WAYPOINT7 ,)
+
+Abstract: Action: MOVE(ROVER1 ,WAYPOINT6 ,WAYPOINT7 ,)
+Detailed:
+Action: MOVE(ROVER1 ,WAYPOINT6 ,WAYPOINT7 ,)
+
+
+Subgoals BFS search time: 33 ms
+Subgoals BFS search explored nodes: 6
+The solution found by the Subgoals BFS is composed by the following actions:
+Abstract: Action: MOVE(ROVER2 ,WAYPOINT6 ,WAYPOINT7 ,)
+Detailed:
+Action: MOVE(ROVER2 ,WAYPOINT6 ,WAYPOINT7 ,BATTERY_ROVER2 ,WHEELS_ROVER2 ,)
+
+Abstract: Action: MOVE(ROVER1 ,WAYPOINT6 ,WAYPOINT7 ,)
+Detailed:
+Action: MOVE(ROVER1 ,WAYPOINT6 ,WAYPOINT7 ,BATTERY_ROVER1 ,WHEELS_ROVER1 ,)
+
+Abstract: Action: TAKE_IMAGE(ROVER1 ,OBJECTIVE2 ,WAYPOINT7 ,)
+Detailed:
+Action: TAKE_IMAGE(ROVER1 ,OBJECTIVE2 ,WAYPOINT7 ,BATTERY_ROVER1 ,)
+
+
+Subgoals BFS search time: 138 ms
+Subgoals BFS search explored nodes: 9

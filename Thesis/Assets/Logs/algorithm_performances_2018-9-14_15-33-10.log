@@ -1,0 +1,37 @@
+The solution found by the Subgoals BFS is composed by the following actions:
+Abstract: MOVE(ROVER1, WAYPOINT6, WAYPOINT7), IDLE(ROVER2)
+Detailed All Sequetial:
+MOVE(ROVER1, WAYPOINT6, WAYPOINT7)
+Detailed Sequetial Lists of Parallel Actions:
+Turn [0]:
+MOVE(ROVER1, WAYPOINT6, WAYPOINT7)
+IDLE(ROVER2)
+
+Abstract: IDLE(ROVER1), MOVE(ROVER2, WAYPOINT6, WAYPOINT7)
+Detailed All Sequetial:
+MOVE(ROVER2, WAYPOINT6, WAYPOINT7)
+Detailed Sequetial Lists of Parallel Actions:
+Turn [0]:
+IDLE(ROVER1)
+MOVE(ROVER2, WAYPOINT6, WAYPOINT7)
+
+Abstract: IDLE(ROVER1), MOVE(ROVER2, WAYPOINT7, WAYPOINT6)
+Detailed All Sequetial:
+MOVE(ROVER2, WAYPOINT7, WAYPOINT6)
+Detailed Sequetial Lists of Parallel Actions:
+Turn [0]:
+IDLE(ROVER1)
+MOVE(ROVER2, WAYPOINT7, WAYPOINT6)
+
+Abstract: MOVE(ROVER1, WAYPOINT7, WAYPOINT6), MOVE(ROVER2, WAYPOINT6, WAYPOINT7)
+Detailed All Sequetial:
+MOVE(ROVER1, WAYPOINT7, WAYPOINT6)
+MOVE(ROVER2, WAYPOINT6, WAYPOINT7)
+Detailed Sequetial Lists of Parallel Actions:
+Turn [0]:
+MOVE(ROVER1, WAYPOINT7, WAYPOINT6)
+MOVE(ROVER2, WAYPOINT6, WAYPOINT7)
+
+
+Subgoals BFS search time: 71 ms
+Subgoals BFS search explored nodes: 15

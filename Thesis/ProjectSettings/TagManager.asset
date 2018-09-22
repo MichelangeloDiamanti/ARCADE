@@ -9,6 +9,7 @@ TagManager:
   - Clickable
   - Waypoint
   - CameraOn
+  - Max LoD
   layers:
   - Default
   - TransparentFX

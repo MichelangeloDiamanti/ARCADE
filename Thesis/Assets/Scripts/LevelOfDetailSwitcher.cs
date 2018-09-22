@@ -7,8 +7,7 @@ public class LevelOfDetailSwitcher : MonoBehaviour
 {
 
     public GameObject player;
-    //public Simulation simulation;
-    //public int detailLevel;     // Simulation LoD higher => more detailed
+    public Simulation simulation;
     public GameObject roverCamera1;
     public GameObject roverCamera2;
     public GameObject roverCameraHolder1;
@@ -18,11 +17,18 @@ public class LevelOfDetailSwitcher : MonoBehaviour
     public GameObject planetCameraHolder;
     public GameObject sampleIcon1;
     public GameObject sampleIcon2;
+    public GameObject batteryIcon1;
+    public GameObject batteryIcon2;
+    public GameObject Inventory1;
+    public GameObject Inventory2;
 
     private Texture texture1;
     private Texture texture2;
     private bool flag;
-    
+    private Vector3 mainInventoryPosition;
+    private Vector3 secondaryInventoryPosition;
+    //private int detailLevel;    // Simulation LoD higher => more detailed
+
     // Use this for initialization
     void Start()
     {
@@ -31,6 +37,8 @@ public class LevelOfDetailSwitcher : MonoBehaviour
         texture2 = roverCameraHolder2.GetComponent<RawImage>().texture;
         sampleIcon1.SetActive(false);
         sampleIcon2.SetActive(false);
+        mainInventoryPosition = Inventory1.transform.localPosition;
+        secondaryInventoryPosition = Inventory2.transform.localPosition;
     }
 
     // Update is called once per frame
@@ -55,8 +63,6 @@ public class LevelOfDetailSwitcher : MonoBehaviour
                 planetCameraHolder.SetActive(false);
                 roverCamera1.SetActive(true);
                 roverCamera2.SetActive(true);
-                //roverCameraHolder1.SetActive(true);
-                //roverCameraHolder2.SetActive(true);
                 if (flag == true)
                 {
                     roverCameraHolder1.GetComponent<RawImage>().texture = texture1;
@@ -71,6 +77,12 @@ public class LevelOfDetailSwitcher : MonoBehaviour
                 sampleIcon1.SetActive(true);
                 sampleIcon2.SetActive(true);
             }
+            //turn ON battery icons
+            else if (this.tag == "Max LoD")
+            {
+                batteryIcon1.SetActive(true);
+                batteryIcon2.SetActive(true);
+            }
 
         }
     }
@@ -79,9 +91,6 @@ public class LevelOfDetailSwitcher : MonoBehaviour
     {
         if (other.transform.gameObject == player)
         {
-            //simulation.setLastObservedStateAtLevel(detailLevel, simulation.CurrentNode);
-            //simulation.CurrentLevelOfDetail = (detailLevel > 1) ? detailLevel - 1 : 1;
-
             //turn OFF rover's camera
             if (this.tag == "CameraOn")
             {
@@ -91,11 +100,15 @@ public class LevelOfDetailSwitcher : MonoBehaviour
                 roverCamera2.SetActive(false);
                 roverCameraHolder1.GetComponent<RawImage>().texture = null;
                 roverCameraHolder2.GetComponent<RawImage>().texture = null;
-                //roverCameraHolder1.SetActive(false);
-                //roverCameraHolder2.SetActive(false);
                 noSignal.SetActive(true);
                 sampleIcon1.SetActive(false);
                 sampleIcon2.SetActive(false);
+            }
+            //turn OFF battery icons
+            else if (this.tag == "Max LoD")
+            {
+                batteryIcon1.SetActive(false);
+                batteryIcon2.SetActive(false);
             }
         }
     }
@@ -106,10 +119,13 @@ public class LevelOfDetailSwitcher : MonoBehaviour
         {
             roverCameraHolder1.GetComponent<RawImage>().texture = texture2;
             roverCameraHolder2.GetComponent<RawImage>().texture = texture1;
-            sampleIcon1.transform.SetParent(roverCameraHolder2.transform.parent, worldPositionStays: false);
-            sampleIcon2.transform.SetParent(roverCameraHolder1.transform.parent, worldPositionStays: false);
-            sampleIcon1.transform.localScale = new Vector3(0.75F, 0.75F, 0.75F);
-            sampleIcon2.transform.localScale = new Vector3(1.0F, 1.0F, 1.0F);
+
+            Inventory1.transform.SetParent(roverCameraHolder2.transform.parent, worldPositionStays: false);
+            Inventory2.transform.SetParent(roverCameraHolder1.transform.parent, worldPositionStays: false);
+            Inventory1.transform.localScale = new Vector3(0.75F, 0.75F, 0.75F);
+            Inventory2.transform.localScale = new Vector3(1.0F, 1.0F, 1.0F);
+            Inventory1.transform.localPosition = secondaryInventoryPosition;
+            Inventory2.transform.localPosition = mainInventoryPosition;
 
             flag = false;
         }
@@ -117,10 +133,13 @@ public class LevelOfDetailSwitcher : MonoBehaviour
         {
             roverCameraHolder1.GetComponent<RawImage>().texture = texture1;
             roverCameraHolder2.GetComponent<RawImage>().texture = texture2;
-            sampleIcon1.transform.SetParent(roverCameraHolder1.transform.parent, worldPositionStays: false);
-            sampleIcon2.transform.SetParent(roverCameraHolder2.transform.parent, worldPositionStays: false);
-            sampleIcon1.transform.localScale = new Vector3(1.0F, 1.0F, 1.0F);
-            sampleIcon2.transform.localScale = new Vector3(0.75F, 0.75F, 0.75F);
+
+            Inventory1.transform.SetParent(roverCameraHolder1.transform.parent, worldPositionStays: false);
+            Inventory2.transform.SetParent(roverCameraHolder2.transform.parent, worldPositionStays: false);
+            Inventory1.transform.localScale = new Vector3(1.0F, 1.0F, 1.0F);
+            Inventory2.transform.localScale = new Vector3(0.75F, 0.75F, 0.75F);
+            Inventory1.transform.localPosition = mainInventoryPosition;
+            Inventory2.transform.localPosition = secondaryInventoryPosition;
 
             flag = true;
         }

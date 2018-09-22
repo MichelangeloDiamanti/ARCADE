@@ -1,0 +1,15 @@
+The solution found by the Subgoals BFS is composed by the following actions:
+Abstract: Action: MOVE(ROVER2 ,WAYPOINT6 ,WAYPOINT7 ,)
+Detailed:
+Action: MOVE(ROVER2 ,WAYPOINT6 ,WAYPOINT7 ,)
+
+Abstract: Action: TAKE_IMAGE(ROVER2 ,OBJECTIVE2 ,WAYPOINT7 ,)
+Detailed:
+Action: TAKE_IMAGE(ROVER2 ,OBJECTIVE2 ,WAYPOINT7 ,)
+
+Abstract: Action: TAKE_IMAGE(ROVER2 ,OBJECTIVE2 ,WAYPOINT7 ,)
+Detailed:
+
+
+Subgoals BFS search time: 79 ms
+Subgoals BFS search explored nodes: 8
