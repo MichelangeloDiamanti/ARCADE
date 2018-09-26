@@ -137,6 +137,7 @@ public class Simulation : MonoBehaviour
             Utils.roverWorldStateThirdLevel(getSimulationBoundaryAtLevel(maxLoD).domain)
         );
 
+
         // parse the most detailed state to every level of detaile and initialize
         // the last observed state of each boundary to the initial state
         foreach (SimulationBoundary sb in simulationBoundaries)
@@ -437,7 +438,7 @@ public class Simulation : MonoBehaviour
             bool simulationInteractive = getSimulationBoundaryAtLevel(lastLoD).interactive;
             if (simulationInteractive)
             {
-                 //Debug.Log("Player is interacting");
+                //Debug.Log("Player is interacting");
 
                 bool result = false;
                 yield return StartCoroutine(visualizer.interact(parallelRandomActions, value => result = value));
@@ -460,7 +461,7 @@ public class Simulation : MonoBehaviour
             }
             else
             {
-                 //Debug.Log("Player is visualizing");
+                //Debug.Log("Player is visualizing");
                 //print("Visualization is requested by: " + transform.parent.name);
                 bool result = false;
                 yield return StartCoroutine(visualizer.visualize(parallelRandomActions, value => result = value));
