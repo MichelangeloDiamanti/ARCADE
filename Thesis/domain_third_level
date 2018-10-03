@@ -16,7 +16,7 @@
       "Type": "BATTERY"
     },
     {
-      "Type": "WHEEL"
+      "Type": "BATTERY_LEVEL"
     }
   ],
   "Predicates": [
@@ -28,7 +28,8 @@
       "Name": "IS_CONNECTED_TO",
       "Destination": {
         "Type": "WAYPOINT"
-      }
+      },
+      "Description": "is connected to"
     },
     {
       "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
@@ -38,7 +39,8 @@
       "Name": "IS_VISIBLE",
       "Destination": {
         "Type": "WAYPOINT"
-      }
+      },
+      "Description": "is visible"
     },
     {
       "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
@@ -48,7 +50,8 @@
       "Name": "IS_IN",
       "Destination": {
         "Type": "WAYPOINT"
-      }
+      },
+      "Description": "is in"
     },
     {
       "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
@@ -58,7 +61,8 @@
       "Name": "BEEN_AT",
       "Destination": {
         "Type": "WAYPOINT"
-      }
+      },
+      "Description": "has been at"
     },
     {
       "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
@@ -68,7 +72,8 @@
       "Name": "CARRY",
       "Destination": {
         "Type": "SAMPLE"
-      }
+      },
+      "Description": "is carrying"
     },
     {
       "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
@@ -78,35 +83,40 @@
       "Name": "AT",
       "Destination": {
         "Type": "WAYPOINT"
-      }
+      },
+      "Description": "is at"
     },
     {
       "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
       "Source": {
         "Type": "WAYPOINT"
       },
-      "Name": "IS_DROPPING_DOCK"
+      "Name": "IS_DROPPING_DOCK",
+      "Description": "is dropping the dock"
     },
     {
       "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
       "Source": {
         "Type": "OBJECTIVE"
       },
-      "Name": "TAKEN_IMAGE"
+      "Name": "TAKEN_IMAGE",
+      "Description": "is taking an image"
     },
     {
       "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
       "Source": {
         "Type": "SAMPLE"
       },
-      "Name": "STORED_SAMPLE"
+      "Name": "STORED_SAMPLE",
+      "Description": "has stored the sample"
     },
     {
       "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
       "Source": {
         "Type": "ROVER"
       },
-      "Name": "IS_EMPTY"
+      "Name": "IS_EMPTY",
+      "Description": "is empty"
     },
     {
       "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
@@ -119,20 +129,6 @@
       }
     },
     {
-      "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
-      "Source": {
-        "Type": "BATTERY"
-      },
-      "Name": "BATTERY_CHARGED"
-    },
-    {
-      "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
-      "Source": {
-        "Type": "WHEEL"
-      },
-      "Name": "WHEELS_INFLATED"
-    },
-    {
       "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
       "Source": {
         "Type": "ROVER"
@@ -145,15 +141,56 @@
     {
       "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
       "Source": {
-        "Type": "ROVER"
+        "Type": "BATTERY"
       },
-      "Name": "HAS",
+      "Name": "HAS_BATTERY_LEVEL",
       "Destination": {
-        "Type": "WHEEL"
+        "Type": "BATTERY_LEVEL"
+      }
+    },
+    {
+      "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
+      "Source": {
+        "Type": "BATTERY_LEVEL"
+      },
+      "Name": "CAN_PERFORM_ACTION"
+    },
+    {
+      "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
+      "Source": {
+        "Type": "BATTERY_LEVEL"
+      },
+      "Name": "DISCHARGES_TO",
+      "Destination": {
+        "Type": "BATTERY_LEVEL"
+      }
+    },
+    {
+      "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
+      "Source": {
+        "Type": "BATTERY_LEVEL"
+      },
+      "Name": "CHARGES_TO",
+      "Destination": {
+        "Type": "BATTERY_LEVEL"
       }
     }
   ],
   "Actions": [
+    {
+      "PreConditions": [],
+      "Name": "IDLE",
+      "Parameters": [
+        {
+          "Role": 1,
+          "Type": {
+            "Type": "ROVER"
+          },
+          "Name": "ROVER"
+        }
+      ],
+      "PostConditions": []
+    },
     {
       "PreConditions": [
         {
@@ -172,7 +209,8 @@
             "Name": "AT",
             "Destination": {
               "Type": "WAYPOINT"
-            }
+            },
+            "Description": "is at"
           },
           "Destination": {
             "Type": {
@@ -198,7 +236,8 @@
             "Name": "IS_CONNECTED_TO",
             "Destination": {
               "Type": "WAYPOINT"
-            }
+            },
+            "Description": "is connected to"
           },
           "Destination": {
             "Type": {
@@ -264,42 +303,25 @@
           "$type": "ru.cadia.pddlFramework.BinaryRelation, Assembly-CSharp",
           "Source": {
             "Type": {
-              "Type": "ROVER"
-            },
-            "Name": "ROVER"
-          },
-          "Predicate": {
-            "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
-            "Source": {
-              "Type": "ROVER"
-            },
-            "Name": "HAS",
-            "Destination": {
-              "Type": "WHEEL"
-            }
-          },
-          "Destination": {
-            "Type": {
-              "Type": "WHEEL"
-            },
-            "Name": "WHEELS"
-          },
-          "Value": 1
-        },
-        {
-          "$type": "ru.cadia.pddlFramework.UnaryRelation, Assembly-CSharp",
-          "Source": {
-            "Type": {
               "Type": "BATTERY"
             },
             "Name": "BATTERY"
           },
           "Predicate": {
-            "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
+            "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
             "Source": {
               "Type": "BATTERY"
             },
-            "Name": "BATTERY_CHARGED"
+            "Name": "HAS_BATTERY_LEVEL",
+            "Destination": {
+              "Type": "BATTERY_LEVEL"
+            }
+          },
+          "Destination": {
+            "Type": {
+              "Type": "BATTERY_LEVEL"
+            },
+            "Name": "BATTERY_LEVEL_FROM"
           },
           "Value": 1
         },
@@ -307,16 +329,42 @@
           "$type": "ru.cadia.pddlFramework.UnaryRelation, Assembly-CSharp",
           "Source": {
             "Type": {
-              "Type": "WHEEL"
+              "Type": "BATTERY_LEVEL"
             },
-            "Name": "WHEELS"
+            "Name": "BATTERY_LEVEL_FROM"
           },
           "Predicate": {
             "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
             "Source": {
-              "Type": "WHEEL"
+              "Type": "BATTERY_LEVEL"
             },
-            "Name": "WHEELS_INFLATED"
+            "Name": "CAN_PERFORM_ACTION"
+          },
+          "Value": 1
+        },
+        {
+          "$type": "ru.cadia.pddlFramework.BinaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "BATTERY_LEVEL"
+            },
+            "Name": "BATTERY_LEVEL_FROM"
+          },
+          "Predicate": {
+            "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "BATTERY_LEVEL"
+            },
+            "Name": "DISCHARGES_TO",
+            "Destination": {
+              "Type": "BATTERY_LEVEL"
+            }
+          },
+          "Destination": {
+            "Type": {
+              "Type": "BATTERY_LEVEL"
+            },
+            "Name": "BATTERY_LEVEL_TO"
           },
           "Value": 1
         }
@@ -354,9 +402,16 @@
         {
           "Role": 2,
           "Type": {
-            "Type": "WHEEL"
+            "Type": "BATTERY_LEVEL"
           },
-          "Name": "WHEELS"
+          "Name": "BATTERY_LEVEL_FROM"
+        },
+        {
+          "Role": 2,
+          "Type": {
+            "Type": "BATTERY_LEVEL"
+          },
+          "Name": "BATTERY_LEVEL_TO"
         }
       ],
       "PostConditions": [
@@ -376,7 +431,8 @@
             "Name": "AT",
             "Destination": {
               "Type": "WAYPOINT"
-            }
+            },
+            "Description": "is at"
           },
           "Destination": {
             "Type": {
@@ -402,7 +458,8 @@
             "Name": "AT",
             "Destination": {
               "Type": "WAYPOINT"
-            }
+            },
+            "Description": "is at"
           },
           "Destination": {
             "Type": {
@@ -428,13 +485,66 @@
             "Name": "BEEN_AT",
             "Destination": {
               "Type": "WAYPOINT"
-            }
+            },
+            "Description": "has been at"
           },
           "Destination": {
             "Type": {
               "Type": "WAYPOINT"
             },
             "Name": "WAYPOINT2"
+          },
+          "Value": 1
+        },
+        {
+          "$type": "ru.cadia.pddlFramework.BinaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "BATTERY"
+            },
+            "Name": "BATTERY"
+          },
+          "Predicate": {
+            "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "BATTERY"
+            },
+            "Name": "HAS_BATTERY_LEVEL",
+            "Destination": {
+              "Type": "BATTERY_LEVEL"
+            }
+          },
+          "Destination": {
+            "Type": {
+              "Type": "BATTERY_LEVEL"
+            },
+            "Name": "BATTERY_LEVEL_FROM"
+          },
+          "Value": 2
+        },
+        {
+          "$type": "ru.cadia.pddlFramework.BinaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "BATTERY"
+            },
+            "Name": "BATTERY"
+          },
+          "Predicate": {
+            "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "BATTERY"
+            },
+            "Name": "HAS_BATTERY_LEVEL",
+            "Destination": {
+              "Type": "BATTERY_LEVEL"
+            }
+          },
+          "Destination": {
+            "Type": {
+              "Type": "BATTERY_LEVEL"
+            },
+            "Name": "BATTERY_LEVEL_TO"
           },
           "Value": 1
         }
@@ -458,7 +568,8 @@
             "Name": "IS_IN",
             "Destination": {
               "Type": "WAYPOINT"
-            }
+            },
+            "Description": "is in"
           },
           "Destination": {
             "Type": {
@@ -484,7 +595,8 @@
             "Name": "AT",
             "Destination": {
               "Type": "WAYPOINT"
-            }
+            },
+            "Description": "is at"
           },
           "Destination": {
             "Type": {
@@ -507,7 +619,8 @@
             "Source": {
               "Type": "ROVER"
             },
-            "Name": "IS_EMPTY"
+            "Name": "IS_EMPTY",
+            "Description": "is empty"
           },
           "Value": 1
         },
@@ -538,7 +651,7 @@
           "Value": 1
         },
         {
-          "$type": "ru.cadia.pddlFramework.UnaryRelation, Assembly-CSharp",
+          "$type": "ru.cadia.pddlFramework.BinaryRelation, Assembly-CSharp",
           "Source": {
             "Type": {
               "Type": "BATTERY"
@@ -546,11 +659,63 @@
             "Name": "BATTERY"
           },
           "Predicate": {
-            "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
+            "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
             "Source": {
               "Type": "BATTERY"
             },
-            "Name": "BATTERY_CHARGED"
+            "Name": "HAS_BATTERY_LEVEL",
+            "Destination": {
+              "Type": "BATTERY_LEVEL"
+            }
+          },
+          "Destination": {
+            "Type": {
+              "Type": "BATTERY_LEVEL"
+            },
+            "Name": "BATTERY_LEVEL_FROM"
+          },
+          "Value": 1
+        },
+        {
+          "$type": "ru.cadia.pddlFramework.UnaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "BATTERY_LEVEL"
+            },
+            "Name": "BATTERY_LEVEL_FROM"
+          },
+          "Predicate": {
+            "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "BATTERY_LEVEL"
+            },
+            "Name": "CAN_PERFORM_ACTION"
+          },
+          "Value": 1
+        },
+        {
+          "$type": "ru.cadia.pddlFramework.BinaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "BATTERY_LEVEL"
+            },
+            "Name": "BATTERY_LEVEL_FROM"
+          },
+          "Predicate": {
+            "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "BATTERY_LEVEL"
+            },
+            "Name": "DISCHARGES_TO",
+            "Destination": {
+              "Type": "BATTERY_LEVEL"
+            }
+          },
+          "Destination": {
+            "Type": {
+              "Type": "BATTERY_LEVEL"
+            },
+            "Name": "BATTERY_LEVEL_TO"
           },
           "Value": 1
         }
@@ -584,6 +749,20 @@
             "Type": "BATTERY"
           },
           "Name": "BATTERY"
+        },
+        {
+          "Role": 2,
+          "Type": {
+            "Type": "BATTERY_LEVEL"
+          },
+          "Name": "BATTERY_LEVEL_FROM"
+        },
+        {
+          "Role": 2,
+          "Type": {
+            "Type": "BATTERY_LEVEL"
+          },
+          "Name": "BATTERY_LEVEL_TO"
         }
       ],
       "PostConditions": [
@@ -603,7 +782,8 @@
             "Name": "IS_IN",
             "Destination": {
               "Type": "WAYPOINT"
-            }
+            },
+            "Description": "is in"
           },
           "Destination": {
             "Type": {
@@ -626,7 +806,8 @@
             "Source": {
               "Type": "ROVER"
             },
-            "Name": "IS_EMPTY"
+            "Name": "IS_EMPTY",
+            "Description": "is empty"
           },
           "Value": 2
         },
@@ -646,13 +827,66 @@
             "Name": "CARRY",
             "Destination": {
               "Type": "SAMPLE"
-            }
+            },
+            "Description": "is carrying"
           },
           "Destination": {
             "Type": {
               "Type": "SAMPLE"
             },
             "Name": "SAMPLE"
+          },
+          "Value": 1
+        },
+        {
+          "$type": "ru.cadia.pddlFramework.BinaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "BATTERY"
+            },
+            "Name": "BATTERY"
+          },
+          "Predicate": {
+            "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "BATTERY"
+            },
+            "Name": "HAS_BATTERY_LEVEL",
+            "Destination": {
+              "Type": "BATTERY_LEVEL"
+            }
+          },
+          "Destination": {
+            "Type": {
+              "Type": "BATTERY_LEVEL"
+            },
+            "Name": "BATTERY_LEVEL_FROM"
+          },
+          "Value": 2
+        },
+        {
+          "$type": "ru.cadia.pddlFramework.BinaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "BATTERY"
+            },
+            "Name": "BATTERY"
+          },
+          "Predicate": {
+            "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "BATTERY"
+            },
+            "Name": "HAS_BATTERY_LEVEL",
+            "Destination": {
+              "Type": "BATTERY_LEVEL"
+            }
+          },
+          "Destination": {
+            "Type": {
+              "Type": "BATTERY_LEVEL"
+            },
+            "Name": "BATTERY_LEVEL_TO"
           },
           "Value": 1
         }
@@ -673,7 +907,8 @@
             "Source": {
               "Type": "WAYPOINT"
             },
-            "Name": "IS_DROPPING_DOCK"
+            "Name": "IS_DROPPING_DOCK",
+            "Description": "is dropping the dock"
           },
           "Value": 1
         },
@@ -693,7 +928,8 @@
             "Name": "AT",
             "Destination": {
               "Type": "WAYPOINT"
-            }
+            },
+            "Description": "is at"
           },
           "Destination": {
             "Type": {
@@ -719,7 +955,8 @@
             "Name": "CARRY",
             "Destination": {
               "Type": "SAMPLE"
-            }
+            },
+            "Description": "is carrying"
           },
           "Destination": {
             "Type": {
@@ -756,7 +993,7 @@
           "Value": 1
         },
         {
-          "$type": "ru.cadia.pddlFramework.UnaryRelation, Assembly-CSharp",
+          "$type": "ru.cadia.pddlFramework.BinaryRelation, Assembly-CSharp",
           "Source": {
             "Type": {
               "Type": "BATTERY"
@@ -764,11 +1001,63 @@
             "Name": "BATTERY"
           },
           "Predicate": {
-            "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
+            "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
             "Source": {
               "Type": "BATTERY"
             },
-            "Name": "BATTERY_CHARGED"
+            "Name": "HAS_BATTERY_LEVEL",
+            "Destination": {
+              "Type": "BATTERY_LEVEL"
+            }
+          },
+          "Destination": {
+            "Type": {
+              "Type": "BATTERY_LEVEL"
+            },
+            "Name": "BATTERY_LEVEL_FROM"
+          },
+          "Value": 1
+        },
+        {
+          "$type": "ru.cadia.pddlFramework.UnaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "BATTERY_LEVEL"
+            },
+            "Name": "BATTERY_LEVEL_FROM"
+          },
+          "Predicate": {
+            "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "BATTERY_LEVEL"
+            },
+            "Name": "CAN_PERFORM_ACTION"
+          },
+          "Value": 1
+        },
+        {
+          "$type": "ru.cadia.pddlFramework.BinaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "BATTERY_LEVEL"
+            },
+            "Name": "BATTERY_LEVEL_FROM"
+          },
+          "Predicate": {
+            "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "BATTERY_LEVEL"
+            },
+            "Name": "DISCHARGES_TO",
+            "Destination": {
+              "Type": "BATTERY_LEVEL"
+            }
+          },
+          "Destination": {
+            "Type": {
+              "Type": "BATTERY_LEVEL"
+            },
+            "Name": "BATTERY_LEVEL_TO"
           },
           "Value": 1
         }
@@ -802,6 +1091,20 @@
             "Type": "BATTERY"
           },
           "Name": "BATTERY"
+        },
+        {
+          "Role": 2,
+          "Type": {
+            "Type": "BATTERY_LEVEL"
+          },
+          "Name": "BATTERY_LEVEL_FROM"
+        },
+        {
+          "Role": 2,
+          "Type": {
+            "Type": "BATTERY_LEVEL"
+          },
+          "Name": "BATTERY_LEVEL_TO"
         }
       ],
       "PostConditions": [
@@ -821,7 +1124,8 @@
             "Name": "IS_IN",
             "Destination": {
               "Type": "WAYPOINT"
-            }
+            },
+            "Description": "is in"
           },
           "Destination": {
             "Type": {
@@ -844,7 +1148,8 @@
             "Source": {
               "Type": "ROVER"
             },
-            "Name": "IS_EMPTY"
+            "Name": "IS_EMPTY",
+            "Description": "is empty"
           },
           "Value": 1
         },
@@ -864,7 +1169,8 @@
             "Name": "CARRY",
             "Destination": {
               "Type": "SAMPLE"
-            }
+            },
+            "Description": "is carrying"
           },
           "Destination": {
             "Type": {
@@ -873,6 +1179,58 @@
             "Name": "SAMPLE"
           },
           "Value": 2
+        },
+        {
+          "$type": "ru.cadia.pddlFramework.BinaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "BATTERY"
+            },
+            "Name": "BATTERY"
+          },
+          "Predicate": {
+            "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "BATTERY"
+            },
+            "Name": "HAS_BATTERY_LEVEL",
+            "Destination": {
+              "Type": "BATTERY_LEVEL"
+            }
+          },
+          "Destination": {
+            "Type": {
+              "Type": "BATTERY_LEVEL"
+            },
+            "Name": "BATTERY_LEVEL_FROM"
+          },
+          "Value": 2
+        },
+        {
+          "$type": "ru.cadia.pddlFramework.BinaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "BATTERY"
+            },
+            "Name": "BATTERY"
+          },
+          "Predicate": {
+            "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "BATTERY"
+            },
+            "Name": "HAS_BATTERY_LEVEL",
+            "Destination": {
+              "Type": "BATTERY_LEVEL"
+            }
+          },
+          "Destination": {
+            "Type": {
+              "Type": "BATTERY_LEVEL"
+            },
+            "Name": "BATTERY_LEVEL_TO"
+          },
+          "Value": 1
         }
       ]
     },
@@ -894,7 +1252,8 @@
             "Name": "AT",
             "Destination": {
               "Type": "WAYPOINT"
-            }
+            },
+            "Description": "is at"
           },
           "Destination": {
             "Type": {
@@ -920,7 +1279,8 @@
             "Name": "IS_VISIBLE",
             "Destination": {
               "Type": "WAYPOINT"
-            }
+            },
+            "Description": "is visible"
           },
           "Destination": {
             "Type": {
@@ -957,7 +1317,7 @@
           "Value": 1
         },
         {
-          "$type": "ru.cadia.pddlFramework.UnaryRelation, Assembly-CSharp",
+          "$type": "ru.cadia.pddlFramework.BinaryRelation, Assembly-CSharp",
           "Source": {
             "Type": {
               "Type": "BATTERY"
@@ -965,11 +1325,63 @@
             "Name": "BATTERY"
           },
           "Predicate": {
-            "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
+            "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
             "Source": {
               "Type": "BATTERY"
             },
-            "Name": "BATTERY_CHARGED"
+            "Name": "HAS_BATTERY_LEVEL",
+            "Destination": {
+              "Type": "BATTERY_LEVEL"
+            }
+          },
+          "Destination": {
+            "Type": {
+              "Type": "BATTERY_LEVEL"
+            },
+            "Name": "BATTERY_LEVEL_FROM"
+          },
+          "Value": 1
+        },
+        {
+          "$type": "ru.cadia.pddlFramework.UnaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "BATTERY_LEVEL"
+            },
+            "Name": "BATTERY_LEVEL_FROM"
+          },
+          "Predicate": {
+            "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "BATTERY_LEVEL"
+            },
+            "Name": "CAN_PERFORM_ACTION"
+          },
+          "Value": 1
+        },
+        {
+          "$type": "ru.cadia.pddlFramework.BinaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "BATTERY_LEVEL"
+            },
+            "Name": "BATTERY_LEVEL_FROM"
+          },
+          "Predicate": {
+            "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "BATTERY_LEVEL"
+            },
+            "Name": "DISCHARGES_TO",
+            "Destination": {
+              "Type": "BATTERY_LEVEL"
+            }
+          },
+          "Destination": {
+            "Type": {
+              "Type": "BATTERY_LEVEL"
+            },
+            "Name": "BATTERY_LEVEL_TO"
           },
           "Value": 1
         }
@@ -1003,6 +1415,20 @@
             "Type": "BATTERY"
           },
           "Name": "BATTERY"
+        },
+        {
+          "Role": 2,
+          "Type": {
+            "Type": "BATTERY_LEVEL"
+          },
+          "Name": "BATTERY_LEVEL_FROM"
+        },
+        {
+          "Role": 2,
+          "Type": {
+            "Type": "BATTERY_LEVEL"
+          },
+          "Name": "BATTERY_LEVEL_TO"
         }
       ],
       "PostConditions": [
@@ -1019,7 +1445,60 @@
             "Source": {
               "Type": "OBJECTIVE"
             },
-            "Name": "TAKEN_IMAGE"
+            "Name": "TAKEN_IMAGE",
+            "Description": "is taking an image"
+          },
+          "Value": 1
+        },
+        {
+          "$type": "ru.cadia.pddlFramework.BinaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "BATTERY"
+            },
+            "Name": "BATTERY"
+          },
+          "Predicate": {
+            "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "BATTERY"
+            },
+            "Name": "HAS_BATTERY_LEVEL",
+            "Destination": {
+              "Type": "BATTERY_LEVEL"
+            }
+          },
+          "Destination": {
+            "Type": {
+              "Type": "BATTERY_LEVEL"
+            },
+            "Name": "BATTERY_LEVEL_FROM"
+          },
+          "Value": 2
+        },
+        {
+          "$type": "ru.cadia.pddlFramework.BinaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "BATTERY"
+            },
+            "Name": "BATTERY"
+          },
+          "Predicate": {
+            "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "BATTERY"
+            },
+            "Name": "HAS_BATTERY_LEVEL",
+            "Destination": {
+              "Type": "BATTERY_LEVEL"
+            }
+          },
+          "Destination": {
+            "Type": {
+              "Type": "BATTERY_LEVEL"
+            },
+            "Name": "BATTERY_LEVEL_TO"
           },
           "Value": 1
         }
@@ -1054,7 +1533,7 @@
           "Value": 1
         },
         {
-          "$type": "ru.cadia.pddlFramework.UnaryRelation, Assembly-CSharp",
+          "$type": "ru.cadia.pddlFramework.BinaryRelation, Assembly-CSharp",
           "Source": {
             "Type": {
               "Type": "BATTERY"
@@ -1062,13 +1541,48 @@
             "Name": "BATTERY"
           },
           "Predicate": {
-            "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
+            "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
             "Source": {
               "Type": "BATTERY"
             },
-            "Name": "BATTERY_CHARGED"
+            "Name": "HAS_BATTERY_LEVEL",
+            "Destination": {
+              "Type": "BATTERY_LEVEL"
+            }
           },
-          "Value": 2
+          "Destination": {
+            "Type": {
+              "Type": "BATTERY_LEVEL"
+            },
+            "Name": "BATTERY_LEVEL_FROM"
+          },
+          "Value": 1
+        },
+        {
+          "$type": "ru.cadia.pddlFramework.BinaryRelation, Assembly-CSharp",
+          "Source": {
+            "Type": {
+              "Type": "BATTERY_LEVEL"
+            },
+            "Name": "BATTERY_LEVEL_FROM"
+          },
+          "Predicate": {
+            "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
+            "Source": {
+              "Type": "BATTERY_LEVEL"
+            },
+            "Name": "CHARGES_TO",
+            "Destination": {
+              "Type": "BATTERY_LEVEL"
+            }
+          },
+          "Destination": {
+            "Type": {
+              "Type": "BATTERY_LEVEL"
+            },
+            "Name": "BATTERY_LEVEL_TO"
+          },
+          "Value": 1
         }
       ],
       "Name": "CHARGE_BATTERY",
@@ -1086,94 +1600,25 @@
             "Type": "BATTERY"
           },
           "Name": "BATTERY"
-        }
-      ],
-      "PostConditions": [
-        {
-          "$type": "ru.cadia.pddlFramework.UnaryRelation, Assembly-CSharp",
-          "Source": {
-            "Type": {
-              "Type": "BATTERY"
-            },
-            "Name": "BATTERY"
-          },
-          "Predicate": {
-            "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
-            "Source": {
-              "Type": "BATTERY"
-            },
-            "Name": "BATTERY_CHARGED"
-          },
-          "Value": 1
-        }
-      ]
-    },
-    {
-      "PreConditions": [
-        {
-          "$type": "ru.cadia.pddlFramework.BinaryRelation, Assembly-CSharp",
-          "Source": {
-            "Type": {
-              "Type": "ROVER"
-            },
-            "Name": "ROVER"
-          },
-          "Predicate": {
-            "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
-            "Source": {
-              "Type": "ROVER"
-            },
-            "Name": "HAS",
-            "Destination": {
-              "Type": "BATTERY"
-            }
-          },
-          "Destination": {
-            "Type": {
-              "Type": "BATTERY"
-            },
-            "Name": "BATTERY"
-          },
-          "Value": 1
-        },
-        {
-          "$type": "ru.cadia.pddlFramework.UnaryRelation, Assembly-CSharp",
-          "Source": {
-            "Type": {
-              "Type": "BATTERY"
-            },
-            "Name": "BATTERY"
-          },
-          "Predicate": {
-            "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
-            "Source": {
-              "Type": "BATTERY"
-            },
-            "Name": "BATTERY_CHARGED"
-          },
-          "Value": 1
-        }
-      ],
-      "Name": "DISCHARGE_BATTERY",
-      "Parameters": [
-        {
-          "Role": 1,
-          "Type": {
-            "Type": "ROVER"
-          },
-          "Name": "ROVER"
         },
         {
           "Role": 2,
           "Type": {
-            "Type": "BATTERY"
+            "Type": "BATTERY_LEVEL"
           },
-          "Name": "BATTERY"
+          "Name": "BATTERY_LEVEL_FROM"
+        },
+        {
+          "Role": 2,
+          "Type": {
+            "Type": "BATTERY_LEVEL"
+          },
+          "Name": "BATTERY_LEVEL_TO"
         }
       ],
       "PostConditions": [
         {
-          "$type": "ru.cadia.pddlFramework.UnaryRelation, Assembly-CSharp",
+          "$type": "ru.cadia.pddlFramework.BinaryRelation, Assembly-CSharp",
           "Source": {
             "Type": {
               "Type": "BATTERY"
@@ -1181,179 +1626,48 @@
             "Name": "BATTERY"
           },
           "Predicate": {
-            "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
+            "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
             "Source": {
               "Type": "BATTERY"
             },
-            "Name": "BATTERY_CHARGED"
-          },
-          "Value": 2
-        }
-      ]
-    },
-    {
-      "PreConditions": [
-        {
-          "$type": "ru.cadia.pddlFramework.BinaryRelation, Assembly-CSharp",
-          "Source": {
-            "Type": {
-              "Type": "ROVER"
-            },
-            "Name": "ROVER"
-          },
-          "Predicate": {
-            "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
-            "Source": {
-              "Type": "ROVER"
-            },
-            "Name": "HAS",
+            "Name": "HAS_BATTERY_LEVEL",
             "Destination": {
-              "Type": "WHEEL"
+              "Type": "BATTERY_LEVEL"
             }
           },
           "Destination": {
             "Type": {
-              "Type": "WHEEL"
+              "Type": "BATTERY_LEVEL"
             },
-            "Name": "WHEELS"
-          },
-          "Value": 1
-        },
-        {
-          "$type": "ru.cadia.pddlFramework.UnaryRelation, Assembly-CSharp",
-          "Source": {
-            "Type": {
-              "Type": "WHEEL"
-            },
-            "Name": "WHEELS"
-          },
-          "Predicate": {
-            "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
-            "Source": {
-              "Type": "WHEEL"
-            },
-            "Name": "WHEELS_INFLATED"
+            "Name": "BATTERY_LEVEL_FROM"
           },
           "Value": 2
-        }
-      ],
-      "Name": "INFLATE_WHEELS",
-      "Parameters": [
-        {
-          "Role": 1,
-          "Type": {
-            "Type": "ROVER"
-          },
-          "Name": "ROVER"
         },
-        {
-          "Role": 2,
-          "Type": {
-            "Type": "WHEEL"
-          },
-          "Name": "WHEELS"
-        }
-      ],
-      "PostConditions": [
-        {
-          "$type": "ru.cadia.pddlFramework.UnaryRelation, Assembly-CSharp",
-          "Source": {
-            "Type": {
-              "Type": "WHEEL"
-            },
-            "Name": "WHEELS"
-          },
-          "Predicate": {
-            "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
-            "Source": {
-              "Type": "WHEEL"
-            },
-            "Name": "WHEELS_INFLATED"
-          },
-          "Value": 1
-        }
-      ]
-    },
-    {
-      "PreConditions": [
         {
           "$type": "ru.cadia.pddlFramework.BinaryRelation, Assembly-CSharp",
           "Source": {
             "Type": {
-              "Type": "ROVER"
+              "Type": "BATTERY"
             },
-            "Name": "ROVER"
+            "Name": "BATTERY"
           },
           "Predicate": {
             "$type": "ru.cadia.pddlFramework.BinaryPredicate, Assembly-CSharp",
             "Source": {
-              "Type": "ROVER"
+              "Type": "BATTERY"
             },
-            "Name": "HAS",
+            "Name": "HAS_BATTERY_LEVEL",
             "Destination": {
-              "Type": "WHEEL"
+              "Type": "BATTERY_LEVEL"
             }
           },
           "Destination": {
             "Type": {
-              "Type": "WHEEL"
+              "Type": "BATTERY_LEVEL"
             },
-            "Name": "WHEELS"
+            "Name": "BATTERY_LEVEL_TO"
           },
           "Value": 1
-        },
-        {
-          "$type": "ru.cadia.pddlFramework.UnaryRelation, Assembly-CSharp",
-          "Source": {
-            "Type": {
-              "Type": "WHEEL"
-            },
-            "Name": "WHEELS"
-          },
-          "Predicate": {
-            "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
-            "Source": {
-              "Type": "WHEEL"
-            },
-            "Name": "WHEELS_INFLATED"
-          },
-          "Value": 1
-        }
-      ],
-      "Name": "DEFLATE_WHEELS",
-      "Parameters": [
-        {
-          "Role": 1,
-          "Type": {
-            "Type": "ROVER"
-          },
-          "Name": "ROVER"
-        },
-        {
-          "Role": 2,
-          "Type": {
-            "Type": "WHEEL"
-          },
-          "Name": "WHEELS"
-        }
-      ],
-      "PostConditions": [
-        {
-          "$type": "ru.cadia.pddlFramework.UnaryRelation, Assembly-CSharp",
-          "Source": {
-            "Type": {
-              "Type": "WHEEL"
-            },
-            "Name": "WHEELS"
-          },
-          "Predicate": {
-            "$type": "ru.cadia.pddlFramework.UnaryPredicate, Assembly-CSharp",
-            "Source": {
-              "Type": "WHEEL"
-            },
-            "Name": "WHEELS_INFLATED"
-          },
-          "Value": 2
         }
       ]
     }

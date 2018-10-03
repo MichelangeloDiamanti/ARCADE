@@ -173,7 +173,7 @@ namespace ru.cadia.pddlFramework
 
             superAction = new Action(superActionPreconditions, superActionName,
                 superActionParameters, superActionPostconditions);
-        
+
             return applyAction(superAction);
         }
 
@@ -258,6 +258,7 @@ namespace ru.cadia.pddlFramework
         }
         public List<Action> getPossibleActions()
         {
+            int count = 0;
             List<Action> listActions = new List<Action>();
             List<Action> possibleActions = new List<Action>();
             foreach (Action a in _domain.Actions)
@@ -318,6 +319,7 @@ namespace ru.cadia.pddlFramework
                     sobstitutions = tmpSobstitutions;
                 }
 
+                count += sobstitutions.Count();
                 // Every sobstitution represents a possible action wich may or may not be
                 // performable in the current state, so we check if its preconditions
                 // are satisfied and, if so, we add it to the list of possible actions
@@ -328,6 +330,8 @@ namespace ru.cadia.pddlFramework
                         listActions.Add(action);
                 }
             }
+            UnityEngine.Debug.Log("EXPLORED POSSIBILITIES: " + count);
+
             return listActions;
         }
 

@@ -400,102 +400,150 @@ public class Utils
 
         EntityType entityTypeBattery = new EntityType("BATTERY");
         domain.addEntityType(entityTypeBattery);
-        EntityType entityTypeWheel = new EntityType("WHEEL");
-        domain.addEntityType(entityTypeWheel);
-        UnaryPredicate predicateBatteryCharged = new UnaryPredicate(entityTypeBattery, "BATTERY_CHARGED");
-        domain.addPredicate(predicateBatteryCharged);
-        UnaryPredicate predicateWheelsInflated = new UnaryPredicate(entityTypeWheel, "WHEELS_INFLATED");
-        domain.addPredicate(predicateWheelsInflated);
+        EntityType entityTypeBatteryLevel = new EntityType("BATTERY_LEVEL");
+        domain.addEntityType(entityTypeBatteryLevel);
 
+        // ROVER HAS BATTERY
         EntityType entityTypeRover = domain.getEntityType("ROVER");
-
         BinaryPredicate predicateHasBattery = new BinaryPredicate(entityTypeRover, "HAS", entityTypeBattery);
         domain.addPredicate(predicateHasBattery);
-        BinaryPredicate predicateHasWheels = new BinaryPredicate(entityTypeRover, "HAS", entityTypeWheel);
-        domain.addPredicate(predicateHasWheels);
+
+        // THE BATTERY HAS A CERTAIN BATTERY LEVEL
+        BinaryPredicate predicateBatteryHasLevel = new BinaryPredicate(entityTypeBattery, "HAS_BATTERY_LEVEL", entityTypeBatteryLevel);
+        domain.addPredicate(predicateBatteryHasLevel);
+
+        // WHICH BATTERY LEVEL IS ENOUGH TO PERFORM AN ACTION
+        UnaryPredicate predicateBatteryLevelCanPerformAction = new UnaryPredicate(entityTypeBatteryLevel, "CAN_PERFORM_ACTION");
+        domain.addPredicate(predicateBatteryLevelCanPerformAction);
+
+        // HOW DOES THE BATTERY DISCHARGE? e.g. lvl_n --> lvl_n-1
+        BinaryPredicate predicateBatteryLevelDischargesToBatteryLevel = new BinaryPredicate(entityTypeBatteryLevel, "DISCHARGES_TO", entityTypeBatteryLevel);
+        domain.addPredicate(predicateBatteryLevelDischargesToBatteryLevel);
+        // HOW DOES THE BATTERY CHARGE? e.g. lvl_n --> lvl_n+1
+        BinaryPredicate predicateBatteryLevelChargesToBatteryLevel = new BinaryPredicate(entityTypeBatteryLevel, "CHARGES_TO", entityTypeBatteryLevel);
+        domain.addPredicate(predicateBatteryLevelChargesToBatteryLevel);
 
         HashSet<ActionParameter> actionChargeParameters = new HashSet<ActionParameter>();
         Entity entityRover = new Entity(entityTypeRover, "ROVER");
         Entity entityBattery = new Entity(entityTypeBattery, "BATTERY");
+        Entity entityBatteryLevelFrom = new Entity(entityTypeBatteryLevel, "BATTERY_LEVEL_FROM");
+        Entity entityBatteryLevelTo = new Entity(entityTypeBatteryLevel, "BATTERY_LEVEL_TO");
+
         actionChargeParameters.Add(new ActionParameter(entityRover, ActionParameterRole.ACTIVE));
         actionChargeParameters.Add(new ActionParameter(entityBattery, ActionParameterRole.PASSIVE));
+        actionChargeParameters.Add(new ActionParameter(entityBatteryLevelFrom, ActionParameterRole.PASSIVE));
+        actionChargeParameters.Add(new ActionParameter(entityBatteryLevelTo, ActionParameterRole.PASSIVE));
 
         HashSet<IRelation> actionChargePreconditions = new HashSet<IRelation>();
+        // Rover must have the battery it wants to charge in order to charge it
         BinaryRelation relationRoverHasBattery = new BinaryRelation(entityRover, predicateHasBattery, entityBattery, RelationValue.TRUE);
         actionChargePreconditions.Add(relationRoverHasBattery);
-        UnaryRelation relationBatteryDischarged = new UnaryRelation(entityBattery, predicateBatteryCharged, RelationValue.FALSE);
-        actionChargePreconditions.Add(relationBatteryDischarged);
+        // To charge from level X to Y the battery must have level X
+        BinaryRelation relationBatteryHasBatteryLevelFrom = new BinaryRelation(entityBattery, predicateBatteryHasLevel, entityBatteryLevelFrom, RelationValue.TRUE);
+        actionChargePreconditions.Add(relationBatteryHasBatteryLevelFrom);
+        // It must be possible to charge from level X to Y (eg. maybe we can't charge straight from level 0 to level 10)
+        BinaryRelation relationBatteryCanChargeFromXToY = new BinaryRelation(entityBatteryLevelFrom, predicateBatteryLevelChargesToBatteryLevel, entityBatteryLevelTo, RelationValue.TRUE);
+        actionChargePreconditions.Add(relationBatteryCanChargeFromXToY);
+
 
         HashSet<IRelation> actionChargePostconditions = new HashSet<IRelation>();
-        UnaryRelation relationBatteryCharged = new UnaryRelation(entityBattery, predicateBatteryCharged, RelationValue.TRUE);
-        actionChargePostconditions.Add(relationBatteryCharged);
+        // after charge the battery doesn't have the old level anymore
+        BinaryRelation relationNotBatteryHasBatteryLevelFrom = new BinaryRelation(entityBattery, predicateBatteryHasLevel, entityBatteryLevelFrom, RelationValue.FALSE);
+        actionChargePostconditions.Add(relationNotBatteryHasBatteryLevelFrom);
+        // after charge the battery has new charge level
+        BinaryRelation relationBatteryHasBatteryLevelTo = new BinaryRelation(entityBattery, predicateBatteryHasLevel, entityBatteryLevelTo, RelationValue.TRUE);
+        actionChargePostconditions.Add(relationBatteryHasBatteryLevelTo);
 
         Action actionChargeBattery = new Action(actionChargePreconditions, "CHARGE_BATTERY", actionChargeParameters, actionChargePostconditions);
         domain.addAction(actionChargeBattery);
 
-        HashSet<IRelation> actionDischargePreconditions = new HashSet<IRelation>();
-        actionDischargePreconditions.Add(relationRoverHasBattery);
-        actionDischargePreconditions.Add(relationBatteryCharged);
-
-        HashSet<IRelation> actionDischargePostconditions = new HashSet<IRelation>();
-        actionDischargePostconditions.Add(relationBatteryDischarged);
-
-        Action actionDischargeBattery = new Action(actionDischargePreconditions, "DISCHARGE_BATTERY", actionChargeParameters, actionDischargePostconditions);
-        domain.addAction(actionDischargeBattery);
-
-        HashSet<ActionParameter> actionInflateParameters = new HashSet<ActionParameter>();
-        Entity entityWheels = new Entity(entityTypeWheel, "WHEELS");
-        actionInflateParameters.Add(new ActionParameter(entityRover, ActionParameterRole.ACTIVE));
-        actionInflateParameters.Add(new ActionParameter(entityWheels, ActionParameterRole.PASSIVE));
-
-        HashSet<IRelation> actionInflatePreconditions = new HashSet<IRelation>();
-        BinaryRelation relationRoverHasWheels = new BinaryRelation(entityRover, predicateHasWheels, entityWheels, RelationValue.TRUE);
-        actionInflatePreconditions.Add(relationRoverHasWheels);
-        UnaryRelation relationWheelsDeflated = new UnaryRelation(entityWheels, predicateWheelsInflated, RelationValue.FALSE);
-        actionInflatePreconditions.Add(relationWheelsDeflated);
-
-        HashSet<IRelation> actionInflatePostconditions = new HashSet<IRelation>();
-        UnaryRelation relationWheelsInflated = new UnaryRelation(entityWheels, predicateWheelsInflated, RelationValue.TRUE);
-        actionInflatePostconditions.Add(relationWheelsInflated);
-
-        Action actionInflate = new Action(actionInflatePreconditions, "INFLATE_WHEELS", actionInflateParameters, actionInflatePostconditions);
-        domain.addAction(actionInflate);
-
-        HashSet<IRelation> actionDeflatePreconditions = new HashSet<IRelation>();
-        actionDeflatePreconditions.Add(relationRoverHasWheels);
-        actionDeflatePreconditions.Add(relationWheelsInflated);
-
-        HashSet<IRelation> actionDeflatePostconditions = new HashSet<IRelation>();
-        actionDeflatePostconditions.Add(relationWheelsDeflated);
-
-        Action actionDeflate = new Action(actionDeflatePreconditions, "DEFLATE_WHEELS", actionInflateParameters, actionDeflatePostconditions);
-        domain.addAction(actionDeflate);
 
         Action moveAction = domain.getAction("MOVE");
         ActionParameter actionParameterBattery = new ActionParameter(entityBattery, ActionParameterRole.PASSIVE);
-        ActionParameter actionParameterWheels = new ActionParameter(entityWheels, ActionParameterRole.PASSIVE);
+        ActionParameter actionParameterBatteryLevelFrom = new ActionParameter(entityBatteryLevelFrom, ActionParameterRole.PASSIVE);
+        ActionParameter actionParameterBatteryLevelTo = new ActionParameter(entityBatteryLevelTo, ActionParameterRole.PASSIVE);
 
-        moveAction.addParameter(actionParameterBattery);
-        moveAction.addParameter(actionParameterWheels);
-        moveAction.addPrecondition(relationRoverHasBattery);
-        moveAction.addPrecondition(relationRoverHasWheels);
-        moveAction.addPrecondition(relationBatteryCharged);
-        moveAction.addPrecondition(relationWheelsInflated);
+        moveAction.addParameter(actionParameterBattery);            // the battery of the rover
+        moveAction.addParameter(actionParameterBatteryLevelFrom);   // the battery level of of the rover's battery
+        moveAction.addParameter(actionParameterBatteryLevelTo);     // new battery level after performing move action
+
+        moveAction.addPrecondition(relationRoverHasBattery);            // rover has its battery
+        moveAction.addPrecondition(relationBatteryHasBatteryLevelFrom); // battery has charge leve
+
+        // the charge level is enough to perform an action
+        UnaryRelation relationBatteryLevelCanPerformAction = new UnaryRelation(entityBatteryLevelFrom,
+            predicateBatteryLevelCanPerformAction, RelationValue.TRUE
+        );
+        moveAction.addPrecondition(relationBatteryLevelCanPerformAction);
+        // This is needed so that we get the correct levels FROM and TO
+        BinaryRelation relationBatteryLevelDischargesToBatteryLevel = new BinaryRelation(entityBatteryLevelFrom,
+            predicateBatteryLevelDischargesToBatteryLevel, entityBatteryLevelTo, RelationValue.TRUE
+        );
+        moveAction.addPrecondition(relationBatteryLevelDischargesToBatteryLevel);
+
+        // update battery level
+        moveAction.addPostcondition(relationNotBatteryHasBatteryLevelFrom);
+        moveAction.addPostcondition(relationBatteryHasBatteryLevelTo);
+
+
 
         Action takeSampleAction = domain.getAction("TAKE_SAMPLE");
-        takeSampleAction.addParameter(actionParameterBattery);
-        takeSampleAction.addPrecondition(relationRoverHasBattery);
-        takeSampleAction.addPrecondition(relationBatteryCharged);
+
+        takeSampleAction.addParameter(actionParameterBattery);            // the battery of the rover
+        takeSampleAction.addParameter(actionParameterBatteryLevelFrom);   // the battery level of of the rover's battery
+        takeSampleAction.addParameter(actionParameterBatteryLevelTo);     // new battery level after performing move action
+
+        takeSampleAction.addPrecondition(relationRoverHasBattery);            // rover has its battery
+        takeSampleAction.addPrecondition(relationBatteryHasBatteryLevelFrom); // battery has charge leve
+
+        // the charge level is enough to perform an action
+        takeSampleAction.addPrecondition(relationBatteryLevelCanPerformAction);
+        // This is needed so that we get the correct levels FROM and TO
+        takeSampleAction.addPrecondition(relationBatteryLevelDischargesToBatteryLevel);
+
+        // update battery level
+        takeSampleAction.addPostcondition(relationNotBatteryHasBatteryLevelFrom);
+        takeSampleAction.addPostcondition(relationBatteryHasBatteryLevelTo);
+
+
 
         Action dropSampleAction = domain.getAction("DROP_SAMPLE");
-        dropSampleAction.addParameter(actionParameterBattery);
-        dropSampleAction.addPrecondition(relationRoverHasBattery);
-        dropSampleAction.addPrecondition(relationBatteryCharged);
+
+        dropSampleAction.addParameter(actionParameterBattery);            // the battery of the rover
+        dropSampleAction.addParameter(actionParameterBatteryLevelFrom);   // the battery level of of the rover's battery
+        dropSampleAction.addParameter(actionParameterBatteryLevelTo);     // new battery level after performing move action
+
+        dropSampleAction.addPrecondition(relationRoverHasBattery);            // rover has its battery
+        dropSampleAction.addPrecondition(relationBatteryHasBatteryLevelFrom); // battery has charge leve
+
+        // the charge level is enough to perform an action
+        dropSampleAction.addPrecondition(relationBatteryLevelCanPerformAction);
+        // This is needed so that we get the correct levels FROM and TO
+        dropSampleAction.addPrecondition(relationBatteryLevelDischargesToBatteryLevel);
+
+        // update battery level
+        dropSampleAction.addPostcondition(relationNotBatteryHasBatteryLevelFrom);
+        dropSampleAction.addPostcondition(relationBatteryHasBatteryLevelTo);
+
+
 
         Action takeImageAction = domain.getAction("TAKE_IMAGE");
-        takeImageAction.addParameter(actionParameterBattery);
-        takeImageAction.addPrecondition(relationRoverHasBattery);
-        takeImageAction.addPrecondition(relationBatteryCharged);
+
+        takeImageAction.addParameter(actionParameterBattery);            // the battery of the rover
+        takeImageAction.addParameter(actionParameterBatteryLevelFrom);   // the battery level of of the rover's battery
+        takeImageAction.addParameter(actionParameterBatteryLevelTo);     // new battery level after performing move action
+
+        takeImageAction.addPrecondition(relationRoverHasBattery);            // rover has its battery
+        takeImageAction.addPrecondition(relationBatteryHasBatteryLevelFrom); // battery has charge leve
+
+        // the charge level is enough to perform an action
+        takeImageAction.addPrecondition(relationBatteryLevelCanPerformAction);
+        // This is needed so that we get the correct levels FROM and TO
+        takeImageAction.addPrecondition(relationBatteryLevelDischargesToBatteryLevel);
+
+        // update battery level
+        takeImageAction.addPostcondition(relationNotBatteryHasBatteryLevelFrom);
+        takeImageAction.addPostcondition(relationBatteryHasBatteryLevelTo);
 
         return domain;
     }
@@ -506,19 +554,22 @@ public class Utils
 
         EntityType entityTypeRover = new EntityType("ROVER");
         EntityType entityTypeBattery = new EntityType("BATTERY");
-        EntityType entityTypeWheel = new EntityType("WHEEL");
+        EntityType entityTypeBatteryLevel = new EntityType("BATTERY_LEVEL");
+
 
         Entity entityBatteryRover1 = new Entity(entityTypeBattery, "BATTERY_ROVER1");
         Entity entityBatteryRover2 = new Entity(entityTypeBattery, "BATTERY_ROVER2");
-
-        Entity entityWheelsRover1 = new Entity(entityTypeWheel, "WHEELS_ROVER1");
-        Entity entityWheelsRover2 = new Entity(entityTypeWheel, "WHEELS_ROVER2");
-
         detailedState.addEntity(entityBatteryRover1);
         detailedState.addEntity(entityBatteryRover2);
 
-        detailedState.addEntity(entityWheelsRover1);
-        detailedState.addEntity(entityWheelsRover2);
+        Entity entityBatteryLevel0 = new Entity(entityTypeBatteryLevel, "BATTERY_LEVEL_0");
+        Entity entityBatteryLevel1 = new Entity(entityTypeBatteryLevel, "BATTERY_LEVEL_1");
+        Entity entityBatteryLevel2 = new Entity(entityTypeBatteryLevel, "BATTERY_LEVEL_2");
+        Entity entityBatteryLevel3 = new Entity(entityTypeBatteryLevel, "BATTERY_LEVEL_3");
+        detailedState.addEntity(entityBatteryLevel0);
+        detailedState.addEntity(entityBatteryLevel1);
+        detailedState.addEntity(entityBatteryLevel2);
+        detailedState.addEntity(entityBatteryLevel3);
 
         // Rovers have their respective batteries
         BinaryPredicate predicateHasBattery = new BinaryPredicate(entityTypeRover, "HAS", entityTypeBattery);
@@ -529,28 +580,45 @@ public class Utils
         detailedState.addRelation(relationRover1HasBattery1);
         detailedState.addRelation(relationRover2HasBattery2);
 
-        // the batteries are charged
-        UnaryRelation relationBatteryRover1IsCharged = detailedState.Domain.generateRelationFromPredicateName("BATTERY_CHARGED", entityBatteryRover1, RelationValue.TRUE);
-        UnaryRelation relationBatteryRover2IsCharged = detailedState.Domain.generateRelationFromPredicateName("BATTERY_CHARGED", entityBatteryRover2, RelationValue.TRUE);
 
-        detailedState.addRelation(relationBatteryRover1IsCharged);
-        detailedState.addRelation(relationBatteryRover2IsCharged);
 
-        // Rovers have their respective wheels
-        BinaryPredicate predicateHasWheels = new BinaryPredicate(entityTypeRover, "HAS", entityTypeWheel);
+        // batteries charge like this: lvl_0 -> lvl_1 -> lvl_2 -> lvl_3 
+        BinaryRelation relationBatteriesChargeFrom0To1 = domain.generateRelationFromPredicateName("CHARGES_TO", entityBatteryLevel0, entityBatteryLevel1, RelationValue.TRUE);
+        BinaryRelation relationBatteriesChargeFrom1To2 = domain.generateRelationFromPredicateName("CHARGES_TO", entityBatteryLevel1, entityBatteryLevel2, RelationValue.TRUE);
+        BinaryRelation relationBatteriesChargeFrom2To3 = domain.generateRelationFromPredicateName("CHARGES_TO", entityBatteryLevel2, entityBatteryLevel3, RelationValue.TRUE);
+        detailedState.addRelation(relationBatteriesChargeFrom0To1);
+        detailedState.addRelation(relationBatteriesChargeFrom1To2);
+        detailedState.addRelation(relationBatteriesChargeFrom2To3);
 
-        BinaryRelation relationRover1HasWheels1 = new BinaryRelation(detailedState.getEntity("ROVER1"), predicateHasWheels, entityWheelsRover1, RelationValue.TRUE);
-        BinaryRelation relationRover2HasWheels2 = new BinaryRelation(detailedState.getEntity("ROVER2"), predicateHasWheels, entityWheelsRover2, RelationValue.TRUE);
 
-        detailedState.addRelation(relationRover1HasWheels1);
-        detailedState.addRelation(relationRover2HasWheels2);
 
-        // the wheels are inflated
-        UnaryRelation relationWheelsRover1Inflated = detailedState.Domain.generateRelationFromPredicateName("WHEELS_INFLATED", entityWheelsRover1, RelationValue.TRUE);
-        UnaryRelation relationWheelsRover2Inflated = detailedState.Domain.generateRelationFromPredicateName("WHEELS_INFLATED", entityWheelsRover2, RelationValue.TRUE);
+        // batteries discharge like this: lvl_3 -> lvl_2 -> lvl_1 -> lvl_0
+        BinaryRelation relationBatteriesDischargeFrom3To2 = domain.generateRelationFromPredicateName("DISCHARGES_TO", entityBatteryLevel3, entityBatteryLevel2, RelationValue.TRUE);
+        BinaryRelation relationBatteriesDischargeFrom2To1 = domain.generateRelationFromPredicateName("DISCHARGES_TO", entityBatteryLevel2, entityBatteryLevel1, RelationValue.TRUE);
+        BinaryRelation relationBatteriesDischargeFrom1To0 = domain.generateRelationFromPredicateName("DISCHARGES_TO", entityBatteryLevel1, entityBatteryLevel0, RelationValue.TRUE);
+        detailedState.addRelation(relationBatteriesDischargeFrom3To2);
+        detailedState.addRelation(relationBatteriesDischargeFrom2To1);
+        detailedState.addRelation(relationBatteriesDischargeFrom1To0);
 
-        detailedState.addRelation(relationWheelsRover1Inflated);
-        detailedState.addRelation(relationWheelsRover2Inflated);
+
+
+        // every battery level is enough to perform actions except lvl_0
+        UnaryRelation relationBatteryLevel3CanPerformAction = domain.generateRelationFromPredicateName("CAN_PERFORM_ACTION", entityBatteryLevel3, RelationValue.TRUE);
+        UnaryRelation relationBatteryLevel2CanPerformAction = domain.generateRelationFromPredicateName("CAN_PERFORM_ACTION", entityBatteryLevel2, RelationValue.TRUE);
+        UnaryRelation relationBatteryLevel1CanPerformAction = domain.generateRelationFromPredicateName("CAN_PERFORM_ACTION", entityBatteryLevel1, RelationValue.TRUE);
+        UnaryRelation relationBatteryLevel0CanNOTPerformAction = domain.generateRelationFromPredicateName("CAN_PERFORM_ACTION", entityBatteryLevel0, RelationValue.FALSE);
+        detailedState.addRelation(relationBatteryLevel3CanPerformAction);
+        detailedState.addRelation(relationBatteryLevel2CanPerformAction);
+        detailedState.addRelation(relationBatteryLevel1CanPerformAction);
+        detailedState.addRelation(relationBatteryLevel0CanNOTPerformAction);
+
+
+
+        // both rovers start with battery fully charged
+        BinaryRelation relationBatteryRover1HasBatteryLevel3 = domain.generateRelationFromPredicateName("HAS_BATTERY_LEVEL", entityBatteryRover1, entityBatteryLevel3, RelationValue.TRUE);
+        BinaryRelation relationBatteryRover2HasBatteryLevel3 = domain.generateRelationFromPredicateName("HAS_BATTERY_LEVEL", entityBatteryRover2, entityBatteryLevel3, RelationValue.TRUE);
+        detailedState.addRelation(relationBatteryRover1HasBatteryLevel3);
+        detailedState.addRelation(relationBatteryRover2HasBatteryLevel3);
 
         return detailedState;
     }

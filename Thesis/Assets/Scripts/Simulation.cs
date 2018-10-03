@@ -317,11 +317,11 @@ public class Simulation : MonoBehaviour
                         // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                         // modify here
 
-                        s += "Detailed All Sequetial:\n";
+                        // s += "Detailed All Sequetial:\n";
 
                         foreach (Action a in sortedActions.Reverse())
                         {
-                            s += a.shortToString() + "\n";
+                            // s += a.shortToString() + "\n";
                             lastNodeAtCurrentLevel = lastNodeAtCurrentLevel.AddChild(
                                 lastNodeAtCurrentLevel.Data.applyAction(a), new HashSet<Action>() { a }
                             );
@@ -419,7 +419,16 @@ public class Simulation : MonoBehaviour
             // this is the actual simulation, for now we just pick a random action
             // remember to use lastLoD while updating the lastObservedState because
             // in the meantime it could have changed
+
+            var watchRandomActions = System.Diagnostics.Stopwatch.StartNew();
+
             HashSet<Action> parallelRandomActions = getRandomPossibleAction(_currentNode);
+
+            watchRandomActions.Stop();
+            long elapsedMsRandomAction = watchRandomActions.ElapsedMilliseconds;
+            UnityEngine.Debug.Log("ELAPSED TIME FOR GETTING A RANDOM ACTION: " + elapsedMsRandomAction + "ms");
+
+            // UnityEngine.Debug.Log("POSSIBLE ACTIONS: " + parallelRandomActions.Count());
 
             if (parallelRandomActions == null || parallelRandomActions.Count <= 0)
             {
