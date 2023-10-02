@@ -4,7 +4,9 @@
 
 **ARCADE** is a cutting-edge framework tailored for dynamic simulation detail adjustment. Rooted in the concept of level of detail adjustment in computer graphics—widely employed in today's leading game engines—ARCADE ventures into the more complex realm of simulations, addressing and conquering challenges related to behavior simulation.
 
-![Alt text](GitHubImages/general_simulation.png)
+<p align="center">
+  <img src="GitHubImages/general_simulation.png" alt="General Simulation" width="80%">
+</p>
 
 ## Highlights
 
@@ -21,7 +23,10 @@ When a player's perception of the simulated environment reduces, ARCADE automati
 - Translates the world state by changing the domain of the simulation.
 - Ensures removed features from the domain remain consistent with the world state.
 
-![Alt text](GitHubImages/abstraction.png)
+<p align="center">
+  <img src="GitHubImages/abstraction.png" alt="Abstraction" width="80%">
+</p>
+
 
 ### 2. Refinement
 
@@ -30,7 +35,9 @@ Should a player's immersion increase, the framework adjusts by raising the level
 - Re-iterates the simulation from the most detailed state to validate every action's compatibility with the detailed domain.
 - Identifies and addresses potential inconsistencies by exploring alternative solutions.
 
-![Alt text](GitHubImages/refinement.png)
+<p align="center">
+  <img src="GitHubImages/refinement.png" alt="Refinement" width="80%">
+</p>
 
 ### 3. Dynamic Detail Adjustment
 
@@ -39,7 +46,9 @@ ARCADE continually monitors the user's knowledge and perception of the simulated
 - Uses a tree structure to represent the simulation progress.
 - Divides space based on required detail levels, with efficient memory allocation for new details.
 
-![Alt text](GitHubImages/detail_adjustment.png)
+<p align="center">
+  <img src="GitHubImages/detail_adjustment.png" alt="Detail Adjustment" width="80%">
+</p>
 
 ### 4. Action Management
 
@@ -51,4 +60,8 @@ ARCADE continually monitors the user's knowledge and perception of the simulated
 
 If you want to know more about ARCADE, please check out our [[paper](	https://doi.org/10.1609/aiide.v15i1.5219)], [[thesis](http://hdl.handle.net/1946/32234)] and demo [[video](https://youtu.be/Jk9vLNNoY4s?si=oy3i5cGW0E--gdpm)]:
 
-[![ScreenShot](/GitHubImages/video_image.png)](https://youtu.be/Jk9vLNNoY4s?si=oy3i5cGW0E--gdpm)
+<p align="center">
+  <a href="https://youtu.be/Jk9vLNNoY4s?si=oy3i5cGW0E--gdpm">
+    <img src="/GitHubImages/video_image.png" alt="Demo Video">
+  </a>
+</p>
